@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:a4j="http://richfaces.org/a4j"      
+      xmlns:rich="http://richfaces.org/rich"> 
+
+<h:head></h:head> 
+<h:body>
+	<h:form>
+		<rich:dataTable width="600" var="perfil" value="#{perfilControl.listar()}" id="table">
+			<f:facet name="header">
+				<rich:columnGroup>
+					<rich:column>
+	                    <h:outputText value="ID" />
+	                </rich:column>
+	                <rich:column>
+	                    <h:outputText value="Descrição" />
+	                </rich:column>
+	                <rich:column>
+	                    <h:outputText value="Deletado" />
+	                </rich:column>
+				</rich:columnGroup>
+			</f:facet>
+			 <rich:column>
+	            <h:outputText value="#{perfil.id}" />
+	        </rich:column>
+	        <rich:column>
+	            <h:outputText value="#{perfil.descricao}" />
+	        </rich:column>
+	        <rich:column>
+	            <h:outputText value="#{perfil.deleted}" />
+	        </rich:column>
+		</rich:dataTable>
+				
+		<rich:panel header="Inserir Perfil" id="panel">
+			<rich:messages ajaxRendered="true" id="msg"/>
+			<h:panelGrid columns="3">
+				<h:outputLabel value="Nome:" />
+				<h:inputText value="#{perfilControl.perfil.descricao}" id="descricao" required="true">					
+				</h:inputText>
+				<rich:message for="descricao" />
+			</h:panelGrid>
+			<a4j:commandButton actionListener="#{perfilControl.gravar}" execute="@form" render="msg,descricao,table,panel" />
+		</rich:panel>
+	</h:form>
+</h:body> 
+</html>

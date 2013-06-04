@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"> 
+
+
+<h:head>
+	<style>
+		.ui-widget {
+		    font-size: 12px !important;
+		}
+	</style>
+</h:head> 
+<h:body>
+	<h:form>		
+		 <p:messages id="msgs"/>
+		 
+		 <p:contextMenu for="perfis">
+		 	<p:menuitem value="Deletar" update="perfis,msgs" icon="ui-icon-close" actionListener="#{perfilControl.deletar}"/>
+		 	<p:menuitem value="Editar" update="perfis,msgs" actionListener="#{perfilControl.update}"/>
+		 </p:contextMenu>
+		 
+		 
+		 
+	    <p:dataTable var="perfil" value="#{perfilControl.listarAtivos()}" id="perfis" rowKey="#{perfil.id}"  
+                		selection="#{perfilControl.perfil}" selectionMode="single" >
+			<f:facet name="header">
+				<p:columnGroup>
+					<p:column colspan="2" style="width: 50%">
+						<h:outputText value="Perfil" />
+					</p:column>
+					
+					<p:column headerText="ID" style="width: 15%"/>
+					<p:column headerText="Descrição" style="width:35%" />
+				</p:columnGroup>
+			</f:facet>                		
+	        <p:column headerText="ID">
+	            <h:outputText value="#{perfil.id}" />
+	        </p:column>
+	
+	        <p:column headerText="Descrição">
+	            <h:outputText value="#{perfil.descricao}" />
+	        </p:column>        
+	    </p:dataTable>
+    
+	   
+		<p:panel id="novoPerfil" header="Novo Perfil">
+		    <h:panelGrid columns="2">
+		    	<h:outputLabel value="Descrição:" />
+		    	<h:inputText value="#{perfilControl.perfil.descricao}" />		    	
+		    	<p:commandButton value="Salvar" actionListener="#{perfilControl.gravar}" update="novoPerfil,msgs,perfis" />
+		    </h:panelGrid>
+		 </p:panel>
+	</h:form>
+	
+</h:body> 
+</html>
