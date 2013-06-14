@@ -6,7 +6,9 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
+import br.com.casabemestilo.model.Perfil;
 import br.com.casabemestilo.model.Usuario;
+import br.com.casabemestilo.util.Conexao;
 
 public class UsuarioDAO implements InterfaceDAO, Serializable {
 
@@ -40,29 +42,48 @@ public class UsuarioDAO implements InterfaceDAO, Serializable {
 	@Override
 	public void insert(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
-
+		
+		
 	}
+	
+	public Usuario insert(Usuario usuario){
+		session = Conexao.getInstance();		
+		session.beginTransaction();
+		usuario.setId((Integer) session.save(usuario));
+		session.getTransaction().commit();
+		return usuario;
+	} 
 
 	@Override
 	public void update(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
-
+		usuario = (Usuario) obj;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		session.update(usuario);
+		session.getTransaction().commit();
 	}
 
 	@Override
 	public void delete(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
-
+		usuario = (Usuario) obj;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		session.update(usuario);
+		session.getTransaction().commit();
 	}
 
 	@Override
 	public Usuario buscaObjetoId(Integer id) throws Exception,
 			HibernateException, ConstraintViolationException {
-		// TODO Auto-generated method stub
-		return null;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		usuario = (Usuario) session.createQuery("from Usuario where id= :id")
+							 .setInteger("id", id)
+							 .uniqueResult();
+		session.close();
+		return usuario;
 	}
 
 	@Override
@@ -75,8 +96,11 @@ public class UsuarioDAO implements InterfaceDAO, Serializable {
 	@Override
 	public List<Usuario> listaAtivos() throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
-		return null;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		listaUsuario = session.createQuery("from Usuario u where deleted=0").list();
+		session.close();
+		return listaUsuario;
 	}
 
 	@Override
@@ -85,7 +109,7 @@ public class UsuarioDAO implements InterfaceDAO, Serializable {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 	
 	/*
 	 * GETTERS & SETTERS

@@ -9,6 +9,9 @@ import org.hibernate.exception.ConstraintViolationException;
 
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
 import br.com.casabemestilo.control.FornecedoresControl;
+import br.com.casabemestilo.model.Cliente;
+import br.com.casabemestilo.model.Fornecedor;
+import br.com.casabemestilo.util.Conexao;
 
 public class FornecedoresDAO implements InterfaceDAO, Serializable {
 
@@ -19,16 +22,19 @@ public class FornecedoresDAO implements InterfaceDAO, Serializable {
 	
 	private FornecedoresControl fornecedoresControl;
 	
-	private List<FornecedoresControl> listaFornecedores;
+	private List<Fornecedor> listaFornecedores;
+	
+	private Fornecedor fornecedor;
 	
 	/*
 	 * CONSTRUTORES
 	 * */
 	public FornecedoresDAO(FornecedoresControl fornecedoresControl,
-			List<FornecedoresControl> listaFornecedores) {
+			List<Fornecedor> listaFornecedores, Fornecedor fornecedor) {
 		super();
 		this.fornecedoresControl = fornecedoresControl;
 		this.listaFornecedores = listaFornecedores;
+		this.fornecedor = fornecedor;
 	}
 	
 	
@@ -44,47 +50,64 @@ public class FornecedoresDAO implements InterfaceDAO, Serializable {
 	@Override
 	public void insert(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
+		this.fornecedor = (Fornecedor) obj;
+		session = Conexao.getInstance();		
+		session.beginTransaction();
+		session.save(this.fornecedor);
+		session.getTransaction().commit();
 
 	}
 
 	@Override
 	public void update(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
-
+		fornecedor = (Fornecedor) obj;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		session.update(fornecedor);
+		session.getTransaction().commit();
 	}
 
 	@Override
 	public void delete(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
+		fornecedor = (Fornecedor) obj;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		session.createQuery("update Fornecedor f set f.deleted = :deleted where f.id=:id")
+			   .setBoolean("deleted", true)
+			   .setInteger("id", fornecedor.getId())
+			   .executeUpdate();
+		session.getTransaction().commit();
 
 	}
 
 	@Override
-	public FornecedoresControl buscaObjetoId(Integer id) throws Exception,
+	public Fornecedor buscaObjetoId(Integer id) throws Exception,
 			HibernateException, ConstraintViolationException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<FornecedoresControl> listaTodos() throws Exception, HibernateException,
+	public List<Fornecedor> listaTodos() throws Exception, HibernateException,
 			ConstraintViolationException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<FornecedoresControl> listaAtivos() throws Exception, HibernateException,
+	public List<Fornecedor> listaAtivos() throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
-		return null;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		listaFornecedores = session.createQuery("from Fornecedor f where f.deleted=0").list();
+		session.close();
+		return listaFornecedores;
 	}
 
 	@Override
-	public List<FornecedoresControl> listaSelecao(Object obj) throws Exception,
+	public List<Fornecedor> listaSelecao(Object obj) throws Exception,
 			HibernateException, ConstraintViolationException {
 		// TODO Auto-generated method stub
 		return null;
@@ -104,13 +127,25 @@ public class FornecedoresDAO implements InterfaceDAO, Serializable {
 	}
 
 
-	public List<FornecedoresControl> getListaFornecedores() {
+	public List<Fornecedor> getListaFornecedores() {
 		return listaFornecedores;
 	}
 
 
-	public void setListaFornecedores(List<FornecedoresControl> listaFornecedores) {
+	public void setListaFornecedores(List<Fornecedor> listaFornecedores) {
 		this.listaFornecedores = listaFornecedores;
 	}
+
+
+	public Fornecedor getFornecedor() {
+		return fornecedor;
+	}
+
+
+	public void setFornecedor(Fornecedor fornecedor) {
+		this.fornecedor = fornecedor;
+	}
+	
+	
 	
 }

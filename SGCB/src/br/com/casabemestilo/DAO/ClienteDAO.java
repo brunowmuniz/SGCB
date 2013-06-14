@@ -105,7 +105,7 @@ public class ClienteDAO implements Serializable,InterfaceDAO{
 			ConstraintViolationException {
 		session = Conexao.getInstance();
 		session.beginTransaction();
-		listaClientes = session.createQuery( "from Cliente c where c.deleted=0").list();
+		listaClientes = session.createQuery("from Cliente c where c.deleted=0").list();
 		session.close();
 		return listaClientes;
 	}
