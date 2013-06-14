@@ -3,18 +3,36 @@ package br.com.casabemestilo.control;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+
+import org.hibernate.HibernateException;
+import org.hibernate.TransactionException;
+import org.hibernate.exception.ConstraintViolationException;
+
+import com.sun.faces.context.flash.ELFlash;
+
+import br.com.casabemestilo.DAO.ClienteDAO;
 import br.com.casabemestilo.DAO.FornecedoresDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
+import br.com.casabemestilo.model.Cliente;
+import br.com.casabemestilo.model.Fornecedor;
 
+@ManagedBean
+@ViewScoped
 public class FornecedoresControl extends Control implements InterfaceControl,
 		Serializable {
 	
 	
 	private static final long serialVersionUID = 1L;
 	
-	private FornecedoresControl fornecedoresControl;
+	private Fornecedor fornecedor;
 	
-	private List<FornecedoresControl> listaFornecedores;
+	private List<Fornecedor> listaFornecedores;
 	
 	private FornecedoresDAO fornecedoresDAO;
 	
@@ -22,11 +40,11 @@ public class FornecedoresControl extends Control implements InterfaceControl,
 	/*
 	 * CONSTRUTORES
 	 * */	
-	public FornecedoresControl(String messagem, FornecedoresControl fornecedoresControl,
-			List<FornecedoresControl> listaFornecedores,
+	public FornecedoresControl(String messagem, Fornecedor fornecedor,
+			List<Fornecedor> listaFornecedores,
 			FornecedoresDAO fornecedoresDAO) {
 		super(messagem);
-		this.fornecedoresControl = fornecedoresControl;
+		this.fornecedor = fornecedor;
 		this.listaFornecedores = listaFornecedores;
 		this.fornecedoresDAO = fornecedoresDAO;
 	}
@@ -44,28 +62,103 @@ public class FornecedoresControl extends Control implements InterfaceControl,
 	/*
 	 * MÉTODOS
 	 * */
+	@PostConstruct
+	public void init(){
+		if(ELFlash.getFlash().get("fornecedor") != null){
+			fornecedor = (Fornecedor) ELFlash.getFlash().get("fornecedor");
+		}		
+	}
+		
+	    
+	 @PreDestroy
+	public void destroy() {}
+	 
 	@Override
 	public void gravar() {
-		// TODO Auto-generated method stub
+		try{
+    		fornecedoresDAO = new FornecedoresDAO();
+    		fornecedor.setDeleted(false);
+        	fornecedoresDAO.insert(fornecedor);
+        	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Fornecedor:" + fornecedor.getNome() + " foi gravado!"));
+        	fornecedor = new Fornecedor();
+        	logger.info("Salvo fornecedor: " + fornecedor.toString());
+    	}catch(ConstraintViolationException e){
+    		super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));
+			logger.error("Erro Constraint: " + super.mensagem + "-" + fornecedor.getNome());
+    	}catch (HibernateException e) {
+    		super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Hibernate: " + super.mensagem, ""));
+			logger.error("Erro hibernate: " + super.mensagem + "-" + fornecedor.getNome());
+		}catch (Exception e) {
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Exception: " + super.mensagem, ""));
+			logger.error("Erro : " + super.mensagem + "-" + fornecedor.getNome());
+		}
 
 	}
 
 	@Override
 	public void deletar() {
-		// TODO Auto-generated method stub
-
+		try{
+			fornecedoresDAO = new FornecedoresDAO();
+    		fornecedor.setDeleted(true);
+    		fornecedoresDAO.delete(fornecedor);
+        	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Fornecedor: " + fornecedor.getNome() + " deletado!"));
+        	fornecedor = new Fornecedor();
+    	}catch(ConstraintViolationException e){
+    		super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));		
+    	}catch (HibernateException e) {
+    		super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Hibernate: " + super.mensagem, ""));
+		}catch (Exception e) {
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Exception: " + super.mensagem, ""));
+		}
 	}
 
 	@Override
 	public void alterar() {
-		// TODO Auto-generated method stub
+		try{
+			fornecedoresDAO = new FornecedoresDAO();
+    		fornecedoresDAO.update(fornecedor);
+        	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Fornecedor: " + fornecedor.getNome() + " alterado!"));
+        	fornecedor = new Fornecedor();
+    	}catch(ConstraintViolationException e){
+    		super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));		
+    	}catch (HibernateException e) {
+    		super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Hibernate: " + super.mensagem, ""));
+		}catch (Exception e) {
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Exception: " + super.mensagem, ""));
+		}
 
 	}
 
+	public String alterarCadastro(){
+		ELFlash.getFlash().put("fornecedor", fornecedor);
+		return "cadastrafornecedor";
+	}
+	
 	@Override
-	public List<FornecedoresControl> listarAtivos() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Fornecedor> listarAtivos() {
+		try{
+			fornecedoresDAO = new FornecedoresDAO();
+			listaFornecedores = fornecedoresDAO.listaAtivos();
+		}catch (ConstraintViolationException e) {
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));
+		}catch(HibernateException e){
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Hibernate: " + super.mensagem, ""));
+    	}catch (Exception e) {
+    		super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Exception: " + super.mensagem, ""));
+		}
+		return listaFornecedores;
 	}
 
 	@Override
@@ -86,23 +179,29 @@ public class FornecedoresControl extends Control implements InterfaceControl,
 		return null;
 	}
 	
+	public String sairAlteracao(){
+		return "manutencaofornecedor?faces-redirect=true";
+	}
 	
 	/*
 	 * GETTERS & SETTERS
-	 * */
-	public FornecedoresControl getFornecedores() {
-		return fornecedoresControl;
+	 * */	
+	public Fornecedor getFornecedor() {
+		if(this.fornecedor == null){
+			this.fornecedor = new Fornecedor();
+		}
+		return fornecedor;
 	}
 
-	public void setFornecedores(FornecedoresControl fornecedoresControl) {
-		this.fornecedoresControl = fornecedoresControl;
+	public void setFornecedor(Fornecedor fornecedor) {
+		this.fornecedor = fornecedor;
 	}
-
-	public List<FornecedoresControl> getListaFornecedores() {
+	
+	public List<Fornecedor> getListaFornecedores() {
 		return listaFornecedores;
 	}
 
-	public void setListaFornecedores(List<FornecedoresControl> listaFornecedores) {
+	public void setListaFornecedores(List<Fornecedor> listaFornecedores) {
 		this.listaFornecedores = listaFornecedores;
 	}
 

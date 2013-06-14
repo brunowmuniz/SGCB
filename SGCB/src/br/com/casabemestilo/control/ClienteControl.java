@@ -14,6 +14,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.TransactionException;
 import org.hibernate.exception.ConstraintViolationException;
 
+import com.sun.faces.context.flash.ELFlash;
+
 import br.com.casabemestilo.DAO.AssistenciaTecnicaDAO;
 import br.com.casabemestilo.DAO.ClienteDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
@@ -27,7 +29,7 @@ public class ClienteControl extends Control implements Serializable,InterfaceCon
 	
 	private static final long serialVersionUID = 1L;
 
-	private Cliente cliente;
+	private Cliente cliente = new Cliente();
 	
 	private ClienteDAO clienteDAO;
 	
@@ -59,7 +61,11 @@ public class ClienteControl extends Control implements Serializable,InterfaceCon
 	 * MÉTODOS
 	 * */
 	@PostConstruct
-	public void init(){}
+	public void init(){
+		if(ELFlash.getFlash().get("cliente") != null){
+			cliente = (Cliente) ELFlash.getFlash().get("cliente");
+		}		
+	}
 		
 	    
 	 @PreDestroy
@@ -71,21 +77,21 @@ public class ClienteControl extends Control implements Serializable,InterfaceCon
     		clienteDAO = new ClienteDAO();
         	cliente.setDeleted(false);        	
         	clienteDAO.insert(cliente);
-        	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Cliente:" + cliente.getNome() + "foi gravado!"));
+        	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Cliente:" + cliente.getNome() + " foi gravado!"));
+        	logger.info("Salvo cliente: " + cliente.getNome());
         	cliente = new Cliente();
-    	}catch(TransactionException e){
+    	}catch(ConstraintViolationException e){
     		super.mensagem = e.getMessage();
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Conexão: " + super.mensagem, ""));
-    	}
-    	catch(ConstraintViolationException e){
-    		super.mensagem = e.getMessage();
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));		
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));
+			logger.error("Erro Constraint: " + super.mensagem + "-" + cliente.getNome());
     	}catch (HibernateException e) {
     		super.mensagem = e.getMessage();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Hibernate: " + super.mensagem, ""));
+			logger.error("Erro Hibernate: " + super.mensagem + "-" + cliente.getNome());
 		}catch (Exception e) {
 			super.mensagem = e.getMessage();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Exception: " + super.mensagem, ""));
+			logger.error("Erro: " + super.mensagem + "-" + cliente.getNome());
 		}
 		
 	}	
@@ -94,7 +100,6 @@ public class ClienteControl extends Control implements Serializable,InterfaceCon
 	public void deletar() {
 		try{
 			clienteDAO = new ClienteDAO();
-    		cliente = this.buscaObjetoId(cliente.getId());
     		cliente.setDeleted(true);
     		clienteDAO.delete(cliente);
         	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Cliente:" + cliente.getNome() + " deletado!"));
@@ -129,6 +134,11 @@ public class ClienteControl extends Control implements Serializable,InterfaceCon
 			super.mensagem = e.getMessage();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Exception: " + super.mensagem, ""));
 		}
+	}
+	
+	public String alterarCadastro(){
+		ELFlash.getFlash().put("cliente", cliente);
+		return "cadastracliente";
 	}
 
 	@Override
@@ -187,16 +197,32 @@ public class ClienteControl extends Control implements Serializable,InterfaceCon
 
 	@Override
 	public Cliente buscaObjetoId(Integer id) {
-		
-		return null;
+		clienteDAO = new ClienteDAO();
+		try {
+			cliente = clienteDAO.buscaObjetoId(id);
+		} catch (ConstraintViolationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (HibernateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return cliente;
 	}
 
+	public String sairAlteracao(){
+		return "manutencaocliente?faces-redirect=true";
+	}
 	
 	
 	/*
 	 * GETTERS & SETTERS
 	 * */
 	public Cliente getCliente() {
+		
 		return cliente;
 	}
 

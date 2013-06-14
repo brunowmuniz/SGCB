@@ -1,6 +1,7 @@
 package br.com.casabemestilo.control;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import javax.faces.application.FacesMessage.Severity;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 
 import org.hibernate.HibernateException;
 import org.hibernate.TransactionException;
@@ -31,6 +33,8 @@ public class PerfilControl extends Control implements Serializable,InterfaceCont
 	private Perfil perfil;
 	
 	private List<Perfil> listarPerfil;
+	
+	private List listaPerfilCombo;
 	
 	private PerfilDAO perfilDAO;
 	
@@ -227,5 +231,23 @@ public class PerfilControl extends Control implements Serializable,InterfaceCont
 	public void setListarPerfil(List<Perfil> listarPerfil) {
 		this.listarPerfil = listarPerfil;
 	}
+
+	public List getListaPerfilCombo() {
+		listaPerfilCombo = new ArrayList();
+		listarAtivos();
+		for(Perfil perfis : listarPerfil){
+			SelectItem si = new SelectItem();
+			si.setValue(perfis.getId());
+			si.setLabel(perfis.getDescricao());
+			listaPerfilCombo.add(si);
+		}		
+		return listaPerfilCombo;
+	}
+
+	public void setListaPerfilCombo(List listaPerfilCombo) {
+		this.listaPerfilCombo = listaPerfilCombo;
+	}
+	
+	
 	
 }

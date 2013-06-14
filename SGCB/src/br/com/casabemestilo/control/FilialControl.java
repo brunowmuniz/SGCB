@@ -1,12 +1,22 @@
 package br.com.casabemestilo.control;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.faces.model.SelectItem;
+
+import org.hibernate.HibernateException;
+import org.hibernate.exception.ConstraintViolationException;
 
 import br.com.casabemestilo.DAO.FilialDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Filial;
 
+@ManagedBean
+@ViewScoped
 public class FilialControl extends Control implements InterfaceControl, Serializable {
 
 	
@@ -17,6 +27,8 @@ public class FilialControl extends Control implements InterfaceControl, Serializ
 	private List<Filial> listaFilial;
 	
 	private FilialDAO filialDAO;
+	
+	private List listaFilialCombo;
 
 	
 	/*
@@ -62,9 +74,20 @@ public class FilialControl extends Control implements InterfaceControl, Serializ
 	}
 
 	@Override
-	public List<Filial> listarAtivos() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Filial> listarAtivos() {		
+		try {
+			listaFilial = new FilialDAO().listaAtivos();
+		} catch (ConstraintViolationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (HibernateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return listaFilial;
 	}
 
 	@Override
@@ -112,5 +135,23 @@ public class FilialControl extends Control implements InterfaceControl, Serializ
 	public void setFilialDAO(FilialDAO filialDAO) {
 		this.filialDAO = filialDAO;
 	}
+
+	public List getListaFilialCombo() {
+		listaFilialCombo = new ArrayList();
+		listarAtivos();
+		 for (Filial filiais : listaFilial) {
+             SelectItem si = new SelectItem();
+             si.setValue(filiais.getId());
+             si.setLabel(filiais.getNome());             
+             listaFilialCombo.add(si);
+         }
+		 return listaFilialCombo;
+	}
+
+	public void setListaFilialCombo(List listaFilialCombo) {
+		this.listaFilialCombo = listaFilialCombo;
+	}
+	
+	
 	
 }
