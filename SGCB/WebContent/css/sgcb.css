@@ -1,0 +1,21 @@
+.ui-widget {
+    font-size: 12px !important;
+}
+
+#logo_cabecalho{
+	float: right;
+}
+
+.rodape_esquerda{
+	float: left;
+	padding-left: 20px;	
+}
+
+.rodape_direita{
+	float: right;
+	padding-right: 20px;	
+}
+
+.rodape{
+	height: 60px;
+}

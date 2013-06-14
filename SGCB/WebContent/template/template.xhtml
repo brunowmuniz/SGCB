@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>SGCB - Sistema de Gestão Casabem Estilo</title>
+	<link rel="stylesheet" href="../css/sgcb.css" type="text/css" />
+</h:head>
+<h:body>
+	 <ui:insert name="cabecalho">
+      <p:panel header="SGCB - Sistema de Gestão Casabem Estilo">
+      	<div style="height: 100px;">
+      		<p:graphicImage url="../imagens/logo_site.png" id="logo_cabecalho"/>
+      	</div>      	
+      </p:panel>
+      <p:menubar>
+      	<p:submenu label="Vendas">
+      	</p:submenu>
+      	<p:submenu label="Financeiro">
+      	</p:submenu>
+      	<p:submenu label="Estoque">
+      	</p:submenu>
+      	<p:submenu label="Frete">
+      	</p:submenu>
+      	<p:submenu label="Montagem">
+      	</p:submenu>
+      	<p:submenu label="Assitência Técnica">
+      	</p:submenu>
+      	<p:submenu label="Contas a Pagar">
+      	</p:submenu>
+      	<p:submenu label="Contas a Receber">      	
+      	</p:submenu>
+      	<p:submenu label="Cadastros Básicos">
+      		<p:submenu label="Usuário">
+      			<p:menuitem value="Cadastro de Usuários" url="cadastrausuario.jsf" />
+      			<p:menuitem value="Manutenção de Usuários" url="manutencaousuario.jsf" />
+      		</p:submenu>
+      		<p:submenu label="Filial">
+      			<p:menuitem value="Cadastra Filial" url="#"/>
+      			<p:menuitem value="Lista Filial" url="#"/>      			
+      		</p:submenu>
+      		<p:submenu label="Comissões">
+      			<p:menuitem value="Cadastra Comissão" url="#"/>
+      			<p:menuitem value="Manutenção de Comissão" url="#"/>      			
+      		</p:submenu>
+      		<p:submenu label="Cliente">
+      			<p:menuitem value="Cadastra Cliente" url="cadastracliente.jsf"/>
+      			<p:menuitem value="Manutenção de Clientes" url="manutencaocliente.jsf"/>      			
+      		</p:submenu>
+      		<p:submenu label="Fornecedor">
+      			<p:menuitem value="Cadastra Fornecedor" url="cadastrafornecedor.jsf"/>
+      			<p:menuitem value="Manutenção de Fornecedores" url="manutencaofornecedor.jsf"/>      			
+      		</p:submenu>   
+      	</p:submenu>
+      </p:menubar>
+    </ui:insert>        
+    <ui:insert name="conteudo">
+      <h:outputLabel value="Teste Conteudo" />
+    </ui:insert>
+    <ui:insert name="rodape">     	
+    </ui:insert>	
+</h:body>	
+</html>
