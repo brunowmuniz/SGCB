@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form>
+				<p:panel header="Cadastro de Fornecedor">
+			     	<p:messages id="msgs"/>			     	
+					<h:panelGrid columns="2" id="cadastro">
+						<p:outputLabel for="nome" value="Nome: "/>
+						<p:inputText value="#{fornecedoresControl.fornecedor.nome}" id="nome" size="60" required="true">
+							<f:validateBean/>
+						</p:inputText>
+						<p:outputLabel for="cnpj" value="CNPJ: "/>
+						<p:inputMask value="#{fornecedoresControl.fornecedor.cnpj}" id="cnpj" size="20" required="true" mask="99.999.999/9999-99">
+							<f:validateBean/>
+						</p:inputMask>
+						<p:outputLabel for="telefone" value="Telefone: "/>
+						<p:inputMask value="#{fornecedoresControl.fornecedor.telefone}" id="telefone" size="20" mask="(99) 9999-9999">
+							<f:validateBean/>
+						</p:inputMask>
+						<p:outputLabel for="endereco" value="Endereço: "/>
+						<p:inputText value="#{fornecedoresControl.fornecedor.endereco}" id="endereco" size="60">
+							<f:validateBean/>
+						</p:inputText>
+						<p:outputLabel for="cidade" value="Cidade: "/>
+						<p:inputText value="#{fornecedoresControl.fornecedor.cidade}" id="cidade" size="30">
+							<f:validateBean/>
+						</p:inputText>						
+						<p:outputLabel for="ehrede" value="Rede: "/>
+						<p:selectBooleanCheckbox value="#{fornecedoresControl.fornecedor.ehrede}" id="ehrede"/>												
+						<p:commandButton rendered="#{fornecedoresControl.fornecedor.id != null}" actionListener="#{fornecedoresControl.alterar}" value="Alterar" update="msgs,cadastro" id="gravar"/>
+						<p:commandButton rendered="#{fornecedoresControl.fornecedor.id == null}" actionListener="#{fornecedoresControl.gravar}" value="Gravar" update="msgs,cadastro" id="alterar"/>
+						<p:commandButton rendered="#{fornecedoresControl.fornecedor.id != null}" action="#{fornecedoresControl.sairAlteracao}" value="Sair" id="sair" ajax="false"/>
+					</h:panelGrid>
+			     </p:panel>
+			</h:form>
+		</ui:define>
+		<ui:define name="rodape">
+			<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela para cadastro e edição de fornecedor." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="cadastrafornecedor.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
+		</ui:define>
+	</ui:composition>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form>
+				<p:panel header="Manutenção de Clientes">
+			     	<p:messages id="msgs"/>
+					 <p:contextMenu for="clientes">
+					 	<p:menuitem value="Deletar" update="clientes,msgs" icon="ui-icon-close" actionListener="#{clienteControl.deletar}"/>
+					 	<p:menuitem value="Editar" action="#{clienteControl.alterarCadastro}" ajax="false"/>
+					 </p:contextMenu>
+					 
+					 <p:dataTable var="cliente" value="#{clienteControl.listarAtivos()}" id="clientes" rowKey="#{cliente.id}"  
+                		selection="#{clienteControl.cliente}" selectionMode="single" >                		  		
+				        <p:column headerText="Nome">
+				            <h:outputText value="#{cliente.nome}" />
+				        </p:column>
+				
+				        <p:column headerText="Telefone">
+				            <h:outputText value="#{cliente.telefone}" />
+				        </p:column>
+				        
+				        <p:column headerText="Endereço">
+				            <h:outputText value="#{cliente.endereco}" />
+				        </p:column>
+				             
+				        <p:column headerText="Cidade">				        	
+				        	<h:outputText value="#{cliente.cidade}" />				            
+				        </p:column>				        
+				    </p:dataTable>
+			     </p:panel>
+			</h:form>
+		</ui:define>
+		 <ui:define name="rodape">
+	    	<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela de listagem dos clientes da loja." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="manutencaocliente.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
+	    </ui:define>
+	</ui:composition>
+</html>

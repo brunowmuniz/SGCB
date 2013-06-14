@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form>
+				<p:panel header="Manutenção de Usuário">
+			     	<p:messages id="msgs"/>
+					 <p:contextMenu for="usuarios">
+					 	<p:menuitem value="Deletar" update="usuarios,msgs" icon="ui-icon-close" actionListener="#{usuarioControl.deletar}"/>
+					 	<p:menuitem value="Editar" action="#{usuarioControl.alterarCadastro}" ajax="false"/>
+					 </p:contextMenu>
+					 
+					 <p:dataTable var="usuario" value="#{usuarioControl.listarAtivos()}" id="usuarios" rowKey="#{usuario.id}"  
+                		selection="#{usuarioControl.usuario}" selectionMode="single" >                		  		
+				        <p:column headerText="Nome">
+				            <h:outputText value="#{usuario.nome}" />
+				        </p:column>
+				
+				        <p:column headerText="Login">
+				            <h:outputText value="#{usuario.login}" />
+				        </p:column>
+				        
+				        <p:column headerText="Perfil">
+				            <h:outputText value="#{usuario.perfil.descricao}" />
+				        </p:column>
+				             
+				        <p:column headerText="Filiais">				        	
+				        	<p:dataList var="filialusuario" itemType="square" value="#{usuarioFilialControl.listaFiliaisDoUsuario(usuario)}">
+				        		<h:outputText value="#{filialusuario.filial.nome}" />
+				        	</p:dataList>				            
+				        </p:column>
+				        
+				    </p:dataTable>
+			     </p:panel>
+			</h:form>	     
+	    </ui:define>
+	    <ui:define name="rodape">
+	    	<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela de listagem dos usuários do sistema." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="manutencaousuario.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
+	    </ui:define>
+	</ui:composition>
+</html>

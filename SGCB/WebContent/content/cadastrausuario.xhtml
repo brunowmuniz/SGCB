@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form>
+				<p:panel header="Cadastro de Usuário">
+			     	<p:messages id="msgs"/>			     	
+					<h:panelGrid columns="2" id="cadastro">
+						<p:outputLabel for="nome" value="Nome: "/>
+						<p:inputText value="#{usuarioControl.usuario.nome}" id="nome" size="60">
+							<f:validateBean/>
+						</p:inputText>
+						<p:outputLabel for="senha" value="Senha: "/>
+						<p:password value="#{usuarioControl.usuario.senha}" id="senha" size="15" 
+									feedback="true"
+									promptLabel="Insira a sua senha" weakLabel="fraco"  
+	                        		goodLabel="bom" strongLabel="forte">	                        
+						</p:password>
+						<p:outputLabel for="login" value="Login: "/>
+						<p:inputText value="#{usuarioControl.usuario.login}" id="login" size="15">
+							<f:validateBean/>
+						</p:inputText>
+						<p:outputLabel for="filialUsuario" value="Filial: "/>					
+						<p:selectManyMenu id="filialUsuario" value="#{usuarioControl.usuario.usuarioFiliais}"
+										 required="true" requiredMessage="Selecionar uma filial ao menos">
+							<f:selectItems value="#{filialControl.listaFilialCombo}" />
+						</p:selectManyMenu>	
+						<p:outputLabel for="perfilUsuario" value="Perfil: "/>					
+						<p:selectOneMenu id="perfilUsuario" value="#{usuarioControl.usuario.perfil.id}"
+										 required="true" requiredMessage="Selecionar um perfil">						
+							<f:selectItem itemLabel="Selecione Perfil" itemValue=""/>
+							<f:selectItems value="#{perfilControl.listaPerfilCombo}"/>
+						</p:selectOneMenu>				
+						<p:outputLabel for="deletado" value="Deletado: " rendered="#{usuarioControl.usuario.id == 0}"/>
+						<p:selectBooleanCheckbox id="deletado" value="#{usuarioControl.usuario.deleted}" rendered="#{usuarioControl.usuario.id == 0}"/>
+						
+						<p:commandButton actionListener="#{usuarioControl.gravar}" value="Gravar" update="msgs,cadastro"/>
+					</h:panelGrid>
+			     </p:panel>
+			</h:form>	     
+	    </ui:define>
+	    <ui:define name="rodape">
+	    	<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela para cadastro e edição dos usuários do sistema" styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="cadastrausuario.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
+	    </ui:define>
+	</ui:composition>
+</html>

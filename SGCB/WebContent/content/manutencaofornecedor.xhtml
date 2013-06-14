@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form>
+				<p:panel header="Manutenção de Fornecedores">
+			     	<p:messages id="msgs"/>
+					 <p:contextMenu for="fornecedores">
+					 	<p:menuitem value="Deletar" update="fornecedores,msgs" icon="ui-icon-close" actionListener="#{fornecedoresControl.deletar}"/>
+					 	<p:menuitem value="Editar" action="#{fornecedoresControl.alterarCadastro}" ajax="false"/>
+					 </p:contextMenu>
+					 
+					 <p:dataTable var="fornecedor" value="#{fornecedoresControl.listarAtivos()}" id="fornecedores" rowKey="#{fornecedor.id}"  
+                		selection="#{fornecedoresControl.fornecedor}" selectionMode="single" >                		  		
+				        <p:column headerText="Nome">
+				            <h:outputText value="#{fornecedor.nome}" />
+				        </p:column>
+				
+				        <p:column headerText="CNPJ">
+				            <h:outputText value="#{fornecedor.cnpj}" />
+				        </p:column>
+				        
+				        <p:column headerText="Telefone">				        	
+				        	<h:outputText value="#{fornecedor.telefone}" />				            
+				        </p:column>
+				        
+				        <p:column headerText="Endereço/Cidade">
+				            <h:outputText value="#{fornecedor.endereco} #{fornecedor.cidade}"/> 
+				        </p:column>
+				        				        
+				    </p:dataTable>
+			     </p:panel>
+			</h:form>
+		</ui:define>
+		<ui:define name="rodape">
+			<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela de listagem dos fornecedores." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="manutencaofornecedor.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
+	    </ui:define>
+	</ui:composition>
+</html>
