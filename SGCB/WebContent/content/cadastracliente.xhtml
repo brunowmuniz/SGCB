@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form>
+				<p:panel header="Cadastro de Cliente">
+			     	<p:messages id="msgs"/>			     	
+					<h:panelGrid columns="2" id="cadastro">
+						<p:outputLabel for="nome" value="Nome: "/>
+						<p:inputText value="#{clienteControl.cliente.nome}" id="nome" size="60" required="true">
+							<f:validateBean/>
+						</p:inputText>
+						<p:outputLabel for="endereco" value="Endereço: "/>
+						<p:inputText value="#{clienteControl.cliente.endereco}" id="endereco" size="60" required="true">
+							<f:validateBean/>
+						</p:inputText>
+						<p:outputLabel for="cidade" value="Cidade: "/>
+						<p:inputText value="#{clienteControl.cliente.cidade}" id="cidade" size="30" required="true">
+							<f:validateBean/>
+						</p:inputText>
+						<p:outputLabel for="telefone" value="Telefone: "/>
+						<p:inputMask value="#{clienteControl.cliente.telefone}" id="telefone" size="20" mask="(99) 9999-9999" required="true">
+							<f:validateBean/>
+						</p:inputMask>
+						<p:outputLabel for="telefoneadic" value="Telefone contato: "/>
+						<p:inputMask value="#{clienteControl.cliente.telefoneadicional}" id="telefoneadic" size="20" mask="(99) 9999-9999">
+						</p:inputMask>
+						<p:outputLabel for="cpf" value="CPF: "/>
+						<p:inputMask value="#{clienteControl.cliente.cpf}" id="cpf" size="20" mask="999.999.999-99" required="true">
+						</p:inputMask>
+						<p:outputLabel for="rg" value="RG: "/>
+						<p:inputText value="#{clienteControl.cliente.rg}" id="rg" size="20" required="true">
+						</p:inputText>
+						<p:outputLabel for="datanascimento" value="Data de Nascimento: "/>
+						<p:inputMask value="#{clienteControl.cliente.datadenascimento}" id="datanascimento" size="20" mask="99/99/9999" required="true">
+							<f:convertDateTime pattern="dd/MM/yyyy"/>
+						</p:inputMask>						
+						<p:commandButton rendered="#{clienteControl.cliente.id != 0}" actionListener="#{clienteControl.alterar}" value="Alterar" update="msgs,cadastro" id="gravar"/>
+						<p:commandButton rendered="#{clienteControl.cliente.id == 0}" actionListener="#{clienteControl.gravar}" value="Gravar" update="msgs,cadastro" id="alterar"/>
+						<p:commandButton rendered="#{clienteControl.cliente.id != 0}" action="#{clienteControl.sairAlteracao}" value="Sair" id="sair" ajax="false"/>
+					</h:panelGrid>
+			     </p:panel>
+			</h:form>
+		</ui:define>
+		 <ui:define name="rodape">
+	    	<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela para cadastro e edição dos clientes." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="cadastracliente.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
+	    </ui:define>	
+	</ui:composition>
+</html>
