@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form>
+				<p:panel header="Manutenção de Produtos">
+			     	<p:messages id="msgs"/>
+					 <p:contextMenu for="produtos">
+					 	<p:menuitem value="Deletar" update="produtos,msgs" icon="ui-icon-close" actionListener="#{produtoControl.deletar}"/>
+					 	<p:menuitem value="Editar" action="#{produtoControl.alterarCadastro}" ajax="false"/>
+					 </p:contextMenu>
+					 
+					 <p:dataTable var="produto" value="#{produtoControl.listarAtivos()}" id="produtos" rowKey="#{produto.id}"  
+                		selection="#{produtoControl.produto}" selectionMode="single" >                		  		
+				        <p:column headerText="Descrição">
+				            <h:outputText value="#{produto.descricao}" />
+				        </p:column>
+				
+				        <p:column headerText="Código">
+				            <h:outputText value="#{produto.codigo}" />
+				        </p:column>
+				        
+				        <p:column headerText="Valor Sugerido">
+				        	<h:outputText value="R$ "/>
+				        	<h:outputText value="#{produto.valorsugerido}">
+				        		<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+				        	</h:outputText>				        					            
+				        </p:column>
+				        
+				        <p:column headerText="Fornecedor">
+				            <h:outputText value="#{produto.fornecedor.nome}"/> 
+				        </p:column>
+						
+						<p:column headerText="Em estoque">
+							<h:outputText value="#{produto.estoque}" />
+				        </p:column>
+				        
+				        <p:column headerText="Showroom">
+				        	<h:outputText value="#{produto.showroom}" />
+				        </p:column>
+				        			
+				        <p:column headerText="Encomenda">
+				        	<h:outputText value="#{produto.encomenda}" />
+				        </p:column>	   		        				        
+				    </p:dataTable>
+			     </p:panel>
+			</h:form>
+		</ui:define>
+		<ui:define name="rodape">
+		</ui:define>
+	</ui:composition>
+</html>

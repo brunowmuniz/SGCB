@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form>
+				<p:panel header="Cadastro de Produto">
+			     	<p:messages id="msgs"/>			     	
+					<h:panelGrid columns="2" id="cadastro">
+						<p:outputLabel for="descricao" value="Descrição: "/>
+						<p:inputText value="#{produtoControl.produto.descricao}" id="descricao" size="60" required="true">
+							<f:validateBean/>
+						</p:inputText>
+						<p:outputLabel for="codigo" value="Código Fábrica: "/>
+						<p:inputText value="#{produtoControl.produto.codigo}" id="codigo" size="20">
+							<f:validateBean/>
+						</p:inputText>
+						<p:outputLabel for="valor" value="Valor sugerido: "/>
+						<p:inputText value="#{produtoControl.produto.valorsugerido}" id="valor" size="20" required="true">
+							<f:validateBean/>
+							<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+						</p:inputText>
+						<p:outputLabel for="fornecedor" value="Fornecedor: "/>
+						<p:selectOneMenu required="true" value="#{produtoControl.produto.fornecedor.id}" id="fornecedor">
+							<f:selectItem itemValue="0" itemLabel="Selecione Fornecedor" noSelectionOption="true"/>							
+							<f:selectItems value="#{fornecedoresControl.listaFornecedorCombo}"/>						
+						</p:selectOneMenu>
+						<p:outputLabel for="qtdeshowroom" value="Qtde Showroom: "/>
+						<p:spinner value="#{produtoControl.produto.showroom}" required="true" id="qtdeshowroom" max="999" min="0">
+							<f:validateBean/>
+							<f:convertNumber maxIntegerDigits="3"/>
+						</p:spinner>
+						<p:outputLabel for="qtdeestoque" value="Qtde Estoque: "/>
+						<p:spinner value="#{produtoControl.produto.estoque}" required="true" id="qtdeestoque" max="999" min="0">
+							<f:validateBean/>
+							<f:convertNumber maxIntegerDigits="3"/>
+						</p:spinner>
+						<p:outputLabel for="qtdeencomenda" value="Qtde Encomenda: "/>
+						<p:spinner value="#{produtoControl.produto.encomenda}" required="true" id="qtdeencomenda" max="999" min="0">
+							<f:validateBean/>
+							<f:convertNumber maxIntegerDigits="3"/>
+						</p:spinner>
+						<p:commandButton rendered="#{produtoControl.produto.id != null}" actionListener="#{produtoControl.alterar}" value="Alterar" update="msgs,cadastro" id="gravar"/>
+						<p:commandButton rendered="#{produtoControl.produto.id == null}" actionListener="#{produtoControl.gravar}" value="Gravar" update="msgs,cadastro" id="alterar"/>
+						<p:commandButton rendered="#{produtoControl.produto.id != null}" action="#{produtoControl.sairAlteracao}" value="Sair" id="sair" ajax="false"/>
+					</h:panelGrid>
+				</p:panel>
+			</h:form>
+		</ui:define>
+		<ui:define name="rodape">
+			<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela para cadastro e edição dos produtos da loja." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="cadastraproduto.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
+		</ui:define>
+	</ui:composition>
+</html>
