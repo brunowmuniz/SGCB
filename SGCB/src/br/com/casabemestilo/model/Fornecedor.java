@@ -133,7 +133,7 @@ public class Fornecedor implements java.io.Serializable {
 		this.cidade = cidade;
 	}
 
-	@OneToMany(targetEntity = Produto.class, mappedBy = "fornecedor")
+	@OneToMany(targetEntity = Produto.class, mappedBy = "fornecedor", fetch = FetchType.EAGER)
 	public Set getProdutos() {
 		return this.produtos;
 	}

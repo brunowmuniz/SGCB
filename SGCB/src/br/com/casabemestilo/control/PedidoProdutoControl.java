@@ -3,6 +3,7 @@ package br.com.casabemestilo.control;
 import java.io.Serializable;
 import java.util.List;
 
+import br.com.casabemestilo.DAO.PedidoProdutoDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Pedido;
 import br.com.casabemestilo.model.Pedidoproduto;

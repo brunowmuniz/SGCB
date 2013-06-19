@@ -1,18 +1,23 @@
-package br.com.casabemestilo.control;
+package br.com.casabemestilo.DAO;
 
 import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
 
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
+import br.com.casabemestilo.model.Fornecedor;
 import br.com.casabemestilo.model.Produto;
+import br.com.casabemestilo.util.Conexao;
 
 public class ProdutoDAO implements InterfaceDAO, Serializable {
 
 	
 	private static final long serialVersionUID = 1L;
+	
+	Session session;
 	
 	private Produto produto;
 	
@@ -29,7 +34,6 @@ public class ProdutoDAO implements InterfaceDAO, Serializable {
 	}
 
 	public ProdutoDAO() {
-		// TODO Auto-generated constructor stub
 	}
 
 	
@@ -37,23 +41,51 @@ public class ProdutoDAO implements InterfaceDAO, Serializable {
 	 * MÉTODOS
 	 * */
 	@Override
-	public void insert(Object obj) throws Exception, HibernateException,
-			ConstraintViolationException {
-		// TODO Auto-generated method stub
-
+	public void insert(Object obj) {
+		produto = (Produto) obj;
+		session = Conexao.getInstance();		
+		session.beginTransaction();
+		session.save(this.produto);		
+		session.getTransaction().commit();
+	}
+	
+	public String insertProd(Object obj){
+		try{
+			produto = (Produto) obj;
+			session = Conexao.getInstance();		
+			session.beginTransaction();
+			session.save(this.produto);
+			session.getTransaction().commit();
+			return "ok";
+		}catch(HibernateException e){
+			e.printStackTrace();
+			session.getTransaction().rollback();
+			return e.getMessage();
+		}
 	}
 
 	@Override
 	public void update(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
+		produto = (Produto) obj;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		session.update(produto);
+		session.getTransaction().commit();
 
 	}
 
 	@Override
 	public void delete(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
+		produto = (Produto) obj;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		session.createQuery("update Produto p set p.deleted= :deleted where p.id= :id")
+			   .setBoolean("deleted", true)
+			   .setInteger("id", produto.getId())
+			   .executeUpdate();
+		session.getTransaction().commit();
 
 	}
 
@@ -74,8 +106,11 @@ public class ProdutoDAO implements InterfaceDAO, Serializable {
 	@Override
 	public List<Produto> listaAtivos() throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
-		return null;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		listaProduto = session.createQuery("from Produto p where p.deleted=0").list();
+		session.close();
+		return listaProduto;
 	}
 
 	@Override

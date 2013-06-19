@@ -1,35 +1,37 @@
-package br.com.casabemestilo.control;
+package br.com.casabemestilo.DAO;
 
 import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
 
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
-import br.com.casabemestilo.model.Pedidoproduto;
+import br.com.casabemestilo.model.Ocproduto;
 
-public class PedidoProdutoDAO implements InterfaceDAO, Serializable {
-
+public class OcProdutoDAO implements InterfaceDAO, Serializable {
+	
 	
 	private static final long serialVersionUID = 1L;
 	
-	private Pedidoproduto pedidoProduto;
+	Session session;
 	
-	private List<Pedidoproduto> listaPedidoProduto;
+	private Ocproduto ocproduto;
 	
+	private List<Ocproduto> listaOcproduto;
+
 	
 	/*
 	 * CONSTRUTORES
 	 * */
-	public PedidoProdutoDAO(Pedidoproduto pedidoProduto,
-			List<Pedidoproduto> listaPedidoProduto) {
+	public OcProdutoDAO(Ocproduto ocproduto, List<Ocproduto> listaOcproduto) {
 		super();
-		this.pedidoProduto = pedidoProduto;
-		this.listaPedidoProduto = listaPedidoProduto;
+		this.ocproduto = ocproduto;
+		this.listaOcproduto = listaOcproduto;
 	}
 
-	public PedidoProdutoDAO() {
+	public OcProdutoDAO() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -59,28 +61,28 @@ public class PedidoProdutoDAO implements InterfaceDAO, Serializable {
 	}
 
 	@Override
-	public Pedidoproduto buscaObjetoId(Integer id) throws Exception,
+	public Ocproduto buscaObjetoId(Integer id) throws Exception,
 			HibernateException, ConstraintViolationException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<Pedidoproduto> listaTodos() throws Exception, HibernateException,
+	public List<Ocproduto> listaTodos() throws Exception, HibernateException,
 			ConstraintViolationException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<Pedidoproduto> listaAtivos() throws Exception, HibernateException,
+	public List<Ocproduto> listaAtivos() throws Exception, HibernateException,
 			ConstraintViolationException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<Pedidoproduto> listaSelecao(Object obj) throws Exception,
+	public List<Ocproduto> listaSelecao(Object obj) throws Exception,
 			HibernateException, ConstraintViolationException {
 		// TODO Auto-generated method stub
 		return null;
@@ -90,20 +92,21 @@ public class PedidoProdutoDAO implements InterfaceDAO, Serializable {
 	/*
 	 * GETTERS & SETTERS
 	 * */
-	public Pedidoproduto getPedidoProduto() {
-		return pedidoProduto;
+	public Ocproduto getOcproduto() {
+		return ocproduto;
 	}
 
-	public void setPedidoProduto(Pedidoproduto pedidoProduto) {
-		this.pedidoProduto = pedidoProduto;
+	public void setOcproduto(Ocproduto ocproduto) {
+		this.ocproduto = ocproduto;
 	}
 
-	public List<Pedidoproduto> getListaPedidoProduto() {
-		return listaPedidoProduto;
+	public List<Ocproduto> getListaOcproduto() {
+		return listaOcproduto;
 	}
 
-	public void setListaPedidoProduto(List<Pedidoproduto> listaPedidoProduto) {
-		this.listaPedidoProduto = listaPedidoProduto;
+	public void setListaOcproduto(List<Ocproduto> listaOcproduto) {
+		this.listaOcproduto = listaOcproduto;
 	}
+
 	
 }

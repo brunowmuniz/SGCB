@@ -31,4 +31,5 @@ public class Conexao {
 	   session.setCacheMode(CacheMode.REFRESH);
 	   return session;
 	}
+	
 }

@@ -1,6 +1,7 @@
 package br.com.casabemestilo.control;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -9,6 +10,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 
 import org.hibernate.HibernateException;
 import org.hibernate.TransactionException;
@@ -20,6 +22,7 @@ import br.com.casabemestilo.DAO.ClienteDAO;
 import br.com.casabemestilo.DAO.FornecedoresDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Cliente;
+import br.com.casabemestilo.model.Filial;
 import br.com.casabemestilo.model.Fornecedor;
 
 @ManagedBean
@@ -35,6 +38,8 @@ public class FornecedoresControl extends Control implements InterfaceControl,
 	private List<Fornecedor> listaFornecedores;
 	
 	private FornecedoresDAO fornecedoresDAO;
+	
+	private List listaFornecedorCombo;
 	
 	
 	/*
@@ -213,4 +218,20 @@ public class FornecedoresControl extends Control implements InterfaceControl,
 		this.fornecedoresDAO = fornecedoresDAO;
 	}
 
+	public List getListaFornecedorCombo() {
+		listaFornecedorCombo = new ArrayList();
+		listarAtivos();
+		for (Fornecedor fornecedores : listaFornecedores) {
+            SelectItem si = new SelectItem();
+            si.setValue(fornecedores.getId());
+            si.setLabel(fornecedores.getNome());             
+            listaFornecedorCombo.add(si);
+        }
+		return listaFornecedorCombo;
+	}
+
+	public void setListaFornecedorCombo(List listaFornecedorCombo) {
+		this.listaFornecedorCombo = listaFornecedorCombo;
+	}
+	
 }

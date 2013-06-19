@@ -3,16 +3,31 @@ package br.com.casabemestilo.control;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import org.hibernate.HibernateException;
+import org.hibernate.exception.ConstraintViolationException;
+import com.sun.faces.context.flash.ELFlash;
+
+import br.com.casabemestilo.DAO.FornecedoresDAO;
+import br.com.casabemestilo.DAO.ProdutoDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
+import br.com.casabemestilo.model.Fornecedor;
 import br.com.casabemestilo.model.Produto;
 
+@ManagedBean
+@ViewScoped
 public class ProdutoControl extends Control implements InterfaceControl,
 		Serializable {
 
 	
 	private static final long serialVersionUID = 1L;
 	
-	private Produto produto;
+	private Produto produto = new Produto();
 	
 	private List<Produto> listaProduto;
 	
@@ -43,28 +58,103 @@ public class ProdutoControl extends Control implements InterfaceControl,
 	/*
 	 * MÉTODOS
 	 * */
+	@PostConstruct
+	public void init(){
+		if(ELFlash.getFlash().get("produto") != null){
+			produto = (Produto) ELFlash.getFlash().get("produto");
+		}		
+	}		
+	    
+	 @PreDestroy
+	public void destroy() {}
+	
 	@Override
 	public void gravar() {
-		// TODO Auto-generated method stub
-
+		try{
+    		produtoDAO = new ProdutoDAO();
+    		produto.setDeleted(false);
+    		produtoDAO.insert(produto);
+        	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Produto: " + produto.getDescricao() + " foi gravado!"));
+        	produto = new Produto();
+        	logger.info("Salvo produto: " + produto.toString());
+    	}catch(ConstraintViolationException e){    		
+    		super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));
+			logger.error("Erro Constraint: " + super.mensagem + "-" + produto.getDescricao());
+    	}catch (HibernateException e) {
+    		super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Hibernate: " + super.mensagem, ""));
+			logger.error("Erro hibernate: " + super.mensagem + "-" + produto.getDescricao());
+		}catch (Exception e) {
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Exception: " + super.mensagem, ""));
+			logger.error("Erro : " + super.mensagem + "-" + produto.getDescricao());
+		}
+		
 	}
 
 	@Override
 	public void deletar() {
-		// TODO Auto-generated method stub
+		try{
+			produtoDAO = new ProdutoDAO();
+    		produto.setDeleted(true);
+    		produtoDAO.delete(produto);
+        	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Produto: " + produto.getDescricao() + " deletado!"));
+        	produto = new Produto();
+    	}catch(ConstraintViolationException e){
+    		super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));		
+    	}catch (HibernateException e) {
+    		super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Hibernate: " + super.mensagem, ""));
+		}catch (Exception e) {
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Exception: " + super.mensagem, ""));
+		}
 
 	}
 
 	@Override
 	public void alterar() {
-		// TODO Auto-generated method stub
+		try{
+			produtoDAO = new ProdutoDAO();    		
+    		produtoDAO.update(produto);
+        	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Produto: " + produto.getDescricao() + " alterado!"));
+        	produto = new Produto();
+    	}catch(ConstraintViolationException e){
+    		super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));		
+    	}catch (HibernateException e) {
+    		super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Hibernate: " + super.mensagem, ""));
+		}catch (Exception e) {
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Exception: " + super.mensagem, ""));
+		}
 
+	}
+	
+	public String alterarCadastro(){
+		ELFlash.getFlash().put("produto", produto);
+		return "cadastraproduto?faces-redirect=true";
 	}
 
 	@Override
 	public List<Produto> listarAtivos() {
-		// TODO Auto-generated method stub
-		return null;
+		try{
+			produtoDAO = new ProdutoDAO();
+			listaProduto = produtoDAO.listaAtivos();
+		}catch (ConstraintViolationException e) {
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));
+		}catch(HibernateException e){
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Hibernate: " + super.mensagem, ""));
+    	}catch (Exception e) {
+    		super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Exception: " + super.mensagem, ""));
+		}
+		return listaProduto;
 	}
 
 	@Override
@@ -85,6 +175,9 @@ public class ProdutoControl extends Control implements InterfaceControl,
 		return null;
 	}
 
+	public String sairAlteracao(){
+		return "manutencaoproduto?faces-redirect=true";
+	}
 	
 	/*
 	 * GETTERS & SETTERS

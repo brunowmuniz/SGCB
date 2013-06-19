@@ -220,7 +220,7 @@ public class UsuarioControl extends Control implements InterfaceControl,
 	
 	public String md5(String senha) throws NoSuchAlgorithmException, UnsupportedEncodingException{		
 	    MessageDigest md = MessageDigest.getInstance("MD5");
-	    BigInteger hash = new BigInteger(1, md.digest(senha.getBytes("UTF-8")));
+	    BigInteger hash = new BigInteger(1, md.digest(senha.getBytes("ISO-8859-1")));
 	    String senhaMD5 = hash.toString(16);
 	    return senhaMD5;
 	}	
