@@ -23,14 +23,16 @@ public class Retencao implements java.io.Serializable {
 	private Formapagamento formapagamento;
 	private String nome;
 	private float percentual;
+	private Boolean deleted;
 
 	public Retencao() {
 	}
 
-	public Retencao(Formapagamento formapagamento, String nome, float percentual) {
+	public Retencao(Formapagamento formapagamento, String nome, float percentual, Boolean deleted) {
 		this.formapagamento = formapagamento;
 		this.nome = nome;
 		this.percentual = percentual;
+		this.deleted = deleted;
 	}
 
 	@Id
@@ -44,9 +46,12 @@ public class Retencao implements java.io.Serializable {
 		this.id = id;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "formapagamento", nullable = false)
 	public Formapagamento getFormapagamento() {
+		if(formapagamento == null){
+			formapagamento = new Formapagamento();
+		}
 		return this.formapagamento;
 	}
 
@@ -70,6 +75,31 @@ public class Retencao implements java.io.Serializable {
 
 	public void setPercentual(float percentual) {
 		this.percentual = percentual;
+	}
+
+	public Boolean getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
+	}
+
+	public Retencao(Integer id, Formapagamento formapagamento, String nome,
+			float percentual, Boolean deleted) {
+		super();
+		this.id = id;
+		this.formapagamento = formapagamento;
+		this.nome = nome;
+		this.percentual = percentual;
+		this.deleted = deleted;
+	}
+
+	@Override
+	public String toString() {
+		return "Retencao [id=" + id + ", formapagamento=" + formapagamento.getNome()
+				+ ", nome=" + nome + ", percentual=" + percentual
+				+ ", deleted=" + deleted + "]";
 	}
 
 }

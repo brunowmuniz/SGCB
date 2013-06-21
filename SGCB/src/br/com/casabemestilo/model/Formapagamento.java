@@ -4,6 +4,8 @@ package br.com.casabemestilo.model;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -22,6 +24,8 @@ public class Formapagamento implements java.io.Serializable {
 
 	private Integer id;
 	private String nome;
+	private Boolean deleted;
+	private Boolean ehantecipacao;
 	private Set pagamentos = new HashSet(0);
 	private Set retencaos = new HashSet(0);
 
@@ -32,10 +36,12 @@ public class Formapagamento implements java.io.Serializable {
 		this.nome = nome;
 	}
 
-	public Formapagamento(String nome, Set pagamentos, Set retencaos) {
+	public Formapagamento(String nome, Set pagamentos, Set retencaos, Boolean deleted, Boolean ehantecipacao) {
 		this.nome = nome;
 		this.pagamentos = pagamentos;
 		this.retencaos = retencaos;
+		this.deleted = deleted;
+		this.ehantecipacao = ehantecipacao;
 	}
 
 	@Id
@@ -57,8 +63,24 @@ public class Formapagamento implements java.io.Serializable {
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
+	
+	public Boolean getDeleted() {
+		return deleted;
+	}
 
-	@OneToMany(targetEntity = Pagamento.class, mappedBy = "formapagamento")
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
+	}
+
+	public Boolean getEhantecipacao() {
+		return ehantecipacao;
+	}
+
+	public void setEhantecipacao(Boolean ehantecipacao) {
+		this.ehantecipacao = ehantecipacao;
+	}
+
+	@OneToMany(targetEntity = Pagamento.class, mappedBy = "formapagamento",cascade= CascadeType.ALL)
 	public Set getPagamentos() {
 		return this.pagamentos;
 	}

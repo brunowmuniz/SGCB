@@ -2,7 +2,9 @@ package br.com.casabemestilo.model;
 
 // Generated 24/05/2013 18:36:37 by Hibernate Tools 4.0.0
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,7 +40,7 @@ public class Usuario implements java.io.Serializable {
 	private Set vales = new HashSet(0);
 	private Set montagems = new HashSet(0);
 	private Set assistenciatecnicas = new HashSet(0);
-	private Set<UsuarioFilial> usuarioFiliais = new HashSet(0);
+	private List<UsuarioFilial> usuarioFiliais = new ArrayList<UsuarioFilial>();
 
 	public Usuario() {
 	}
@@ -183,11 +185,11 @@ public class Usuario implements java.io.Serializable {
 	}
 		
 	@OneToMany(targetEntity = UsuarioFilial.class, mappedBy = "usuario", cascade = CascadeType.ALL)
-	public Set<UsuarioFilial> getUsuarioFiliais() {
+	public List<UsuarioFilial> getUsuarioFiliais() {
 		return usuarioFiliais;
 	}
 
-	public void setUsuarioFiliais(Set usuarioFiliais) {
+	public void setUsuarioFiliais(List<UsuarioFilial> usuarioFiliais) {
 		this.usuarioFiliais = usuarioFiliais;
 	}
 
