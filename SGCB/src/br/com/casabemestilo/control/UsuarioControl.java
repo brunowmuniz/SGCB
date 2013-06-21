@@ -7,6 +7,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import java.util.Iterator;
 
@@ -17,6 +18,7 @@ import javax.faces.bean.ViewScoped;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ValueChangeEvent;
 
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
@@ -47,6 +49,8 @@ public class UsuarioControl extends Control implements InterfaceControl,
 	private UsuarioDAO usuarioDAO;
 	
 	private List<String> listaUsuarioFilial;
+	
+	private Boolean ehAlteradaSenha = false;
 	
 	
 	
@@ -83,18 +87,22 @@ public class UsuarioControl extends Control implements InterfaceControl,
     	if(ELFlash.getFlash().get("id") != null){
     		usuario.setId((Integer) ELFlash.getFlash().get("id"));
     		buscaObjetoId(usuario.getId());
-    		System.out.println(usuario);
-    		
+    		UsuarioFilialControl usuarioFilialControl = new UsuarioFilialControl();
+    		usuario.setUsuarioFiliais(usuarioFilialControl.listaFiliaisDoUsuario(usuario));
     	}
     }
 	
     
     @PreDestroy
-    public void destroy() {    	
+    public void destroy() {
     	 if(usuario == null){
     		 usuario = new Usuario();
     	 }
     	 System.out.println(usuario.getId());
+    }
+    
+    public void alteracaoSenha(ValueChangeEvent event){
+    	this.ehAlteradaSenha = true;
     }
     
 	@Override
@@ -155,9 +163,24 @@ public class UsuarioControl extends Control implements InterfaceControl,
 	}
 
 	@Override
-	public void alterar() {
-		// TODO Auto-generated method stub
-
+	public void alterar() {		
+		try{    		
+    		usuario.setDeleted(false);
+    		if(this.ehAlteradaSenha){
+    			usuario.setSenha(md5(usuario.getSenha()));
+    		}  
+        	usuarioDAO.delete(usuario);
+        	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Usuário:" + usuario.getNome() + " deletado!"));
+    	}catch (ConstraintViolationException e) {
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));
+		}catch(HibernateException e){
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Hibernate: " + super.mensagem, ""));
+    	}catch (Exception e) {
+    		super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Exception: " + super.mensagem, ""));
+		}
 	}
 	
 	

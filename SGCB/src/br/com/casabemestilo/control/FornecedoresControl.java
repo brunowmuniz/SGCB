@@ -140,7 +140,6 @@ public class FornecedoresControl extends Control implements InterfaceControl,
 			super.mensagem = e.getMessage();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Exception: " + super.mensagem, ""));
 		}
-
 	}
 
 	public String alterarCadastro(){

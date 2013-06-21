@@ -142,7 +142,7 @@ public class FilialControl extends Control implements InterfaceControl, Serializ
 		for (Filial filiais : listaFilial) {
              SelectItem si = new SelectItem();
              si.setValue(filiais.getId());
-             si.setLabel(filiais.getNome());             
+             si.setLabel(filiais.getNome());
              listaFilialCombo.add(si);
          }
 		 return listaFilialCombo;

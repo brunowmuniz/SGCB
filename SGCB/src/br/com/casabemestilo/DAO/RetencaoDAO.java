@@ -6,7 +6,10 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
+import br.com.casabemestilo.model.Fornecedor;
+import br.com.casabemestilo.model.Produto;
 import br.com.casabemestilo.model.Retencao;
+import br.com.casabemestilo.util.Conexao;
 
 public class RetencaoDAO implements InterfaceDAO, Serializable {
 
@@ -40,21 +43,36 @@ public class RetencaoDAO implements InterfaceDAO, Serializable {
 	@Override
 	public void insert(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
+		this.retencao = (Retencao) obj;
+		session = Conexao.getInstance();		
+		session.beginTransaction();
+		session.save(this.retencao);
+		session.getTransaction().commit();
 
 	}
 
 	@Override
 	public void update(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
+		retencao = (Retencao) obj;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		session.update(retencao);
+		session.getTransaction().commit();
 
 	}
 
 	@Override
 	public void delete(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
+		retencao = (Retencao) obj;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		session.createQuery("update Retencao r set r.deleted= :deleted where r.id= :id")
+			   .setBoolean("deleted", true)
+			   .setInteger("id", retencao.getId())
+			   .executeUpdate();
+		session.getTransaction().commit();
 
 	}
 
@@ -75,8 +93,11 @@ public class RetencaoDAO implements InterfaceDAO, Serializable {
 	@Override
 	public List<Retencao> listaAtivos() throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
-		return null;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		listaRetencao = session.createQuery("from Retencao r where r.deleted=0").list();
+		session.close();
+		return listaRetencao;
 	}
 
 	@Override

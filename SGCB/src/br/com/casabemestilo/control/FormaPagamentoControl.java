@@ -1,12 +1,25 @@
 package br.com.casabemestilo.control;
 
 import java.io.Serializable;
+
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.faces.model.SelectItem;
+
+import org.hibernate.HibernateException;
+import org.hibernate.exception.ConstraintViolationException;
+
+import antlr.collections.impl.LList;
+import br.com.casabemestilo.DAO.FilialDAO;
 import br.com.casabemestilo.DAO.FormaPagamentoDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Formapagamento;
 
+@ManagedBean
+@ViewScoped
 public class FormaPagamentoControl extends Control implements Serializable,InterfaceControl {
 
 	
@@ -17,6 +30,8 @@ public class FormaPagamentoControl extends Control implements Serializable,Inter
 	private List<Formapagamento> listaFormaPagamento;
 	
 	private FormaPagamentoDAO formaPagamentoDAO;
+	
+	private List listaFormaPagamentoCombo;
 
 	
 	/*
@@ -64,8 +79,19 @@ public class FormaPagamentoControl extends Control implements Serializable,Inter
 
 	@Override
 	public List<Formapagamento> listarAtivos() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			listaFormaPagamento = new FormaPagamentoDAO().listaAtivos();
+		} catch (ConstraintViolationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (HibernateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return listaFormaPagamento;
 	}
 
 	@Override
@@ -112,6 +138,22 @@ public class FormaPagamentoControl extends Control implements Serializable,Inter
 
 	public void setFormaPagamentoDAO(FormaPagamentoDAO formaPagamentoDAO) {
 		this.formaPagamentoDAO = formaPagamentoDAO;
+	}
+
+	public List getListaFormaPagamentoCombo() {
+		listaFormaPagamentoCombo = new ArrayList();
+		listarAtivos();
+		for(Formapagamento formapagamentos : listaFormaPagamento){
+			SelectItem si = new SelectItem();
+			si.setValue(formapagamentos.getId());
+			si.setLabel(formapagamentos.getNome());
+			listaFormaPagamentoCombo.add(si);
+		}
+		return listaFormaPagamentoCombo;
+	}
+
+	public void setListaFormaPagamentoCombo(List listaFormaPagamentoCombo) {
+		this.listaFormaPagamentoCombo = listaFormaPagamentoCombo;
 	}
 
 }
