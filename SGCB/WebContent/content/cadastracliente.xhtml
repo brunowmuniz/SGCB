@@ -40,9 +40,9 @@
 						<p:inputMask value="#{clienteControl.cliente.datadenascimento}" id="datanascimento" size="20" mask="99/99/9999" required="true">
 							<f:convertDateTime pattern="dd/MM/yyyy"/>
 						</p:inputMask>						
-						<p:commandButton rendered="#{clienteControl.cliente.id != 0}" actionListener="#{clienteControl.alterar}" value="Alterar" update="msgs,cadastro" id="gravar"/>
-						<p:commandButton rendered="#{clienteControl.cliente.id == 0}" actionListener="#{clienteControl.gravar}" value="Gravar" update="msgs,cadastro" id="alterar"/>
-						<p:commandButton rendered="#{clienteControl.cliente.id != 0}" action="#{clienteControl.sairAlteracao}" value="Sair" id="sair" ajax="false"/>
+						<p:commandButton rendered="#{clienteControl.cliente.id != null}" actionListener="#{clienteControl.alterar}" value="Alterar" update="msgs,cadastro" id="gravar"/>
+						<p:commandButton rendered="#{clienteControl.cliente.id == null}" actionListener="#{clienteControl.gravar}" value="Gravar" update="msgs,cadastro" id="alterar"/>
+						<p:commandButton rendered="#{clienteControl.cliente.id != null}" action="#{clienteControl.sairAlteracao}" value="Sair" id="sair" ajax="false"/>
 					</h:panelGrid>
 			     </p:panel>
 			</h:form>

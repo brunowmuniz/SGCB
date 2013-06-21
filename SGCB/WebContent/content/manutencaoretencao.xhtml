@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form>
+				<p:panel header="Manutenção de Retenção">
+			     	<p:messages id="msgs"/>
+					 <p:contextMenu for="retencoes">
+					 	<p:menuitem value="Deletar" update="retencoes,msgs" icon="ui-icon-close" actionListener="#{retencaoControl.deletar}"/>
+					 	<p:menuitem value="Editar" action="#{retencaoControl.alterarCadastro}" ajax="false"/>
+					 </p:contextMenu>
+					 
+					 <p:dataTable var="retencao" value="#{retencaoControl.listarAtivos()}" id="retencoes" rowKey="#{retencao.id}"  
+                		selection="#{retencaoControl.retencao}" selectionMode="single" >                		  		
+				        <p:column headerText="Descrição">
+				            <h:outputText value="#{retencao.nome}" />
+				        </p:column>
+				
+				        <p:column headerText="Forma de Pagamento">
+				            <h:outputText value="#{retencao.formapagamento.nome}" />
+				        </p:column>
+				        
+				        <p:column headerText="%">
+				            <h:outputText value="#{retencao.percentual}" />
+				        </p:column>				        
+				    </p:dataTable>
+			     </p:panel>
+			</h:form>
+		</ui:define>
+		 <ui:define name="rodape">
+	    	<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela de listagem das retenções nas formas de pagamento." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="manutencaoretencao.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
+	    </ui:define>
+	</ui:composition>
+</html>

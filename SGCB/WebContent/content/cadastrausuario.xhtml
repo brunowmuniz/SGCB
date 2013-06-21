@@ -8,7 +8,7 @@
 	<ui:composition template="../template/template.xhtml">
 		<ui:define name="conteudo">
 			<h:form>
-				<p:panel header="Cadastro de Produto">
+				<p:panel header="Cadastro de Retenção">
 			     	<p:messages id="msgs"/>			     	
 					<h:panelGrid columns="2" id="cadastro">
 						<p:outputLabel for="nome" value="Nome: "/>
@@ -26,11 +26,11 @@
 							<f:validateBean/>
 						</p:inputText>
 						<p:outputLabel for="filialUsuario" value="Filial: "/>					
-						<p:selectManyMenu id="filialUsuario" value="#{usuarioControl.usuario.usuarioFiliais}"
-										 required="true" requiredMessage="Selecionar uma filial ao menos">
-							<f:selectItems value="#{filialControl.listaFilialCombo}" />
+						<p:selectManyMenu id="filialUsuario" value="#{usuarioControl.listaUsuarioFilial}"
+										 required="true" requiredMessage="Selecionar uma filial ao menos" >
+							<f:selectItems value="#{filialControl.listaFilialCombo}" />										
 						</p:selectManyMenu>	
-						<p:outputLabel for="perfilUsuario" value="Perfil: "/>					
+						<p:outputLabel for="perfilUsuario" value="Perfil: "/>
 						<p:selectOneMenu id="perfilUsuario" value="#{usuarioControl.usuario.perfil.id}"
 										 required="true" requiredMessage="Selecionar um perfil">						
 							<f:selectItem itemLabel="Selecione Perfil" itemValue=""/>
