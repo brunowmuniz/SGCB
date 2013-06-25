@@ -164,13 +164,12 @@ public class UsuarioControl extends Control implements InterfaceControl,
 
 	@Override
 	public void alterar() {		
-		try{    		
-    		usuario.setDeleted(false);
-    		if(this.ehAlteradaSenha){
-    			usuario.setSenha(md5(usuario.getSenha()));
-    		}  
-        	usuarioDAO.delete(usuario);
-        	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Usuário:" + usuario.getNome() + " deletado!"));
+		try{
+			if(ehAlteradaSenha){
+				usuario.setSenha(md5(usuario.getSenha()));
+			}
+    		usuarioDAO.update(usuario);
+        	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Usuário:" + usuario.getNome() + " alterado!"));
     	}catch (ConstraintViolationException e) {
 			super.mensagem = e.getMessage();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));

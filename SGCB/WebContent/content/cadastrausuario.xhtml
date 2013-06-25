@@ -19,8 +19,8 @@
 						<p:password value="#{usuarioControl.usuario.senha}" id="senha" size="15" 
 									feedback="true"
 									promptLabel="Insira a sua senha" weakLabel="fraco"  
-	                        		goodLabel="bom" strongLabel="forte">	                        
-						</p:password>
+	                        		goodLabel="bom" strongLabel="forte" redisplay="true" valueChangeListener="#{usuarioControl.alteracaoSenha}"/>	                        
+						
 						<p:outputLabel for="login" value="Login: "/>
 						<p:inputText value="#{usuarioControl.usuario.login}" id="login" size="15">
 							<f:validateBean/>
@@ -34,12 +34,14 @@
 						<p:selectOneMenu id="perfilUsuario" value="#{usuarioControl.usuario.perfil.id}"
 										 required="true" requiredMessage="Selecionar um perfil">						
 							<f:selectItem itemLabel="Selecione Perfil" itemValue=""/>
-							<f:selectItems value="#{perfilControl.listaPerfilCombo}"/>
+							<f:selectItems value="#{perfilControl.listaPerfilCombo}" />							
 						</p:selectOneMenu>				
 						<p:outputLabel for="deletado" value="Deletado: " rendered="#{usuarioControl.usuario.id == 0}"/>
 						<p:selectBooleanCheckbox id="deletado" value="#{usuarioControl.usuario.deleted}" rendered="#{usuarioControl.usuario.id == 0}"/>
 						
-						<p:commandButton actionListener="#{usuarioControl.gravar}" value="Gravar" update="msgs,cadastro"/>
+						<p:commandButton rendered="#{usuarioControl.usuario.id != null}" actionListener="#{usuarioControl.alterar}" value="Alterar" update="msgs,cadastro" id="gravar"/>
+						<p:commandButton rendered="#{usuarioControl.usuario.id == null}" actionListener="#{usuarioControl.gravar}" value="Gravar" update="msgs,cadastro" id="alterar"/>
+						<p:commandButton rendered="#{usuarioControl.usuario.id != null}" action="#{usuarioControl.sairAlteracao}" value="Sair" id="sair" ajax="false"/>
 					</h:panelGrid>
 			     </p:panel>
 			</h:form>	     
