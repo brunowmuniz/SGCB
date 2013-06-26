@@ -1,38 +1,25 @@
 package br.com.casabemestilo.control;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
 import java.util.Iterator;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ViewScoped;
-
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
-
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
-
 import com.sun.faces.context.flash.ELFlash;
-
-import br.com.casabemestilo.DAO.PerfilDAO;
 import br.com.casabemestilo.DAO.UsuarioDAO;
 import br.com.casabemestilo.DAO.UsuarioFilialDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
-import br.com.casabemestilo.model.Filial;
-import br.com.casabemestilo.model.Perfil;
 import br.com.casabemestilo.model.Usuario;
 import br.com.casabemestilo.model.UsuarioFilial;
+import br.com.casabemestilo.util.Encrypt;
 
 @ManagedBean
 @ViewScoped
@@ -50,16 +37,14 @@ public class UsuarioControl extends Control implements InterfaceControl,
 	
 	private List<String> listaUsuarioFilial;
 	
-	private Boolean ehAlteradaSenha = false;
+	private String novaSenha =  "";
 	
 	
 	
 	/*
 	 * CONSTRUTORES
 	 * */
-	public UsuarioControl(String messagem, Usuario usuario,
-			List<Usuario> listaUsuario,
-			br.com.casabemestilo.DAO.UsuarioDAO usuarioDAO) {
+	public UsuarioControl(String messagem, Usuario usuario, List<Usuario> listaUsuario, UsuarioDAO usuarioDAO) {
 		super(messagem);
 		this.usuario = usuario;
 		this.listaUsuario = listaUsuario;
@@ -68,7 +53,6 @@ public class UsuarioControl extends Control implements InterfaceControl,
 
 	public UsuarioControl(String messagem) {
 		super(messagem);
-		// TODO Auto-generated constructor stub
 	}
 
 	public UsuarioControl() {
@@ -84,11 +68,9 @@ public class UsuarioControl extends Control implements InterfaceControl,
      */
     @PostConstruct
     public void init(){    	 
-    	if(ELFlash.getFlash().get("id") != null){
-    		usuario.setId((Integer) ELFlash.getFlash().get("id"));
-    		buscaObjetoId(usuario.getId());
-    		UsuarioFilialControl usuarioFilialControl = new UsuarioFilialControl();
-    		usuario.setUsuarioFiliais(usuarioFilialControl.listaFiliaisDoUsuario(usuario));
+    	if(ELFlash.getFlash().get("usuarioEdicao") != null){
+    		usuario = (Usuario) ELFlash.getFlash().get("usuarioEdicao");
+    		listaUsuarioFilial = (List<String>) ELFlash.getFlash().get("listaUsuarioFilial");
     	}
     }
 	
@@ -102,17 +84,22 @@ public class UsuarioControl extends Control implements InterfaceControl,
     }
     
     public void alteracaoSenha(ValueChangeEvent event){
-    	this.ehAlteradaSenha = true;
+    	try {
+    		Encrypt encrypt = new Encrypt();
+    		novaSenha = encrypt.md5(event.getNewValue().toString());    		
+		} catch (Exception e) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro na definição: " + e.getMessage(), ""));
+		}
     }
     
 	@Override
 	public void gravar() {
 		usuarioDAO = new UsuarioDAO();
 		try {
-			usuario.setSenha(md5(usuario.getSenha()));
 			usuario.setDeleted(false);
+			usuario.setSenha(novaSenha);
 			usuario = usuarioDAO.insert(usuario);			
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Usuário: " + usuario.getId() + "-" + usuario.getNome() + " gravado!"));
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Usuário: " + usuario.getNome() + " gravado!"));
 			logger.info("Salvo perfil: " + usuario.toString());			
 			for (Iterator<String> iterUsuarioFilial = listaUsuarioFilial.iterator(); iterUsuarioFilial.hasNext();) {
 				UsuarioFilial usuarioFilial =  new UsuarioFilial();
@@ -137,10 +124,6 @@ public class UsuarioControl extends Control implements InterfaceControl,
 			super.mensagem = e.getMessage();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Hibernate: " + super.mensagem, ""));
 			logger.error("Erro Hibernate: " + super.mensagem + "-" + usuario.getNome());
-		}catch (NoSuchAlgorithmException e) {
-			logger.error("Erro Não Encontrou algorítimo: " + super.mensagem + "-" + usuario.getNome());
-		}catch(UnsupportedEncodingException e){
-			logger.error("Erro Enconding: " + super.mensagem + "-" + usuario.getNome());
 		}
 	}
 
@@ -164,11 +147,48 @@ public class UsuarioControl extends Control implements InterfaceControl,
 
 	@Override
 	public void alterar() {		
-		try{
-			if(ehAlteradaSenha){
-				usuario.setSenha(md5(usuario.getSenha()));
+		try{		
+			usuarioDAO = new UsuarioDAO();
+			if(novaSenha != ""){
+				usuario.setSenha(novaSenha);
 			}
-    		usuarioDAO.update(usuario);
+    		usuarioDAO.update(usuario);    		
+    		if(listaUsuarioFilial.size() != usuario.getUsuarioFiliais().size()){
+    			for(Iterator<String> iterFilial = listaUsuarioFilial.iterator(); iterFilial.hasNext();){
+    				Boolean ehAdicionar = true;
+    				Integer idFilial = Integer.parseInt(iterFilial.next());
+    				for(Iterator<UsuarioFilial> iterUsuarioFilial = usuario.getUsuarioFiliais().iterator(); iterUsuarioFilial.hasNext() && ehAdicionar;){
+    					UsuarioFilial usuarioFilial = iterUsuarioFilial.next();
+    					if(usuarioFilial.getFilial().getId() == idFilial){
+    						ehAdicionar = false;
+    					}
+    				}
+    				if(ehAdicionar){
+    					UsuarioFilial usuarioFilial = new UsuarioFilial();
+    					UsuarioFilialDAO usuarioFilialDAO = new UsuarioFilialDAO();
+    					usuarioFilial.getUsuario().setId(usuario.getId());
+    					usuarioFilial.getFilial().setId(idFilial);
+    					usuario.getUsuarioFiliais().add(usuarioFilial);
+    					usuarioFilialDAO.insert(usuarioFilial);
+    				}
+    			}
+    			
+    			for(Iterator<UsuarioFilial> iterUsuarioFilial = usuario.getUsuarioFiliais().iterator(); iterUsuarioFilial.hasNext();){
+    				Boolean ehDeletar = true;
+    				UsuarioFilial usuarioFilial = iterUsuarioFilial.next();
+    				for(Iterator<String> iterFilial = listaUsuarioFilial.iterator(); iterFilial.hasNext() && ehDeletar;){
+    					Integer idFilial = Integer.parseInt(iterFilial.next());
+    					if(idFilial == usuarioFilial.getFilial().getId()){
+    						ehDeletar = false;
+    					}
+    				}
+    				if(ehDeletar){
+    					UsuarioFilialDAO usuarioFilialDAO = new UsuarioFilialDAO();
+    					usuarioFilial.setDeleted(true);
+    					usuarioFilialDAO.delete(usuarioFilial);
+    				}
+    			}
+    		}    		
         	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Usuário:" + usuario.getNome() + " alterado!"));
     	}catch (ConstraintViolationException e) {
 			super.mensagem = e.getMessage();
@@ -177,6 +197,7 @@ public class UsuarioControl extends Control implements InterfaceControl,
 			super.mensagem = e.getMessage();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Hibernate: " + super.mensagem, ""));
     	}catch (Exception e) {
+    		e.printStackTrace();
     		super.mensagem = e.getMessage();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Exception: " + super.mensagem, ""));
 		}
@@ -184,7 +205,15 @@ public class UsuarioControl extends Control implements InterfaceControl,
 	
 	
 	public String alterarCadastro(){
-		ELFlash.getFlash().put("id", usuario.getId());
+		UsuarioFilialControl usuarioFilialControl = new UsuarioFilialControl();
+		usuario.setUsuarioFiliais(usuarioFilialControl.listaFiliaisDoUsuario(usuario));
+		listaUsuarioFilial = new ArrayList<String>();
+		for(Iterator<UsuarioFilial> iterUsuarioFilial = usuario.getUsuarioFiliais().iterator(); iterUsuarioFilial.hasNext();){
+			UsuarioFilial usuarioFilial = iterUsuarioFilial.next();    			
+			listaUsuarioFilial.add(usuarioFilial.getFilial().getId().toString());
+		}
+		ELFlash.getFlash().put("listaUsuarioFilial", listaUsuarioFilial);
+		ELFlash.getFlash().put("usuarioEdicao", usuario);
 		return "cadastrausuario";
 	}
 
@@ -240,13 +269,6 @@ public class UsuarioControl extends Control implements InterfaceControl,
 		return "manutencaousuario?faces-redirect=true";
 	}
 	
-	public String md5(String senha) throws NoSuchAlgorithmException, UnsupportedEncodingException{		
-	    MessageDigest md = MessageDigest.getInstance("MD5");
-	    BigInteger hash = new BigInteger(1, md.digest(senha.getBytes("ISO-8859-1")));
-	    String senhaMD5 = hash.toString(16);
-	    return senhaMD5;
-	}	
-	 	
 
 	/*
 	 * GETTERS & SETTERS
@@ -281,8 +303,5 @@ public class UsuarioControl extends Control implements InterfaceControl,
 
 	public void setListaUsuarioFilial(List<String> listaUsuarioFilial) {
 		this.listaUsuarioFilial = listaUsuarioFilial;
-	}
-
-	
-	
+	}	
 }

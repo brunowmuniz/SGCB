@@ -8,6 +8,7 @@ import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
 
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
+import br.com.casabemestilo.model.Fornecedor;
 import br.com.casabemestilo.model.Perfil;
 import br.com.casabemestilo.model.Usuario;
 import br.com.casabemestilo.model.UsuarioFilial;
@@ -56,14 +57,25 @@ public class UsuarioFilialDAO implements InterfaceDAO, Serializable {
 	@Override
 	public void update(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
+		usuarioFilial = (UsuarioFilial) obj;
+		session = Conexao.getInstance();		
+		session.beginTransaction();
+		session.update(usuarioFilial);
+		session.getTransaction().commit();
 
 	}
 
 	@Override
 	public void delete(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
+		usuarioFilial = (UsuarioFilial) obj;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		session.createQuery("update UsuarioFilial uf set uf.deleted = :deleted where uf.id=:id")
+			   .setBoolean("deleted", true)
+			   .setInteger("id", usuarioFilial.getId())
+			   .executeUpdate();
+		session.getTransaction().commit();
 
 	}
 
@@ -98,7 +110,7 @@ public class UsuarioFilialDAO implements InterfaceDAO, Serializable {
 	public List<UsuarioFilial> listaFiliaisDoUsuario(Usuario usuario){
 		session = Conexao.getInstance();
 		session.beginTransaction();
-		listaUsuarioFilial = session.createQuery("from UsuarioFilial uf where uf.usuario= :id")
+		listaUsuarioFilial = session.createQuery("from UsuarioFilial uf where uf.usuario= :id and uf.deleted <> 1")
 							 .setInteger("id", usuario.getId())
 							 .list();
 		session.close();
