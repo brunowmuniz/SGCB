@@ -19,7 +19,9 @@
 						<p:password value="#{usuarioControl.usuario.senha}" id="senha" size="15" 
 									feedback="true"
 									promptLabel="Insira a sua senha" weakLabel="fraco"  
-	                        		goodLabel="bom" strongLabel="forte" redisplay="true" valueChangeListener="#{usuarioControl.alteracaoSenha}"/>	                        
+	                        		goodLabel="bom" strongLabel="forte" redisplay="true" valueChangeListener="#{usuarioControl.alteracaoSenha}">
+	                        		<p:ajax event="blur" process="@this"/>
+	                     </p:password>
 						
 						<p:outputLabel for="login" value="Login: "/>
 						<p:inputText value="#{usuarioControl.usuario.login}" id="login" size="15">
@@ -27,14 +29,14 @@
 						</p:inputText>
 						<p:outputLabel for="filialUsuario" value="Filial: "/>					
 						<p:selectManyMenu id="filialUsuario" value="#{usuarioControl.listaUsuarioFilial}"
-										 required="true" requiredMessage="Selecionar uma filial ao menos" >
-							<f:selectItems value="#{filialControl.listaFilialCombo}" />										
+										 required="true" requiredMessage="Selecionar uma filial ao menos">
+							<f:selectItems value="#{filialControl.listaFilialCombo}" />							
 						</p:selectManyMenu>	
 						<p:outputLabel for="perfilUsuario" value="Perfil: "/>
 						<p:selectOneMenu id="perfilUsuario" value="#{usuarioControl.usuario.perfil.id}"
-										 required="true" requiredMessage="Selecionar um perfil">						
+										 required="true" requiredMessage="Selecionar um perfil" >						
 							<f:selectItem itemLabel="Selecione Perfil" itemValue=""/>
-							<f:selectItems value="#{perfilControl.listaPerfilCombo}" />							
+							<f:selectItems value="#{perfilControl.listaPerfilCombo}" />												
 						</p:selectOneMenu>				
 						<p:outputLabel for="deletado" value="Deletado: " rendered="#{usuarioControl.usuario.id == 0}"/>
 						<p:selectBooleanCheckbox id="deletado" value="#{usuarioControl.usuario.deleted}" rendered="#{usuarioControl.usuario.id == 0}"/>
