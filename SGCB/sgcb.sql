@@ -83,6 +83,36 @@ INSERT INTO `cliente` VALUES (3,'Bruno Muniz','Rua Teixeirinha, 186 - Jardim dos
 UNLOCK TABLES;
 
 --
+-- Table structure for table `comisaousuario`
+--
+
+DROP TABLE IF EXISTS `comisaousuario`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `comisaousuario` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `oc` int(11) DEFAULT NULL,
+  `ocproduto` int(11) DEFAULT NULL,
+  `valor` float(7,2) NOT NULL,
+  `deleted` bit(1) DEFAULT b'0',
+  PRIMARY KEY (`id`),
+  KEY `fk_comissaousuario_oc_idx` (`oc`),
+  KEY `fk_comissaousario_ocproduto_idx` (`ocproduto`),
+  CONSTRAINT `fk_comissaousuario_oc` FOREIGN KEY (`oc`) REFERENCES `oc` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_comissaousario_ocproduto` FOREIGN KEY (`ocproduto`) REFERENCES `ocproduto` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `comisaousuario`
+--
+
+LOCK TABLES `comisaousuario` WRITE;
+/*!40000 ALTER TABLE `comisaousuario` DISABLE KEYS */;
+/*!40000 ALTER TABLE `comisaousuario` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `comissao`
 --
 
@@ -92,15 +122,20 @@ DROP TABLE IF EXISTS `comissao`;
 CREATE TABLE `comissao` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `usuario` int(11) NOT NULL,
-  `usuariocomissaoconjunta` int(11) DEFAULT NULL,
-  `tipocomissao` int(11) NOT NULL,
-  `percentual` float(2,2) NOT NULL,
+  `deleted` bit(1) NOT NULL DEFAULT b'0',
+  `ehcomissaoindividual` bit(1) DEFAULT b'0',
+  `percentualcomissaoindividual` float(4,2) DEFAULT NULL,
+  `ehcomissaoconjunta` bit(1) DEFAULT b'0',
+  `usuariocomissaoconjunta` varchar(45) DEFAULT NULL,
+  `percentualcomissaoconjunta` float(4,2) DEFAULT NULL,
+  `ehcomissaomontadorindividual` bit(1) DEFAULT b'0',
+  `percentualcomissaomontadorindividual` float(4,2) DEFAULT NULL,
+  `ehcomissaomontadorconjunta` bit(1) DEFAULT b'0',
+  `percentualcomissaomontadorconjunta` float(4,2) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_comissao_usuario1_idx` (`usuario`),
-  KEY `fk_comissao_comissao1_idx` (`usuariocomissaoconjunta`),
-  CONSTRAINT `fk_comissao_comissao1` FOREIGN KEY (`usuariocomissaoconjunta`) REFERENCES `comissao` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_comissao_usuario1` FOREIGN KEY (`usuario`) REFERENCES `usuario` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='		';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -625,7 +660,7 @@ CREATE TABLE `usuario` (
   PRIMARY KEY (`id`),
   KEY `fk_usuario_perfil1_idx` (`perfil`),
   CONSTRAINT `fk_usuario_perfil1` FOREIGN KEY (`perfil`) REFERENCES `perfil` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -634,7 +669,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,1,'Bruno Wagner Nunes Muniz','\0','bruno','d749a8b4ce024f337310f9270f6b1ef9'),(2,1,'Edson Neumann','\0','edson','698dc19d489c4e4db73e28a713eab07b'),(5,3,'Elmara Baldez','\0','elmara','698dc19d489c4e4db73e28a713eab07b');
+INSERT INTO `usuario` VALUES (1,4,'Bruno Wagner Nunes Muniz','\0','bruno','f850bce37f95a998a2362e26062e7a22'),(2,1,'Edson Neumann','\0','edson','698dc19d489c4e4db73e28a713eab07b'),(5,3,'Elmara Baldez','\0','elmara','698dc19d489c4e4db73e28a713eab07b'),(6,1,'Bruno Wagner Nunes Muniz','','bruno','698dc19d489c4e4db73e28a713eab07b'),(8,5,'Teste uusario','\0','rwerw','casa'),(9,5,'Montador 2','\0','montador2','47f62dc04f8d29bfaf26bb0cdb755a65');
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -655,7 +690,7 @@ CREATE TABLE `usuariofilial` (
   KEY `fk_usuariofilial_filial_idx` (`filial`),
   CONSTRAINT `fk_usuariofilial_filial` FOREIGN KEY (`filial`) REFERENCES `filial` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_usuariofilial_usuario` FOREIGN KEY (`usuario`) REFERENCES `usuario` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -664,7 +699,7 @@ CREATE TABLE `usuariofilial` (
 
 LOCK TABLES `usuariofilial` WRITE;
 /*!40000 ALTER TABLE `usuariofilial` DISABLE KEYS */;
-INSERT INTO `usuariofilial` VALUES (3,1,1,NULL),(4,1,2,NULL),(5,2,1,'\0'),(6,2,2,'\0'),(7,5,1,'\0'),(8,5,2,'\0');
+INSERT INTO `usuariofilial` VALUES (3,1,1,''),(4,1,2,''),(5,2,1,''),(6,2,2,'\0'),(7,5,1,'\0'),(8,5,2,'\0'),(9,6,1,'\0'),(10,8,1,'\0'),(11,9,1,''),(12,9,2,'\0'),(13,8,2,'\0'),(14,1,2,'\0'),(15,2,1,'\0'),(16,9,1,'\0');
 /*!40000 ALTER TABLE `usuariofilial` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -712,4 +747,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-06-24 23:17:50
+-- Dump completed on 2013-06-27  0:07:50
