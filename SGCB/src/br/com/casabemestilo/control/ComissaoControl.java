@@ -3,10 +3,15 @@ package br.com.casabemestilo.control;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
 import br.com.casabemestilo.DAO.ComissaoDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Comissao;
 
+@ManagedBean
+@ViewScoped
 public class ComissaoControl extends Control implements Serializable,InterfaceControl {
 
 	

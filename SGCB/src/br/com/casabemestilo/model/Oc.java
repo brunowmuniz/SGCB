@@ -2,8 +2,10 @@ package br.com.casabemestilo.model;
 
 // Generated 24/05/2013 18:36:37 by Hibernate Tools 4.0.0
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -40,6 +42,7 @@ public class Oc implements java.io.Serializable {
 	private Date datalancamento;
 	private Set pagamentos = new HashSet(0);
 	private Set ocprodutos = new HashSet(0);
+	private List<ComissaoUsuario> comissaoUsuario = new ArrayList<ComissaoUsuario>();
 
 	public Oc() {
 	}
@@ -219,6 +222,15 @@ public class Oc implements java.io.Serializable {
 
 	public void setOcprodutos(Set ocprodutos) {
 		this.ocprodutos = ocprodutos;
+	}
+
+	@OneToMany(targetEntity=ComissaoUsuario.class, mappedBy= "oc")
+	public List<ComissaoUsuario> getComissaoUsuario() {
+		return comissaoUsuario;
+	}
+
+	public void setComissaoUsuario(List<ComissaoUsuario> comissaoUsuario) {
+		this.comissaoUsuario = comissaoUsuario;
 	}
 
 }

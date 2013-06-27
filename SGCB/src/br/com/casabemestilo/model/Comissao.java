@@ -22,30 +22,52 @@ import javax.persistence.Table;
 @Table(name = "comissao", catalog = "gcb")
 public class Comissao implements java.io.Serializable {
 
+	
+	private static final long serialVersionUID = 1L;
 	private Integer id;
-	private Comissao comissao;
 	private Usuario usuario;
-	private int tipocomissao;
-	private float percentual;
-	private Set comissaos = new HashSet(0);
+	private Boolean deleted;
+	private Boolean ehComissaoIndividual;
+	private Float percentualComissaoIndividual;
+	private Boolean ehComissaoConjunta;
+	private String usuarioComissaoConjunta;
+	private Float percentualComissaoConjunta;
+	private Boolean ehComissaoMontadorIndividual;
+	private Float percentualComissaoMontadorIndividual;
+	private Boolean ehComissaoMontadorConjunta;
+	private Float percentualComissaoMontadorConjunta;
+	private String usuarioComissaoMontadorConjunta;
+	
 
 	public Comissao() {
 	}
 
-	public Comissao(Usuario usuario, int tipocomissao, float percentual) {
+	public Comissao(Integer id, Usuario usuario, Boolean deleted,
+			Boolean ehComissaoIndividual, Float percentualComissaoIndividual,
+			Boolean ehComissaoConjunta, String usuarioComissaoConjunta,
+			Float percentualComissaoConjunta,
+			Boolean ehComissaoMontadorIndividual,
+			Float percentualComissaoMontadorIndividual,
+			Boolean ehComissaoMontadorConjunta,
+			Float percentualComissaoMontadorConjunta,
+			String usuarioComissaoMontadorConjunta) {
+		super();
+		this.id = id;
 		this.usuario = usuario;
-		this.tipocomissao = tipocomissao;
-		this.percentual = percentual;
+		this.deleted = deleted;
+		this.ehComissaoIndividual = ehComissaoIndividual;
+		this.percentualComissaoIndividual = percentualComissaoIndividual;
+		this.ehComissaoConjunta = ehComissaoConjunta;
+		this.usuarioComissaoConjunta = usuarioComissaoConjunta;
+		this.percentualComissaoConjunta = percentualComissaoConjunta;
+		this.ehComissaoMontadorIndividual = ehComissaoMontadorIndividual;
+		this.percentualComissaoMontadorIndividual = percentualComissaoMontadorIndividual;
+		this.ehComissaoMontadorConjunta = ehComissaoMontadorConjunta;
+		this.percentualComissaoMontadorConjunta = percentualComissaoMontadorConjunta;
+		this.usuarioComissaoMontadorConjunta = usuarioComissaoMontadorConjunta;
 	}
 
-	public Comissao(Comissao comissao, Usuario usuario, int tipocomissao,
-			float percentual, Set comissaos) {
-		this.comissao = comissao;
-		this.usuario = usuario;
-		this.tipocomissao = tipocomissao;
-		this.percentual = percentual;
-		this.comissaos = comissaos;
-	}
+
 
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
@@ -58,15 +80,6 @@ public class Comissao implements java.io.Serializable {
 		this.id = id;
 	}
 
-	@ManyToOne
-	@JoinColumn(name = "usuariocomissaoconjunta")
-	public Comissao getComissao() {
-		return this.comissao;
-	}
-
-	public void setComissao(Comissao comissao) {
-		this.comissao = comissao;
-	}
 
 	@ManyToOne
 	@JoinColumn(name = "usuario", nullable = false)
@@ -77,32 +90,107 @@ public class Comissao implements java.io.Serializable {
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
 	}
-
-	@Column(name = "tipocomissao", nullable = false)
-	public int getTipocomissao() {
-		return this.tipocomissao;
+	
+	@Column(name="deleted", nullable=false)
+	public Boolean getDeleted() {
+		return deleted;
 	}
 
-	public void setTipocomissao(int tipocomissao) {
-		this.tipocomissao = tipocomissao;
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
 	}
 
-	@Column(name = "percentual", nullable = false, precision = 2)
-	public float getPercentual() {
-		return this.percentual;
+	@Column(name="ehcomissaoindividual", nullable=true)
+	public Boolean getEhComissaoIndividual() {
+		return ehComissaoIndividual;
 	}
 
-	public void setPercentual(float percentual) {
-		this.percentual = percentual;
+	public void setEhComissaoIndividual(Boolean ehComissaoIndividual) {
+		this.ehComissaoIndividual = ehComissaoIndividual;
 	}
 
-	@OneToMany(targetEntity = Comissao.class, mappedBy = "comissao")
-	public Set getComissaos() {
-		return this.comissaos;
+	@Column(name="percentualcomissaoindividual", nullable=true)
+	public Float getPercentualComissaoIndividual() {
+		return percentualComissaoIndividual;
 	}
 
-	public void setComissaos(Set comissaos) {
-		this.comissaos = comissaos;
+	public void setPercentualComissaoIndividual(Float percentualComissaoIndividual) {
+		this.percentualComissaoIndividual = percentualComissaoIndividual;
+	}
+
+	@Column(name="ehcomissaoconjunta", nullable=true)
+	public Boolean getEhComissaoConjunta() {
+		return ehComissaoConjunta;
+	}
+
+	public void setEhComissaoConjunta(Boolean ehComissaoConjunta) {
+		this.ehComissaoConjunta = ehComissaoConjunta;
+	}
+
+	@Column(name="usuariocomissaoconjunta", nullable=true)
+	public String getUsuarioComissaoConjunta() {
+		return usuarioComissaoConjunta;
+	}
+
+	public void setUsuarioComissaoConjunta(String usuarioComissaoConjunta) {
+		this.usuarioComissaoConjunta = usuarioComissaoConjunta;
+	}
+
+	@Column(name="percentualcomissaoconjunta", nullable=true)
+	public Float getPercentualComissaoConjunta() {
+		return percentualComissaoConjunta;
+	}
+
+	public void setPercentualComissaoConjunta(Float percentualComissaoConjunta) {
+		this.percentualComissaoConjunta = percentualComissaoConjunta;
+	}
+
+	@Column(name="ehcomissaomontadorindividual", nullable=true)
+	public Boolean getEhComissaoMontadorIndividual() {
+		return ehComissaoMontadorIndividual;
+	}
+
+	public void setEhComissaoMontadorIndividual(Boolean ehComissaoMontadorIndividual) {
+		this.ehComissaoMontadorIndividual = ehComissaoMontadorIndividual;
+	}
+
+	@Column(name="percentualcomissaomontadorindividual", nullable=true)
+	public Float getPercentualComissaoMontadorIndividual() {
+		return percentualComissaoMontadorIndividual;
+	}
+
+	public void setPercentualComissaoMontadorIndividual(
+			Float percentualComissaoMontadorIndividual) {
+		this.percentualComissaoMontadorIndividual = percentualComissaoMontadorIndividual;
+	}
+
+	@Column(name="ehcomissaomontadorconjunta", nullable=true)
+	public Boolean getEhComissaoMontadorConjunta() {
+		return ehComissaoMontadorConjunta;
+	}
+	
+	public void setEhComissaoMontadorConjunta(Boolean ehComissaoMontadorConjunta) {
+		this.ehComissaoMontadorConjunta = ehComissaoMontadorConjunta;
+	}
+	
+	@Column(name="percentualcomissaomontadorconjunta", nullable=true)
+	public Float getPercentualComissaoMontadorConjunta() {
+		return percentualComissaoMontadorConjunta;
+	}
+
+	public void setPercentualComissaoMontadorConjunta(
+			Float percentualComissaoMontadorConjunta) {
+		this.percentualComissaoMontadorConjunta = percentualComissaoMontadorConjunta;
+	}
+
+	@Column(name="usuariocomissaomontadorconjunta", nullable=true)
+	public String getUsuarioComissaoMontadorConjunta() {
+		return usuarioComissaoMontadorConjunta;
+	}
+
+	public void setUsuarioComissaoMontadorConjunta(
+			String usuarioComissaoMontadorConjunta) {
+		this.usuarioComissaoMontadorConjunta = usuarioComissaoMontadorConjunta;
 	}
 
 }
