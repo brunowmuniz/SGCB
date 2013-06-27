@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form>
+				<p:panel header="Cadastro de Comissão">
+			     	<p:messages id="msgs"/>			     	
+					<h:panelGrid columns="4" id="cadastro">
+						<p:outputLabel for="nome" value="Nome: "/>
+						<p:inputText value="#{comissaoControl.comissao.usuario.nome}" id="nome" size="60" required="true" disabled="true"/>
+						
+						<p:outputLabel for="comissaoIndividualVenda" value="Comissão Individual Venda (%): " rendered="#{comissaoControl.comissao.usuario.perfil.id == 2}"/>
+						<p:selectBooleanCheckbox value="" />
+						<p:inputText rendered="#{comissaoControl.comissao.usuario.perfil.id == 2}" id="comissaoIndividualVenda">
+							<f:validateBean/>
+							<f:convertNumber locale="pt_BR" maxIntegerDigits="2" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+						</p:inputText>
+						<br />
+						<p:outputLabel for="comissaoConjuntaVenda" value="Comissão Individual Venda (%): " rendered="#{comissaoControl.comissao.usuario.perfil.id == 2}"/>
+						<p:inputText rendered="#{comissaoControl.comissao.usuario.perfil.id == 2}" id="comissaoIndividualVenda">
+							<f:validateBean/>
+							<f:convertNumber locale="pt_BR" maxIntegerDigits="2" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+						</p:inputText>
+						
+								
+						<p:commandButton rendered="#{comissaoControl.comissao.id != null}" actionListener="#{comissaoControl.alterar}" value="Alterar" update="msgs,cadastro" id="gravar"/>
+						<p:commandButton rendered="#{comissaoControl.comissao.id == null}" actionListener="#{comissaoControl.gravar}" value="Gravar" update="msgs,cadastro" id="alterar"/>
+						<p:commandButton rendered="#{comissaoControl.comissao.id != null}" action="#{clienteControl.sairAlteracao}" value="Sair" id="sair" ajax="false"/>
+					</h:panelGrid>
+			     </p:panel>
+			</h:form>
+		</ui:define>
+		<ui:define name="rodape">
+			<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela para cadastro e edição de comissão dos funcionários." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="cadastraproduto.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
+		</ui:define>
+	</ui:composition>
+</html>
