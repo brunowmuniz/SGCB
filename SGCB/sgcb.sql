@@ -98,8 +98,8 @@ CREATE TABLE `comisaousuario` (
   PRIMARY KEY (`id`),
   KEY `fk_comissaousuario_oc_idx` (`oc`),
   KEY `fk_comissaousario_ocproduto_idx` (`ocproduto`),
-  CONSTRAINT `fk_comissaousuario_oc` FOREIGN KEY (`oc`) REFERENCES `oc` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_comissaousario_ocproduto` FOREIGN KEY (`ocproduto`) REFERENCES `ocproduto` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_comissaousario_ocproduto` FOREIGN KEY (`ocproduto`) REFERENCES `ocproduto` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_comissaousuario_oc` FOREIGN KEY (`oc`) REFERENCES `oc` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -132,10 +132,13 @@ CREATE TABLE `comissao` (
   `percentualcomissaomontadorindividual` float(4,2) DEFAULT NULL,
   `ehcomissaomontadorconjunta` bit(1) DEFAULT b'0',
   `percentualcomissaomontadorconjunta` float(4,2) DEFAULT NULL,
+  `ehcomissaoloja` bit(1) DEFAULT b'0',
+  `percentualcomissaoloja` float(4,2) DEFAULT NULL,
+  `usuariocomissaomontadorconjunta` float(4,2) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_comissao_usuario1_idx` (`usuario`),
   CONSTRAINT `fk_comissao_usuario1` FOREIGN KEY (`usuario`) REFERENCES `usuario` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='		';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='		';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -144,6 +147,7 @@ CREATE TABLE `comissao` (
 
 LOCK TABLES `comissao` WRITE;
 /*!40000 ALTER TABLE `comissao` DISABLE KEYS */;
+INSERT INTO `comissao` VALUES (1,1,'\0','',1.00,'',NULL,3.00,'',2.00,'',5.00,'',4.00,NULL);
 /*!40000 ALTER TABLE `comissao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -747,4 +751,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-06-27  0:07:50
+-- Dump completed on 2013-06-28  0:05:54
