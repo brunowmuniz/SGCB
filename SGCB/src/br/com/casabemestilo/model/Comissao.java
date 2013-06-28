@@ -37,6 +37,8 @@ public class Comissao implements java.io.Serializable {
 	private Boolean ehComissaoMontadorConjunta;
 	private Float percentualComissaoMontadorConjunta;
 	private String usuarioComissaoMontadorConjunta;
+	private Boolean ehComissaoLoja;
+	private Float percentualComissaoLoja;
 	
 
 	public Comissao() {
@@ -50,7 +52,9 @@ public class Comissao implements java.io.Serializable {
 			Float percentualComissaoMontadorIndividual,
 			Boolean ehComissaoMontadorConjunta,
 			Float percentualComissaoMontadorConjunta,
-			String usuarioComissaoMontadorConjunta) {
+			String usuarioComissaoMontadorConjunta,
+			Boolean ehComissaoLoja,
+			Float percentualComissaoLoja) {
 		super();
 		this.id = id;
 		this.usuario = usuario;
@@ -65,6 +69,8 @@ public class Comissao implements java.io.Serializable {
 		this.ehComissaoMontadorConjunta = ehComissaoMontadorConjunta;
 		this.percentualComissaoMontadorConjunta = percentualComissaoMontadorConjunta;
 		this.usuarioComissaoMontadorConjunta = usuarioComissaoMontadorConjunta;
+		this.ehComissaoLoja = ehComissaoConjunta;
+		this.percentualComissaoLoja = percentualComissaoLoja;
 	}
 
 
@@ -84,6 +90,9 @@ public class Comissao implements java.io.Serializable {
 	@ManyToOne
 	@JoinColumn(name = "usuario", nullable = false)
 	public Usuario getUsuario() {
+		if(usuario == null){
+			usuario = new Usuario();
+		}
 		return this.usuario;
 	}
 
@@ -93,6 +102,9 @@ public class Comissao implements java.io.Serializable {
 	
 	@Column(name="deleted", nullable=false)
 	public Boolean getDeleted() {
+		if(deleted == null){
+			deleted = false;
+		}
 		return deleted;
 	}
 
@@ -102,6 +114,9 @@ public class Comissao implements java.io.Serializable {
 
 	@Column(name="ehcomissaoindividual", nullable=true)
 	public Boolean getEhComissaoIndividual() {
+		if(ehComissaoIndividual == null){
+			ehComissaoIndividual = false;
+		}
 		return ehComissaoIndividual;
 	}
 
@@ -120,6 +135,9 @@ public class Comissao implements java.io.Serializable {
 
 	@Column(name="ehcomissaoconjunta", nullable=true)
 	public Boolean getEhComissaoConjunta() {
+		if(ehComissaoConjunta == null){
+			ehComissaoConjunta = false;
+		}
 		return ehComissaoConjunta;
 	}
 
@@ -147,6 +165,9 @@ public class Comissao implements java.io.Serializable {
 
 	@Column(name="ehcomissaomontadorindividual", nullable=true)
 	public Boolean getEhComissaoMontadorIndividual() {
+		if(ehComissaoMontadorIndividual == null){
+			ehComissaoMontadorIndividual = false;
+		}
 		return ehComissaoMontadorIndividual;
 	}
 
@@ -166,6 +187,9 @@ public class Comissao implements java.io.Serializable {
 
 	@Column(name="ehcomissaomontadorconjunta", nullable=true)
 	public Boolean getEhComissaoMontadorConjunta() {
+		if(ehComissaoMontadorConjunta == null){
+			ehComissaoMontadorConjunta = false;
+		}
 		return ehComissaoMontadorConjunta;
 	}
 	
@@ -192,5 +216,27 @@ public class Comissao implements java.io.Serializable {
 			String usuarioComissaoMontadorConjunta) {
 		this.usuarioComissaoMontadorConjunta = usuarioComissaoMontadorConjunta;
 	}
+
+	@Column(name="ehcomissaoloja", nullable=true)
+	public Boolean getEhComissaoLoja() {
+		if(ehComissaoLoja == null){
+			ehComissaoLoja = false;
+		}
+		return ehComissaoLoja;
+	}
+
+	public void setEhComissaoLoja(Boolean ehComissaoLoja) {
+		this.ehComissaoLoja = ehComissaoLoja;
+	}
+
+	@Column(name="percentualcomissaoloja", nullable=true)
+	public Float getPercentualComissaoLoja() {
+		return percentualComissaoLoja;
+	}
+
+	public void setPercentualComissaoLoja(Float percentualComissaoLoja) {
+		this.percentualComissaoLoja = percentualComissaoLoja;
+	}
+	
 
 }

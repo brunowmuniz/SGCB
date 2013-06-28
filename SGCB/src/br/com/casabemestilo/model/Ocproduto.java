@@ -31,7 +31,7 @@ public class Ocproduto implements java.io.Serializable {
 	private Set montagems = new HashSet(0);
 	private Set fretes = new HashSet(0);
 	private Set assistenciatecnicas = new HashSet(0);
-	private List<UsuarioFilial> usuarioFiliais = new ArrayList<UsuarioFilial>();
+	private List<ComissaoUsuario> comissaoUsuarios = new ArrayList<ComissaoUsuario>();
 
 	public Ocproduto() {
 	}
@@ -129,15 +129,17 @@ public class Ocproduto implements java.io.Serializable {
 	public void setAssistenciatecnicas(Set assistenciatecnicas) {
 		this.assistenciatecnicas = assistenciatecnicas;
 	}
-	
-	@OneToMany(targetEntity= ComissaoUsuario.class, mappedBy = "ocProduto")
-	public List<UsuarioFilial> getUsuarioFiliais() {
-		return usuarioFiliais;
+
+	@OneToMany(targetEntity = ComissaoUsuario.class,mappedBy = "ocProduto")
+	public List<ComissaoUsuario> getComissaoUsuarios() {
+		return comissaoUsuarios;
 	}
 
-	public void setUsuarioFiliais(List<UsuarioFilial> usuarioFiliais) {
-		this.usuarioFiliais = usuarioFiliais;
+	public void setComissaoUsuarios(List<ComissaoUsuario> comissaoUsuarios) {
+		this.comissaoUsuarios = comissaoUsuarios;
 	}
+	
+	
 	
 	
 

@@ -9,6 +9,7 @@ import org.hibernate.exception.ConstraintViolationException;
 
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
 import br.com.casabemestilo.model.Comissao;
+import br.com.casabemestilo.util.Conexao;
 
 public class ComissaoDAO implements Serializable, InterfaceDAO {
 
@@ -45,8 +46,11 @@ public class ComissaoDAO implements Serializable, InterfaceDAO {
 	@Override
 	public void insert(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
-
+		comissao = (Comissao) obj;
+		session = Conexao.getInstance();		
+		session.beginTransaction();
+		session.save(comissao);
+		session.getTransaction().commit();
 	}
 
 	@Override

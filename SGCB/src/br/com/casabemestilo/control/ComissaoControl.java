@@ -3,12 +3,20 @@ package br.com.casabemestilo.control;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+
+import org.hibernate.HibernateException;
+import org.hibernate.exception.ConstraintViolationException;
+
+import com.sun.faces.context.flash.ELFlash;
 
 import br.com.casabemestilo.DAO.ComissaoDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Comissao;
+import br.com.casabemestilo.model.Usuario;
 
 @ManagedBean
 @ViewScoped
@@ -47,9 +55,37 @@ public class ComissaoControl extends Control implements Serializable,InterfaceCo
 	/*
 	 * MÉTODOS
 	 * */
+	 @PostConstruct
+	 public void init(){    	 
+		 if(ELFlash.getFlash().get("usuarioComissao") != null){
+			Usuario usuario = new Usuario();
+			comissao = new Comissao();
+			usuario = (Usuario) ELFlash.getFlash().get("usuarioComissao");
+			comissao.setUsuario(usuario);
+			
+			
+		}
+	 }
+		
+	    
+	 @PreDestroy
+	 public void destroy() {}
+	    
 	@Override
 	public void gravar() {
-		// TODO Auto-generated method stub
+		comissaoDAO = new ComissaoDAO();
+		try {
+			comissaoDAO.insert(comissao);
+		} catch (ConstraintViolationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (HibernateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 
@@ -94,6 +130,9 @@ public class ComissaoControl extends Control implements Serializable,InterfaceCo
 	 * GETTERS & SETTERS
 	 * */
 	public Comissao getComissao() {
+		if(comissao == null){
+			comissao = new Comissao();
+		}
 		return comissao;
 	}
 

@@ -76,12 +76,7 @@ public class UsuarioControl extends Control implements InterfaceControl,
 	
     
     @PreDestroy
-    public void destroy() {
-    	 if(usuario == null){
-    		 usuario = new Usuario();
-    	 }
-    	 System.out.println(usuario.getId());
-    }
+    public void destroy() {}
     
     public void alteracaoSenha(ValueChangeEvent event){
     	try {
@@ -269,6 +264,10 @@ public class UsuarioControl extends Control implements InterfaceControl,
 		return "manutencaousuario?faces-redirect=true";
 	}
 	
+	public String alterarComissao(){
+		ELFlash.getFlash().put("usuarioComissao", usuario);
+		return "cadastracomissao?faces-redirect=true";
+	}
 
 	/*
 	 * GETTERS & SETTERS
