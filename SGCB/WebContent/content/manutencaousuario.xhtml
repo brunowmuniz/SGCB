@@ -13,6 +13,7 @@
 					 <p:contextMenu for="usuarios">
 					 	<p:menuitem value="Deletar" update="usuarios,msgs" icon="ui-icon-close" actionListener="#{usuarioControl.deletar}"/>
 					 	<p:menuitem value="Editar" action="#{usuarioControl.alterarCadastro}" ajax="false"/>
+					 	<p:menuitem value="Editar Comissão" action="#{usuarioControl.alterarComissao}" ajax="false"/>
 					 </p:contextMenu>
 					 
 					 <p:dataTable var="usuario" value="#{usuarioControl.listarAtivos()}" id="usuarios" rowKey="#{usuario.id}"  
