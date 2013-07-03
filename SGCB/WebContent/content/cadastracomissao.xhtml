@@ -16,30 +16,63 @@
 							<p:inputText value="#{comissaoControl.comissao.usuario.nome}" id="nome" size="60" required="true" disabled="true"/>				
 						</h:panelGrid>
 						
-						<h:panelGrid columns="4" style="clear: both;">																
-							<p:outputLabel for="ehcomissaoindividual" value="Comissão Vendedor Individual : "/>
-							<p:selectBooleanCheckbox value="#{comissaoControl.comissao.ehComissaoIndividual}" id="ehcomissaoindividual">
-								<p:ajax process="@this" event="change" update="ehcomissaoindividual,percentualComissaoIndividual"/>
+						<h:panelGrid columns="4" style="clear: both;" rendered="#{comissaoControl.comissao.usuario.perfil.id == 2}" id="comissaoVendedor">																
+							<p:outputLabel for="ehcomissaoindividual" value="Comissão Vendedor Individual (%): "/>
+							<p:selectBooleanCheckbox value="#{comissaoControl.comissao.ehComissaoIndividual}" id="ehcomissaoindividual" valueChangeListener="#{comissaoControl.defineComissaoVendedorIndividual}">
+								<p:ajax process="@this" event="change" update="comissaoVendedor" />						
 							</p:selectBooleanCheckbox>
 							<p:inputText value="#{comissaoControl.comissao.percentualComissaoIndividual}" id="percentualComissaoIndividual" size="10" 
 										disabled="#{!comissaoControl.comissao.ehComissaoIndividual}">
 								<f:validateBean/>
 								<f:convertNumber locale="pt_BR" maxIntegerDigits="2" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
 							</p:inputText>
-							<p:outputLabel value="%"/>
+							<br />						
 							
-							<p:outputLabel for="ehcomissaomontadorindividual" value="Comissão Montador Individual: "/>
-							<p:selectBooleanCheckbox value="#{comissaoControl.comissao.ehComissaoMontadorIndividual}" id="ehcomissaomontadorindividual">
-								<p:ajax process="@this" event="change" update="ehcomissaomontadorindividual,percentualComissaoMontadorIndividual"/>	
+							<p:outputLabel for="ehcomissaovendedorconjunta" value="Comissão Vendedor Conjunta (%): "/>
+							<p:selectBooleanCheckbox value="#{comissaoControl.comissao.ehComissaoConjunta}" id="ehcomissaovendedorconjunta" valueChangeListener="#{comissaoControl.defineComissaoVendedorConjunta}">
+								<p:ajax process="@this" event="change" update="comissaoVendedor" />
+							</p:selectBooleanCheckbox>
+							<p:selectManyMenu id="usuarivendedorconjunta" value="#{comissaoControl.listaUsuarioComissaoConjunta}"
+										disabled="#{!comissaoControl.comissao.ehComissaoConjunta}">
+								<f:selectItems value="#{comissaoControl.listaUsuarioCombo}" />
+							</p:selectManyMenu>
+							<p:inputText value="#{comissaoControl.comissao.percentualComissaoConjunta}" id="percentualComissaoConjunta" size="10"
+										 disabled="#{!comissaoControl.comissao.ehComissaoConjunta}">
+								<f:validateBean/>
+								<f:convertNumber locale="pt_BR" maxIntegerDigits="2" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+							</p:inputText>
+						</h:panelGrid>
+						
+						<h:panelGrid columns="4" rendered="#{comissaoControl.comissao.usuario.perfil.id == 5}" id="comissaoMontador">							
+							<p:outputLabel for="ehcomissaomontadorindividual" value="Comissão Montador Individual (%): "/>
+							<p:selectBooleanCheckbox value="#{comissaoControl.comissao.ehComissaoMontadorIndividual}" id="ehcomissaomontadorindividual" valueChangeListener="#{comissaoControl.defineComissaMontadorIndividual}">
+								<p:ajax process="@this" event="change" update="comissaoMontador"/>	
 							</p:selectBooleanCheckbox>					
 							<p:inputText value="#{comissaoControl.comissao.percentualComissaoMontadorIndividual}" id="percentualComissaoMontadorIndividual" size="10"
 										 disabled="#{!comissaoControl.comissao.ehComissaoMontadorIndividual}">
 								<f:validateBean/>
 								<f:convertNumber locale="pt_BR" maxIntegerDigits="2" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
 							</p:inputText>
-							<p:outputLabel value="%"/>
 							
-							<p:outputLabel for="ehcomissaoloja" value="Comissão Loja: "/>
+							<br />
+							
+							<p:outputLabel for="ehcomissaomontadorconjunta" value="Comissão Montador Conjunta (%): "/>
+							<p:selectBooleanCheckbox value="#{comissaoControl.comissao.ehComissaoMontadorConjunta}" id="ehcomissaomontadorconjunta" valueChangeListener="#{comissaoControl.defineComissaMontadorConjunta}">
+								<p:ajax process="@this" event="change" update="comissaoMontador"/>
+							</p:selectBooleanCheckbox>
+							<p:selectManyMenu id="listavendedorconjunta" value="#{comissaoControl.listaUsuarioComissaoConjunta}"
+										 disabled="#{!comissaoControl.comissao.ehComissaoMontadorConjunta}">
+								<f:selectItems value="#{comissaoControl.listaUsuarioCombo}" />							
+							</p:selectManyMenu>				
+							<p:inputText value="#{comissaoControl.comissao.percentualComissaoMontadorConjunta}" id="percentualComissaoMontadorConjunta" size="10" 
+										 disabled="#{!comissaoControl.comissao.ehComissaoMontadorConjunta}">
+								<f:validateBean/>
+								<f:convertNumber locale="pt_BR" maxIntegerDigits="2" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+							</p:inputText>
+						</h:panelGrid>
+									
+						<h:panelGrid columns="3">
+							<p:outputLabel for="ehcomissaoloja" value="Comissão Loja (%): "/>
 							<p:selectBooleanCheckbox value="#{comissaoControl.comissao.ehComissaoLoja}" id="ehcomissaoloja">
 								<p:ajax process="@this" event="change" update="ehcomissaoloja,percentualComissaoLoja"/>
 							</p:selectBooleanCheckbox>					
@@ -47,35 +80,14 @@
 										 disabled="#{!comissaoControl.comissao.ehComissaoLoja}">
 								<f:validateBean/>
 								<f:convertNumber locale="pt_BR" maxIntegerDigits="2" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
-							</p:inputText>
-							<p:outputLabel value="%"/>
-													
-							<p:outputLabel for="ehcomissaovendedorconjunta" value="Comissão Vendedor Conjunta: "/>
-							<p:selectBooleanCheckbox value="#{comissaoControl.comissao.ehComissaoConjunta}" id="ehcomissaovendedorconjunta">
-								<p:ajax process="@this" event="change" update="ehcomissaovendedorconjunta,percentualComissaoConjunta"/>
-							</p:selectBooleanCheckbox>					
-							<p:inputText value="#{comissaoControl.comissao.percentualComissaoConjunta}" id="percentualComissaoConjunta" size="10"
-										 disabled="#{!comissaoControl.comissao.ehComissaoConjunta}">
-								<f:validateBean/>
-								<f:convertNumber locale="pt_BR" maxIntegerDigits="2" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
-							</p:inputText>
-							<p:outputLabel value="%"/>
-							
-							<p:outputLabel for="ehcomissaomontadorconjunta" value="Comissão Montador Conjunta: "/>
-							<p:selectBooleanCheckbox value="#{comissaoControl.comissao.ehComissaoMontadorConjunta}" id="ehcomissaomontadorconjunta">
-								<p:ajax process="@this" event="change" update="ehcomissaomontadorconjunta,percentualComissaoMontadorConjunta"/>
-							</p:selectBooleanCheckbox>					
-							<p:inputText value="#{comissaoControl.comissao.percentualComissaoMontadorConjunta}" id="percentualComissaoMontadorConjunta" size="10" 
-										 disabled="#{!comissaoControl.comissao.ehComissaoMontadorConjunta}">
-								<f:validateBean/>
-								<f:convertNumber locale="pt_BR" maxIntegerDigits="2" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
-							</p:inputText>
-							<p:outputLabel value="%"/>
+							</p:inputText>										
 						</h:panelGrid>
 						
-						<p:commandButton rendered="#{comissaoControl.comissao.id != null}" actionListener="#{comissaoControl.alterar}" value="Alterar" update="msgs,cadastro" id="gravar"/>
-						<p:commandButton rendered="#{comissaoControl.comissao.id == null}" actionListener="#{comissaoControl.gravar}" value="Gravar" update="msgs,cadastro" id="alterar"/>
-						<p:commandButton rendered="#{comissaoControl.comissao.id != null}" action="#{clienteControl.sairAlteracao}" value="Sair" id="sair" ajax="false"/>
+						<h:panelGrid columns="2">
+							<p:commandButton rendered="#{comissaoControl.comissao.id != null}" actionListener="#{comissaoControl.alterar}" value="Alterar" update="msgs,cadastro" id="gravar"/>
+							<p:commandButton rendered="#{comissaoControl.comissao.id == null}" actionListener="#{comissaoControl.gravar}" value="Gravar" update="msgs,cadastro" id="alterar"/>
+							<p:commandButton action="#{comissaoControl.sairAlteracao}" value="Sair" id="sair" ajax="false"/>
+						</h:panelGrid>						
 					</h:panelGrid>
 			     </p:panel>
 			</h:form>
@@ -83,7 +95,7 @@
 		<ui:define name="rodape">
 			<p:panel header="Descritivo Tela" styleClass="rodape">
 	    		<p:outputLabel value="Tela para cadastro e edição de comissão dos funcionários." styleClass="rodape_esquerda"/>
-	    		<p:outputLabel value="cadastraproduto.jsf" styleClass="rodape_direita"/>
+	    		<p:outputLabel value="cadastracomissao.jsf" styleClass="rodape_direita"/>
 	    	</p:panel>
 		</ui:define>
 	</ui:composition>

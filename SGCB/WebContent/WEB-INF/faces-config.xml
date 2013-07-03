@@ -13,5 +13,9 @@
 		<converter-id>converter.filialConverter</converter-id>
 		<converter-class>br.com.casabemestilo.converter.FilialConverter</converter-class>
 	</converter>
+	<converter>
+		<converter-id>converter.clienteConverter</converter-id>
+		<converter-class>br.com.casabemestilo.converter.ClienteConverter</converter-class>
+	</converter>
 
 </faces-config>

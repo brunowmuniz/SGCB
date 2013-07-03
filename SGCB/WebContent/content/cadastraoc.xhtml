@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form>
+				<p:panel header="Cadastro de OC">
+					<p:messages id="msgs"/>
+					<h:panelGrid id="cadastro" columns="1" width="100%">
+						<h:panelGrid  columns="9">
+							<p:outputLabel for="numero" value="Número OC:"/>
+							<h:outputText value="1319"  id="numero" style="width: 100px; " styleClass="negrito"/>
+							<p:spacer width="10px"/>
+							
+							<p:outputLabel for="vendedor" value="Vendedor: "/>
+							<h:outputText value="Thiago"  id="vendedor" style="width: 100px;" styleClass="negrito"/>
+							<p:spacer width="10px"/>
+							
+							<p:outputLabel for="data" value="Data: "/>
+							<h:outputText value="03/10/2012" id="data" style="width: 100px;" styleClass="negrito">									
+								<f:convertDateTime pattern="dd/MM/yyyy"/>									
+							</h:outputText>
+							<p:spacer width="10px"/>	
+						</h:panelGrid>
+						<p:tabView>
+							<p:tab title="Dados do Cliente">
+								<h:panelGrid id="dadoscliente">
+									<h:panelGrid columns="3">
+										<p:outputLabel for="buscarcliente" value="Busca Cliente: "/>
+										<p:autoComplete id="buscarcliente" value="#{ocControl.oc.cliente}" minQueryLength="3"
+															completeMethod="#{clienteControl.listaComplete}"											 
+															forceSelection="true" converter="converter.clienteConverter"
+															var="cliente" itemValue="#{cliente}" itemLabel="#{cliente.nome}"
+															disabled="#{ocControl.oc.cliente.id != null}">
+												<p:ajax event="itemSelect" update="dadoscliente" process="@this"/>
+										</p:autoComplete>
+										<p:commandButton value="Limpar" actionListener="#{ocControl.limparCliente}" update="dadoscliente" id="limpar" rendered="#{ocControl.oc.cliente.id != null}" process="@this" />
+									</h:panelGrid>
+									<h:panelGrid columns="2">
+										<p:outputLabel value="Nome: " for="nomeclienteoc"/>
+										<p:inputText size="78" value="#{ocControl.oc.cliente.nome}" required="true" id="nomeclienteoc">
+											<f:validateBean />
+										</p:inputText>
+										
+										<p:outputLabel value="Endereço: " for="enderecoclienteoc"/>
+										<p:inputText size="78" value="#{ocControl.oc.cliente.endereco}" required="true" id="enderecoclienteoc">
+											<f:validateBean/>
+										</p:inputText>
+									</h:panelGrid>
+									<h:panelGrid columns="4">	
+										<p:outputLabel value="Cidade: " for="cidadeclienteoc"/>
+										<p:inputText size="30" value="#{ocControl.oc.cliente.cidade}" required="true" id="cidadeclienteoc">
+											<f:validateBean/>
+										</p:inputText>
+										
+										<p:outputLabel value="Telefone: " for="telefoneclienteoc"/>
+										<p:inputMask size="30" value="#{ocControl.oc.cliente.telefone}" required="true" id="telefoneclienteoc" mask="(99) 9999-9999">
+											<f:validateBean/>
+										</p:inputMask>
+										
+										<p:outputLabel value="CPF: " for="cpfclienteoc"/>
+										<p:inputMask size="30" value="#{ocControl.oc.cliente.cpf}" required="true" id="cpfclienteoc" mask="999.999.999-99" />
+										
+										<p:outputLabel value="RG: " for="rgclienteoc"/>
+										<p:inputText size="30" value="#{ocControl.oc.cliente.rg}" required="true" id="rgclienteoc"/>
+										
+										<p:outputLabel value="Data Nascimento: " for="datanascimentoclienteoc"/>
+										<p:inputMask size="30" value="#{ocControl.oc.cliente.datadenascimento}" required="true" id="datanascimentoclienteoc"
+											mask="99/99/9999">
+											<f:convertDateTime pattern="dd/MM/yyyy"/>
+										</p:inputMask>								
+									</h:panelGrid>
+								</h:panelGrid>
+							</p:tab>
+							<p:tab title="Produtos">
+							</p:tab>
+							<p:tab title="Financeiro">
+							</p:tab>
+						</p:tabView>												
+					</h:panelGrid>
+				</p:panel>				
+			</h:form>			
+		</ui:define>
+		<ui:define name="rodape">
+			<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela para cadastro e edição de comissão dos funcionários." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="cadastracomissao.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
+		</ui:define>
+	</ui:composition>
+</html>
