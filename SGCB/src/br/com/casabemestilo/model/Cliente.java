@@ -173,6 +173,15 @@ public class Cliente implements java.io.Serializable {
 	public void setDeleted(Boolean deleted) {
 		this.deleted = deleted;
 	}
+
+	@Override
+	public String toString() {
+		return "Cliente [id=" + id + ", nome=" + nome + ", endereco="
+				+ endereco + ", cidade=" + cidade + ", telefone=" + telefone
+				+ ", telefoneadicional=" + telefoneadicional + ", cpf=" + cpf
+				+ ", rg=" + rg + ", datadenascimento=" + datadenascimento
+				+ ", deleted=" + deleted + "]";
+	}
 	
 	
 

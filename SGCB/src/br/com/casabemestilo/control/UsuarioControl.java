@@ -11,12 +11,15 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.SelectItem;
+
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
 import com.sun.faces.context.flash.ELFlash;
 import br.com.casabemestilo.DAO.UsuarioDAO;
 import br.com.casabemestilo.DAO.UsuarioFilialDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
+import br.com.casabemestilo.model.Filial;
 import br.com.casabemestilo.model.Usuario;
 import br.com.casabemestilo.model.UsuarioFilial;
 import br.com.casabemestilo.util.Encrypt;
@@ -38,6 +41,7 @@ public class UsuarioControl extends Control implements InterfaceControl,
 	private List<String> listaUsuarioFilial;
 	
 	private String novaSenha =  "";
+	
 	
 	
 	
@@ -302,5 +306,6 @@ public class UsuarioControl extends Control implements InterfaceControl,
 
 	public void setListaUsuarioFilial(List<String> listaUsuarioFilial) {
 		this.listaUsuarioFilial = listaUsuarioFilial;
-	}	
+	}
+
 }

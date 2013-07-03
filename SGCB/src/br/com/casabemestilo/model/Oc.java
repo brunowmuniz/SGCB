@@ -12,6 +12,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.IDENTITY;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -41,7 +43,7 @@ public class Oc implements java.io.Serializable {
 	private float valorliquido;
 	private Date datalancamento;
 	private Set pagamentos = new HashSet(0);
-	private Set ocprodutos = new HashSet(0);
+	private List<Ocproduto> ocprodutos = new ArrayList<Ocproduto>();
 	private List<ComissaoUsuario> comissaoUsuario = new ArrayList<ComissaoUsuario>();
 
 	public Oc() {
@@ -65,7 +67,7 @@ public class Oc implements java.io.Serializable {
 			float valorfrete, float valormontagem, Date prazoentrega,
 			String observacoes, float valor, Float valorfinanciado,
 			float valorfinal, float valorliquido, Date datalancamento,
-			Set pagamentos, Set ocprodutos) {
+			Set pagamentos, List<Ocproduto> ocprodutos) {
 		this.usuario = usuario;
 		this.status = status;
 		this.cliente = cliente;
@@ -116,6 +118,9 @@ public class Oc implements java.io.Serializable {
 	@ManyToOne
 	@JoinColumn(name = "cliente", nullable = false)
 	public Cliente getCliente() {
+		if(cliente == null){
+			cliente = new Cliente();
+		}
 		return this.cliente;
 	}
 
@@ -215,12 +220,12 @@ public class Oc implements java.io.Serializable {
 		this.pagamentos = pagamentos;
 	}
 
-	@OneToMany(targetEntity = Ocproduto.class, mappedBy = "oc")
-	public Set getOcprodutos() {
+	@OneToMany(targetEntity = Ocproduto.class, mappedBy = "oc", cascade= CascadeType.ALL)
+	public List<Ocproduto> getOcprodutos() {
 		return this.ocprodutos;
 	}
 
-	public void setOcprodutos(Set ocprodutos) {
+	public void setOcprodutos(List<Ocproduto> ocprodutos) {
 		this.ocprodutos = ocprodutos;
 	}
 

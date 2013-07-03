@@ -3,10 +3,19 @@ package br.com.casabemestilo.control;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
+import org.hibernate.sql.Select;
+import org.primefaces.event.SelectEvent;
+
 import br.com.casabemestilo.DAO.OcDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
+import br.com.casabemestilo.model.Cliente;
 import br.com.casabemestilo.model.Oc;
 
+@ManagedBean
+@ViewScoped
 public class OcControl extends Control implements InterfaceControl,
 		Serializable {
 
@@ -15,7 +24,7 @@ public class OcControl extends Control implements InterfaceControl,
 	
 	private List<Oc> listaOc;
 	
-	private Oc oc;
+	private Oc oc = new Oc();
 	
 	private OcDAO ocDAO;
 	
@@ -43,6 +52,14 @@ public class OcControl extends Control implements InterfaceControl,
 	/*
 	 * MÉTODOS
 	 * */
+	public void defineClienteBuscaOC(SelectEvent event){
+		oc.setCliente((Cliente) event.getObject());
+	}
+	
+	public void limparCliente(){
+		oc.setCliente(new Cliente());
+	}
+	
 	@Override
 	public void gravar() {
 		// TODO Auto-generated method stub

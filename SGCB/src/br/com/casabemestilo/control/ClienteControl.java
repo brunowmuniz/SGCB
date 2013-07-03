@@ -1,6 +1,7 @@
 package br.com.casabemestilo.control;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -217,6 +218,24 @@ public class ClienteControl extends Control implements Serializable,InterfaceCon
 		return "manutencaocliente?faces-redirect=true";
 	}
 	
+	public List<Cliente> listaComplete(String nomeCliente){
+		listaCliente = new ArrayList<Cliente>();		
+		cliente.setNome(nomeCliente);
+		cliente.setDeleted(false);
+		try {
+			listaCliente = new ClienteDAO().listaSelecao(cliente);
+		} catch (ConstraintViolationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (HibernateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+		return listaCliente;
+	}
 	
 	/*
 	 * GETTERS & SETTERS

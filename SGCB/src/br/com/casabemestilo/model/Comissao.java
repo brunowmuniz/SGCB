@@ -126,6 +126,9 @@ public class Comissao implements java.io.Serializable {
 
 	@Column(name="percentualcomissaoindividual", nullable=true)
 	public Float getPercentualComissaoIndividual() {
+		if(!ehComissaoIndividual){
+			percentualComissaoIndividual = null;
+		}
 		return percentualComissaoIndividual;
 	}
 
@@ -156,6 +159,9 @@ public class Comissao implements java.io.Serializable {
 
 	@Column(name="percentualcomissaoconjunta", nullable=true)
 	public Float getPercentualComissaoConjunta() {
+		if(!ehComissaoConjunta){
+			percentualComissaoConjunta = null;
+		}
 		return percentualComissaoConjunta;
 	}
 
@@ -177,6 +183,9 @@ public class Comissao implements java.io.Serializable {
 
 	@Column(name="percentualcomissaomontadorindividual", nullable=true)
 	public Float getPercentualComissaoMontadorIndividual() {
+		if(!ehComissaoMontadorIndividual){
+			percentualComissaoMontadorIndividual = null;
+		}
 		return percentualComissaoMontadorIndividual;
 	}
 
@@ -199,6 +208,9 @@ public class Comissao implements java.io.Serializable {
 	
 	@Column(name="percentualcomissaomontadorconjunta", nullable=true)
 	public Float getPercentualComissaoMontadorConjunta() {
+		if(!ehComissaoMontadorConjunta){
+			percentualComissaoMontadorConjunta = null;
+		}
 		return percentualComissaoMontadorConjunta;
 	}
 
@@ -231,6 +243,9 @@ public class Comissao implements java.io.Serializable {
 
 	@Column(name="percentualcomissaoloja", nullable=true)
 	public Float getPercentualComissaoLoja() {
+		if(!ehComissaoLoja){
+			percentualComissaoLoja = null;
+		}
 		return percentualComissaoLoja;
 	}
 

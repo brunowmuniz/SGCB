@@ -9,6 +9,7 @@ import org.hibernate.exception.ConstraintViolationException;
 
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
 import br.com.casabemestilo.model.Comissao;
+import br.com.casabemestilo.model.Usuario;
 import br.com.casabemestilo.util.Conexao;
 
 public class ComissaoDAO implements Serializable, InterfaceDAO {
@@ -44,7 +45,7 @@ public class ComissaoDAO implements Serializable, InterfaceDAO {
 	 * MÉTODOS
 	 * */
 	@Override
-	public void insert(Object obj) throws Exception, HibernateException,
+	public void insert(Object obj) throws HibernateException,
 			ConstraintViolationException {
 		comissao = (Comissao) obj;
 		session = Conexao.getInstance();		
@@ -54,14 +55,18 @@ public class ComissaoDAO implements Serializable, InterfaceDAO {
 	}
 
 	@Override
-	public void update(Object obj) throws Exception, HibernateException,
+	public void update(Object obj) throws HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
+		comissao = (Comissao) obj;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		session.update(comissao);
+		session.getTransaction().commit();
 
 	}
 
 	@Override
-	public void delete(Object obj) throws Exception, HibernateException,
+	public void delete(Object obj) throws HibernateException,
 			ConstraintViolationException {
 		// TODO Auto-generated method stub
 
@@ -70,8 +75,13 @@ public class ComissaoDAO implements Serializable, InterfaceDAO {
 	@Override
 	public Comissao buscaObjetoId(Integer id) throws Exception,
 			HibernateException, ConstraintViolationException {
-		// TODO Auto-generated method stub
-		return null;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		comissao = (Comissao) session.createQuery("from Comissao c where c.usuario.id= :id")
+							 		 .setInteger("id", id)
+							 		 .uniqueResult();
+		session.close();
+		return comissao;
 	}
 
 	@Override
