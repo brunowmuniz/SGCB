@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form>
+				<p:panel header="Cadastro de Filial">
+			     	<p:messages id="msgs"/>			     	
+					<h:panelGrid columns="2" id="cadastro">
+						<p:outputLabel for="nome" value="Nome: "/>
+						<p:inputText value="#{filialControl.filial}" id="nome" size="60" required="true">
+							<f:validateBean/>
+						</p:inputText>
+						
+										
+						<p:commandButton rendered="#{filialControl.filial.id != null}" actionListener="#{filialControl.alterar}" value="Alterar" update="msgs,cadastro" id="gravar"/>
+						<p:commandButton rendered="#{filialControl.filial.id == null}" actionListener="#{filialControl.gravar}" value="Gravar" update="msgs,cadastro" id="alterar"/>
+						<p:commandButton rendered="#{filialControl.filialid != null}" action="#{filialControl.sairAlteracao}" value="Sair" id="sair" ajax="false"/>
+					</h:panelGrid>
+				</p:panel>
+			</h:form>
+		</ui:define>
+		<ui:define name="rodape">
+			<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela para cadastro e edição da retenção dos parcelamentos nas forma de pagamento." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="cadastrafilial.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
+		</ui:define>
+	</ui:composition>
+</html>
