@@ -18,6 +18,7 @@
       </p:panel>
       <p:menubar>
       	<p:submenu label="Vendas">
+      		<p:menuitem value="Nova OC" url="cadastraoc.jsf" />
       	</p:submenu>
       	<p:submenu label="Financeiro">
       	</p:submenu>
@@ -64,6 +65,10 @@
       		</p:submenu>
       	</p:submenu>
       </p:menubar>
+      <!-- p:ajaxStatus onstart="aguarde.show()" onsuccess="aguarde.hide()" />
+      <p:dialog id="aguarde" modal="true" header="Aguarde..." draggable="false" closable="false" closeOnEscape="true">
+      		teste
+      </p:dialog>-->
     </ui:insert>        
     <ui:insert name="conteudo">
       <h:outputLabel value="Teste Conteudo" />

@@ -19,7 +19,7 @@
 										
 						<p:commandButton rendered="#{filialControl.filial.id != null}" actionListener="#{filialControl.alterar}" value="Alterar" update="msgs,cadastro" id="gravar"/>
 						<p:commandButton rendered="#{filialControl.filial.id == null}" actionListener="#{filialControl.gravar}" value="Gravar" update="msgs,cadastro" id="alterar"/>
-						<p:commandButton rendered="#{filialControl.filialid != null}" action="#{filialControl.sairAlteracao}" value="Sair" id="sair" ajax="false"/>
+						<p:commandButton rendered="#{filialControl.filial.id != null}" action="#{filialControl.sairAlteracao}" value="Sair" id="sair" ajax="false"/>
 					</h:panelGrid>
 				</p:panel>
 			</h:form>

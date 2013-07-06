@@ -22,7 +22,8 @@
 						<p:outputLabel for="valor" value="Valor sugerido: "/>
 						<p:inputText value="#{produtoControl.produto.valorsugerido}" id="valor" size="20" required="true">
 							<f:validateBean/>
-							<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+							<f:convertNumber locale="pt_BR" maxIntegerDigits="6" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+							<p:ajax event="blur" process="@this" update="valor"/>
 						</p:inputText>
 						<p:outputLabel for="fornecedor" value="Fornecedor: "/>
 						<p:selectOneMenu required="true" value="#{produtoControl.produto.fornecedor.id}" id="fornecedor">
