@@ -1,10 +1,12 @@
 package br.com.casabemestilo.control;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.event.ActionListener;
 
 import org.hibernate.sql.Select;
 import org.primefaces.event.SelectEvent;
@@ -13,6 +15,7 @@ import br.com.casabemestilo.DAO.OcDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Cliente;
 import br.com.casabemestilo.model.Oc;
+import br.com.casabemestilo.model.Ocproduto;
 
 @ManagedBean
 @ViewScoped
@@ -27,6 +30,8 @@ public class OcControl extends Control implements InterfaceControl,
 	private Oc oc = new Oc();
 	
 	private OcDAO ocDAO;
+	
+	private List<Ocproduto> listaOcprodutos = new ArrayList<Ocproduto>();
 	
 	
 	/*
@@ -59,6 +64,12 @@ public class OcControl extends Control implements InterfaceControl,
 	public void limparCliente(){
 		oc.setCliente(new Cliente());
 	}
+	
+	public void adicionarProdutoOc(Ocproduto ocproduto){
+		listaOcprodutos.add(ocproduto);
+		oc.setOcprodutos(new ArrayList<Ocproduto>());
+	}
+	
 	
 	@Override
 	public void gravar() {
@@ -128,6 +139,14 @@ public class OcControl extends Control implements InterfaceControl,
 
 	public void setOcDAO(OcDAO ocDAO) {
 		this.ocDAO = ocDAO;
+	}
+
+	public List<Ocproduto> getListaOcprodutos() {
+		return listaOcprodutos;
+	}
+
+	public void setListaOcprodutos(List<Ocproduto> listaOcprodutos) {
+		this.listaOcprodutos = listaOcprodutos;
 	}
 
 }

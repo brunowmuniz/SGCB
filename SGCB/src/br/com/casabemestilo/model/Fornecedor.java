@@ -4,6 +4,8 @@ package br.com.casabemestilo.model;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -86,7 +88,7 @@ public class Fornecedor implements java.io.Serializable {
 		this.ehrede = ehrede;
 	}
 
-	@Column(name = "cnpj", length = 18)
+	@Column(name = "cnpj", length = 18,nullable=true)
 	public String getCnpj() {
 		return this.cnpj;
 	}
@@ -133,7 +135,7 @@ public class Fornecedor implements java.io.Serializable {
 		this.cidade = cidade;
 	}
 
-	@OneToMany(targetEntity = Produto.class, mappedBy = "fornecedor", fetch = FetchType.EAGER)
+	@OneToMany(targetEntity = Produto.class, mappedBy = "fornecedor")
 	public Set getProdutos() {
 		return this.produtos;
 	}

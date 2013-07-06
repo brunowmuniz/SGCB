@@ -128,7 +128,7 @@ public class Oc implements java.io.Serializable {
 		this.cliente = cliente;
 	}
 
-	@Column(name = "valorfrete", nullable = false, precision = 5)
+	@Column(name = "valorfrete", nullable = false, precision = 6, scale = 2)
 	public float getValorfrete() {
 		return this.valorfrete;
 	}
@@ -137,7 +137,7 @@ public class Oc implements java.io.Serializable {
 		this.valorfrete = valorfrete;
 	}
 
-	@Column(name = "valormontagem", nullable = false, precision = 5)
+	@Column(name = "valormontagem", nullable = false, precision = 6, scale = 2)
 	public float getValormontagem() {
 		return this.valormontagem;
 	}
@@ -165,7 +165,7 @@ public class Oc implements java.io.Serializable {
 		this.observacoes = observacoes;
 	}
 
-	@Column(name = "valor", nullable = false, precision = 6)
+	@Column(name = "valor", nullable = false, precision = 8, scale = 2)
 	public float getValor() {
 		return this.valor;
 	}
@@ -174,7 +174,7 @@ public class Oc implements java.io.Serializable {
 		this.valor = valor;
 	}
 
-	@Column(name = "valorfinanciado", precision = 6)
+	@Column(name = "valorfinanciado", precision = 8, scale = 2)
 	public Float getValorfinanciado() {
 		return this.valorfinanciado;
 	}
@@ -183,7 +183,7 @@ public class Oc implements java.io.Serializable {
 		this.valorfinanciado = valorfinanciado;
 	}
 
-	@Column(name = "valorfinal", nullable = false, precision = 6)
+	@Column(name = "valorfinal", nullable = false, precision = 8, scale = 2)
 	public float getValorfinal() {
 		return this.valorfinal;
 	}

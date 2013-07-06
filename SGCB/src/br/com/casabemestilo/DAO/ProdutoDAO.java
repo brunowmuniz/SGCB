@@ -8,6 +8,7 @@ import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
 
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
+import br.com.casabemestilo.model.Cliente;
 import br.com.casabemestilo.model.Fornecedor;
 import br.com.casabemestilo.model.Produto;
 import br.com.casabemestilo.util.Conexao;
@@ -92,8 +93,13 @@ public class ProdutoDAO implements InterfaceDAO, Serializable {
 	@Override
 	public Produto buscaObjetoId(Integer id) throws Exception,
 			HibernateException, ConstraintViolationException {
-		// TODO Auto-generated method stub
-		return null;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		produto = (Produto) session.createQuery("from Produto p where p.id= :id")
+							 .setInteger("id", id)
+							 .uniqueResult();
+		session.close();
+		return produto;
 	}
 
 	@Override
@@ -119,7 +125,20 @@ public class ProdutoDAO implements InterfaceDAO, Serializable {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
+	public List<Produto> listaProdutoCodigoNome(Produto produtoBusca) {
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		listaProduto = session.createQuery("from Produto p where " +
+											" p.deleted =0" +
+											" and (p.codigo like :codigo" +
+											" or p.descricao like :descricao)")
+											.setString("codigo","%" + produtoBusca.getCodigo() + "%")
+											.setString("descricao","%" + produtoBusca.getDescricao() + "%")
+											.list();
+		session.close();
+		return listaProduto;
+	}
 	
 	/*
 	 * GETTERS & SETTERS
@@ -139,6 +158,8 @@ public class ProdutoDAO implements InterfaceDAO, Serializable {
 	public void setListaProduto(List<Produto> listaProduto) {
 		this.listaProduto = listaProduto;
 	}
+
+	
 	
 	
 }

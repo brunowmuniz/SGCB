@@ -8,24 +8,24 @@ import javax.faces.convert.FacesConverter;
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
 
-import br.com.casabemestilo.DAO.ClienteDAO;
-import br.com.casabemestilo.model.Cliente;
-import br.com.casabemestilo.model.Filial;
+import br.com.casabemestilo.DAO.ProdutoDAO;
+import br.com.casabemestilo.model.Produto;
 
-@FacesConverter(forClass=Cliente.class)
-public class ClienteConverter implements Converter {
+@FacesConverter(forClass=Produto.class)
+public class ProdutoConverter implements Converter {
 
-	public ClienteConverter() {
+	public ProdutoConverter() {
+		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public Object getAsObject(FacesContext context, UIComponent component,
 			String value) {
 		
-		Cliente cliente = new Cliente();
+		Produto produto = new Produto();
 		
 		try {
-			cliente = new ClienteDAO().buscaObjetoId(Integer.parseInt(value));
+			produto = new ProdutoDAO().buscaObjetoId(Integer.parseInt(value));
 		} catch (ConstraintViolationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -39,25 +39,25 @@ public class ClienteConverter implements Converter {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-				
-		if(cliente == null){
+		
+		
+		if(produto == null){
 			return null;
 		}
 		
-		return cliente;
+		return produto;
 	}
 
 	@Override
 	public String getAsString(FacesContext context, UIComponent component,
 			Object value) {
+		Produto produto = (Produto) value;
 		
-		Cliente cliente= (Cliente) value;		
-		
-		if(cliente == null || cliente.getId() == null){
+		if(produto == null || produto.getId() == null){
 			return null;
 		}
 		
-		return String.valueOf(cliente.getId());
+		return String.valueOf(produto.getId());
 	}
 
 }

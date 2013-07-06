@@ -32,9 +32,9 @@ public class Produto implements java.io.Serializable {
 	private Fornecedor fornecedor;
 	private String descricao;
 	private float valorsugerido;
-	private int showroom;
-	private int estoque;
-	private int encomenda;
+	private Integer showroom;
+	private Integer estoque;
+	private Integer encomenda;
 	private String codigo;
 	private Boolean deleted;
 	private Set ocprodutos = new HashSet(0);
@@ -44,7 +44,7 @@ public class Produto implements java.io.Serializable {
 	}
 
 	public Produto(Fornecedor fornecedor, String descricao,
-			float valorsugerido, int showroom, int estoque, int encomenda) {
+			float valorsugerido, Integer showroom, Integer estoque, Integer encomenda) {
 		this.fornecedor = fornecedor;
 		this.descricao = descricao;
 		this.valorsugerido = valorsugerido;
@@ -77,7 +77,7 @@ public class Produto implements java.io.Serializable {
 		this.id = id;
 	}
 
-	@ManyToOne(cascade=CascadeType.ALL, fetch= FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "fornecedor", nullable = false)
 	public Fornecedor getFornecedor() {
 		if(this.fornecedor == null){
@@ -99,7 +99,7 @@ public class Produto implements java.io.Serializable {
 		this.descricao = descricao;
 	}
 
-	@Column(name = "valorsugerido", nullable = false, scale = 5, precision=2)
+	@Column(name = "valorsugerido", nullable = false, scale = 6, precision=2)
 	public float getValorsugerido() {
 		return this.valorsugerido;
 	}
@@ -111,33 +111,42 @@ public class Produto implements java.io.Serializable {
 	@Column(name = "showroom", nullable = false)
 	@Max(value=999)
 	@Min(value=0)
-	public int getShowroom() {
+	public Integer getShowroom() {
+		if(this.showroom == null){
+			showroom = 0;
+		}			
 		return this.showroom;
 	}
 
-	public void setShowroom(int showroom) {
+	public void setShowroom(Integer showroom) {
 		this.showroom = showroom;
 	}
 
 	@Column(name = "estoque", nullable = false)
 	@Max(value=999)
 	@Min(value=0)
-	public int getEstoque() {
+	public Integer getEstoque() {
+		if(this.estoque == null){
+			estoque = 0;
+		}
 		return this.estoque;
 	}
 
-	public void setEstoque(int estoque) {
+	public void setEstoque(Integer estoque) {
 		this.estoque = estoque;
 	}
 
 	@Column(name = "encomenda", nullable = false)
 	@Max(value=999)
 	@Min(value=0)
-	public int getEncomenda() {
+	public Integer getEncomenda() {
+		if(this.encomenda == null){
+			this.encomenda = 0;
+		}
 		return this.encomenda;
 	}
 
-	public void setEncomenda(int encomenda) {
+	public void setEncomenda(Integer encomenda) {
 		this.encomenda = encomenda;
 	}
 	

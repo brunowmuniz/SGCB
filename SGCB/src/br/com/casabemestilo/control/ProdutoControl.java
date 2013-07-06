@@ -1,6 +1,7 @@
 package br.com.casabemestilo.control;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -177,6 +178,19 @@ public class ProdutoControl extends Control implements InterfaceControl,
 
 	public String sairAlteracao(){
 		return "manutencaoproduto?faces-redirect=true";
+	}
+	
+	public List<Produto> buscaProdutoCodigoNome(String busca){
+		listaProduto = new ArrayList<Produto>();
+		Produto produtoBusca = new Produto();
+		produtoBusca.setDescricao(busca);
+		produtoBusca.setCodigo(busca);
+		listaProduto = new ProdutoDAO().listaProdutoCodigoNome(produtoBusca);
+		if(listaProduto.isEmpty()){
+			produtoBusca.getFornecedor().setNome("Cadastrar - ");
+			listaProduto.add(produtoBusca);
+		}
+		return listaProduto;
 	}
 	
 	/*
