@@ -78,7 +78,7 @@ CREATE TABLE `cliente` (
 
 LOCK TABLES `cliente` WRITE;
 /*!40000 ALTER TABLE `cliente` DISABLE KEYS */;
-INSERT INTO `cliente` VALUES (3,'Bruno Muniz','Rua Teixeirinha, 186 - Jardim dos Lagos','Guaíba/RS','(51) 9892-2668','(51) 9757-5929','973.532.640-04','5066278069','1981-10-02',''),(4,'Edson Neumann','Rua dois, 189 - Jardim dos Lagos','Guaiba/RS','(51) 9898-9898','(51) 9797-8877','973.532.640-04','090909090909','1977-11-17','\0');
+INSERT INTO `cliente` VALUES (3,'Bruno Muniz','Rua Teixeirinha, 186 - Jardim dos Lagos','Guaíba/RS','(51) 9892-2668','(51) 9757-5929','973.532.640-04','5066278069','1981-09-30','\0'),(4,'Edson Neumann','Rua dois, 189 - Jardim dos Lagos','Guaiba/RS','(51) 9898-9898','(51) 9797-8877','973.532.640-04','090909090909','1977-11-17','\0');
 /*!40000 ALTER TABLE `cliente` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -138,7 +138,7 @@ CREATE TABLE `comissao` (
   PRIMARY KEY (`id`),
   KEY `fk_comissao_usuario1_idx` (`usuario`),
   CONSTRAINT `fk_comissao_usuario1` FOREIGN KEY (`usuario`) REFERENCES `usuario` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='		';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='		';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -147,7 +147,7 @@ CREATE TABLE `comissao` (
 
 LOCK TABLES `comissao` WRITE;
 /*!40000 ALTER TABLE `comissao` DISABLE KEYS */;
-INSERT INTO `comissao` VALUES (1,1,'\0','',1.00,'',NULL,3.00,'',2.00,'',5.00,'',4.00,NULL);
+INSERT INTO `comissao` VALUES (1,1,'\0','\0',NULL,'','2',3.00,'\0',NULL,'\0',NULL,'',0.50,NULL),(2,8,'\0','\0',NULL,'\0',NULL,NULL,'',3.00,'\0',NULL,'\0',NULL,NULL);
 /*!40000 ALTER TABLE `comissao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -237,7 +237,7 @@ CREATE TABLE `fornecedor` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nome` varchar(60) NOT NULL,
   `ehrede` bit(1) DEFAULT b'0',
-  `cnpj` varchar(18) NOT NULL,
+  `cnpj` varchar(18) DEFAULT NULL,
   `deleted` bit(1) DEFAULT b'0',
   `cidade` varchar(80) DEFAULT NULL,
   `telefone` varchar(14) DEFAULT NULL,
@@ -363,14 +363,14 @@ CREATE TABLE `oc` (
   `cliente` int(11) NOT NULL,
   `vendedor` int(11) NOT NULL,
   `status` int(11) NOT NULL,
-  `valorfrete` float(5,2) NOT NULL,
-  `valormontagem` float(5,2) NOT NULL,
+  `valorfrete` float(6,2) NOT NULL,
+  `valormontagem` float(6,2) NOT NULL,
   `prazoentrega` date DEFAULT NULL,
   `observacoes` text,
-  `valor` float(6,2) NOT NULL,
-  `valorfinanciado` float(6,2) DEFAULT NULL,
-  `valorfinal` float(6,2) NOT NULL,
-  `valorliquido` float(6,2) NOT NULL,
+  `valor` float(8,2) NOT NULL,
+  `valorfinanciado` float(8,2) DEFAULT NULL,
+  `valorfinal` float(8,2) NOT NULL,
+  `valorliquido` float(8,2) NOT NULL,
   `datalancamento` date NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_oc_cliente_idx` (`cliente`),
@@ -404,6 +404,10 @@ CREATE TABLE `ocproduto` (
   `oc` int(11) NOT NULL,
   `status` int(11) NOT NULL,
   `tiposaida` enum('estoque','showroom','encomenda') DEFAULT NULL,
+  `quantidade` int(3) NOT NULL DEFAULT '0',
+  `valorsugerido` float(8,2) DEFAULT NULL,
+  `valorunitario` float(8,2) NOT NULL,
+  `valortotal` float(8,2) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_ocproduto_oc1_idx` (`oc`),
   KEY `fk_ocproduto_status1_idx` (`status`),
@@ -571,7 +575,7 @@ DROP TABLE IF EXISTS `produto`;
 CREATE TABLE `produto` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `descricao` varchar(150) NOT NULL,
-  `valorsugerido` float(7,2) NOT NULL,
+  `valorsugerido` float(8,2) NOT NULL,
   `fornecedor` int(11) NOT NULL,
   `showroom` int(11) NOT NULL,
   `estoque` int(11) NOT NULL,
@@ -581,7 +585,7 @@ CREATE TABLE `produto` (
   PRIMARY KEY (`id`),
   KEY `fk_produto_fornecedor1_idx` (`fornecedor`),
   CONSTRAINT `fk_produto_fornecedor1` FOREIGN KEY (`fornecedor`) REFERENCES `fornecedor` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -590,7 +594,7 @@ CREATE TABLE `produto` (
 
 LOCK TABLES `produto` WRITE;
 /*!40000 ALTER TABLE `produto` DISABLE KEYS */;
-INSERT INTO `produto` VALUES (1,'adsasdas',999.00,1,2,2,0,'',''),(2,'Roupeiro 6 portas - branco e preto',999.00,1,1,1,0,'BB-IAEI-9123-Y5','\0'),(3,'DASDADAS',0.00,1,1,1,0,'',''),(4,'dasdsadas',213.00,1,0,0,0,'',''),(5,'teste',1000.00,1,0,0,0,'',''),(6,'ADDASD',10000.00,1,1,0,0,'',''),(7,'teste',10000.00,3,1,0,0,'',''),(8,'laçsdksaçldkç',10000.00,1,1,0,0,'',''),(9,'Roupeiro 4 portas - Tabaco com branco',1360.00,1,1,0,0,'','\0');
+INSERT INTO `produto` VALUES (1,'adsasdas',999.00,1,2,2,0,'',''),(2,'Roupeiro 6 portas - branco e preto',999.00,1,1,1,0,'BB-IAEI-9123-Y5','\0'),(3,'DASDADAS',0.00,1,1,1,0,'',''),(4,'dasdsadas',213.00,1,0,0,0,'',''),(5,'teste',1000.00,1,0,0,0,'',''),(6,'ADDASD',10000.00,1,1,0,0,'',''),(7,'teste',10000.00,3,1,0,0,'',''),(8,'laçsdksaçldkç',10000.00,1,1,0,0,'',''),(9,'Roupeiro 4 portas - Tabaco com branco',1360.00,1,1,0,0,'','\0'),(20,'Cabeceira com criado mudo - Mogno',900.00,3,1,0,0,'III-09-123-DKSAL','\0');
 /*!40000 ALTER TABLE `produto` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -635,7 +639,7 @@ CREATE TABLE `status` (
   `deleted` bit(1) DEFAULT NULL,
   `descricao` varchar(45) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -644,6 +648,7 @@ CREATE TABLE `status` (
 
 LOCK TABLES `status` WRITE;
 /*!40000 ALTER TABLE `status` DISABLE KEYS */;
+INSERT INTO `status` VALUES (1,'\0','Aberta'),(2,'\0','Pendente de Pagamento'),(3,'\0','Pendente de Encomenda'),(4,'\0','Pendente de Chegada'),(5,'\0','Pendente de Execução'),(6,'\0','Pendente de Pós-Venda'),(7,'\0','Pendente de Entrega'),(8,'\0','Pendente de Assistência Técnica'),(9,'\0','Fechado'),(10,'\0','Cancelado');
 /*!40000 ALTER TABLE `status` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -673,7 +678,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,4,'Bruno Wagner Nunes Muniz','\0','bruno','f850bce37f95a998a2362e26062e7a22'),(2,1,'Edson Neumann','\0','edson','698dc19d489c4e4db73e28a713eab07b'),(5,3,'Elmara Baldez','\0','elmara','698dc19d489c4e4db73e28a713eab07b'),(6,1,'Bruno Wagner Nunes Muniz','','bruno','698dc19d489c4e4db73e28a713eab07b'),(8,5,'Teste uusario','\0','rwerw','casa'),(9,5,'Montador 2','\0','montador2','47f62dc04f8d29bfaf26bb0cdb755a65');
+INSERT INTO `usuario` VALUES (1,2,'Bruno Wagner Nunes Muniz','\0','bruno','f850bce37f95a998a2362e26062e7a22'),(2,2,'Edson Neumann','\0','edson','698dc19d489c4e4db73e28a713eab07b'),(5,2,'Elmara Baldez','\0','elmara','698dc19d489c4e4db73e28a713eab07b'),(6,1,'Bruno Wagner Nunes Muniz','','bruno','698dc19d489c4e4db73e28a713eab07b'),(8,5,'Teste uusario','\0','rwerw','casa'),(9,5,'Montador 2','\0','montador2','47f62dc04f8d29bfaf26bb0cdb755a65');
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -751,4 +756,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-06-28  0:05:54
+-- Dump completed on 2013-07-06  3:51:45
