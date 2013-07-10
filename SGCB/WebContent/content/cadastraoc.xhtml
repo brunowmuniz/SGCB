@@ -76,8 +76,8 @@
 									</h:panelGrid>
 								</h:panelGrid>
 							</p:tab>
-							<p:tab title="Produtos">
-								<p:commandLink value="Procurar Produto" id="btnbuscaproduto" oncomplete="modalbuscaproduto.show()" action="#{ocProdutoControl.limparOcProduto}" actionListener="#{ocProdutoControl.limparProduto}" update="modalbuscaproduto"/> <br />
+							<p:tab title="Produtos" id="tabProdutos">
+								<p:commandLink value="Procurar Produto" id="btnbuscaproduto" oncomplete="modalbuscaproduto.show()" action="#{ocProdutoControl.limparOcProduto}" actionListener="#{ocProdutoControl.limparProduto}" update="modalbuscaproduto" process="@this"/> <br />
 								<p:spacer width="10px"/>									
 								<p:dialog widgetVar="modalbuscaproduto" header="Buscar Produto" resizable="false" id="modalbuscaproduto">									
 									<h:panelGrid id="dadosproduto">
@@ -91,41 +91,49 @@
 											</p:autoComplete>																						
 											<p:commandButton value="Limpar" actionListener="#{ocProdutoControl.limparOcProduto}" update="dadosproduto" id="limparproduto" disabled="#{ocProdutoControl.ocproduto.produto.id == null}" process="@this,dadosproduto" />											
 										</h:panelGrid>									
-										<h:panelGrid columns="2">																					
+										<h:panelGrid columns="2" id="descproduto">																					
 											<p:outputLabel for="codigoproduto" value="Código: " />
-											<p:inputText disabled="#{ocProdutoControl.ocproduto.produto.id == null}" value="#{ocProdutoControl.ocproduto.produto.codigo}" id="codigoproduto"/>
+											<p:inputText disabled="#{ocProdutoControl.ocproduto.produto.id != null}" value="#{ocProdutoControl.ocproduto.produto.codigo}" id="codigoproduto"/>
 											
 											<p:outputLabel for="nomeproduto" value="Nome: " />
-											<p:inputText disabled="#{ocProdutoControl.ocproduto.produto.id == null}" value="#{ocProdutoControl.ocproduto.produto.descricao}" id="nomeproduto"/>
+											<p:inputText disabled="#{ocProdutoControl.ocproduto.produto.id != null}" value="#{ocProdutoControl.ocproduto.produto.descricao}" id="nomeproduto"/>
 											
 											<p:outputLabel for="nomefornecedor" value="Fornecedor: " />
-											<p:inputText disabled="#{ocProdutoControl.ocproduto.produto.id == null}" value="#{ocProdutoControl.ocproduto.produto.fornecedor.nome}" id="nomefornecedor"/>
+											<p:inputText disabled="#{ocProdutoControl.ocproduto.produto.id != null}" value="#{ocProdutoControl.ocproduto.produto.fornecedor}" id="nomefornecedor" rendered="#{ocProdutoControl.ocproduto.produto.id != null}"/>
+											<p:selectOneMenu required="true" value="#{ocProdutoControl.ocproduto.produto.fornecedor.id}" id="fornecedor" rendered="#{ocProdutoControl.ocproduto.produto.id == null}">
+												<f:selectItem itemValue="0" itemLabel="Selecione Fornecedor" noSelectionOption="true"/>							
+												<f:selectItems value="#{fornecedoresControl.listaFornecedorCombo}"/>																									
+											</p:selectOneMenu>
 											
 											<p:outputLabel for="valorsugerido" value="Valor sugerido: " />
-											<p:inputText disabled="#{ocProdutoControl.ocproduto.produto.id == null}" value="#{ocProdutoControl.ocproduto.produto.valorsugerido}" id="valorsugerido"/>
+											<p:inputText disabled="#{ocProdutoControl.ocproduto.produto.id != null}" value="#{ocProdutoControl.ocproduto.produto.valorsugerido}" id="valorsugerido">
+												<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1"/>
+											</p:inputText>
 											
-											<p:outputLabel for="qtdeshowroom" value="Showroom: " />
-											<p:inputText disabled="true" value="#{ocProdutoControl.ocproduto.produto.showroom}" id="qtdeshowroom" rendered="#{ocProdutoControl.ocproduto.produto.id != null}"/>
-											<p:spinner value="#{ocProdutoControl.ocproduto.produto.showroom}" required="true" id="qtdeshowroom" max="999" min="0" rendered="#{ocProdutoControl.ocproduto.produto.id == null}">
+											<p:outputLabel value="Showroom: " />
+											<p:inputText disabled="true" value="#{ocProdutoControl.ocproduto.produto.showroom}" id="qtdeshowroomvis" rendered="#{ocProdutoControl.ocproduto.produto.id != null}"/>
+											<p:spinner value="#{ocProdutoControl.ocproduto.produto.showroom}" required="true" id="qtdeshowroomedit" max="999" min="0" rendered="#{ocProdutoControl.ocproduto.produto.id == null}">
 												<f:validateBean/>
 												<f:convertNumber maxIntegerDigits="3"/>
 											</p:spinner>
 											
-											<p:outputLabel for="qtdeestoque" value="Estoque: " />
-											<p:inputText disabled="true" value="#{ocProdutoControl.ocproduto.produto.estoque}" id="qtdeestoque" rendered="#{ocProdutoControl.ocproduto.produto.id != null}"/>
-											<p:spinner value="#{ocProdutoControl.ocproduto.produto.estoque}" required="true" id="qtdeestoque" max="999" min="0" rendered="#{ocProdutoControl.ocproduto.produto.id == null}">
+											<p:outputLabel value="Estoque: " />
+											<p:inputText disabled="true" value="#{ocProdutoControl.ocproduto.produto.estoque}" id="qtdeestoquevis" rendered="#{ocProdutoControl.ocproduto.produto.id != null}"/>
+											<p:spinner value="#{ocProdutoControl.ocproduto.produto.estoque}" required="true" id="qtdeestoqueedit" max="999" min="0" rendered="#{ocProdutoControl.ocproduto.produto.id == null}">
 												<f:validateBean/>
 												<f:convertNumber maxIntegerDigits="3"/>
 											</p:spinner>
 											
-											<p:outputLabel for="qtdeencomenda" value="Encomenda: " />
-											<p:inputText disabled="true" value="#{ocProdutoControl.ocproduto.produto.encomenda}" id="qtdeencomenda" rendered="#{ocProdutoControl.ocproduto.produto.id != null}"/>
-											<p:spinner value="#{produtoControl.produto.encomenda}" required="true" id="qtdeencomenda" max="999" min="0" rendered="#{ocProdutoControl.ocproduto.produto.id == null}">
+											<p:outputLabel value="Encomenda: " />
+											<p:inputText disabled="true" value="#{ocProdutoControl.ocproduto.produto.encomenda}" id="qtdeencomendavis" rendered="#{ocProdutoControl.ocproduto.produto.id != null}"/>
+											<p:spinner value="#{ocProdutoControl.ocproduto.produto.encomenda}" required="true" id="qtdeencomendaedit" max="999" min="0" rendered="#{ocProdutoControl.ocproduto.produto.id == null}">
 												<f:validateBean/>
 												<f:convertNumber maxIntegerDigits="3"/>
 											</p:spinner>
 											<p:outputLabel for="tiposaida" value="Tipo de Saída: "/>
 											<p:selectOneMenu value="#{ocProdutoControl.ocproduto.tiposaida}" id="tiposaida" size="1">
+												<p:ajax event="change" process="@this"/>
+												<f:selectItem noSelectionOption="true" itemLabel="Escolha uma Saída"/>
 												<f:selectItem itemValue="estoque" itemLabel="Estoque" itemDisabled="#{ocProdutoControl.ocproduto.produto.estoque == 0}"/>
 												<f:selectItem itemValue="showroom" itemLabel="Showroom" itemDisabled="#{ocProdutoControl.ocproduto.produto.showroom == 0}" />
 												<f:selectItem itemValue="encomenda" itemLabel="Encomenda" />
@@ -140,7 +148,7 @@
 											
 											<p:outputLabel for="valorunitario" value="Valor Unitário: " />
 											<p:inputText value="#{ocProdutoControl.ocproduto.valorunitario}" id="valorunitario" immediate="true" >
-												<p:ajax event="blur"  process="@this,valortotal" update="valortotal" />
+												<p:ajax event="blur"  process="@this,valortotal" update="valorunitario,valortotal" />
 												<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1"/>												
 											</p:inputText>											
 										
@@ -150,12 +158,18 @@
 											</p:inputText>																																	
 											
 											<p:commandButton value="Insere Produto" actionListener="#{ocControl.adicionarProdutoOc(ocProdutoControl.ocproduto)}" 
-															 process="@this" update="updLista"  onclick="modalbuscaproduto.hide()"
-															 action="#{ocProdutoControl.limparOcProduto}"/>
+															 process="@this,dadosproduto" update="updLista"  onclick="modalbuscaproduto.hide()"
+															 action="#{ocProdutoControl.limparOcProduto}"
+															 rendered="#{ocProdutoControl.ocproduto.produto.id != null}"/>
+															 
+											<p:commandButton value="Insere Produto/OC"  actionListener="#{ocControl.gravarProdutoAdicionaOc(ocProdutoControl.ocproduto)}" 
+															 process="@this,dadosproduto" update="updLista"  onclick="modalbuscaproduto.hide()"	
+															 action="#{ocProdutoControl.limparOcProduto}"														 											 
+															 rendered="#{ocProdutoControl.ocproduto.produto.id == null}"/>
 										</h:panelGrid>
 									</h:panelGrid>
 								</p:dialog>
-								<p:outputPanel id="updLista">
+								<p:outputPanel id="updLista">									 
 									<p:dataTable id="listaprodutooc" value="#{ocControl.listaOcprodutos}" var="ocproduto" rowKey="#{ocproduto.produto.id}" selectionMode="single"
 										selection="#{ocProdutoControl.ocproduto}" emptyMessage="Sem produtos cadastrados para a OC" rowIndexVar="linha">
 										 <p:column headerText="Item">
@@ -167,13 +181,13 @@
 								        </p:column>
 								        
 								        <p:column headerText="Discriminação">
-								            <h:outputText value="#{ocproduto.produto.descricao}" />
+								            <h:outputText value="#{ocproduto.produto.fornecedor.nome} - #{ocproduto.produto.descricao}" />
 								        </p:column>
 								        
-								        <p:column headerText="Tipo de Saída">
-								        	<h:outputText value="Estoque" rendered="#{ocProdutoControl.ocproduto.tiposaida == 'estoque'}" />
-								        	<h:outputText value="Encomenda" rendered="#{ocProdutoControl.ocproduto.tiposaida == 'encomenda'}" />
-								        	<h:outputText value="Showroom" rendered="#{ocProdutoControl.ocproduto.tiposaida == 'showroom'}" />
+								        <p:column headerText="Tipo de Saída">								        	
+								        	<h:outputText value="Estoque" rendered="#{ocproduto.tiposaida == 'estoque'}" />
+								        	<h:outputText value="Encomenda" rendered="#{ocproduto.tiposaida == 'encomenda'}" />
+								        	<h:outputText value="Showroom" rendered="#{ocproduto.tiposaida == 'showroom'}" />
 								        </p:column>
 								             
 								        <p:column headerText="Valor Unitário">				        	

@@ -12,7 +12,7 @@
 			     	<p:messages id="msgs"/>			     	
 					<h:panelGrid columns="2" id="cadastro">
 						<p:outputLabel for="nome" value="Nome: "/>
-						<p:inputText value="#{filialControl.filial}" id="nome" size="60" required="true">
+						<p:inputText value="#{filialControl.filial.nome}" id="nome" size="60" required="true">
 							<f:validateBean/>
 						</p:inputText>
 						
