@@ -162,6 +162,9 @@ public class Produto implements java.io.Serializable {
 	
 	@Column(name="deleted", nullable = false)
 	public Boolean getDeleted() {
+		if(deleted == null){
+			deleted = false;
+		}
 		return deleted;
 	}
 

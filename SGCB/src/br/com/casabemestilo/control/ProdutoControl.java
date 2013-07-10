@@ -187,7 +187,7 @@ public class ProdutoControl extends Control implements InterfaceControl,
 		produtoBusca.setCodigo(busca);
 		listaProduto = new ProdutoDAO().listaProdutoCodigoNome(produtoBusca);
 		if(listaProduto.isEmpty()){
-			produtoBusca.getFornecedor().setNome("Cadastrar - ");
+			produtoBusca.getFornecedor().setNome("Cadastrar ");
 			listaProduto.add(produtoBusca);
 		}
 		return listaProduto;

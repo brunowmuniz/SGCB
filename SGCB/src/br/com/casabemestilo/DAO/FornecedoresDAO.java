@@ -11,6 +11,7 @@ import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
 import br.com.casabemestilo.control.FornecedoresControl;
 import br.com.casabemestilo.model.Cliente;
 import br.com.casabemestilo.model.Fornecedor;
+import br.com.casabemestilo.model.Produto;
 import br.com.casabemestilo.util.Conexao;
 
 public class FornecedoresDAO implements InterfaceDAO, Serializable {
@@ -85,8 +86,13 @@ public class FornecedoresDAO implements InterfaceDAO, Serializable {
 	@Override
 	public Fornecedor buscaObjetoId(Integer id) throws Exception,
 			HibernateException, ConstraintViolationException {
-		// TODO Auto-generated method stub
-		return null;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		fornecedor = (Fornecedor) session.createQuery("from Fornecedor f where f.id= :id")
+							 .setInteger("id", id)
+							 .uniqueResult();
+		session.close();
+		return fornecedor;
 	}
 
 	@Override

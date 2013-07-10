@@ -62,37 +62,30 @@ public class FilialControl extends Control implements InterfaceControl, Serializ
 	 * MÉTODOS
 	 * */
 	@Override
-	public void gravar() {
-		// TODO Auto-generated method stub
-		
-			
-			try {
-				filialDAO = new FilialDAO();
-				filial.setDeleted(false);
-				filialDAO.insert(filial);
-				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Filial: " + filial.getNome() + "foi gravado!"));
-				logger.info("Salvo" + filial.toString());
-				filial = new Filial();
-			} catch (ConstraintViolationException e) {
-				super.mensagem = e.getMessage();
-				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Erro Constraint: "+ super.mensagem,""));
-				logger.error("Erro Constraint: "+ super.mensagem + "-"+ filial.getNome());
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (HibernateException e) {
-				super.mensagem = e.getMessage();
-				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Hibernate: " + super.mensagem, ""));
-				logger.error("Erro hibernate: " + super.mensagem + "-" + filial.getNome());
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (Exception e) {
-				super.mensagem = e.getMessage();
-				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Exception: " + super.mensagem, ""));
-				logger.error("Erro : " + super.mensagem + "-" + filial.getNome());
-				e.printStackTrace();
-			}
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Filial: "+ filial.getNome() + "Foi gravado!"));
-		
+	public void gravar() {			
+		try {
+			filialDAO = new FilialDAO();
+			filial.setDeleted(false);
+			filialDAO.insert(filial);
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Filial: " + filial.getNome() + " foi gravado!"));
+			logger.info("Salvo" + filial.toString());
+			filial = new Filial();
+		} catch (ConstraintViolationException e) {
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Erro Constraint: "+ super.mensagem,""));
+			logger.error("Erro Constraint: "+ super.mensagem + "-"+ filial.getNome());			
+			e.printStackTrace();
+		} catch (HibernateException e) {
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Hibernate: " + super.mensagem, ""));
+			logger.error("Erro hibernate: " + super.mensagem + "-" + filial.getNome());			
+			e.printStackTrace();
+		} catch (Exception e) {
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Exception: " + super.mensagem, ""));
+			logger.error("Erro : " + super.mensagem + "-" + filial.getNome());
+			e.printStackTrace();
+		}		
 	}
 
 	@Override
@@ -201,6 +194,9 @@ public class FilialControl extends Control implements InterfaceControl, Serializ
 	 * GETTERS & SETTERS
 	 * */
 	public Filial getFilial() {
+		if(filial == null){
+			filial = new Filial();
+		}
 		return filial;
 	}
 

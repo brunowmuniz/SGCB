@@ -140,6 +140,14 @@ public class ProdutoDAO implements InterfaceDAO, Serializable {
 		return listaProduto;
 	}
 	
+	public Produto gravarProdutoAdicionarOc(Produto produto) {		
+		session = Conexao.getInstance();		
+		session.beginTransaction();
+		produto.setId((Integer) session.save(produto));		
+		session.getTransaction().commit();
+		return produto;
+	}
+	
 	/*
 	 * GETTERS & SETTERS
 	 * */
@@ -158,6 +166,8 @@ public class ProdutoDAO implements InterfaceDAO, Serializable {
 	public void setListaProduto(List<Produto> listaProduto) {
 		this.listaProduto = listaProduto;
 	}
+
+	
 
 	
 	

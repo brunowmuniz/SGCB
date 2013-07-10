@@ -103,7 +103,7 @@ public class Ocproduto implements java.io.Serializable {
 		this.oc = oc;
 	}
 
-	@Column(name = "tiposaida", length = 9)
+	@Column(name = "tiposaida")
 	public String getTiposaida() {
 		return this.tiposaida;
 	}

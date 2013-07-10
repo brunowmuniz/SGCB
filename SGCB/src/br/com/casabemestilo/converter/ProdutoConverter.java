@@ -25,7 +25,9 @@ public class ProdutoConverter implements Converter {
 		Produto produto = new Produto();
 		
 		try {
-			produto = new ProdutoDAO().buscaObjetoId(Integer.parseInt(value));
+			if(value != "" && value != null){
+				produto = new ProdutoDAO().buscaObjetoId(Integer.parseInt(value));
+			}			
 		} catch (ConstraintViolationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -38,11 +40,6 @@ public class ProdutoConverter implements Converter {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		
-		
-		if(produto == null){
-			return null;
 		}
 		
 		return produto;

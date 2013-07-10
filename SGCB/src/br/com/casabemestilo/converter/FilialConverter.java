@@ -8,7 +8,6 @@ import javax.faces.convert.FacesConverter;
 import br.com.casabemestilo.model.Filial;
 import br.com.casabemestilo.model.UsuarioFilial;
 
-@FacesConverter(forClass=Filial.class)
 public class FilialConverter implements Converter {
 
 	public FilialConverter() {

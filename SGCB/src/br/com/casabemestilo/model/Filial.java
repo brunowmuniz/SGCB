@@ -21,6 +21,8 @@ import javax.validation.constraints.Null;
 @Table(name = "filial", catalog = "gcb")
 public class Filial implements java.io.Serializable {
 
+	private static final long serialVersionUID = 180790152795605071L;
+	
 	private Integer id;
 	private String nome;
 	private Boolean deleted;	

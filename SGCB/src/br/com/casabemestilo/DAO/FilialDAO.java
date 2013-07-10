@@ -8,6 +8,7 @@ import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
 
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
+import br.com.casabemestilo.model.Cliente;
 import br.com.casabemestilo.model.Filial;
 import br.com.casabemestilo.util.Conexao;
 
@@ -42,7 +43,11 @@ public class FilialDAO implements Serializable, InterfaceDAO {
 	@Override
 	public void insert(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
+		filial = (Filial) obj;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		session.save(filial);
+		session.getTransaction().commit();
 
 	}
 

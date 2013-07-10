@@ -222,8 +222,8 @@ public class FornecedoresControl extends Control implements InterfaceControl,
 		listarAtivos();
 		for (Fornecedor fornecedores : listaFornecedores) {
             SelectItem si = new SelectItem();
+            si.setLabel(fornecedores.getNome());
             si.setValue(fornecedores.getId());
-            si.setLabel(fornecedores.getNome());             
             listaFornecedorCombo.add(si);
         }
 		return listaFornecedorCombo;

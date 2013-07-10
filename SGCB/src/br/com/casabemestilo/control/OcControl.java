@@ -8,14 +8,19 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionListener;
 
+import org.hibernate.HibernateException;
+import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.sql.Select;
 import org.primefaces.event.SelectEvent;
 
+import br.com.casabemestilo.DAO.FornecedoresDAO;
 import br.com.casabemestilo.DAO.OcDAO;
+import br.com.casabemestilo.DAO.ProdutoDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Cliente;
 import br.com.casabemestilo.model.Oc;
 import br.com.casabemestilo.model.Ocproduto;
+import br.com.casabemestilo.model.Produto;
 
 @ManagedBean
 @ViewScoped
@@ -68,6 +73,15 @@ public class OcControl extends Control implements InterfaceControl,
 	public void adicionarProdutoOc(Ocproduto ocproduto){
 		listaOcprodutos.add(ocproduto);
 		oc.setOcprodutos(new ArrayList<Ocproduto>());
+	}
+	
+	public void gravarProdutoAdicionaOc(Ocproduto ocproduto) throws ConstraintViolationException, HibernateException, Exception{		
+		Produto produto = new Produto();
+		ocproduto.getProduto().setDeleted(false);
+		ocproduto.getProduto().setFornecedor(new FornecedoresDAO().buscaObjetoId(ocproduto.getProduto().getFornecedor().getId()));
+		produto = new ProdutoDAO().gravarProdutoAdicionarOc(ocproduto.getProduto());		
+		listaOcprodutos.add(ocproduto);
+		oc.setOcprodutos(new ArrayList<Ocproduto>());		
 	}
 	
 	
