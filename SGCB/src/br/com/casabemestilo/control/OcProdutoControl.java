@@ -6,6 +6,7 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
+import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
 
 import br.com.casabemestilo.DAO.OcProdutoDAO;
@@ -26,6 +27,7 @@ public class OcProdutoControl extends Control implements InterfaceControl,
 	private List<Ocproduto> listaOcproduto;
 	
 	private OcProdutoDAO ocProdutoDAO;
+	
 	
 	
 	/*
@@ -103,11 +105,6 @@ public class OcProdutoControl extends Control implements InterfaceControl,
 		ocproduto.setProduto(new Produto());
 	}
 	
-	public void setarProduto(SelectEvent event){
-		ocproduto.setProduto((Produto) event.getObject());
-	}
-	
-	
 	/*
 	 * GETTERS & SETTERS
 	 * */
@@ -137,5 +134,6 @@ public class OcProdutoControl extends Control implements InterfaceControl,
 	public void setOcProdutoDAO(OcProdutoDAO ocProdutoDAO) {
 		this.ocProdutoDAO = ocProdutoDAO;
 	}
+	
 	
 }

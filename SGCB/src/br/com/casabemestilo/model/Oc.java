@@ -185,11 +185,13 @@ public class Oc implements java.io.Serializable {
 
 	@Column(name = "valorfinal", nullable = false, precision = 8, scale = 2)
 	public float getValorfinal() {
+		this.valorfinal = getValor() + getValorfrete() + getValormontagem();
 		return this.valorfinal;
 	}
 
 	public void setValorfinal(float valorfinal) {
 		this.valorfinal = valorfinal;
+		
 	}
 
 	@Column(name = "valorliquido", nullable = false, precision = 6)

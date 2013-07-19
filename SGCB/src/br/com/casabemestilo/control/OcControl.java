@@ -2,6 +2,7 @@ package br.com.casabemestilo.control;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -12,6 +13,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.sql.Select;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.event.TabChangeEvent;
 
 import br.com.casabemestilo.DAO.FornecedoresDAO;
 import br.com.casabemestilo.DAO.OcDAO;
@@ -37,6 +39,7 @@ public class OcControl extends Control implements InterfaceControl,
 	private OcDAO ocDAO;
 	
 	private List<Ocproduto> listaOcprodutos = new ArrayList<Ocproduto>();
+	
 	
 	
 	/*
@@ -73,6 +76,7 @@ public class OcControl extends Control implements InterfaceControl,
 	public void adicionarProdutoOc(Ocproduto ocproduto){
 		listaOcprodutos.add(ocproduto);
 		oc.setOcprodutos(new ArrayList<Ocproduto>());
+		calculaValorTotalProdutos();
 	}
 	
 	public void gravarProdutoAdicionaOc(Ocproduto ocproduto) throws ConstraintViolationException, HibernateException, Exception{		
@@ -81,8 +85,27 @@ public class OcControl extends Control implements InterfaceControl,
 		ocproduto.getProduto().setFornecedor(new FornecedoresDAO().buscaObjetoId(ocproduto.getProduto().getFornecedor().getId()));
 		produto = new ProdutoDAO().gravarProdutoAdicionarOc(ocproduto.getProduto());		
 		listaOcprodutos.add(ocproduto);
-		oc.setOcprodutos(new ArrayList<Ocproduto>());		
+		oc.setOcprodutos(new ArrayList<Ocproduto>());
+		calculaValorTotalProdutos();
 	}
+	
+	public void removerProdutoOc(Ocproduto ocproduto){
+		listaOcprodutos.remove(ocproduto);
+		calculaValorTotalProdutos();
+	}
+	
+	public void calculaValorTotalProdutos(){
+		oc.setValor(0);
+		for(Iterator<Ocproduto> iterOcProd = listaOcprodutos.iterator(); iterOcProd.hasNext();){
+			Ocproduto ocproduto =  iterOcProd.next();
+			oc.setValor(oc.getValor() + ocproduto.getValortotal());
+		}		
+	}
+	
+	public void atualizaValorTotal(TabChangeEvent event){
+		calculaValorTotalProdutos();
+	}
+	
 	
 	
 	@Override
