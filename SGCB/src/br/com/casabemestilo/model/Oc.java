@@ -42,7 +42,7 @@ public class Oc implements java.io.Serializable {
 	private float valorfinal;
 	private float valorliquido;
 	private Date datalancamento;
-	private Set pagamentos = new HashSet(0);
+	private List<Pagamento> pagamentos = new ArrayList<Pagamento>();
 	private List<Ocproduto> ocprodutos = new ArrayList<Ocproduto>();
 	private List<ComissaoUsuario> comissaoUsuario = new ArrayList<ComissaoUsuario>();
 
@@ -67,7 +67,7 @@ public class Oc implements java.io.Serializable {
 			float valorfrete, float valormontagem, Date prazoentrega,
 			String observacoes, float valor, Float valorfinanciado,
 			float valorfinal, float valorliquido, Date datalancamento,
-			Set pagamentos, List<Ocproduto> ocprodutos) {
+			List<Pagamento> pagamentos, List<Ocproduto> ocprodutos) {
 		this.usuario = usuario;
 		this.status = status;
 		this.cliente = cliente;
@@ -214,11 +214,11 @@ public class Oc implements java.io.Serializable {
 	}
 
 	@OneToMany(targetEntity = Pagamento.class, mappedBy = "oc")
-	public Set getPagamentos() {
+	public List<Pagamento> getPagamentos() {
 		return this.pagamentos;
 	}
 
-	public void setPagamentos(Set pagamentos) {
+	public void setPagamentos(List<Pagamento> pagamentos) {
 		this.pagamentos = pagamentos;
 	}
 

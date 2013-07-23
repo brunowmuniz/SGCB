@@ -2,8 +2,9 @@ package br.com.casabemestilo.model;
 
 // Generated 24/05/2013 18:36:37 by Hibernate Tools 4.0.0
 
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -26,8 +27,7 @@ public class Formapagamento implements java.io.Serializable {
 	private String nome;
 	private Boolean deleted;
 	private Boolean ehantecipacao;
-	private Set pagamentos = new HashSet(0);
-	private Set retencaos = new HashSet(0);
+	private List<CondicoesPagamento> condicoesPagamentos = new ArrayList<CondicoesPagamento>();
 
 	public Formapagamento() {
 	}
@@ -36,10 +36,9 @@ public class Formapagamento implements java.io.Serializable {
 		this.nome = nome;
 	}
 
-	public Formapagamento(String nome, Set pagamentos, Set retencaos, Boolean deleted, Boolean ehantecipacao) {
+	public Formapagamento(String nome,List<CondicoesPagamento> condicoesPagamentos, Boolean deleted, Boolean ehantecipacao) {
 		this.nome = nome;
-		this.pagamentos = pagamentos;
-		this.retencaos = retencaos;
+		this.condicoesPagamentos = condicoesPagamentos;
 		this.deleted = deleted;
 		this.ehantecipacao = ehantecipacao;
 	}
@@ -64,6 +63,7 @@ public class Formapagamento implements java.io.Serializable {
 		this.nome = nome;
 	}
 	
+	@Column(name = "deleted", nullable = false)
 	public Boolean getDeleted() {
 		return deleted;
 	}
@@ -72,6 +72,7 @@ public class Formapagamento implements java.io.Serializable {
 		this.deleted = deleted;
 	}
 
+	@Column(name = "ehantecipacao", nullable = false)
 	public Boolean getEhantecipacao() {
 		return ehantecipacao;
 	}
@@ -80,22 +81,13 @@ public class Formapagamento implements java.io.Serializable {
 		this.ehantecipacao = ehantecipacao;
 	}
 
-	@OneToMany(targetEntity = Pagamento.class, mappedBy = "formapagamento",cascade= CascadeType.ALL)
-	public Set getPagamentos() {
-		return this.pagamentos;
+	@OneToMany(targetEntity = CondicoesPagamento.class, mappedBy = "formapagamento", cascade = CascadeType.ALL)
+	public List<CondicoesPagamento> getCondicoesPagamentos() {
+		return condicoesPagamentos;
 	}
 
-	public void setPagamentos(Set pagamentos) {
-		this.pagamentos = pagamentos;
-	}
-
-	@OneToMany(targetEntity = Retencao.class, mappedBy = "formapagamento")
-	public Set getRetencaos() {
-		return this.retencaos;
-	}
-
-	public void setRetencaos(Set retencaos) {
-		this.retencaos = retencaos;
+	public void setCondicoesPagamentos(List<CondicoesPagamento> condicoesPagamentos) {
+		this.condicoesPagamentos = condicoesPagamentos;
 	}
 
 }

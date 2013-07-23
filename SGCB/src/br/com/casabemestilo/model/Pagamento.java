@@ -26,26 +26,30 @@ import javax.persistence.TemporalType;
 public class Pagamento implements java.io.Serializable {
 
 	private Integer id;
-	private Formapagamento formapagamento;
+	private CondicoesPagamento condicoesPagamento;
 	private Oc oc;
 	private Date datalancamento;
 	private Set parcelas = new HashSet(0);
+	private Boolean deleted;
+	private Float valor;
 
 	public Pagamento() {
 	}
 
-	public Pagamento(Formapagamento formapagamento, Oc oc, Date datalancamento) {
-		this.formapagamento = formapagamento;
+	public Pagamento(CondicoesPagamento condicoesPagamento, Oc oc, Date datalancamento) {
+		this.condicoesPagamento = condicoesPagamento;
 		this.oc = oc;
 		this.datalancamento = datalancamento;
 	}
 
-	public Pagamento(Formapagamento formapagamento, Oc oc, Date datalancamento,
-			Set parcelas) {
-		this.formapagamento = formapagamento;
+	public Pagamento(CondicoesPagamento condicoesPagamento, Oc oc, Date datalancamento,
+			Set parcelas, Boolean deleted, Float valor) {
+		this.condicoesPagamento = condicoesPagamento;
 		this.oc = oc;
 		this.datalancamento = datalancamento;
 		this.parcelas = parcelas;
+		this.deleted = deleted;
+		this.valor = valor;
 	}
 
 	@Id
@@ -60,13 +64,16 @@ public class Pagamento implements java.io.Serializable {
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "formapagamento", nullable = false)
-	public Formapagamento getFormapagamento() {
-		return this.formapagamento;
+	@JoinColumn(name = "condicoesPagamento", nullable = false)
+	public CondicoesPagamento getCondicoesPagamento() {
+		if(condicoesPagamento == null){
+			condicoesPagamento = new CondicoesPagamento();
+		}
+		return this.condicoesPagamento;
 	}
 
-	public void setFormapagamento(Formapagamento formapagamento) {
-		this.formapagamento = formapagamento;
+	public void setCondicoesPagamento(CondicoesPagamento condicoesPagamento) {
+		this.condicoesPagamento = condicoesPagamento;
 	}
 
 	@ManyToOne
@@ -98,4 +105,20 @@ public class Pagamento implements java.io.Serializable {
 		this.parcelas = parcelas;
 	}
 
+	public Boolean getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
+	}
+
+	@Column(name = "valor", nullable = false, scale = 6, precision = 2)
+	public Float getValor() {
+		return valor;
+	}
+
+	public void setValor(Float valor) {
+		this.valor = valor;
+	}
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionListener;
+import javax.swing.event.ChangeEvent;
 
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
@@ -15,6 +16,7 @@ import org.hibernate.sql.Select;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TabChangeEvent;
 
+import br.com.casabemestilo.DAO.FormaPagamentoDAO;
 import br.com.casabemestilo.DAO.FornecedoresDAO;
 import br.com.casabemestilo.DAO.OcDAO;
 import br.com.casabemestilo.DAO.ProdutoDAO;
@@ -22,6 +24,7 @@ import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Cliente;
 import br.com.casabemestilo.model.Oc;
 import br.com.casabemestilo.model.Ocproduto;
+import br.com.casabemestilo.model.Pagamento;
 import br.com.casabemestilo.model.Produto;
 
 @ManagedBean
@@ -40,6 +43,9 @@ public class OcControl extends Control implements InterfaceControl,
 	
 	private List<Ocproduto> listaOcprodutos = new ArrayList<Ocproduto>();
 	
+	private Pagamento pagamento = new Pagamento();
+	
+	private List<Pagamento> listaOcPagamentos = new ArrayList<Pagamento>();
 	
 	
 	/*
@@ -104,6 +110,14 @@ public class OcControl extends Control implements InterfaceControl,
 	
 	public void atualizaValorTotal(TabChangeEvent event){
 		calculaValorTotalProdutos();
+	}
+	
+	public void defineFormaPagamento() throws ConstraintViolationException, HibernateException, Exception{		
+		getPagamento().getCondicoesPagamento().setFormapagamento(new FormaPagamentoDAO().buscaObjetoId(getPagamento().getCondicoesPagamento().getFormapagamento().getId()));		
+	}
+	
+	public void gravaFormaPagamentoOc(Pagamento pagamento){
+		getOc().getPagamentos().add(pagamento);
 	}
 	
 	
@@ -185,5 +199,22 @@ public class OcControl extends Control implements InterfaceControl,
 	public void setListaOcprodutos(List<Ocproduto> listaOcprodutos) {
 		this.listaOcprodutos = listaOcprodutos;
 	}
+
+	public Pagamento getPagamento() {
+		return pagamento;
+	}
+
+	public void setPagamento(Pagamento pagamento) {
+		this.pagamento = pagamento;
+	}
+
+	public List<Pagamento> getListaOcPagamentos() {
+		return listaOcPagamentos;
+	}
+
+	public void setListaOcPagamentos(List<Pagamento> listaOcPagamentos) {
+		this.listaOcPagamentos = listaOcPagamentos;
+	}
+
 
 }

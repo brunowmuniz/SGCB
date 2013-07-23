@@ -108,8 +108,20 @@ public class FormaPagamentoControl extends Control implements Serializable,Inter
 
 	@Override
 	public Formapagamento buscaObjetoId(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
+		formapagamento =  new Formapagamento();
+		try {
+			formapagamento = new FormaPagamentoDAO().buscaObjetoId(id);
+		} catch (ConstraintViolationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (HibernateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return formapagamento;
 	}
 
 	

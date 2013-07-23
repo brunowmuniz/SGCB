@@ -8,6 +8,7 @@ import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
 
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
+import br.com.casabemestilo.model.Cliente;
 import br.com.casabemestilo.model.Formapagamento;
 import br.com.casabemestilo.util.Conexao;
 
@@ -65,8 +66,13 @@ public class FormaPagamentoDAO implements InterfaceDAO, Serializable {
 	@Override
 	public Formapagamento buscaObjetoId(Integer id) throws Exception,
 			HibernateException, ConstraintViolationException {
-		// TODO Auto-generated method stub
-		return null;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		formaPagamento = (Formapagamento) session.createQuery("from Formapagamento fp where fp.id= :id")
+							 .setInteger("id", id)
+							 .uniqueResult();
+		session.close();
+		return formaPagamento;
 	}
 
 	@Override

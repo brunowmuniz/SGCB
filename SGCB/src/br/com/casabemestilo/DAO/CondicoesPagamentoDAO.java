@@ -8,31 +8,31 @@ import org.hibernate.exception.ConstraintViolationException;
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
 import br.com.casabemestilo.model.Fornecedor;
 import br.com.casabemestilo.model.Produto;
-import br.com.casabemestilo.model.Retencao;
+import br.com.casabemestilo.model.CondicoesPagamento;
 import br.com.casabemestilo.util.Conexao;
 
-public class RetencaoDAO implements InterfaceDAO, Serializable {
+public class CondicoesPagamentoDAO implements InterfaceDAO, Serializable {
 
 	
 	private static final long serialVersionUID = 1L;
 	
 	Session session;
 	
-	private Retencao retencao;
+	private CondicoesPagamento condicoesPagamento;
 	
-	private List<Retencao> listaRetencao;
+	private List<CondicoesPagamento> listaRetencao;
 	
 	
 	/*
 	 * CONSTRUTORES
 	 * */
-	public RetencaoDAO(Retencao retencao, List<Retencao> listaRetencao) {
+	public CondicoesPagamentoDAO(CondicoesPagamento condicoesPagamento, List<CondicoesPagamento> listaRetencao) {
 		super();
-		this.retencao = retencao;
+		this.condicoesPagamento = condicoesPagamento;
 		this.listaRetencao = listaRetencao;
 	}
 
-	public RetencaoDAO() {
+	public CondicoesPagamentoDAO() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -43,10 +43,10 @@ public class RetencaoDAO implements InterfaceDAO, Serializable {
 	@Override
 	public void insert(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		this.retencao = (Retencao) obj;
+		this.condicoesPagamento = (CondicoesPagamento) obj;
 		session = Conexao.getInstance();		
 		session.beginTransaction();
-		session.save(this.retencao);
+		session.save(this.condicoesPagamento);
 		session.getTransaction().commit();
 
 	}
@@ -54,10 +54,10 @@ public class RetencaoDAO implements InterfaceDAO, Serializable {
 	@Override
 	public void update(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		retencao = (Retencao) obj;
+		condicoesPagamento = (CondicoesPagamento) obj;
 		session = Conexao.getInstance();
 		session.beginTransaction();
-		session.update(retencao);
+		session.update(condicoesPagamento);
 		session.getTransaction().commit();
 
 	}
@@ -65,43 +65,43 @@ public class RetencaoDAO implements InterfaceDAO, Serializable {
 	@Override
 	public void delete(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		retencao = (Retencao) obj;
+		condicoesPagamento = (CondicoesPagamento) obj;
 		session = Conexao.getInstance();
 		session.beginTransaction();
-		session.createQuery("update Retencao r set r.deleted= :deleted where r.id= :id")
+		session.createQuery("update CondicoesPagamento r set r.deleted= :deleted where r.id= :id")
 			   .setBoolean("deleted", true)
-			   .setInteger("id", retencao.getId())
+			   .setInteger("id", condicoesPagamento.getId())
 			   .executeUpdate();
 		session.getTransaction().commit();
 
 	}
 
 	@Override
-	public Retencao buscaObjetoId(Integer id) throws Exception,
+	public CondicoesPagamento buscaObjetoId(Integer id) throws Exception,
 			HibernateException, ConstraintViolationException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<Retencao> listaTodos() throws Exception, HibernateException,
+	public List<CondicoesPagamento> listaTodos() throws Exception, HibernateException,
 			ConstraintViolationException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<Retencao> listaAtivos() throws Exception, HibernateException,
+	public List<CondicoesPagamento> listaAtivos() throws Exception, HibernateException,
 			ConstraintViolationException {
 		session = Conexao.getInstance();
 		session.beginTransaction();
-		listaRetencao = session.createQuery("from Retencao r where r.deleted=0").list();
+		listaRetencao = session.createQuery("from CondicoesPagamento r where r.deleted=0").list();
 		session.close();
 		return listaRetencao;
 	}
 
 	@Override
-	public List<Retencao> listaSelecao(Object obj) throws Exception,
+	public List<CondicoesPagamento> listaSelecao(Object obj) throws Exception,
 			HibernateException, ConstraintViolationException {
 		// TODO Auto-generated method stub
 		return null;
@@ -111,19 +111,19 @@ public class RetencaoDAO implements InterfaceDAO, Serializable {
 	/*
 	 * GETTERS & SETTERS
 	 * */
-	public Retencao getRetencao() {
-		return retencao;
+	public CondicoesPagamento getRetencao() {
+		return condicoesPagamento;
 	}
 
-	public void setRetencao(Retencao retencao) {
-		this.retencao = retencao;
+	public void setRetencao(CondicoesPagamento condicoesPagamento) {
+		this.condicoesPagamento = condicoesPagamento;
 	}
 
-	public List<Retencao> getListaRetencao() {
+	public List<CondicoesPagamento> getListaRetencao() {
 		return listaRetencao;
 	}
 
-	public void setListaRetencao(List<Retencao> listaRetencao) {
+	public void setListaRetencao(List<CondicoesPagamento> listaRetencao) {
 		this.listaRetencao = listaRetencao;
 	}
 	

@@ -16,10 +16,10 @@ import org.hibernate.exception.ConstraintViolationException;
 import com.sun.faces.context.flash.ELFlash;
 
 import br.com.casabemestilo.DAO.FilialDAO;
-import br.com.casabemestilo.DAO.RetencaoDAO;
+import br.com.casabemestilo.DAO.CondicoesPagamentoDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Filial;
-import br.com.casabemestilo.model.Retencao;
+import br.com.casabemestilo.model.CondicoesPagamento;
 
 @ManagedBean
 @ViewScoped

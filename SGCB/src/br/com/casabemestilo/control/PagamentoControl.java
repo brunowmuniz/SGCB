@@ -3,10 +3,15 @@ package br.com.casabemestilo.control;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
 import br.com.casabemestilo.DAO.PagamentoDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Pagamento;
 
+@ManagedBean
+@ViewScoped
 public class PagamentoControl extends Control implements InterfaceControl,
 		Serializable {
 	
@@ -20,7 +25,9 @@ public class PagamentoControl extends Control implements InterfaceControl,
 	private PagamentoDAO pagamentoDAO;
 	
 	
-
+	/*
+	 * CONSTRUTORES
+	 * */
 	public PagamentoControl(String messagem) {
 		super(messagem);
 		// TODO Auto-generated constructor stub
@@ -30,6 +37,10 @@ public class PagamentoControl extends Control implements InterfaceControl,
 		// TODO Auto-generated constructor stub
 	}
 
+	
+	/*
+	 * MÉTODOS
+	 * */
 	@Override
 	public void gravar() {
 		// TODO Auto-generated method stub
@@ -70,6 +81,33 @@ public class PagamentoControl extends Control implements InterfaceControl,
 	public Object buscaObjetoId(Integer id) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/*
+	 * GETTERS & SETTERS
+	 * */
+	public Pagamento getPagamento() {
+		return pagamento;
+	}
+
+	public void setPagamento(Pagamento pagamento) {
+		this.pagamento = pagamento;
+	}
+
+	public List<Pagamento> getListaPagamento() {
+		return listaPagamento;
+	}
+
+	public void setListaPagamento(List<Pagamento> listaPagamento) {
+		this.listaPagamento = listaPagamento;
+	}
+
+	public PagamentoDAO getPagamentoDAO() {
+		return pagamentoDAO;
+	}
+
+	public void setPagamentoDAO(PagamentoDAO pagamentoDAO) {
+		this.pagamentoDAO = pagamentoDAO;
 	}
 
 }

@@ -2,11 +2,15 @@ package br.com.casabemestilo.control;
 
 import java.io.Serializable;
 import java.util.List;
-
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import br.com.casabemestilo.DAO.ParcelaDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Parcela;
 
+
+@ManagedBean
+@ViewScoped
 public class ParcelaControl extends Control implements InterfaceControl,
 		Serializable {
 

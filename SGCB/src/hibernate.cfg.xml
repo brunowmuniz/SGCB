@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
                                          "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
- <session-factory>
+ <session-factory name="">
   <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
   <property name="hibernate.connection.password">973532</property>
   <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/gcb?autoReconnect=true</property>
@@ -33,7 +33,7 @@
   <mapping class="br.com.casabemestilo.model.Assistenciatecnica"/>
   <mapping class="br.com.casabemestilo.model.Fornecedor"/>
   <mapping class="br.com.casabemestilo.model.Comissao"/>
-  <mapping class="br.com.casabemestilo.model.Retencao"/>
+  <mapping class="br.com.casabemestilo.model.CondicoesPagamento"/>
   <mapping class="br.com.casabemestilo.model.Pagamento"/>
   <mapping class="br.com.casabemestilo.model.Contacontabil"/>
   <mapping class="br.com.casabemestilo.model.Cliente"/>
