@@ -23,3 +23,8 @@
 .negrito{
 	font-weight: bolder;
 }
+
+.vAlTop{
+	vertical-align: top;
+	width: 50%;
+}

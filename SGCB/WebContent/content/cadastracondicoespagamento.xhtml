@@ -8,27 +8,34 @@
 	<ui:composition template="../template/template.xhtml">
 		<ui:define name="conteudo">
 			<h:form>
-				<p:panel header="Cadastro de Retenção">
+				<p:panel header="Cadastro de Condições de Pagamento">
 			     	<p:messages id="msgs"/>			     	
 					<h:panelGrid columns="2" id="cadastro">
 						<p:outputLabel for="nome" value="Nome: "/>
-						<p:inputText value="#{retencaoControl.retencao.nome}" id="nome" size="60" required="true">
+						<p:inputText value="#{condicoesPagamentoControl.condicoesPagamento.nome}" id="nome" size="60" required="true">
 							<f:validateBean/>
 						</p:inputText>
 						<p:outputLabel for="formapagamento" value="Forma de Pagamento: "/>						
-						<p:selectOneMenu id="formapagamento" value="#{retencaoControl.retencao.formapagamento.id}"
+						<p:selectOneMenu id="formapagamento" value="#{condicoesPagamentoControl.condicoesPagamento.formapagamento.id}"
 										 required="true" requiredMessage="Selecionar uma forma de pagamento">						
 							<f:selectItem itemLabel="Selecione Forma Pagamento" itemValue=""/>
 							<f:selectItems value="#{formaPagamentoControl.listaFormaPagamentoCombo}"/>
 						</p:selectOneMenu>
 						<p:outputLabel for="percentual" value="Retenção (%): "/>						
-						<p:inputText value="#{retencaoControl.retencao.percentual}" id="percentual" size="10" required="true">
+						<p:inputText value="#{condicoesPagamentoControl.condicoesPagamento.percentual}" id="percentual" size="10" required="true">
 							<f:validateBean/>
 							<f:convertNumber locale="pt_BR" maxIntegerDigits="2" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
-						</p:inputText>						
-						<p:commandButton rendered="#{retencaoControl.retencao.id != null}" actionListener="#{retencaoControl.alterar}" value="Alterar" update="msgs,cadastro" id="gravar"/>
-						<p:commandButton rendered="#{retencaoControl.retencao.id == null}" actionListener="#{retencaoControl.gravar}" value="Gravar" update="msgs,cadastro" id="alterar"/>
-						<p:commandButton rendered="#{retencaoControl.retencao.id != null}" action="#{retencasoControl.sairAlteracao}" value="Sair" id="sair" ajax="false"/>
+						</p:inputText>
+						<p:outputLabel for="parcelas" value="Nº de Parcelas: "/>
+						<p:spinner value="#{condicoesPagamentoControl.condicoesPagamento.parcelas}" min="1" max="12" id="parcelas" required="true">
+							<p:ajax event="change" process="@this" update="avista" />
+						</p:spinner>
+						<p:outputLabel for="avista" value="À vista: "/>
+						<p:selectBooleanCheckbox id="avista" value="#{condicoesPagamentoControl.condicoesPagamento.avista}"/>
+												
+						<p:commandButton rendered="#{condicoesPagamentoControl.condicoesPagamento.id != null}" actionListener="#{condicoesPagamentoControl.alterar}" value="Alterar" update="msgs,cadastro" id="gravar"/>
+						<p:commandButton rendered="#{condicoesPagamentoControl.condicoesPagamento.id == null}" actionListener="#{condicoesPagamentoControl.gravar}" value="Gravar" update="msgs,cadastro" id="alterar"/>
+						<p:commandButton rendered="#{condicoesPagamentoControl.condicoesPagamento.id != null}" action="#{retencasoControl.sairAlteracao}" value="Sair" id="sair" ajax="false"/>
 					</h:panelGrid>
 				</p:panel>
 			</h:form>
@@ -36,7 +43,7 @@
 		<ui:define name="rodape">
 			<p:panel header="Descritivo Tela" styleClass="rodape">
 	    		<p:outputLabel value="Tela para cadastro e edição da retenção dos parcelamentos nas forma de pagamento." styleClass="rodape_esquerda"/>
-	    		<p:outputLabel value="cadastraretencao.jsf" styleClass="rodape_direita"/>
+	    		<p:outputLabel value="cadastracondicoesPagamento.jsf" styleClass="rodape_direita"/>
 	    	</p:panel>
 		</ui:define>
 	</ui:composition>

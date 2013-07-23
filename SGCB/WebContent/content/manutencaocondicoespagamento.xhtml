@@ -11,22 +11,22 @@
 				<p:panel header="Manutenção de Retenção">
 			     	<p:messages id="msgs"/>
 					 <p:contextMenu for="retencoes">
-					 	<p:menuitem value="Deletar" update="retencoes,msgs" icon="ui-icon-close" actionListener="#{retencaoControl.deletar}"/>
-					 	<p:menuitem value="Editar" action="#{retencaoControl.alterarCadastro}" ajax="false"/>
+					 	<p:menuitem value="Deletar" update="retencoes,msgs" icon="ui-icon-close" actionListener="#{condicoesPagamentoControl.deletar}"/>
+					 	<p:menuitem value="Editar" action="#{condicoesPagamentoControl.alterarCadastro}" ajax="false"/>
 					 </p:contextMenu>
 					 
-					 <p:dataTable var="retencao" value="#{retencaoControl.listarAtivos()}" id="retencoes" rowKey="#{retencao.id}"  
-                		selection="#{retencaoControl.retencao}" selectionMode="single" >                		  		
+					 <p:dataTable var="condicoesPagamento" value="#{condicoesPagamentoControl.listarAtivos()}" id="retencoes" rowKey="#{condicoesPagamento.id}"  
+                		selection="#{condicoesPagamentoControl.condicoesPagamento}" selectionMode="single" >                		  		
 				        <p:column headerText="Descrição">
-				            <h:outputText value="#{retencao.nome}" />
+				            <h:outputText value="#{condicoesPagamento.nome}" />
 				        </p:column>
 				
 				        <p:column headerText="Forma de Pagamento">
-				            <h:outputText value="#{retencao.formapagamento.nome}" />
+				            <h:outputText value="#{condicoesPagamento.formapagamento.nome}" />
 				        </p:column>
 				        
-				        <p:column headerText="%">
-				            <h:outputText value="#{retencao.percentual}" />
+				        <p:column headerText="% Retenção">
+				            <h:outputText value="#{condicoesPagamento.percentual}" />
 				        </p:column>				        
 				    </p:dataTable>
 			     </p:panel>
@@ -35,7 +35,7 @@
 		 <ui:define name="rodape">
 	    	<p:panel header="Descritivo Tela" styleClass="rodape">
 	    		<p:outputLabel value="Tela de listagem das retenções nas formas de pagamento." styleClass="rodape_esquerda"/>
-	    		<p:outputLabel value="manutencaoretencao.jsf" styleClass="rodape_direita"/>
+	    		<p:outputLabel value="manutencaocondicoesPagamento.jsf" styleClass="rodape_direita"/>
 	    	</p:panel>
 	    </ui:define>
 	</ui:composition>

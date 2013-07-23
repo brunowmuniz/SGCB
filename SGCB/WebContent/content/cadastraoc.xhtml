@@ -6,7 +6,11 @@
       xmlns:p="http://primefaces.org/ui">
 
 	<ui:composition template="../template/template.xhtml">
-		<ui:define name="conteudo">
+		<p:ajaxStatus onstart="PF('aguarde').show();" onsuccess="PF('aguarde').hide();"/> 
+		<p:dialog modal="true" widgetVar="aguarde" header="Aguarde..." draggable="false" closable="false">
+			<p:graphicImage value="../imagens/loading.gif" />
+		</p:dialog>
+		<ui:define name="conteudo">			
 			<h:form id="form">
 				<p:panel header="Cadastro de OC">
 					<p:messages id="msgs"/>					
@@ -265,63 +269,102 @@
 							</p:tab>
 							
 							<p:tab title="Financeiro" id="financeiro">								
-								<p:outputPanel id="updFinanceiro">																
-									<h:panelGrid id="dadosfinanceiro">
-										<h:panelGrid columns="6">
-											<p:outputLabel value="Frete: " />
-											<p:inputText value="#{ocControl.oc.valorfrete}">
-												<f:validateBean />
-												<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="4" minFractionDigits="2"/>
-												<p:ajax event="blur" process="@this" update="@this,valorfinaloc"/>
-											</p:inputText>
-											
-											<p:outputLabel value="Montagem: " />
-											<p:inputText value="#{ocControl.oc.valormontagem}">
-												<f:validateBean />
-												<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="4" minFractionDigits="2"/>
-												<p:ajax event="blur" process="@this" update="@this,valorfinaloc"/>
-											</p:inputText>
-											
-											<p:outputLabel value="Prazo de Entrega: " />
-											<p:inputText value="#{ocControl.oc.prazoentrega}">
-												<f:validateBean />
-												<f:convertNumber minIntegerDigits="1" maxIntegerDigits="3"/>
-												<p:ajax event="blur" process="@this"/>
-											</p:inputText>										
-										</h:panelGrid>
-										<h:panelGrid columns="2">
-											<p:outputLabel for="obsoc" value="Observações: "/>
-											<p:inputTextarea value="#{ocControl.oc.observacoes}" id="obsoc" rows="10" cols="50"/>
-										</h:panelGrid>
-										<h:panelGrid columns="2">
-											<p:outputLabel for="formapagamento" value="Forma de Pagamento: "/>
-											<p:inputText value="" id="formapagamento">
-												<f:validateBean />
-												<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
-												<p:ajax event="blur" process="@this"/>
-											</p:inputText>
-											
-											<p:outputLabel for="valoroc" value="Valor: "/>
-											<p:inputText value="#{ocControl.oc.valor}" id="valoroc">
-												<f:validateBean />
-												<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
-												<p:ajax event="blur" process="@this"/>
-											</p:inputText>
-											
-											<p:outputLabel for="valorfinanciadooc" value="Valor Financ.: "/>
-											<p:inputText value="#{ocControl.oc.valorfinanciado}" id="valorfinanciadooc">
-												<f:validateBean />
-												<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
-												<p:ajax event="blur" process="@this"/>
-											</p:inputText>
-											
-											<p:outputLabel for="valorfinaloc" value="Valor Final: "/>
-											<p:inputText value="#{ocControl.oc.valorfinal}" id="valorfinaloc">
-												<f:validateBean />
-												<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
-												<p:ajax event="blur" process="@this"/>
-											</p:inputText>
-										</h:panelGrid>
+								<p:outputPanel id="updFinanceiro">																								
+									<h:panelGrid id="dadosfinanceiro" columns="2" columnClasses="vAlTop,vAlTop">
+										<p:panel>
+											<h:panelGrid columns="4">
+												<p:outputLabel value="Frete: " />
+												<p:inputText value="#{ocControl.oc.valorfrete}">
+													<f:validateBean />
+													<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="4" minFractionDigits="2"/>
+													<p:ajax event="blur" process="@this" update="@this,valorfinaloc"/>
+												</p:inputText>
+												
+												<p:outputLabel value="Montagem: " />
+												<p:inputText value="#{ocControl.oc.valormontagem}">
+													<f:validateBean />
+													<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="4" minFractionDigits="2"/>
+													<p:ajax event="blur" process="@this" update="@this,valorfinaloc"/>
+												</p:inputText>
+												
+												<p:outputLabel value="Prazo de Entrega: " />
+												<p:inputText value="#{ocControl.oc.prazoentrega}">
+													<f:validateBean />
+													<f:convertNumber minIntegerDigits="1" maxIntegerDigits="3"/>
+													<p:ajax event="blur" process="@this"/>
+												</p:inputText>										
+											</h:panelGrid>
+											<h:panelGrid columns="2" >
+												<p:outputLabel for="obsoc" value="Observações: "/>
+												<p:inputTextarea value="#{ocControl.oc.observacoes}" id="obsoc" rows="10" cols="50"/>
+											</h:panelGrid>
+											<h:panelGrid columns="2">
+												<p:outputLabel for="valoroc" value="Valor: "/>
+												<p:inputText value="#{ocControl.oc.valor}" id="valoroc">
+													<f:validateBean />
+													<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
+													<p:ajax event="blur" process="@this"/>
+												</p:inputText>
+												
+												<p:outputLabel for="valorfinanciadooc" value="Valor Financ.: "/>
+												<p:inputText value="#{ocControl.oc.valorfinanciado}" id="valorfinanciadooc">
+													<f:validateBean />
+													<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
+													<p:ajax event="blur" process="@this"/>
+												</p:inputText>
+												
+												<p:outputLabel for="valorfinaloc" value="Valor Final: "/>
+												<p:inputText value="#{ocControl.oc.valorfinal}" id="valorfinaloc">
+													<f:validateBean />
+													<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
+													<p:ajax event="blur" process="@this"/>
+												</p:inputText>
+											</h:panelGrid>
+										</p:panel>
+										<p:panel>
+											<p:panel>
+												<h:panelGrid columns="2" id="formapagamentodet">													
+													<p:outputLabel for="formapagamento" value="Forma de Pagamento: "/>
+													<p:selectOneMenu id="formapagamento" value="#{ocControl.pagamento.condicoesPagamento.formapagamento.id}"
+													 				 required="true" requiredMessage="Selecionar uma forma de pagamento">						
+														<f:selectItem itemLabel="Selecione Forma de Pagamento" itemValue=""/>
+														<f:selectItems value="#{formaPagamentoControl.listaFormaPagamentoCombo}"/>
+														<p:ajax event="change" update="formapagamento,condicoespagamento" process="formapagamento" listener="#{ocControl.defineFormaPagamento}"/>
+													</p:selectOneMenu>
+																								
+													<p:outputLabel for="condicoespagamento" value="Condição de Pagamento: "/>
+													<p:selectOneMenu id="condicoespagamento" value="#{ocControl.pagamento.condicoesPagamento.id}"
+													 				 required="true" requiredMessage="Selecionar uma condição de pagamento">						
+														<f:selectItem itemLabel="Selecione Condição de Pagamento" itemValue=""/>
+														<f:selectItems value="#{condicoesPagamentoControl.carregaCondicoesPagamentoPorFormaPagamento(ocControl.pagamento.condicoesPagamento.formapagamento.id)}"/>
+														<p:ajax event="change" process="@this"/>
+													</p:selectOneMenu>
+													<p:outputLabel for="valorcondicoespagamento" value="Valor: "/>
+													<p:inputText value="#{ocControl.pagamento.valor}" id="valorcondicoespagamento">
+														<f:validateBean />
+														<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
+														<p:ajax event="blur" process="@this"/>
+													</p:inputText>
+													<p:commandButton value="Adicionar Forma Pagamento" update="updFormaPagamento,formapagamentodet" process="@this,formapagamentodet"
+																	actionListener="#{ocControl.gravaFormaPagamentoOc(ocControl.pagamento)}"/>																										
+												</h:panelGrid>
+											</p:panel>
+											<p:panel>
+												<p:outputPanel id="updFormaPagamento">
+													<p:dataTable id="tabelapagamento" value="#{ocControl.oc.pagamentos}" var="pagamento">
+														<p:column headerText="Forma de Pagamento">
+															<h:outputText value="#{pagamento.condicoesPagamento.formapagamento.nome}" />
+														</p:column>
+														<p:column headerText="Condição">
+															<h:outputText value="#{pagamento.condicoesPagamento.nome}" />
+														</p:column>
+														<p:column headerText="Valor">
+															<h:outputText value="#{pagamento.valor}" />
+														</p:column>
+													</p:dataTable>
+												</p:outputPanel>																						
+											</p:panel>											
+										</p:panel>
 									</h:panelGrid>
 								</p:outputPanel>						
 							</p:tab>
