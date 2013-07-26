@@ -317,49 +317,61 @@
 												<p:inputText value="#{ocControl.oc.valorfinal}" id="valorfinaloc">
 													<f:validateBean />
 													<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
-													<p:ajax event="blur" process="@this"/>
+													<p:ajax event="blur" process="@this" update="@this,updSelecaoCondicao"/>																																							 
 												</p:inputText>
+												<p:message for="valorfinaloc"/>
 											</h:panelGrid>
 										</p:panel>
 										<p:panel>
 											<p:panel>
-												<h:panelGrid columns="2" id="formapagamentodet">													
-													<p:outputLabel for="formapagamento" value="Forma de Pagamento: "/>
-													<p:selectOneMenu id="formapagamento" value="#{ocControl.pagamento.condicoesPagamento.formapagamento.id}"
-													 				 required="true" requiredMessage="Selecionar uma forma de pagamento">						
-														<f:selectItem itemLabel="Selecione Forma de Pagamento" itemValue=""/>
-														<f:selectItems value="#{formaPagamentoControl.listaFormaPagamentoCombo}"/>
-														<p:ajax event="change" update="formapagamento,condicoespagamento" process="formapagamento" listener="#{ocControl.defineFormaPagamento}"/>
-													</p:selectOneMenu>
-																								
-													<p:outputLabel for="condicoespagamento" value="Condição de Pagamento: "/>
-													<p:selectOneMenu id="condicoespagamento" value="#{ocControl.pagamento.condicoesPagamento.id}"
-													 				 required="true" requiredMessage="Selecionar uma condição de pagamento">						
-														<f:selectItem itemLabel="Selecione Condição de Pagamento" itemValue=""/>
-														<f:selectItems value="#{condicoesPagamentoControl.carregaCondicoesPagamentoPorFormaPagamento(ocControl.pagamento.condicoesPagamento.formapagamento.id)}"/>
-														<p:ajax event="change" process="@this"/>
-													</p:selectOneMenu>
-													<p:outputLabel for="valorcondicoespagamento" value="Valor: "/>
-													<p:inputText value="#{ocControl.pagamento.valor}" id="valorcondicoespagamento">
-														<f:validateBean />
-														<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
-														<p:ajax event="blur" process="@this"/>
-													</p:inputText>
-													<p:commandButton value="Adicionar Forma Pagamento" update="updFormaPagamento,formapagamentodet" process="@this,formapagamentodet"
-																	actionListener="#{ocControl.gravaFormaPagamentoOc(ocControl.pagamento)}"/>																										
-												</h:panelGrid>
+												<p:messages id="msg" />												
+												<p:outputPanel id="updSelecaoCondicao">
+													<h:panelGrid columns="2" id="formapagamentodet" rendered="#{not ocControl.habilitaCondicoesPagamento()}">
+														<p:outputLabel for="formapagamento" value="Forma de Pagamento: "/>
+														<p:selectOneMenu id="formapagamento" value="#{ocControl.pagamento.condicoesPagamento.formapagamento.id}"
+														 				 required="true" requiredMessage="Selecionar uma forma de pagamento">						
+															<f:selectItem itemLabel="Selecione Forma de Pagamento" itemValue=""/>
+															<f:selectItems value="#{formaPagamentoControl.listaFormaPagamentoCombo}"/>
+															<p:ajax event="change" update="formapagamento,condicoespagamento,msg" process="formapagamento" listener="#{ocControl.defineFormaPagamento}"/>
+														</p:selectOneMenu>
+																									
+														<p:outputLabel for="condicoespagamento" value="Condição de Pagamento: "/>
+														<p:selectOneMenu id="condicoespagamento" value="#{ocControl.pagamento.condicoesPagamento.id}" required="true">
+															<f:selectItem itemLabel="Selecione Condição" itemValue=""/>
+															<f:selectItems value="#{condicoesPagamentoControl.carregaCondicoesPagamentoPorFormaPagamento(ocControl.pagamento.condicoesPagamento.formapagamento.id)}"/>
+															<p:ajax event="change" process="@this" listener="#{ocControl.defineCondicoesPagamento}" update="condicoespagamento,msg"/>
+														</p:selectOneMenu>											
+														
+														<p:outputLabel for="valorcondicoespagamento" value="Valor: "/>																											
+														<p:inputText value="#{ocControl.pagamento.valor}" id="valorcondicoespagamento">															
+															<f:validateBean />
+															<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
+															<p:ajax event="blur" process="@this" update="valorcondicoespagamento,msg"/>
+														</p:inputText>
+														<p:commandButton value="Adicionar Forma Pagamento" update="updFormaPagamento,formapagamentodet" process="@this,formapagamentodet"
+																		actionListener="#{ocControl.gravaFormaPagamentoOc()}">														
+														</p:commandButton>
+													</h:panelGrid>		
+												</p:outputPanel>
 											</p:panel>
 											<p:panel>
+												<p:contextMenu for="tabelapagamento">
+													<p:menuitem value="Deletar" update="tabelapagamento,updSelecaoCondicao" icon="ui-icon-close" process="@this,tabelapagamento"
+								 								actionListener="#{ocControl.removeCondicoesPagamento(ocControl.pagamento)}"/>
+												</p:contextMenu>
 												<p:outputPanel id="updFormaPagamento">
-													<p:dataTable id="tabelapagamento" value="#{ocControl.oc.pagamentos}" var="pagamento">
+													<p:dataTable id="tabelapagamento" value="#{ocControl.oc.pagamentos}" var="pagamento"
+																 selectionMode="single" selection="#{ocControl.pagamento}" rowKey="#{pagamento.condicoesPagamento.id}">
 														<p:column headerText="Forma de Pagamento">
 															<h:outputText value="#{pagamento.condicoesPagamento.formapagamento.nome}" />
 														</p:column>
 														<p:column headerText="Condição">
-															<h:outputText value="#{pagamento.condicoesPagamento.nome}" />
+															<h:outputText value="#{pagamento.condicoesPagamento.nome}"/>
 														</p:column>
 														<p:column headerText="Valor">
-															<h:outputText value="#{pagamento.valor}" />
+															<h:outputText value="#{pagamento.valor}">
+																<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
+															</h:outputText>
 														</p:column>
 													</p:dataTable>
 												</p:outputPanel>																						

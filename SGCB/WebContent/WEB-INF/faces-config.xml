@@ -21,5 +21,9 @@
 		<converter-id>converter.ProdutoConverter</converter-id>
 		<converter-class>br.com.casabemestilo.converter.ProdutoConverter</converter-class>
 	</converter>
+	<converter>
+		<converter-id>converter.CondicoesPagamentoConverter</converter-id>
+		<converter-class>br.com.casabemestilo.converter.CondicoesPagamentoConverter</converter-class>
+	</converter>
 
 </faces-config>
