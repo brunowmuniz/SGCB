@@ -16,12 +16,14 @@ import org.hibernate.sql.Select;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TabChangeEvent;
 
+import br.com.casabemestilo.DAO.CondicoesPagamentoDAO;
 import br.com.casabemestilo.DAO.FormaPagamentoDAO;
 import br.com.casabemestilo.DAO.FornecedoresDAO;
 import br.com.casabemestilo.DAO.OcDAO;
 import br.com.casabemestilo.DAO.ProdutoDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Cliente;
+import br.com.casabemestilo.model.CondicoesPagamento;
 import br.com.casabemestilo.model.Oc;
 import br.com.casabemestilo.model.Ocproduto;
 import br.com.casabemestilo.model.Pagamento;
@@ -46,6 +48,8 @@ public class OcControl extends Control implements InterfaceControl,
 	private Pagamento pagamento = new Pagamento();
 	
 	private List<Pagamento> listaOcPagamentos = new ArrayList<Pagamento>();
+	
+	private Float totalPagamento = new Float(0);
 	
 	
 	/*
@@ -100,6 +104,10 @@ public class OcControl extends Control implements InterfaceControl,
 		calculaValorTotalProdutos();
 	}
 	
+	public void removeCondicoesPagamento(Pagamento pagamento){
+		oc.getPagamentos().remove(pagamento);
+	}
+	
 	public void calculaValorTotalProdutos(){
 		oc.setValor(0);
 		for(Iterator<Ocproduto> iterOcProd = listaOcprodutos.iterator(); iterOcProd.hasNext();){
@@ -116,10 +124,27 @@ public class OcControl extends Control implements InterfaceControl,
 		getPagamento().getCondicoesPagamento().setFormapagamento(new FormaPagamentoDAO().buscaObjetoId(getPagamento().getCondicoesPagamento().getFormapagamento().getId()));		
 	}
 	
-	public void gravaFormaPagamentoOc(Pagamento pagamento){
-		getOc().getPagamentos().add(pagamento);
+	public void defineCondicoesPagamento() throws ConstraintViolationException, HibernateException, Exception{
+		CondicoesPagamento condicoesPagamento = new CondicoesPagamento();
+		condicoesPagamento = new CondicoesPagamentoDAO().buscaObjetoId(getPagamento().getCondicoesPagamento().getId());
+		getPagamento().setCondicoesPagamento(condicoesPagamento);
 	}
 	
+	public void gravaFormaPagamentoOc(){
+		getOc().getPagamentos().add(getOc().getPagamentos().size(), getPagamento());
+		for(Iterator<Pagamento> iterPag = getOc().getPagamentos().iterator(); iterPag.hasNext();){
+			System.out.println(iterPag.next().toString());
+		}
+		setPagamento(new Pagamento());
+	}
+	
+	public boolean habilitaCondicoesPagamento(){		 
+		if(getTotalPagamento() < oc.getValorfinal()){
+			return false;
+		}else{
+			return true;
+		}		
+	}
 	
 	
 	@Override
@@ -214,6 +239,18 @@ public class OcControl extends Control implements InterfaceControl,
 
 	public void setListaOcPagamentos(List<Pagamento> listaOcPagamentos) {
 		this.listaOcPagamentos = listaOcPagamentos;
+	}
+
+	public Float getTotalPagamento() {
+		for(Iterator<Pagamento> iterPagamento = oc.getPagamentos().iterator(); iterPagamento.hasNext();){
+			Pagamento pagamento = iterPagamento.next();
+			totalPagamento += pagamento.getValor();
+		}
+		return totalPagamento;
+	}
+
+	public void setTotalPagamento(Float totalPagamento) {
+		this.totalPagamento = totalPagamento;
 	}
 
 

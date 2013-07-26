@@ -115,10 +115,22 @@ public class Pagamento implements java.io.Serializable {
 
 	@Column(name = "valor", nullable = false, scale = 6, precision = 2)
 	public Float getValor() {
+		if(this.valor == null){
+			valor = new Float(0);
+		}
 		return valor;
 	}
 
 	public void setValor(Float valor) {
 		this.valor = valor;
 	}
+
+	@Override
+	public String toString() {
+		return "Pagamento [id=" + id + ", datalancamento=" + datalancamento
+				+ ", parcelas=" + parcelas + ", deleted=" + deleted
+				+ ", valor=" + valor + "]";
+	}
+	
+	
 }

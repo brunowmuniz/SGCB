@@ -175,15 +175,12 @@ public class CondicoesPagamentoControl extends Control implements InterfaceContr
 		return listaCondicoesPagamento;
 	}
 	
-	public List carregaCondicoesPagamentoPorFormaPagamento(Integer idFormaPagamento){
+	public List<SelectItem> carregaCondicoesPagamentoPorFormaPagamento(Integer idFormaPagamento){
 		listaCondicoesPagamentoCombo = new ArrayList();
 		listarAtivos();
 		for(CondicoesPagamento condicoesPagamento : listaCondicoesPagamento){
 			if(condicoesPagamento.getFormapagamento().getId() == idFormaPagamento){
-				SelectItem si = new SelectItem();
-				si.setValue(condicoesPagamento.getId());
-				si.setLabel(condicoesPagamento.getNome());
-				listaCondicoesPagamentoCombo.add(si);
+				listaCondicoesPagamentoCombo.add(new SelectItem(condicoesPagamento.getId(), condicoesPagamento.getNome()));
 			}			
 		}
 		

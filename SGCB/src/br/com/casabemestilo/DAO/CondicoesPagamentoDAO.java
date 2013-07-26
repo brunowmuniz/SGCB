@@ -79,8 +79,13 @@ public class CondicoesPagamentoDAO implements InterfaceDAO, Serializable {
 	@Override
 	public CondicoesPagamento buscaObjetoId(Integer id) throws Exception,
 			HibernateException, ConstraintViolationException {
-		// TODO Auto-generated method stub
-		return null;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		condicoesPagamento = (CondicoesPagamento) session.createQuery("from CondicoesPagamento cp where cp.id= :id")
+							 .setInteger("id", id)
+							 .uniqueResult();
+		session.close();
+		return condicoesPagamento;
 	}
 
 	@Override
