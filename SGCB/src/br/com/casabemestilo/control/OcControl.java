@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionListener;
 import javax.swing.event.ChangeEvent;
 
@@ -16,18 +18,23 @@ import org.hibernate.sql.Select;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TabChangeEvent;
 
+import br.com.casabemestilo.DAO.ComissaoDAO;
 import br.com.casabemestilo.DAO.CondicoesPagamentoDAO;
 import br.com.casabemestilo.DAO.FormaPagamentoDAO;
 import br.com.casabemestilo.DAO.FornecedoresDAO;
 import br.com.casabemestilo.DAO.OcDAO;
+import br.com.casabemestilo.DAO.OcProdutoDAO;
 import br.com.casabemestilo.DAO.ProdutoDAO;
+import br.com.casabemestilo.DAO.StatusDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Cliente;
+import br.com.casabemestilo.model.Comissao;
 import br.com.casabemestilo.model.CondicoesPagamento;
 import br.com.casabemestilo.model.Oc;
 import br.com.casabemestilo.model.Ocproduto;
 import br.com.casabemestilo.model.Pagamento;
 import br.com.casabemestilo.model.Produto;
+import br.com.casabemestilo.model.Status;
 
 @ManagedBean
 @ViewScoped
@@ -131,10 +138,7 @@ public class OcControl extends Control implements InterfaceControl,
 	}
 	
 	public void gravaFormaPagamentoOc(){
-		getOc().getPagamentos().add(getOc().getPagamentos().size(), getPagamento());
-		for(Iterator<Pagamento> iterPag = getOc().getPagamentos().iterator(); iterPag.hasNext();){
-			System.out.println(iterPag.next().toString());
-		}
+		getOc().getPagamentos().add(getOc().getPagamentos().size(), getPagamento());		
 		setPagamento(new Pagamento());
 	}
 	
@@ -149,8 +153,29 @@ public class OcControl extends Control implements InterfaceControl,
 	
 	@Override
 	public void gravar() {
-		// TODO Auto-generated method stub
-
+		try {
+			oc.getOcprodutos().clear();
+			ocDAO = new OcDAO();
+			oc.setOcprodutos(listaOcprodutos);
+			oc.setStatus((Status) new StatusDAO().buscaObjetoId(1));
+			calculaValorComissao();
+			ocDAO.insert(oc);
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("OC " + oc.getId() + " foi gravada!"));
+			oc = new Oc();
+		} catch (ConstraintViolationException e) {			
+			e.printStackTrace();
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));
+		} catch (HibernateException e) {
+			e.printStackTrace();
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Hibernate: " + super.mensagem, ""));
+		} catch (Exception e) {
+			e.printStackTrace();
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Geral: " + super.mensagem, ""));
+		}
+		
 	}
 
 	@Override
@@ -196,7 +221,54 @@ public class OcControl extends Control implements InterfaceControl,
 	public void setListaOc(List<Oc> listaOc) {
 		this.listaOc = listaOc;
 	}
-
+	
+	public void calculaValorComissao(){
+		oc.setValorcomissao(new Float(0));
+		Float percentualRetencao = new Float(0);
+		Float valorLiquido = null;		
+		Float valorImpermeabilizacao = new Float(0);
+		Float valorLiquidoImpermeabilizacao = new Float(0);
+		
+		for(Ocproduto ocproduto : oc.getOcprodutos()){
+			if(ocproduto.getProduto().getDescricao().equalsIgnoreCase("Impermeabilização")){				
+				valorImpermeabilizacao = ocproduto.getValortotal();
+			}
+		}
+		
+		for(Pagamento pagamentoOc : oc.getPagamentos()){
+			percentualRetencao = null;
+			valorLiquido = null;			
+			percentualRetencao = pagamentoOc.getCondicoesPagamento().getPercentual() / 100;
+			if(pagamentoOc.getCondicoesPagamento().getFormapagamento().getEhantecipacao()){
+				percentualRetencao +=  pagamentoOc.getCondicoesPagamento().getFormapagamento().getPercentualAntecipacao() /100;
+			}
+			valorLiquido = pagamentoOc.getValor() - (pagamentoOc.getValor() * percentualRetencao);
+			
+			oc.setValorliquido(oc.getValorliquido() + valorLiquido);
+		}
+		
+		if(valorImpermeabilizacao != 0){
+			valorLiquidoImpermeabilizacao = (oc.getValorliquido() / oc.getValorfinal()) * valorImpermeabilizacao;
+		}
+		
+		ComissaoDAO comissaoDAO = new ComissaoDAO();		
+		Comissao comissao = comissaoDAO.buscaComissaoUsuario(oc.getUsuario());
+		
+		if(comissao != null){
+			if(comissao.getEhComissaoIndividual()){			
+				oc.setValorcomissao(((oc.getValorliquido() - valorLiquidoImpermeabilizacao) * (comissao.getPercentualComissaoIndividual() / 100))
+									+ new Float(valorLiquidoImpermeabilizacao * 0.25));
+			}else{
+				oc.setValorcomissao(((oc.getValorliquido() - valorLiquidoImpermeabilizacao) * (comissao.getPercentualComissaoConjunta() / 100))
+									+ new Float(valorLiquidoImpermeabilizacao * 0.25));
+			}
+		}
+	}
+	
+	public void gravarPagamento(){
+		
+	}
+	
 	
 	/*
 	 * GETTERS & SETTERS
@@ -242,6 +314,7 @@ public class OcControl extends Control implements InterfaceControl,
 	}
 
 	public Float getTotalPagamento() {
+		totalPagamento = new Float(0);
 		for(Iterator<Pagamento> iterPagamento = oc.getPagamentos().iterator(); iterPagamento.hasNext();){
 			Pagamento pagamento = iterPagamento.next();
 			totalPagamento += pagamento.getValor();

@@ -9,6 +9,8 @@ import org.hibernate.exception.ConstraintViolationException;
 
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
 import br.com.casabemestilo.model.Status;
+import br.com.casabemestilo.model.Usuario;
+import br.com.casabemestilo.util.Conexao;
 
 public class StatusDAO implements InterfaceDAO, Serializable {
 
@@ -49,8 +51,13 @@ public class StatusDAO implements InterfaceDAO, Serializable {
 	@Override
 	public Object buscaObjetoId(Integer id) throws Exception,
 			HibernateException, ConstraintViolationException {
-		// TODO Auto-generated method stub
-		return null;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		status = (Status) session.createQuery("from Status where id= :id")
+							 .setInteger("id", id)
+							 .uniqueResult();
+		session.close();
+		return status;
 	}
 
 	@Override

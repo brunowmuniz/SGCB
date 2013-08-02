@@ -27,6 +27,7 @@ public class Formapagamento implements java.io.Serializable {
 	private String nome;
 	private Boolean deleted;
 	private Boolean ehantecipacao;
+	private Float percentualAntecipacao;
 	private List<CondicoesPagamento> condicoesPagamentos = new ArrayList<CondicoesPagamento>();
 
 	public Formapagamento() {
@@ -36,11 +37,13 @@ public class Formapagamento implements java.io.Serializable {
 		this.nome = nome;
 	}
 
-	public Formapagamento(String nome,List<CondicoesPagamento> condicoesPagamentos, Boolean deleted, Boolean ehantecipacao) {
+	public Formapagamento(String nome,List<CondicoesPagamento> condicoesPagamentos, 
+						  Boolean deleted, Boolean ehantecipacao, Float percentualAntecipacao) {
 		this.nome = nome;
 		this.condicoesPagamentos = condicoesPagamentos;
 		this.deleted = deleted;
 		this.ehantecipacao = ehantecipacao;
+		this.percentualAntecipacao = percentualAntecipacao;
 	}
 
 	@Id
@@ -90,4 +93,13 @@ public class Formapagamento implements java.io.Serializable {
 		this.condicoesPagamentos = condicoesPagamentos;
 	}
 
+	public Float getPercentualAntecipacao() {
+		return percentualAntecipacao;
+	}
+
+	public void setPercentualAntecipacao(Float percentualAntecipacao) {
+		this.percentualAntecipacao = percentualAntecipacao;
+	}
+
+	
 }

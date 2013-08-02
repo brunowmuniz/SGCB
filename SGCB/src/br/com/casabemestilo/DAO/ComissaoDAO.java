@@ -104,6 +104,33 @@ public class ComissaoDAO implements Serializable, InterfaceDAO {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	public Comissao buscaComissaoUsuario(Usuario usuario){		
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		comissao = null;
+		listaComissao = session.createQuery("from Comissao c where deleted = 0").list();
+		for(Comissao comissaoUsuario: listaComissao){
+			if(comissaoUsuario.getUsuario().getId() == usuario.getId()){
+				comissao = comissaoUsuario;
+			}
+		}
+		
+		if(comissao == null){
+			for(Comissao comissaoUsuario: listaComissao){
+				String[] idUsuarioComissaoConjunta = comissaoUsuario.getUsuarioComissaoConjunta().split(",");
+				for(int i = 0; i < idUsuarioComissaoConjunta.length || comissao != null; i++){
+					if (Integer.parseInt(idUsuarioComissaoConjunta[i]) == usuario.getId()){
+						comissao = comissaoUsuario;
+					}
+				}
+			}
+		}
+		
+		session.close();
+		return comissao;
+		
+	}
 
 	
 	/*

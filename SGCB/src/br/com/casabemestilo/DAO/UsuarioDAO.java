@@ -1,6 +1,7 @@
 package br.com.casabemestilo.DAO;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -110,6 +111,13 @@ public class UsuarioDAO implements InterfaceDAO, Serializable {
 		return null;
 	}
 	
+	public List<Usuario> listaVendedorFilial() {
+		session = Conexao.getInstance();
+		listaUsuario = new ArrayList<Usuario>();		
+		listaUsuario = session.createQuery("from Usuario u where u.perfil.id = 2").list();
+		session.close();
+		return listaUsuario;
+	}
 	
 	/*
 	 * GETTERS & SETTERS
@@ -129,6 +137,8 @@ public class UsuarioDAO implements InterfaceDAO, Serializable {
 	public void setListaUsuario(List<Usuario> listaUsuario) {
 		this.listaUsuario = listaUsuario;
 	}
+
+	
 
 	
 }

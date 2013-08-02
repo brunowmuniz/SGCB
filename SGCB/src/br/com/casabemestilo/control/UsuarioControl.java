@@ -15,6 +15,8 @@ import javax.faces.model.SelectItem;
 
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
+import org.w3c.dom.ls.LSInput;
+
 import com.sun.faces.context.flash.ELFlash;
 import br.com.casabemestilo.DAO.UsuarioDAO;
 import br.com.casabemestilo.DAO.UsuarioFilialDAO;
@@ -39,6 +41,8 @@ public class UsuarioControl extends Control implements InterfaceControl,
 	private UsuarioDAO usuarioDAO;
 	
 	private List<String> listaUsuarioFilial;
+	
+	private List listaVendedorFilial;
 	
 	private String novaSenha =  "";
 	
@@ -307,5 +311,23 @@ public class UsuarioControl extends Control implements InterfaceControl,
 	public void setListaUsuarioFilial(List<String> listaUsuarioFilial) {
 		this.listaUsuarioFilial = listaUsuarioFilial;
 	}
+
+	public List getListaVendedorFilial() {
+		List<Usuario> listaVendedor = new ArrayList<Usuario>();		
+		listaVendedorFilial = new ArrayList();			
+		listaVendedor = new UsuarioDAO().listaVendedorFilial();
+		for(Usuario usuarioVendedor : listaVendedor){					
+			SelectItem si = new SelectItem();
+			si.setValue(usuarioVendedor.getId());
+			si.setLabel(usuarioVendedor.getNome());
+			listaVendedorFilial.add(si);
+		}
+		return listaVendedorFilial;
+	}
+
+	public void setListaVendedorFilial(List listaVendedorFilial) {
+		this.listaVendedorFilial = listaVendedorFilial;
+	}
+	
 
 }

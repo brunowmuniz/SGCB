@@ -9,6 +9,9 @@ import org.hibernate.exception.ConstraintViolationException;
 
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
 import br.com.casabemestilo.model.Oc;
+import br.com.casabemestilo.model.Ocproduto;
+import br.com.casabemestilo.util.Conexao;
+
 
 public class OcDAO implements InterfaceDAO, Serializable {
 
@@ -42,9 +45,22 @@ public class OcDAO implements InterfaceDAO, Serializable {
 	@Override
 	public void insert(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
-
+		oc = (Oc) obj;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		session.merge(oc);	
+		session.getTransaction().commit();
 	}
+	
+	public Oc gravarOc(Object obj){
+		oc = (Oc) obj;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		oc.setId((Integer) session.save(oc));		
+		session.getTransaction().commit();
+		return oc;
+	}
+	
 
 	@Override
 	public void update(Object obj) throws Exception, HibernateException,

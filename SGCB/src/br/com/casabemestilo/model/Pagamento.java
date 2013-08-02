@@ -76,8 +76,8 @@ public class Pagamento implements java.io.Serializable {
 		this.condicoesPagamento = condicoesPagamento;
 	}
 
-	@ManyToOne
-	@JoinColumn(name = "oc", nullable = false)
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "oc", updatable = true, insertable = true)
 	public Oc getOc() {
 		return this.oc;
 	}
@@ -89,6 +89,9 @@ public class Pagamento implements java.io.Serializable {
 	@Temporal(TemporalType.DATE)
 	@Column(name = "datalancamento", nullable = false, length = 10)
 	public Date getDatalancamento() {
+		if(this.datalancamento == null){
+			this.datalancamento = new Date();
+		}
 		return this.datalancamento;
 	}
 
@@ -105,7 +108,11 @@ public class Pagamento implements java.io.Serializable {
 		this.parcelas = parcelas;
 	}
 
+	@Column(name = "deleted")
 	public Boolean getDeleted() {
+		if(this.deleted == null){
+			deleted = false;
+		}
 		return deleted;
 	}
 
