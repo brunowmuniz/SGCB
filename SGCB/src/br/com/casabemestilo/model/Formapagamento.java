@@ -84,7 +84,7 @@ public class Formapagamento implements java.io.Serializable {
 		this.ehantecipacao = ehantecipacao;
 	}
 
-	@OneToMany(targetEntity = CondicoesPagamento.class, mappedBy = "formapagamento", cascade = CascadeType.ALL)
+	@OneToMany(targetEntity = CondicoesPagamento.class, mappedBy = "formapagamento", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	public List<CondicoesPagamento> getCondicoesPagamentos() {
 		return condicoesPagamentos;
 	}

@@ -63,7 +63,7 @@ public class Pagamento implements java.io.Serializable {
 		this.id = id;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "condicoesPagamento", nullable = false)
 	public CondicoesPagamento getCondicoesPagamento() {
 		if(condicoesPagamento == null){

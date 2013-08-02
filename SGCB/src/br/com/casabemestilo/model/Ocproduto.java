@@ -91,7 +91,7 @@ public class Ocproduto implements java.io.Serializable {
 		this.status = status;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "produto", nullable = false)
 	public Produto getProduto() {
 		if(this.produto == null){
@@ -186,15 +186,15 @@ public class Ocproduto implements java.io.Serializable {
 	}
 
 	@Column(name="valortotal", scale=6, precision=2)
-	public Float getValortotal() {
-		if(valortotal == null){
+	public Float getValortotal() {		
+		if(getId() == null && valortotal == null){
 			valortotal = new Float(0.00);
 		}
 		return valortotal;
 	}
 
-	public void setValortotal(Float valortotal) {
-		if(valortotal == 0.00 || this.valortotal != valortotal){
+	public void setValortotal(Float valortotal) {		
+		if((valortotal == 0.00 || this.valortotal != valortotal) && getId() == null){
 			this.valortotal = getValorunitario() * getQuantidade();
 		}else{
 			this.valortotal = valortotal;

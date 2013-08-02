@@ -223,7 +223,7 @@ public class Oc implements java.io.Serializable {
 		this.datalancamento = datalancamento;
 	}
 
-	@OneToMany(mappedBy = "oc", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	public List<Pagamento> getPagamentos() {
 		return this.pagamentos;
 	}

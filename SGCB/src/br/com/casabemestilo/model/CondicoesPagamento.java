@@ -68,7 +68,7 @@ public class CondicoesPagamento implements java.io.Serializable {
 		this.id = id;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "formapagamento", nullable = false)
 	public Formapagamento getFormapagamento() {
 		if(formapagamento == null){
