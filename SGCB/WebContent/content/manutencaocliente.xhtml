@@ -16,7 +16,9 @@
 					 </p:contextMenu>
 					 
 					 <p:dataTable var="cliente" value="#{clienteControl.listarAtivos()}" id="clientes" rowKey="#{cliente.id}"  
-                		selection="#{clienteControl.cliente}" selectionMode="single" >                		  		
+                		selection="#{clienteControl.cliente}" selectionMode="single"  paginator="true" rows="10"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                 rowsPerPageTemplate="10,25,50">        
+                       		  		
 				        <p:column headerText="Nome">
 				            <h:outputText value="#{cliente.nome}" />
 				        </p:column>
@@ -34,6 +36,7 @@
 				        </p:column>				        
 				    </p:dataTable>
 			     </p:panel>
+	
 			</h:form>
 		</ui:define>
 		 <ui:define name="rodape">

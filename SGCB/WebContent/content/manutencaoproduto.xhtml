@@ -16,7 +16,8 @@
 					 </p:contextMenu>
 					 
 					 <p:dataTable var="produto" value="#{produtoControl.listarAtivos()}" id="produtos" rowKey="#{produto.id}"  
-                		selection="#{produtoControl.produto}" selectionMode="single" >                		  		
+                		selection="#{produtoControl.produto}" selectionMode="single" paginator="true" rows="10"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                 rowsPerPageTemplate="10,25,50" >                		  		
 				        <p:column headerText="Descrição">
 				            <h:outputText value="#{produto.descricao}" />
 				        </p:column>
