@@ -76,8 +76,8 @@ public class Pagamento implements java.io.Serializable {
 		this.condicoesPagamento = condicoesPagamento;
 	}
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "oc", updatable = true, insertable = true)
+	@ManyToOne
+	@JoinColumn(name = "oc")
 	public Oc getOc() {
 		return this.oc;
 	}

@@ -79,7 +79,11 @@ public class Ocproduto implements java.io.Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "status", nullable = false)
-	public Status getStatus() {		
+	public Status getStatus() {
+		if(status == null){
+			this.status = new Status();
+			status.setId(1);
+		}
 		return this.status;
 	}
 
