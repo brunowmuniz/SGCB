@@ -16,20 +16,31 @@
 					<p:messages id="msgs"/>					
 					<h:panelGrid id="cadastro" columns="1" width="100%">
 						
-						<h:panelGrid  columns="9">
-							<p:outputLabel for="numero" value="Número OC:"/>
-							<h:outputText value="1319"  id="numero" style="width: 100px; " styleClass="negrito"/>
+						<h:panelGrid  columns="10">
+							<p:outputLabel for="numero" value="Número OC:"/>							
+							<h:outputText value="#{ocControl.oc.id == null ? 'Nova OC' : ocControl.oc.id}"  id="numero" style="width: 100px; " styleClass="negrito" update="cadastro"/>
 							<p:spacer width="10px"/>
 							
 							<p:outputLabel for="vendedor" value="Vendedor: "/>
-							<h:outputText value="Thiago"  id="vendedor" style="width: 100px;" styleClass="negrito"/>
+							<p:inplace event="dblclick" id="vendedor" label="Selecione um vendedor" rendered="#{ocControl.oc.id == null}">
+								<p:selectOneMenu value="#{ocControl.oc.usuario.id}" size="1">
+									<f:selectItem itemLabel="Selecione Vendedor" itemValue="" noSelectionOption="true"/>
+									<f:selectItems value="#{usuarioControl.listaVendedorFilial}"/>
+								</p:selectOneMenu>
+							</p:inplace>
+							<h:outputText value="#{ocControl.oc.usuario.nome}" rendered="#{ocControl.oc.id != null}"/>							
 							<p:spacer width="10px"/>
 							
-							<p:outputLabel for="data" value="Data: "/>
-							<h:outputText value="03/10/2012" id="data" style="width: 100px;" styleClass="negrito">									
+							<p:outputLabel for="#{ocControl.oc.id == null ? 'dataedicao' : 'data'}" value="Data: "/>
+							<h:outputText value="#{ocControl.oc.datalancamento}" id="dataedicao" style="width: 100px;" styleClass="negrito"
+											rendered="#{ocControl.oc.id != null}">									
 								<f:convertDateTime pattern="dd/MM/yyyy"/>									
-							</h:outputText>
-							<p:spacer width="10px"/>							
+							</h:outputText>							
+							<p:calendar value="#{ocControl.oc.datalancamento}" id="data" pattern="dd/mm/yyyy" locale="pt" rendered="#{ocControl.oc.id == null}"/>							
+							<p:spacer width="10px"/>
+							
+							<p:commandButton value="Gravar OC" action="#{ocControl.gravar}" ajax="false" rendered="#{ocControl.oc.id == null}"/>
+							<p:commandButton value="Gravar OC" action="#{ocControl.gravar}" ajax="false" rendered="#{ocControl.oc.id == null}"/>											
 						</h:panelGrid>
 						<p:tabView id="oc">																																							 
 							<p:tab title="Dados do Cliente">								
@@ -106,7 +117,7 @@
 												
 												<p:outputLabel for="nomefornecedor" value="Fornecedor: " />
 												<p:inputText disabled="#{ocProdutoControl.ocproduto.produto.id != null}" value="#{ocProdutoControl.ocproduto.produto.fornecedor.nome}" id="nomefornecedor" rendered="#{ocProdutoControl.ocproduto.produto.id != null}"/>
-												<p:selectOneMenu required="true" value="#{ocProdutoControl.ocproduto.produto.fornecedor.id}" id="fornecedor" rendered="#{ocProdutoControl.ocproduto.produto.id == null}">
+												<p:selectOneMenu value="#{ocProdutoControl.ocproduto.produto.fornecedor.id}" id="fornecedor" rendered="#{ocProdutoControl.ocproduto.produto.id == null}">
 													<f:selectItem itemValue="0" itemLabel="Selecione Fornecedor" noSelectionOption="true"/>							
 													<f:selectItems value="#{fornecedoresControl.listaFornecedorCombo}"/>																									
 												</p:selectOneMenu>
@@ -348,7 +359,7 @@
 															<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
 															<p:ajax event="blur" process="@this" update="valorcondicoespagamento,msg"/>
 														</p:inputText>
-														<p:commandButton value="Adicionar Forma Pagamento" update="updFormaPagamento,formapagamentodet" process="@this,formapagamentodet"
+														<p:commandButton value="Adicionar Forma Pagamento" update="updFormaPagamento,formapagamentodet" process="@this"
 																		actionListener="#{ocControl.gravaFormaPagamentoOc()}">														
 														</p:commandButton>
 													</h:panelGrid>		
@@ -361,7 +372,8 @@
 												</p:contextMenu>
 												<p:outputPanel id="updFormaPagamento">
 													<p:dataTable id="tabelapagamento" value="#{ocControl.oc.pagamentos}" var="pagamento"
-																 selectionMode="single" selection="#{ocControl.pagamento}" rowKey="#{pagamento.condicoesPagamento.id}">
+																 selectionMode="single" selection="#{ocControl.pagamento}" rowKey="#{pagamento.condicoesPagamento.id}"
+																 emptyMessage="Sem formas de pagamento lançada!">
 														<p:column headerText="Forma de Pagamento">
 															<h:outputText value="#{pagamento.condicoesPagamento.formapagamento.nome}" />
 														</p:column>
