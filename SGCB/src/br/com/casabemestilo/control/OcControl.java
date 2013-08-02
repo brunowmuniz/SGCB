@@ -138,6 +138,7 @@ public class OcControl extends Control implements InterfaceControl,
 	}
 	
 	public void gravaFormaPagamentoOc(){
+		getPagamento().setOc(getOc());
 		getOc().getPagamentos().add(getOc().getPagamentos().size(), getPagamento());		
 		setPagamento(new Pagamento());
 	}
@@ -263,12 +264,7 @@ public class OcControl extends Control implements InterfaceControl,
 									+ new Float(valorLiquidoImpermeabilizacao * 0.25));
 			}
 		}
-	}
-	
-	public void gravarPagamento(){
-		
-	}
-	
+	}	
 	
 	/*
 	 * GETTERS & SETTERS
@@ -301,7 +297,7 @@ public class OcControl extends Control implements InterfaceControl,
 		return pagamento;
 	}
 
-	public void setPagamento(Pagamento pagamento) {
+	public void setPagamento(Pagamento pagamento) {		
 		this.pagamento = pagamento;
 	}
 
