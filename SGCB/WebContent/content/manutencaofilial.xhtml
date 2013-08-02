@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form>
+				<p:panel header="Manutenção de Filial">
+			     	<p:messages id="msgs"/>
+					 <p:contextMenu for="filial">
+					 	<p:menuitem value="Deletar" update="filial,msgs" icon="ui-icon-close" actionListener="#{filialControl.deletar}"/>
+					 	<p:menuitem value="Editar" action="#{filialControl.alterarCadastro}" ajax="false"/>
+					 	
+					 </p:contextMenu>
+					 
+					 <p:dataTable var="filial" value="#{filialControl.listarAtivos()}" id="filial" rowKey="#{filial.id}"  
+                		selection="#{filialControl.filial}" selectionMode="single" paginator="true" rows="10"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                 rowsPerPageTemplate="10,25,50" >  
+                 		<p:column headerText="Código">
+                 			<h:outputText value="#{filial.id}" />
+                 		</p:column>              		  		
+				        <p:column headerText="Filial">
+				            <h:outputText value="#{filial.nome}" />
+				        </p:column>
+				
+				        
+				    </p:dataTable>
+			     </p:panel>
+			</h:form>	     
+	    </ui:define>
+	    <ui:define name="rodape">
+	    	<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela de listagem das filiais do sistema." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="manutencaofilial.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
+	    </ui:define>
+	</ui:composition>
+</html>
