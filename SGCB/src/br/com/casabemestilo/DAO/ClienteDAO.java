@@ -70,10 +70,7 @@ public class ClienteDAO implements Serializable,InterfaceDAO{
 		cliente = (Cliente) obj;
 		session = Conexao.getInstance();
 		session.beginTransaction();
-		session.createQuery("update Cliente c set c.deleted = :deleted where c.id=:id")
-			   .setBoolean("deleted", true)
-			   .setInteger("id", cliente.getId())
-			   .executeUpdate();
+		session.update(cliente);
 		session.getTransaction().commit();
 		
 	}
