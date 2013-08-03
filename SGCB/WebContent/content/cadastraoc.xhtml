@@ -3,7 +3,8 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 	<ui:composition template="../template/template.xhtml">
 		<p:ajaxStatus onstart="PF('aguarde').show();" onsuccess="PF('aguarde').hide();"/> 
@@ -16,7 +17,7 @@
 					<p:messages id="msgs"/>					
 					<h:panelGrid id="cadastro" columns="1" width="100%">
 						
-						<h:panelGrid  columns="10">
+						<h:panelGrid  columns="7">
 							<p:outputLabel for="numero" value="Número OC:"/>							
 							<h:outputText value="#{ocControl.oc.id == null ? 'Nova OC' : ocControl.oc.id}"  id="numero" style="width: 100px; " styleClass="negrito" update="cadastro"/>
 							<p:spacer width="10px"/>
@@ -28,7 +29,14 @@
 									<f:selectItems value="#{usuarioControl.listaVendedorFilial}"/>
 								</p:selectOneMenu>
 							</p:inplace>
-							<h:outputText value="#{ocControl.oc.usuario.nome}" rendered="#{ocControl.oc.id != null}"/>							
+							<h:outputText value="#{ocControl.oc.usuario.nome}" rendered="#{ocControl.oc.id != null}" styleClass="negrito"/>							
+							<p:spacer width="10px"/>
+							
+							<p:commandButton value="Gravar OC" action="#{ocControl.gravar}" ajax="false" rendered="#{ocControl.oc.id == null}"/>							
+							<p:commandButton value="Alterar OC" action="#{ocControl.alterar}" ajax="false" rendered="#{ocControl.oc.id != null}"/>
+							
+							<p:outputLabel for="status" value="Status OC:"/>
+							<h:outputText value="#{ocControl.oc.status.descricao}" id="status" styleClass="negrito status_#{ocControl.oc.status.id}"/>
 							<p:spacer width="10px"/>
 							
 							<p:outputLabel for="#{ocControl.oc.id == null ? 'dataedicao' : 'data'}" value="Data: "/>
@@ -36,11 +44,8 @@
 											rendered="#{ocControl.oc.id != null}">									
 								<f:convertDateTime pattern="dd/MM/yyyy"/>									
 							</h:outputText>							
-							<p:calendar value="#{ocControl.oc.datalancamento}" id="data" pattern="dd/mm/yyyy" locale="pt" rendered="#{ocControl.oc.id == null}"/>							
-							<p:spacer width="10px"/>
-							
-							<p:commandButton value="Gravar OC" action="#{ocControl.gravar}" ajax="false" rendered="#{ocControl.oc.id == null}"/>
-							<p:commandButton value="Gravar OC" action="#{ocControl.gravar}" ajax="false" rendered="#{ocControl.oc.id == null}"/>											
+							<p:calendar value="#{ocControl.oc.datalancamento}" id="data" pattern="dd/MM/yyyy" locale="pt" rendered="#{ocControl.oc.id == null}" />							
+																		
 						</h:panelGrid>
 						<p:tabView id="oc">																																							 
 							<p:tab title="Dados do Cliente">								
@@ -187,14 +192,14 @@
 									</p:outputPanel>
 								</p:dialog>
 								<p:contextMenu for="listaprodutooc">
-								 	<p:menuitem value="Deletar" update="listaprodutooc,valoroc" icon="ui-icon-close" process="@this,listaprodutooc,valoroc,:form:oc:valorfinaloc" 
-								 				actionListener="#{ocControl.removerProdutoOc(ocProdutoControl.ocproduto)}"/>
+								 	<p:menuitem value="Deletar" update="listaprodutooc,valoroc,:form:msgs" icon="ui-icon-close" process="@this,listaprodutooc,valoroc,:form:oc:valorfinaloc" 
+								 				actionListener="#{ocControl.removerProdutoOc(ocControl.ocproduto)}"/>
 								 </p:contextMenu>							 
 								<p:outputPanel id="updLista">																										 
-									<p:dataTable id="listaprodutooc" selection="#{ocProdutoControl.ocproduto}" selectionMode="single" value="#{ocControl.listaOcprodutos}"
+									<p:dataTable id="listaprodutooc" selection="#{ocControl.ocproduto}" selectionMode="single" value="#{ocControl.listaOcprodutos}"
 									 var="ocproduto" rowKey="#{ocproduto.produto.id}" emptyMessage="Sem proddutos cadastrados para a OC" rowIndexVar="linha" editable="true">
 									 	
-									 	<p:ajax event="rowEdit" listener="#{ocControl.calculaValorTotalProdutos}" update=":form:oc:valoroc,:form:oc:valorfinaloc" process=":form:oc:valorfinaloc"/>
+									 	<p:ajax event="rowEdit" listener="#{ocControl.calculaValorTotalProdutos}" update=":form:oc:valoroc,:form:oc:valorfinaloc" process=":form:oc:valorfinaloc,listaprodutooc"/>
 									 									 
 										<p:column headerText="Item">
 								            <h:outputText value="#{linha + 1}" />
@@ -298,12 +303,13 @@
 													<p:ajax event="blur" process="@this" update="@this,valorfinaloc"/>
 												</p:inputText>
 												
-												<p:outputLabel value="Prazo de Entrega: " />
-												<p:inputText value="#{ocControl.oc.prazoentrega}">
+												<p:outputLabel value="Prazo de Entrega: " for="prazoentrega"/>
+												<p:inputText value="#{ocControl.oc.prazoentrega}" rendered="false">
 													<f:validateBean />
 													<f:convertNumber minIntegerDigits="1" maxIntegerDigits="3"/>
 													<p:ajax event="blur" process="@this"/>
-												</p:inputText>										
+												</p:inputText>			
+												<p:calendar value="#{ocControl.oc.prazoentrega}" id="prazoentrega" pattern="dd/MM/yyyy" locale="pt" />							
 											</h:panelGrid>
 											<h:panelGrid columns="2" >
 												<p:outputLabel for="obsoc" value="Observações: "/>
@@ -333,9 +339,8 @@
 												<p:message for="valorfinaloc"/>
 											</h:panelGrid>
 										</p:panel>
-										<p:panel>
-											<p:panel>
-												<p:messages id="msg" />												
+										<p:panel rendered="#{sessionScope.UsuarioLogado.perfil.id != 2}">
+											<p:panel>											
 												<p:outputPanel id="updSelecaoCondicao">
 													<h:panelGrid columns="2" id="formapagamentodet" rendered="#{not ocControl.habilitaCondicoesPagamento()}">
 														<p:outputLabel for="formapagamento" value="Forma de Pagamento: "/>
@@ -343,23 +348,23 @@
 														 				 required="true" requiredMessage="Selecionar uma forma de pagamento">						
 															<f:selectItem itemLabel="Selecione Forma de Pagamento" itemValue=""/>
 															<f:selectItems value="#{formaPagamentoControl.listaFormaPagamentoCombo}"/>
-															<p:ajax event="change" update="formapagamento,condicoespagamento,msg" process="formapagamento" listener="#{ocControl.defineFormaPagamento}"/>
+															<p:ajax event="change" update="formapagamento,condicoespagamento" process="formapagamento" listener="#{ocControl.defineFormaPagamento}"/>
 														</p:selectOneMenu>
 																									
 														<p:outputLabel for="condicoespagamento" value="Condição de Pagamento: "/>
 														<p:selectOneMenu id="condicoespagamento" value="#{ocControl.pagamento.condicoesPagamento.id}" required="true">
 															<f:selectItem itemLabel="Selecione Condição" itemValue=""/>
 															<f:selectItems value="#{condicoesPagamentoControl.carregaCondicoesPagamentoPorFormaPagamento(ocControl.pagamento.condicoesPagamento.formapagamento.id)}"/>
-															<p:ajax event="change" process="@this" listener="#{ocControl.defineCondicoesPagamento}" update="condicoespagamento,msg"/>
+															<p:ajax event="change" process="@this" listener="#{ocControl.defineCondicoesPagamento}" update="condicoespagamento"/>
 														</p:selectOneMenu>											
 														
 														<p:outputLabel for="valorcondicoespagamento" value="Valor: "/>																											
 														<p:inputText value="#{ocControl.pagamento.valor}" id="valorcondicoespagamento">															
 															<f:validateBean />
 															<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
-															<p:ajax event="blur" process="@this" update="valorcondicoespagamento,msg"/>
+															<p:ajax event="blur" process="@this" update="valorcondicoespagamento"/>
 														</p:inputText>
-														<p:commandButton value="Adicionar Forma Pagamento" update="updFormaPagamento,formapagamentodet" process="@this"
+														<p:commandButton value="Adicionar Forma Pagamento" update="updFormaPagamento,updSelecaoCondicao,:form:msgs,gravarpgto" process="@this"
 																		actionListener="#{ocControl.gravaFormaPagamentoOc()}">														
 														</p:commandButton>
 													</h:panelGrid>		
@@ -367,15 +372,15 @@
 											</p:panel>
 											<p:panel>
 												<p:contextMenu for="tabelapagamento">
-													<p:menuitem value="Deletar" update="tabelapagamento,updSelecaoCondicao" icon="ui-icon-close" process="@this,tabelapagamento"
+													<p:menuitem value="Deletar" update="updFormaPagamento,updSelecaoCondicao" icon="ui-icon-close" process="@this,tabelapagamento"
 								 								actionListener="#{ocControl.removeCondicoesPagamento(ocControl.pagamento)}"/>
 												</p:contextMenu>
 												<p:outputPanel id="updFormaPagamento">
 													<p:dataTable id="tabelapagamento" value="#{ocControl.oc.pagamentos}" var="pagamento"
 																 selectionMode="single" selection="#{ocControl.pagamento}" rowKey="#{pagamento.condicoesPagamento.id}"
-																 emptyMessage="Sem formas de pagamento lançada!">
+																 emptyMessage="Sem formas de pagamento lançada!">														
 														<p:column headerText="Forma de Pagamento">
-															<h:outputText value="#{pagamento.condicoesPagamento.formapagamento.nome}" />
+														<h:outputText value="#{pagamento.condicoesPagamento.formapagamento.nome}" />
 														</p:column>
 														<p:column headerText="Condição">
 															<h:outputText value="#{pagamento.condicoesPagamento.nome}"/>
@@ -384,9 +389,12 @@
 															<h:outputText value="#{pagamento.valor}">
 																<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
 															</h:outputText>
-														</p:column>
+														</p:column>														
 													</p:dataTable>
-												</p:outputPanel>																						
+													<br />
+													<p:commandButton value="Liberar Pagamento" rendered="#{ocControl.habilitaCondicoesPagamento()}" id="gravarpgto"
+																		action="#{ocControl.liberarPagamento}" ajax="false"/>													
+												</p:outputPanel>																																		
 											</p:panel>											
 										</p:panel>
 									</h:panelGrid>

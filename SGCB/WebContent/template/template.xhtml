@@ -14,10 +14,21 @@
 </h:head>
 <h:body>
 	 <ui:insert name="cabecalho">
+	 
       <p:panel header="SGCB - Sistema de Gestão Casabem Estilo">
-      	<div style="height: 100px;">
-      		<p:graphicImage url="../imagens/logo_site.png" id="logo_cabecalho"/>
-      	</div>      	
+      	<h:panelGrid columns="2" width="100%">      		      			
+      		<h:form id="formcabecalho">
+      			<h:panelGrid width="50%" style="float: left; margin-left: 50px;" columns="2">
+      				<h:outputText value="Olá #{sessionScope.UsuarioLogado.nome}!" styleClass="negrito nome"/>
+      				<p:commandLink value="Sair" action="#{usuarioControl.sairAplicacao}" ajax="false" styleClass="sair nome"/>
+      				<h:outputText value="Perfil: #{sessionScope.UsuarioLogado.perfil.descricao}" styleClass="negrito nome"/>      				
+      			</h:panelGrid>
+			</h:form>
+      		<h:panelGrid width="50%" style="float:right;">
+      			<p:graphicImage url="../imagens/logo_site.png" id="logo_cabecalho" style="float:left;"/>
+      		</h:panelGrid>
+      	</h:panelGrid>
+      	      	
       </p:panel>
       <p:menubar>
       	<p:submenu label="Vendas">
@@ -65,8 +76,8 @@
       		<p:submenu label="Condições de Pagamento">
       			<p:menuitem value="Cadastra Condições de Pagamento" url="cadastracondicoespagamento.jsf"/>
       			<p:menuitem value="Manutenção de Condição de Pagamento" url="manutencaocondicoespagamento.jsf"/>      			
-      		</p:submenu>
-      	</p:submenu>
+      		</p:submenu>      		      		
+      	</p:submenu>      	      	
       </p:menubar>
       <!-- p:ajaxStatus onstart="aguarde.show()" onsuccess="aguarde.hide()" />
       <p:dialog id="aguarde" modal="true" header="Aguarde..." draggable="false" closable="false" closeOnEscape="true">

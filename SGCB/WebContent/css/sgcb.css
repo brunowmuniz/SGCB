@@ -28,3 +28,19 @@
 	vertical-align: top;
 	width: 50%;
 }
+.nome{
+	text-decoration: none;
+	margin-left: 20px;
+}
+
+.status_1{
+	color: red;
+}
+
+.status_2{
+	color: orange;
+}
+
+.status_7{
+	color: blue;
+}

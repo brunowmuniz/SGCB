@@ -1,59 +1,50 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui"> 
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
 
 
-<h:head>
+<h:head>	
+	<title>SGCB - Sistema de Gestão Casabem Estilo</title>
+	<link rel="stylesheet" href="css/sgcb.css" type="text/css" />
+	<h:outputScript name="locale-primefaces.js" library="js" />
 	<style>
-		.ui-widget {
-		    font-size: 12px !important;
+		#logo, .logo{
+			position: absolute;
+			left:50%;
+			top:50%;
+			margin-left:-190px;
+			margin-top:-165px;	
 		}
 	</style>
-</h:head> 
+</h:head>
 <h:body>
-	<h:form>		
-		 <p:messages id="msgs"/>
-		 
-		 <p:contextMenu for="perfis">
-		 	<p:menuitem value="Deletar" update="perfis,msgs" icon="ui-icon-close" actionListener="#{perfilControl.deletar}"/>
-		 	<p:menuitem value="Editar" update="perfis,msgs" actionListener="#{perfilControl.update}"/>
-		 </p:contextMenu>
-		 
-		 
-		 
-	    <p:dataTable var="perfil" value="#{perfilControl.listarAtivos()}" id="perfis" rowKey="#{perfil.id}"  
-                		selection="#{perfilControl.perfil}" selectionMode="single" >
-			<f:facet name="header">
-				<p:columnGroup>
-					<p:column colspan="2" style="width: 50%">
-						<h:outputText value="Perfil" />
-					</p:column>
-					
-					<p:column headerText="ID" style="width: 15%"/>
-					<p:column headerText="Descrição" style="width:35%" />
-				</p:columnGroup>
-			</f:facet>                		
-	        <p:column headerText="ID">
-	            <h:outputText value="#{perfil.id}" />
-	        </p:column>
-	
-	        <p:column headerText="Descrição">
-	            <h:outputText value="#{perfil.descricao}" />
-	        </p:column>        
-	    </p:dataTable>
-    
-	   
-		<p:panel id="novoPerfil" header="Novo Perfil">
-		    <h:panelGrid columns="2">
-		    	<h:outputLabel value="Descrição:" />
-		    	<h:inputText value="#{perfilControl.perfil.descricao}" />		    	
-		    	<p:commandButton value="Salvar" actionListener="#{perfilControl.gravar}" update="msgs,perfis" />
-		    </h:panelGrid>
-		 </p:panel>
+	<h:form>
+		<p:growl id="msg" showDetail="true" sticky="true"/>
+		
+		<p:panel id="logo" styleClass="logo" style="width: 380px; height: 280px;" header="Login :: SGCB - Sistema de Gestão Casabem Estilo">
+			<h:panelGrid columns="1">
+				<p:graphicImage url="imagens/logo_site.png" id="logo_cabecalho" style="padding-left:40px;"/>
+				<br/>			
+				<h:outputText value="Seja bem-vindo ao SGCB, por favor, faça o seu login abaixo." styleClass="negrito"/>
+			</h:panelGrid>
+			
+			<h:panelGrid columns="2" style="padding-top: 20px; margin-left: 75px;" >				
+				<p:outputLabel value="Login:" for="login"/>
+				<p:inputText  id="login" value="#{usuarioControl.usuario.login}" required="true" requiredMessage="Favor informar o login para acesso!"/>				
+								
+				<p:outputLabel value="Senha:" for="senha"/>
+				<p:password id="senha" value="#{usuarioControl.usuario.senha}" required="true" requiredMessage="Favor informar a senha para acesso!"/>
+			</h:panelGrid>
+			
+			<h:panelGrid>
+				<p:commandButton value="Entrar"	action="#{usuarioControl.consultarUsuarioLogin}" ajax="false" update="perfis,msg" 
+								style="margin-left: 145px;"/>
+			</h:panelGrid>
+		</p:panel>
 	</h:form>
-	
-</h:body> 
+
+</h:body>
 </html>
