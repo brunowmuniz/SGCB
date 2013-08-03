@@ -119,6 +119,17 @@ public class UsuarioDAO implements InterfaceDAO, Serializable {
 		return listaUsuario;
 	}
 	
+	public Usuario buscaUsuarioLogin(Usuario usuario) {
+		this.usuario = null;
+		session = Conexao.getInstance();
+		this.usuario = (Usuario) session.createQuery("From Usuario u where u.login = :login and u.senha = :senha")
+						 				.setString("login", usuario.getLogin())
+						 				.setString("senha", usuario.getSenha())
+						 				.uniqueResult();
+		session.close();
+		return this.usuario;
+	}
+	
 	/*
 	 * GETTERS & SETTERS
 	 * */
@@ -137,6 +148,8 @@ public class UsuarioDAO implements InterfaceDAO, Serializable {
 	public void setListaUsuario(List<Usuario> listaUsuario) {
 		this.listaUsuario = listaUsuario;
 	}
+
+	
 
 	
 

@@ -1,6 +1,8 @@
 package br.com.casabemestilo.control;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
@@ -12,6 +14,9 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
@@ -85,6 +90,36 @@ public class UsuarioControl extends Control implements InterfaceControl,
     
     @PreDestroy
     public void destroy() {}
+    
+    public String consultarUsuarioLogin(){
+    	usuarioDAO = new UsuarioDAO();    	 
+    	try {
+			usuario.setSenha(new Encrypt().md5(usuario.getSenha()));
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+    	usuario = usuarioDAO.buscaUsuarioLogin(usuario);
+    	if(usuario != null){
+    		FacesContext facesContext = FacesContext.getCurrentInstance(); 
+			HttpServletRequest request = (HttpServletRequest) facesContext.getCurrentInstance().getExternalContext().getRequest();
+    		HttpSession session = request.getSession(); 
+			session.setAttribute("UsuarioLogado", usuario);
+			return "/content/cadastraoc.xhtml?faces-redirect=true";
+    	}else{
+    		FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Usuário e/ou Senha inválidos, favor verificar!", ""));
+    		return "erro";
+    	}
+    }
+    
+    public String sairAplicacao(){
+    	 FacesContext facesContext = FacesContext.getCurrentInstance();
+         HttpServletRequest request = (HttpServletRequest) facesContext.getCurrentInstance().getExternalContext().getRequest();
+         HttpSession session = request.getSession();
+         session.invalidate();
+         return "/index.jsf?faces-redirect=true";
+    }
     
     public void alteracaoSenha(ValueChangeEvent event){
     	try {

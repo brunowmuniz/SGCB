@@ -48,25 +48,19 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		oc = (Oc) obj;
 		session = Conexao.getInstance();
 		session.beginTransaction();
-		session.merge(oc);	
+		session.merge(oc);
 		session.getTransaction().commit();
-	}
-	
-	public Oc gravarOc(Object obj){
-		oc = (Oc) obj;
-		session = Conexao.getInstance();
-		session.beginTransaction();
-		oc.setId((Integer) session.save(oc));		
-		session.getTransaction().commit();
-		return oc;
 	}
 	
 
 	@Override
 	public void update(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
-
+		oc = (Oc) obj;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		session.update(oc);	
+		session.getTransaction().commit();
 	}
 
 	@Override
@@ -79,8 +73,11 @@ public class OcDAO implements InterfaceDAO, Serializable {
 	@Override
 	public Oc buscaObjetoId(Integer id) throws Exception,
 			HibernateException, ConstraintViolationException {
-		// TODO Auto-generated method stub
-		return null;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		oc = (Oc)session.get(Oc.class, new Integer(id));
+		session.close();
+		return oc;
 	}
 
 	@Override

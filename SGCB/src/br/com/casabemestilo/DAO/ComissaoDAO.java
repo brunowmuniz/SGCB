@@ -118,12 +118,16 @@ public class ComissaoDAO implements Serializable, InterfaceDAO {
 		
 		if(comissao == null){
 			for(Comissao comissaoUsuario: listaComissao){
-				String[] idUsuarioComissaoConjunta = comissaoUsuario.getUsuarioComissaoConjunta().split(",");
-				for(int i = 0; i < idUsuarioComissaoConjunta.length || comissao != null; i++){
-					if (Integer.parseInt(idUsuarioComissaoConjunta[i]) == usuario.getId()){
-						comissao = comissaoUsuario;
+				if(comissaoUsuario.getEhComissaoConjunta()){
+					String[] idUsuarioComissaoConjunta = comissaoUsuario.getUsuarioComissaoConjunta().split(",");
+					int i = 0;
+					while(idUsuarioComissaoConjunta.length > i){
+						if (Integer.parseInt(idUsuarioComissaoConjunta[i]) == usuario.getId()){
+							comissao = comissaoUsuario;
+						}
+						i++;
 					}
-				}
+				}				
 			}
 		}
 		

@@ -62,8 +62,11 @@ public class OcProdutoDAO implements InterfaceDAO, Serializable {
 	@Override
 	public void delete(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
-
+		ocproduto = (Ocproduto) obj;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		session.delete(ocproduto);
+		session.getTransaction().commit();
 	}
 
 	@Override
