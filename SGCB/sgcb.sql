@@ -83,36 +83,6 @@ INSERT INTO `cliente` VALUES (3,'Bruno Muniz','Rua Teixeirinha, 186 - Jardim dos
 UNLOCK TABLES;
 
 --
--- Table structure for table `comisaousuario`
---
-
-DROP TABLE IF EXISTS `comisaousuario`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `comisaousuario` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `oc` int(11) DEFAULT NULL,
-  `ocproduto` int(11) DEFAULT NULL,
-  `valor` float(7,2) NOT NULL,
-  `deleted` bit(1) DEFAULT b'0',
-  PRIMARY KEY (`id`),
-  KEY `fk_comissaousuario_oc_idx` (`oc`),
-  KEY `fk_comissaousario_ocproduto_idx` (`ocproduto`),
-  CONSTRAINT `fk_comissaousario_ocproduto` FOREIGN KEY (`ocproduto`) REFERENCES `ocproduto` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_comissaousuario_oc` FOREIGN KEY (`oc`) REFERENCES `oc` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `comisaousuario`
---
-
-LOCK TABLES `comisaousuario` WRITE;
-/*!40000 ALTER TABLE `comisaousuario` DISABLE KEYS */;
-/*!40000 ALTER TABLE `comisaousuario` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `comissao`
 --
 
@@ -152,6 +122,37 @@ INSERT INTO `comissao` VALUES (1,1,'\0','\0',NULL,'','2',3.00,'\0',NULL,'\0',NU
 UNLOCK TABLES;
 
 --
+-- Table structure for table `condicoespagamento`
+--
+
+DROP TABLE IF EXISTS `condicoespagamento`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `condicoespagamento` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `formapagamento` int(11) NOT NULL,
+  `nome` varchar(45) NOT NULL,
+  `percentual` float(4,2) NOT NULL,
+  `deleted` bit(1) NOT NULL DEFAULT b'0',
+  `parcelas` int(11) NOT NULL DEFAULT '1',
+  `avista` bit(1) NOT NULL DEFAULT b'0',
+  PRIMARY KEY (`id`),
+  KEY `fk_retencao_formapagamento1_idx` (`formapagamento`),
+  CONSTRAINT `fk_retencao_formapagamento1` FOREIGN KEY (`formapagamento`) REFERENCES `formapagamento` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `condicoespagamento`
+--
+
+LOCK TABLES `condicoespagamento` WRITE;
+/*!40000 ALTER TABLE `condicoespagamento` DISABLE KEYS */;
+INSERT INTO `condicoespagamento` VALUES (1,1,'3 vezes',13.12,'\0',3,'\0'),(2,1,'2 vezes',12.99,'\0',2,'\0'),(3,1,'1 vez',8.51,'\0',1,'\0'),(4,2,'1 vez',8.50,'\0',1,'\0');
+/*!40000 ALTER TABLE `condicoespagamento` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `contacontabil`
 --
 
@@ -187,7 +188,7 @@ CREATE TABLE `filial` (
   `nome` varchar(45) NOT NULL,
   `deleted` bit(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -196,7 +197,7 @@ CREATE TABLE `filial` (
 
 LOCK TABLES `filial` WRITE;
 /*!40000 ALTER TABLE `filial` DISABLE KEYS */;
-INSERT INTO `filial` VALUES (1,'Matriz','\0'),(2,'Filial 1','\0');
+INSERT INTO `filial` VALUES (1,'Matriz','\0'),(2,'Filial 1','\0'),(5,'teste','\0');
 /*!40000 ALTER TABLE `filial` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -212,8 +213,9 @@ CREATE TABLE `formapagamento` (
   `nome` varchar(45) NOT NULL,
   `deleted` bit(1) NOT NULL DEFAULT b'0',
   `ehantecipacao` bit(1) NOT NULL DEFAULT b'0',
+  `percentualAntecipacao` float(4,2) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -222,7 +224,7 @@ CREATE TABLE `formapagamento` (
 
 LOCK TABLES `formapagamento` WRITE;
 /*!40000 ALTER TABLE `formapagamento` DISABLE KEYS */;
-INSERT INTO `formapagamento` VALUES (1,'Mastercard','\0','\0');
+INSERT INTO `formapagamento` VALUES (1,'Mastercard','\0','\0',NULL),(2,'Visa','\0','\0',NULL),(3,'Dinheiro','\0','\0',NULL),(4,'Cheque','\0','\0',NULL);
 /*!40000 ALTER TABLE `formapagamento` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -243,7 +245,7 @@ CREATE TABLE `fornecedor` (
   `telefone` varchar(14) DEFAULT NULL,
   `endereco` varchar(150) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -252,7 +254,7 @@ CREATE TABLE `fornecedor` (
 
 LOCK TABLES `fornecedor` WRITE;
 /*!40000 ALTER TABLE `fornecedor` DISABLE KEYS */;
-INSERT INTO `fornecedor` VALUES (1,'Kappesberg','','01.010.000/0010-01','\0','Campo Bom/RS','(51) 3540-5988','Rua Projetada Três, 190 - Parque Industrial'),(2,'Carraro','\0','90.909.090/0001-81','','','(51) 4719-0922',''),(3,'Rudnick','\0','99.980.183/0982-03','\0','Caxias do Sul / RS','(55) 3876-0900','Rua Senador Pasqual, 1013 - Vila Alvorada');
+INSERT INTO `fornecedor` VALUES (1,'Kappesberg','','01.010.000/0010-01','\0','Campo Bom/RS','(51) 3540-5988','Rua Projetada Três, 190 - Parque Industrial'),(2,'Carraro','\0','90.909.090/0001-81','','','(51) 4719-0922',''),(3,'Rudnick','\0','99.980.183/0982-03','\0','Caxias do Sul / RS','(55) 3876-0900','Rua Senador Pasqual, 1013 - Vila Alvorada'),(4,'Casabem','\0',NULL,'\0',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `fornecedor` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -372,6 +374,7 @@ CREATE TABLE `oc` (
   `valorfinal` float(8,2) NOT NULL,
   `valorliquido` float(8,2) NOT NULL,
   `datalancamento` date NOT NULL,
+  `valorcomissao` float(8,2) NOT NULL DEFAULT '0.00',
   PRIMARY KEY (`id`),
   KEY `fk_oc_cliente_idx` (`cliente`),
   KEY `fk_oc_usuario1_idx` (`vendedor`),
@@ -379,7 +382,7 @@ CREATE TABLE `oc` (
   CONSTRAINT `fk_oc_cliente` FOREIGN KEY (`cliente`) REFERENCES `cliente` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_oc_status1` FOREIGN KEY (`status`) REFERENCES `status` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_oc_usuario1` FOREIGN KEY (`vendedor`) REFERENCES `usuario` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -388,6 +391,7 @@ CREATE TABLE `oc` (
 
 LOCK TABLES `oc` WRITE;
 /*!40000 ALTER TABLE `oc` DISABLE KEYS */;
+INSERT INTO `oc` VALUES (8,3,1,1,0.00,0.00,NULL,'',1900.00,0.00,1900.00,230.80,'2013-01-31',0.00),(9,3,1,1,0.00,0.00,NULL,'',1900.00,0.00,1900.00,1673.82,'2013-01-31',0.00),(10,3,1,1,0.00,0.00,NULL,'',1900.00,0.00,1900.00,1669.20,'2013-01-31',50.08),(11,3,1,1,120.00,360.00,NULL,'',3800.00,0.00,4280.00,3800.70,'2013-01-31',114.02),(12,3,1,1,0.00,0.00,NULL,'',1950.00,0.00,1950.00,1714.95,'2013-01-01',119.17),(26,3,1,1,0.00,0.00,NULL,'',1900.00,0.00,1900.00,1650.72,'2013-01-01',49.52),(33,4,1,1,0.00,0.00,NULL,'',1900.00,0.00,1900.00,1738.50,'2013-01-01',52.16),(34,4,1,1,150.00,0.00,NULL,'',2350.00,0.00,2500.00,44497.08,'2013-01-01',1334.91),(35,3,1,1,0.00,0.00,NULL,'',450.00,0.00,450.00,411.75,'2013-01-02',102.94),(36,3,2,1,0.00,0.00,NULL,'',1300.00,0.00,1300.00,1129.44,'2013-01-02',33.88),(37,4,2,7,90.00,350.00,NULL,'',2900.00,0.00,3340.00,5835.00,'2013-01-03',175.05),(38,4,2,7,0.00,0.00,'2013-09-05','Entrega definida com o cliente.\r\n\r\n\r\nPrecisa ver com o Cleber sobre a encomenda.',1900.00,0.00,1900.00,4952.16,'2013-08-03',148.56);
 /*!40000 ALTER TABLE `oc` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -415,7 +419,7 @@ CREATE TABLE `ocproduto` (
   CONSTRAINT `fk_ocproduto_oc1` FOREIGN KEY (`oc`) REFERENCES `oc` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_ocproduto_produto1` FOREIGN KEY (`produto`) REFERENCES `produto` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_ocproduto_status1` FOREIGN KEY (`status`) REFERENCES `status` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -424,6 +428,7 @@ CREATE TABLE `ocproduto` (
 
 LOCK TABLES `ocproduto` WRITE;
 /*!40000 ALTER TABLE `ocproduto` DISABLE KEYS */;
+INSERT INTO `ocproduto` VALUES (1,2,26,1,'estoque',1,NULL,1900.00,1900.00),(15,2,33,1,'estoque',1,NULL,1900.00,1900.00),(19,1,35,1,'encomenda',1,NULL,450.00,450.00),(21,2,34,1,'estoque',1,NULL,1900.00,1900.00),(23,1,34,1,'encomenda',1,NULL,450.00,450.00),(24,3,36,1,'estoque',1,NULL,1300.00,1300.00),(25,2,37,1,'estoque',1,NULL,1900.00,1900.00),(26,3,37,1,'showroom',1,NULL,1000.00,1000.00),(27,3,38,1,'estoque',1,NULL,1900.00,1900.00);
 /*!40000 ALTER TABLE `ocproduto` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -437,14 +442,16 @@ DROP TABLE IF EXISTS `pagamento`;
 CREATE TABLE `pagamento` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `oc` int(11) NOT NULL,
-  `formapagamento` int(11) NOT NULL,
+  `condicoesPagamento` int(11) NOT NULL,
   `datalancamento` date NOT NULL,
+  `deleted` bit(1) NOT NULL DEFAULT b'0',
+  `valor` float(8,2) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_pagamento_oc1_idx` (`oc`),
-  KEY `fk_pagamento_formapagamento1_idx` (`formapagamento`),
-  CONSTRAINT `fk_pagamento_formapagamento1` FOREIGN KEY (`formapagamento`) REFERENCES `formapagamento` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_pagamento_oc1` FOREIGN KEY (`oc`) REFERENCES `oc` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  KEY `fk_pagamento_condicoespagamento_idx` (`condicoesPagamento`),
+  CONSTRAINT `fk_pagamento_oc1` FOREIGN KEY (`oc`) REFERENCES `oc` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_pagamento_retencao` FOREIGN KEY (`condicoesPagamento`) REFERENCES `condicoespagamento` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -453,6 +460,7 @@ CREATE TABLE `pagamento` (
 
 LOCK TABLES `pagamento` WRITE;
 /*!40000 ALTER TABLE `pagamento` DISABLE KEYS */;
+INSERT INTO `pagamento` VALUES (1,33,4,'2013-08-01','\0',1900.00),(4,35,4,'2013-08-02','\0',450.00),(9,34,1,'2013-08-02','\0',1900.00),(13,36,1,'2013-08-02','\0',1300.00),(14,34,4,'2013-08-03','\0',600.00),(15,37,1,'2013-08-03','\0',3000.00),(16,37,4,'2013-08-03','\0',340.00),(17,38,1,'2013-08-03','\0',1900.00);
 /*!40000 ALTER TABLE `pagamento` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -585,7 +593,7 @@ CREATE TABLE `produto` (
   PRIMARY KEY (`id`),
   KEY `fk_produto_fornecedor1_idx` (`fornecedor`),
   CONSTRAINT `fk_produto_fornecedor1` FOREIGN KEY (`fornecedor`) REFERENCES `fornecedor` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -594,37 +602,8 @@ CREATE TABLE `produto` (
 
 LOCK TABLES `produto` WRITE;
 /*!40000 ALTER TABLE `produto` DISABLE KEYS */;
-INSERT INTO `produto` VALUES (1,'adsasdas',999.00,1,2,2,0,'',''),(2,'Roupeiro 6 portas - branco e preto',999.00,1,1,1,0,'BB-IAEI-9123-Y5','\0'),(3,'DASDADAS',0.00,1,1,1,0,'',''),(4,'dasdsadas',213.00,1,0,0,0,'',''),(5,'teste',1000.00,1,0,0,0,'',''),(6,'ADDASD',10000.00,1,1,0,0,'',''),(7,'teste',10000.00,3,1,0,0,'',''),(8,'laçsdksaçldkç',10000.00,1,1,0,0,'',''),(9,'Roupeiro 4 portas - Tabaco com branco',1360.00,1,1,0,0,'','\0'),(20,'Cabeceira com criado mudo - Mogno',900.00,3,1,0,0,'III-09-123-DKSAL','\0');
+INSERT INTO `produto` VALUES (1,'Impermeabilização',0.00,4,0,0,0,NULL,'\0'),(2,'Roupeiro 6 portas - branco e preto',1900.00,1,1,0,0,'','\0'),(3,'teste',900.00,3,0,0,0,'','\0');
 /*!40000 ALTER TABLE `produto` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `retencao`
---
-
-DROP TABLE IF EXISTS `retencao`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `retencao` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `formapagamento` int(11) NOT NULL,
-  `nome` varchar(45) NOT NULL,
-  `percentual` float(4,2) NOT NULL,
-  `deleted` bit(1) NOT NULL DEFAULT b'0',
-  PRIMARY KEY (`id`),
-  KEY `fk_retencao_formapagamento1_idx` (`formapagamento`),
-  CONSTRAINT `fk_retencao_formapagamento1` FOREIGN KEY (`formapagamento`) REFERENCES `formapagamento` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `retencao`
---
-
-LOCK TABLES `retencao` WRITE;
-/*!40000 ALTER TABLE `retencao` DISABLE KEYS */;
-INSERT INTO `retencao` VALUES (1,1,'3 vezes',13.12,'\0'),(2,1,'2 vezes',12.99,'\0'),(3,1,'1 vez',8.51,'\0');
-/*!40000 ALTER TABLE `retencao` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -678,7 +657,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,2,'Bruno Wagner Nunes Muniz','\0','bruno','f850bce37f95a998a2362e26062e7a22'),(2,2,'Edson Neumann','\0','edson','698dc19d489c4e4db73e28a713eab07b'),(5,2,'Elmara Baldez','\0','elmara','698dc19d489c4e4db73e28a713eab07b'),(6,1,'Bruno Wagner Nunes Muniz','','bruno','698dc19d489c4e4db73e28a713eab07b'),(8,5,'Teste uusario','\0','rwerw','casa'),(9,5,'Montador 2','\0','montador2','47f62dc04f8d29bfaf26bb0cdb755a65');
+INSERT INTO `usuario` VALUES (1,2,'Bruno Wagner Nunes Muniz','\0','bruno','d749a8b4ce024f337310f9270f6b1ef9'),(2,2,'Edson Neumann','\0','edson','698dc19d489c4e4db73e28a713eab07b'),(5,3,'Elmara Baldez','\0','elmara','81dc9bdb52d04dc20036dbd8313ed055'),(6,1,'Bruno Wagner Nunes Muniz','','bruno','698dc19d489c4e4db73e28a713eab07b'),(8,5,'Teste uusario','\0','rwerw','casa'),(9,5,'Montador 2','\0','montador2','47f62dc04f8d29bfaf26bb0cdb755a65');
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -756,4 +735,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-07-06  3:51:45
+-- Dump completed on 2013-08-03 20:51:02
