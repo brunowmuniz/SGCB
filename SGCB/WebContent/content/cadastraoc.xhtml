@@ -23,7 +23,7 @@
 							<p:spacer width="10px"/>
 							
 							<p:outputLabel for="vendedor" value="Vendedor: "/>
-							<p:inplace event="dblclick" id="vendedor" label="Selecione um vendedor" rendered="#{ocControl.oc.id == null}">
+							<p:inplace event="click" id="vendedor" label="Selecione um vendedor" rendered="#{ocControl.oc.id == null}">
 								<p:selectOneMenu value="#{ocControl.oc.usuario.id}" size="1">
 									<f:selectItem itemLabel="Selecione Vendedor" itemValue="" noSelectionOption="true"/>
 									<f:selectItems value="#{usuarioControl.listaVendedorFilial}"/>
