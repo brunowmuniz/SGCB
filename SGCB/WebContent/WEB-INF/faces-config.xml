@@ -30,10 +30,12 @@
 		<navigation-case>
 			<from-outcome>index</from-outcome>
 			<to-view-id>/index.jsf</to-view-id>
+			<redirect />
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>fazerLogoff</from-outcome>
 			<to-view-id>/index.jsf</to-view-id>
+			<redirect />
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
