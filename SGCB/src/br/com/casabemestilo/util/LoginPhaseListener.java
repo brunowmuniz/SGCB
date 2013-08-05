@@ -33,8 +33,6 @@ public class LoginPhaseListener implements PhaseListener {
         if (!loginPage && (user == null || user.getNome().length() == 0)) {
             NavigationHandler nh = facesContext.getApplication().getNavigationHandler();
             nh.handleNavigation(facesContext, null, "index");
-        }else{
-        	System.out.println("ok");
         }
     }
 }
