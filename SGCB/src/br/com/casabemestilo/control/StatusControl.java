@@ -1,12 +1,26 @@
 package br.com.casabemestilo.control;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
+
+import org.hibernate.HibernateException;
+import org.hibernate.exception.ConstraintViolationException;
+
+import br.com.casabemestilo.DAO.PerfilDAO;
 import br.com.casabemestilo.DAO.StatusDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
+import br.com.casabemestilo.model.Perfil;
 import br.com.casabemestilo.model.Status;
 
+@ManagedBean
+@ViewScoped
 public class StatusControl extends Control implements InterfaceControl,
 		Serializable {
 
@@ -18,6 +32,8 @@ public class StatusControl extends Control implements InterfaceControl,
 	private List<Status> listaStatus;
 
 	private StatusDAO statusDAO;
+	
+	private List listaStatusCombo;
 	
 	
 	/*
@@ -64,8 +80,20 @@ public class StatusControl extends Control implements InterfaceControl,
 
 	@Override
 	public List<Status> listarAtivos() {
-		// TODO Auto-generated method stub
-		return null;
+		try{
+			statusDAO = new StatusDAO();
+	    	listaStatus = statusDAO.listaAtivos();
+		}catch (ConstraintViolationException e) {
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));
+		}catch(HibernateException e){
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Hibernate: " + super.mensagem, ""));
+    	}catch (Exception e) {
+    		super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Exception: " + super.mensagem, ""));
+		}
+		return listaStatus;
 	}
 
 	@Override
@@ -114,5 +142,20 @@ public class StatusControl extends Control implements InterfaceControl,
 		this.statusDAO = statusDAO;
 	}
 
+	public List getListaStatusCombo() {
+		listaStatusCombo = new ArrayList();
+		listarAtivos();
+		for(Status status : listaStatus){
+			SelectItem si = new SelectItem();
+			si.setValue(status.getId());
+			si.setLabel(status.getDescricao());
+			listaStatusCombo.add(si);
+		}		
+		return listaStatusCombo;
+	}
+
+	public void setListaStatusCombo(List listaStatusCombo) {
+		this.listaStatusCombo = listaStatusCombo;
+	}
 	
 }

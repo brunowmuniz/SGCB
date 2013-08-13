@@ -17,6 +17,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Max;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.validator.constraints.Length;
 
 /**
@@ -24,6 +26,7 @@ import org.hibernate.validator.constraints.Length;
  */
 @Entity
 @Table(name = "cliente", catalog = "lacodevidas02")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Cliente implements java.io.Serializable {
 
 	private Integer id;

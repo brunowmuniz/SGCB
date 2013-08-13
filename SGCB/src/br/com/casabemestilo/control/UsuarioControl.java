@@ -106,7 +106,7 @@ public class UsuarioControl extends Control implements InterfaceControl,
 			HttpServletRequest request = (HttpServletRequest) facesContext.getCurrentInstance().getExternalContext().getRequest();
     		HttpSession session = request.getSession(); 
 			session.setAttribute("UsuarioLogado", usuario);
-			return "/content/cadastraoc.xhtml?faces-redirect=true";
+			return "/content/home.xhtml?faces-redirect=true";
     	}else{
     		FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Usuário e/ou Senha inválidos, favor verificar!", ""));
     		return "erro";

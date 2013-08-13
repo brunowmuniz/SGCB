@@ -30,6 +30,7 @@ public class OcDAO implements InterfaceDAO, Serializable {
 	 * */
 	public OcDAO(List<Oc> listaOc, Oc oc) {
 		super();
+		
 		this.listaOc = listaOc;
 		this.oc = oc;
 	}
@@ -52,6 +53,16 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		session.getTransaction().commit();
 	}
 	
+	public Oc insertOc(Object obj) throws Exception, HibernateException,
+		ConstraintViolationException{
+		oc = (Oc) obj;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		oc.setId((Integer) session.merge(oc));
+		session.getTransaction().commit();
+		return oc;
+	}
+	
 
 	@Override
 	public void update(Object obj) throws Exception, HibernateException,
@@ -59,15 +70,18 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		oc = (Oc) obj;
 		session = Conexao.getInstance();
 		session.beginTransaction();
-		session.update(oc);	
+		session.update(oc);
 		session.getTransaction().commit();
 	}
 
 	@Override
 	public void delete(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
-
+		oc = (Oc) obj;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		session.update(oc);
+		session.getTransaction().commit();
 	}
 
 	@Override
@@ -75,7 +89,7 @@ public class OcDAO implements InterfaceDAO, Serializable {
 			HibernateException, ConstraintViolationException {
 		session = Conexao.getInstance();
 		session.beginTransaction();
-		oc = (Oc)session.get(Oc.class, new Integer(id));
+		oc = (Oc) session.get(Oc.class, id);
 		session.close();
 		return oc;
 	}
@@ -90,8 +104,11 @@ public class OcDAO implements InterfaceDAO, Serializable {
 	@Override
 	public List<Oc> listaAtivos() throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
-		return null;
+		session = Conexao.getInstance();
+		session.beginTransaction();		
+		listaOc = session.createQuery("from Oc o where o.deleted=0 order by o.id desc").setCacheable(true).list();
+		session.close();
+		return listaOc;
 	}
 
 	@Override

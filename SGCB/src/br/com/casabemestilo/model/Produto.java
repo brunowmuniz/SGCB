@@ -2,7 +2,9 @@ package br.com.casabemestilo.model;
 
 // Generated 24/05/2013 18:36:37 by Hibernate Tools 4.0.0
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,6 +21,10 @@ import javax.persistence.Table;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.Length;
 
 /**
@@ -26,6 +32,7 @@ import org.hibernate.validator.constraints.Length;
  */
 @Entity
 @Table(name = "produto", catalog = "lacodevidas02")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Produto implements java.io.Serializable {
 
 	private Integer id;
@@ -37,8 +44,8 @@ public class Produto implements java.io.Serializable {
 	private Integer encomenda;
 	private String codigo;
 	private Boolean deleted;
-	private Set ocprodutos = new HashSet(0);
-	private Set pedidoprodutos = new HashSet(0);
+	private List<Ocproduto> ocprodutos = new ArrayList<Ocproduto>();
+	private List<Pedidoproduto> pedidoprodutos = new ArrayList<Pedidoproduto>();
 
 	public Produto() {
 	}
@@ -55,7 +62,7 @@ public class Produto implements java.io.Serializable {
 
 	public Produto(Fornecedor fornecedor, String descricao,
 			float valorsugerido, int showroom, int estoque, int encomenda,
-			Set ocprodutos, Set pedidoprodutos) {
+			List<Ocproduto> ocprodutos, List<Pedidoproduto> pedidoprodutos) {
 		this.fornecedor = fornecedor;
 		this.descricao = descricao;
 		this.valorsugerido = valorsugerido;
@@ -77,7 +84,7 @@ public class Produto implements java.io.Serializable {
 		this.id = id;
 	}
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "fornecedor", nullable = false)
 	public Fornecedor getFornecedor() {
 		if(this.fornecedor == null){
@@ -124,7 +131,6 @@ public class Produto implements java.io.Serializable {
 
 	@Column(name = "estoque", nullable = false)
 	@Max(value=999)
-	@Min(value=0)
 	public Integer getEstoque() {
 		if(this.estoque == null){
 			estoque = 0;
@@ -172,21 +178,28 @@ public class Produto implements java.io.Serializable {
 		this.deleted = deleted;
 	}
 
-	@OneToMany(targetEntity = Ocproduto.class, mappedBy = "produto")
-	public Set getOcprodutos() {
+	@OneToMany(targetEntity = Ocproduto.class, mappedBy = "produto", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@Fetch(FetchMode.SUBSELECT)
+	public List<Ocproduto> getOcprodutos() {
 		return this.ocprodutos;
 	}
 
-	public void setOcprodutos(Set ocprodutos) {
+	public void setOcprodutos(List<Ocproduto> ocprodutos) {		
+		this.ocprodutos = ocprodutos;
+		for(Ocproduto ocproduto : ocprodutos){
+			if(ocproduto.getProduto() == null){
+				ocproduto.setProduto(this);
+			}			
+		}
 		this.ocprodutos = ocprodutos;
 	}
 
 	@OneToMany(targetEntity = Pedidoproduto.class, mappedBy = "produto")
-	public Set getPedidoprodutos() {
+	public List<Pedidoproduto> getPedidoprodutos() {
 		return this.pedidoprodutos;
 	}
 
-	public void setPedidoprodutos(Set pedidoprodutos) {
+	public void setPedidoprodutos(List<Pedidoproduto> pedidoprodutos) {
 		this.pedidoprodutos = pedidoprodutos;
 	}
 

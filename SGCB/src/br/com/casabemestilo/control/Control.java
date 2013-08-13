@@ -8,7 +8,7 @@ public class Control implements Serializable{
 
 	protected String mensagem;
 	
-	 protected Logger logger = Logger.getLogger(Control.class);
+	protected Logger logger = Logger.getLogger(Control.class);
 	
 	
 	

@@ -2,6 +2,7 @@ package br.com.casabemestilo.control;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import javax.swing.event.ChangeEvent;
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.sql.Select;
+import org.primefaces.component.calendar.Calendar;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TabChangeEvent;
 
@@ -38,6 +40,7 @@ import br.com.casabemestilo.model.CondicoesPagamento;
 import br.com.casabemestilo.model.Oc;
 import br.com.casabemestilo.model.Ocproduto;
 import br.com.casabemestilo.model.Pagamento;
+import br.com.casabemestilo.model.Parcela;
 import br.com.casabemestilo.model.Produto;
 import br.com.casabemestilo.model.Status;
 
@@ -53,17 +56,17 @@ public class OcControl extends Control implements InterfaceControl,
 	
 	private Oc oc = new Oc();
 	
-	private OcDAO ocDAO;
-	
-	private List<Ocproduto> listaOcprodutos = new ArrayList<Ocproduto>();
+	private OcDAO ocDAO;	
 	
 	private Pagamento pagamento = new Pagamento();
-	
-	private List<Pagamento> listaOcPagamentos = new ArrayList<Pagamento>();
 	
 	private Float totalPagamento = new Float(0);
 	
 	private Ocproduto ocproduto;
+
+	private Float percentualRetencao;
+
+	private Float valorLiquido;
 	
 	
 	/*
@@ -88,22 +91,15 @@ public class OcControl extends Control implements InterfaceControl,
 	 * */
 	@PostConstruct
 	public void init(){		
-		try{
-			String idOc = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("idOc");
-			if(idOc != null){
-				oc = buscaObjetoId(Integer.parseInt(idOc));
-				setListaOcprodutos(getOc().getOcprodutos());
-			}	
-		}catch(ClassCastException e){
-			e.printStackTrace();
-			oc = new Oc();
+		if(ELFlash.getFlash().get("oc") != null){
+			oc = (Oc) ELFlash.getFlash().get("oc");
+			//oc = buscaObjetoId(oc.getId());
 		}
-		
 	}
-		
 	    
 	@PreDestroy
 	public void destroy() {}
+	
 	 
 	public void defineClienteBuscaOC(SelectEvent event){
 		oc.setCliente((Cliente) event.getObject());
@@ -114,8 +110,10 @@ public class OcControl extends Control implements InterfaceControl,
 	}
 	
 	public void adicionarProdutoOc(Ocproduto ocproduto){
-		listaOcprodutos.add(ocproduto);
-		oc.setOcprodutos(new ArrayList<Ocproduto>());
+		ocproduto.setOc(this.getOc());
+		ocproduto.getStatus().setId(1);
+		oc.getOcprodutos().add(ocproduto);
+		ocproduto = new Ocproduto();
 		calculaValorTotalProdutos();
 	}
 	
@@ -123,9 +121,11 @@ public class OcControl extends Control implements InterfaceControl,
 		Produto produto = new Produto();
 		ocproduto.getProduto().setDeleted(false);
 		ocproduto.getProduto().setFornecedor(new FornecedoresDAO().buscaObjetoId(ocproduto.getProduto().getFornecedor().getId()));
-		produto = new ProdutoDAO().gravarProdutoAdicionarOc(ocproduto.getProduto());		
-		listaOcprodutos.add(ocproduto);
-		oc.setOcprodutos(new ArrayList<Ocproduto>());
+		produto = new ProdutoDAO().gravarProdutoAdicionarOc(ocproduto.getProduto());
+		ocproduto.setOc(this.getOc());
+		ocproduto.getStatus().setId(1);
+		oc.getOcprodutos().add(ocproduto);
+		ocproduto = new Ocproduto();
 		calculaValorTotalProdutos();
 	}
 	
@@ -133,7 +133,7 @@ public class OcControl extends Control implements InterfaceControl,
 		try {
 			OcProdutoDAO ocProdutoDAO = new OcProdutoDAO();
 			ocProdutoDAO.delete(ocproduto);
-			listaOcprodutos.remove(ocproduto);
+			oc.getOcprodutos().remove(ocproduto);
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Produto deletado!"));
 		} catch (ConstraintViolationException e) {			
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Condição não deletada [Erro Constraint]",""));
@@ -170,16 +170,13 @@ public class OcControl extends Control implements InterfaceControl,
 	
 	public void calculaValorTotalProdutos(){
 		oc.setValor(0);
-		for(Iterator<Ocproduto> iterOcProd = listaOcprodutos.iterator(); iterOcProd.hasNext();){
+		for(Iterator<Ocproduto> iterOcProd = oc.getOcprodutos().iterator(); iterOcProd.hasNext();){
 			Ocproduto ocproduto =  iterOcProd.next();
 			oc.setValor(oc.getValor() + ocproduto.getValortotal());
 		}		
 		ocproduto = new Ocproduto();
 	}
-	
-	public void atualizaValorTotal(TabChangeEvent event){
-		calculaValorTotalProdutos();
-	}
+
 	
 	public void defineFormaPagamento() throws ConstraintViolationException, HibernateException, Exception{		
 		getPagamento().getCondicoesPagamento().setFormapagamento(new FormaPagamentoDAO().buscaObjetoId(getPagamento().getCondicoesPagamento().getFormapagamento().getId()));		
@@ -216,7 +213,15 @@ public class OcControl extends Control implements InterfaceControl,
 		if(getTotalPagamento() < oc.getValorfinal()){
 			return false;
 		}else{
-			return true;
+			try {
+				if(oc.getStatus().getId() <= 2){
+					return true;
+				}else{
+					return false;
+				}
+			} catch(NullPointerException e) {
+				return true;
+			}
 		}		
 	}
 	
@@ -224,77 +229,112 @@ public class OcControl extends Control implements InterfaceControl,
 	@Override
 	public void gravar() {
 		try {
-			oc.getOcprodutos().clear();
 			ocDAO = new OcDAO();
-			oc.setOcprodutos(listaOcprodutos);
 			oc.setStatus((Status) new StatusDAO().buscaObjetoId(1));
 			calculaValorComissao();
+			//oc = ocDAO.insertOc(oc);
 			ocDAO.insert(oc);
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("OC " + oc.getId() + " foi gravada!"));
+			logger.info("Salvo Oc: " + oc.getId());
 			oc = new Oc();
-		} catch (ConstraintViolationException e) {			
-			e.printStackTrace();
+		} catch (ConstraintViolationException e) {
 			super.mensagem = e.getMessage();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));
+			logger.error("[gravar] Erro Constraint: " + super.mensagem + "-" + oc.getId());
 		} catch (HibernateException e) {
 			e.printStackTrace();
 			super.mensagem = e.getMessage();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Hibernate: " + super.mensagem, ""));
+			logger.error("[gravar] Erro Hibernate: " + super.mensagem + "-" + oc.getId());
 		} catch (Exception e) {
 			e.printStackTrace();
 			super.mensagem = e.getMessage();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Geral: " + super.mensagem, ""));
+			logger.error("[gravar] Erro genérico: " + super.mensagem + "-" + oc.getId());
 		}
 		
 	}
 
 	@Override
 	public void deletar() {
-		// TODO Auto-generated method stub
-
+		try {
+			ocDAO = new OcDAO();
+			oc.setDeleted(true);
+			oc.getStatus().setId(10);
+			ocDAO.delete(oc);
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("OC " + oc.getId() + " foi deletada e o seu status é CANCELADO!"));
+			logger.info("Deletado Oc: " + oc.getId());
+			oc = new Oc();
+		} catch (ConstraintViolationException e) {
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));
+			logger.error("[deletar] Erro Constraint: " + super.mensagem + "-" + oc.getId());
+		} catch (HibernateException e) {
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Hibernate: " + super.mensagem, ""));
+			logger.error("[deletar] Erro Hibernate: " + super.mensagem + "-" + oc.getId());
+		} catch (Exception e) {
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Geral: " + super.mensagem, ""));
+			logger.error("[deletar] Erro genérico: " + super.mensagem + "-" + oc.getId());
+		}
 	}
 
 	@Override
 	public void alterar() {
 		try {
-			oc.getOcprodutos().clear();
-			ocDAO = new OcDAO();
-			oc.setOcprodutos(listaOcprodutos);			
+			ocDAO = new OcDAO();			
 			calculaValorComissao();
 			ocDAO.update(oc);
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("OC " + oc.getId() + " foi alterada!"));
+			logger.info("Alterado Oc: " + oc.getId());
 			oc = new Oc();
 		} catch (ConstraintViolationException e) {			
-			e.printStackTrace();
 			super.mensagem = e.getMessage();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));
+			logger.error("[alterar] Erro Constraint: " + super.mensagem + "-" + oc.getId());
 		} catch (HibernateException e) {
-			e.printStackTrace();
 			super.mensagem = e.getMessage();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Hibernate: " + super.mensagem, ""));
+			logger.error("[alterar] Erro Hibernate: " + super.mensagem + "-" + oc.getId());
 		} catch (Exception e) {
-			e.printStackTrace();
 			super.mensagem = e.getMessage();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Geral: " + super.mensagem, ""));
+			logger.error("[alterar] Erro genérico: " + super.mensagem + "-" + oc.getId());
 		}
 
+	}
+	
+	public String alterarCadastro(Oc oc){
+		ELFlash.getFlash().put("oc", oc);
+		return "cadastraoc?faces-redirect=true";
 	}
 
 	@Override
 	public List<Oc> listarAtivos() {
-		// TODO Auto-generated method stub
-		return null;
+		try{
+			ocDAO = new OcDAO();
+			listaOc = ocDAO.listaAtivos();
+		}catch (ConstraintViolationException e) {
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));
+		}catch(HibernateException e){
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Hibernate: " + super.mensagem, ""));
+    	}catch (Exception e) {
+    		super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Exception: " + super.mensagem, ""));
+		}
+		return listaOc;
 	}
 
 	@Override
 	public List<Oc> listarTodos() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public List<Oc> listaSelecao(Object obj) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -324,12 +364,12 @@ public class OcControl extends Control implements InterfaceControl,
 		this.listaOc = listaOc;
 	}
 	
-	public void calculaValorComissao(){
-		oc.setValorcomissao(new Float(0));
-		Float percentualRetencao = new Float(0);
-		Float valorLiquido = null;		
+	public void calculaValorComissao(){				
 		Float valorImpermeabilizacao = new Float(0);
 		Float valorLiquidoImpermeabilizacao = new Float(0);
+		oc.setValorcomissao(new Float(0));
+		percentualRetencao = new Float(0);
+		valorLiquido = null;
 		
 		for(Ocproduto ocproduto : oc.getOcprodutos()){
 			if(ocproduto.getProduto().getDescricao().equalsIgnoreCase("Impermeabilização")){				
@@ -374,26 +414,59 @@ public class OcControl extends Control implements InterfaceControl,
 				Produto produto = new Produto();				
 				produto = produtoDAO.buscaObjetoId(ocprodutos.getProduto().getId());
 				if(ocprodutos.getTiposaida().equalsIgnoreCase("estoque")){
-					produto.setEstoque(produto.getEstoque() - ocprodutos.getQuantidade());					
+					produto.setEstoque(produto.getEstoque() - ocprodutos.getQuantidade());
+					ocprodutos.setStatus((Status) new StatusDAO().buscaObjetoId(7));
 				}else if(ocprodutos.getTiposaida().equalsIgnoreCase("showroom")){
-					produto.setShowroom(produto.getShowroom() - ocprodutos.getQuantidade());					
+					produto.setShowroom(produto.getShowroom() - ocprodutos.getQuantidade());
+					ocprodutos.setStatus((Status) new StatusDAO().buscaObjetoId(7));
 				}else{
-					produto.setShowroom(produto.getEncomenda() - ocprodutos.getQuantidade());
+					produto.setEncomenda(produto.getEncomenda() + ocprodutos.getQuantidade());
+					ocprodutos.setStatus((Status) new StatusDAO().buscaObjetoId(3));
 				}
 				produtoDAO.update(produto);
 			}			
 			oc.setStatus((Status) new StatusDAO().buscaObjetoId(7));
-			alterar();
+			
+			//lancaParcelas();
+			alterar();			
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Produtos da OC separados!"));
+			logger.info(oc.getId() + " - com produtos separados!");
 		} catch (ConstraintViolationException e) {
-			e.printStackTrace();
+			super.mensagem = e.getMessage();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro na separação de produtos [Erro Constraint]", ""));
+			logger.error("Erro constraint - separar produtos: [OC:" + oc.getId() + "] - " + super.mensagem);
 		} catch (HibernateException e) {
-			e.printStackTrace();
+			super.mensagem = e.getMessage();			
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro na separação de produtos [Erro Hibernate]", ""));
+			logger.error("Erro hibernate - separar produtos: [OC:" + oc.getId() + "] - " + super.mensagem);
 		} catch (Exception e) {
-			e.printStackTrace();
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro na separação de produtos [Erro Genérico]", ""));
+			super.mensagem = e.getMessage();			
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro na separação de produtos [Erro Genérico] [" + e.getMessage() + "]", ""));
+			logger.error("Erro genérico - separar produtos: [OC:" + oc.getId() + "] - " + super.mensagem);
+		}
+	}
+	
+	public void lancaParcelas(){
+		Float valorParcelas = new Float(0.0);
+		Calendar hoje = new Calendar();
+		for(Pagamento pagamento : oc.getPagamentos()){
+			if(pagamento.getCondicoesPagamento().getFormapagamento().getEhantecipacao()){
+				
+			}else if(pagamento.getCondicoesPagamento().getAvista()){
+				
+			}else{							
+				percentualRetencao = null;
+				valorLiquido = null;			
+				percentualRetencao = pagamento.getCondicoesPagamento().getPercentual() / 100;				
+				valorLiquido = pagamento.getValor() - (pagamento.getValor() * percentualRetencao);				
+				valorParcelas = valorLiquido / pagamento.getCondicoesPagamento().getParcelas();
+				for(int i = 1; i <= pagamento.getCondicoesPagamento().getParcelas(); i++){
+					Parcela parcela = new Parcela();
+					parcela.setPagamento(pagamento);
+					parcela.setNumeroParcela(i);
+					parcela.setValor(valorLiquido);					
+				}
+			}
 		}
 	}
 	
@@ -416,15 +489,10 @@ public class OcControl extends Control implements InterfaceControl,
 		this.ocDAO = ocDAO;
 	}
 
-	public List<Ocproduto> getListaOcprodutos() {
-		return listaOcprodutos;
-	}
-
-	public void setListaOcprodutos(List<Ocproduto> listaOcprodutos) {
-		this.listaOcprodutos = listaOcprodutos;
-	}
-
 	public Pagamento getPagamento() {
+		if(pagamento == null){
+			pagamento = new Pagamento(); 
+		}
 		return pagamento;
 	}
 
@@ -432,13 +500,6 @@ public class OcControl extends Control implements InterfaceControl,
 		this.pagamento = pagamento;
 	}
 
-	public List<Pagamento> getListaOcPagamentos() {
-		return listaOcPagamentos;
-	}
-
-	public void setListaOcPagamentos(List<Pagamento> listaOcPagamentos) {
-		this.listaOcPagamentos = listaOcPagamentos;
-	}
 
 	public Float getTotalPagamento() {
 		totalPagamento = new Float(0);

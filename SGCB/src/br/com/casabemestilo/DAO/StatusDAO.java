@@ -68,10 +68,13 @@ public class StatusDAO implements InterfaceDAO, Serializable {
 	}
 
 	@Override
-	public <T> List<T> listaAtivos() throws Exception, HibernateException,
+	public List<Status> listaAtivos() throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
-		return null;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		listaStatus = session.createQuery( "from Status s where s.deleted=0").list();
+		session.close();
+		return listaStatus;
 	}
 
 	@Override

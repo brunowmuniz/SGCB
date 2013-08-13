@@ -20,6 +20,9 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Min;
 
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -30,6 +33,7 @@ import org.hibernate.annotations.ForeignKey;
  */
 @Entity
 @Table(name = "ocproduto", catalog = "lacodevidas02")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Ocproduto implements java.io.Serializable {
 
 	private Integer id;
@@ -77,12 +81,11 @@ public class Ocproduto implements java.io.Serializable {
 		this.id = id;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "status", nullable = false)
+	@ManyToOne
+	@JoinColumn(name = "status", nullable = false)	
 	public Status getStatus() {
-		if(status == null){
+		if(this.status == null){
 			this.status = new Status();
-			status.setId(1);
 		}
 		return this.status;
 	}
@@ -91,7 +94,7 @@ public class Ocproduto implements java.io.Serializable {
 		this.status = status;
 	}
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "produto", nullable = false)
 	public Produto getProduto() {
 		if(this.produto == null){
@@ -105,8 +108,11 @@ public class Ocproduto implements java.io.Serializable {
 	}
 
 	@ManyToOne
-	@JoinColumn(name = "oc")
+	@JoinColumn(name = "oc", nullable = false)
 	public Oc getOc() {
+		if(this.oc == null){
+			oc = new Oc();
+		}
 		return this.oc;
 	}
 

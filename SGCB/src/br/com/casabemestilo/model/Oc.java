@@ -22,7 +22,14 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.OnDelete;
@@ -33,6 +40,7 @@ import org.hibernate.annotations.OnDeleteAction;
  */
 @Entity
 @Table(name = "oc", catalog = "lacodevidas02")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Oc implements java.io.Serializable {
 
 	private Integer id;
@@ -49,12 +57,22 @@ public class Oc implements java.io.Serializable {
 	private float valorliquido;
 	private Date datalancamento;
 	private Float valorcomissao;
+	private Boolean deleted;
 	private List<Pagamento> pagamentos = new ArrayList<Pagamento>();
 	private List<Ocproduto> ocprodutos = new ArrayList<Ocproduto>();
 
 	public Oc() {
 	}
 
+	
+	public Oc(Integer id, Usuario usuario, Float valorfinal, Status status, Boolean deleted){
+		this.id= id;
+		this.usuario = usuario;
+		this.valorfinal = valorfinal;
+		this.status = status;
+		this.deleted = deleted;
+	}
+	
 	public Oc(Usuario usuario, Status status, Cliente cliente,
 			float valorfrete, float valormontagem, float valor,
 			float valorfinal, float valorliquido, Date datalancamento, Float valorcomissao) {
@@ -223,29 +241,47 @@ public class Oc implements java.io.Serializable {
 		this.datalancamento = datalancamento;
 	}
 
-	@OneToMany(mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@Column(name="deleted", nullable=false)
+	public Boolean getDeleted() {
+		if(this.deleted == null){
+			this.deleted = false;
+		}
+		return this.deleted;
+	}
+
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
+	}
+
+	@OneToMany(targetEntity = Pagamento.class, mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public List<Pagamento> getPagamentos() {
 		return this.pagamentos;
 	}
 
 	public void setPagamentos(List<Pagamento> pagamentos) {
 		this.pagamentos = pagamentos;
+		for(Pagamento pagamento : pagamentos){	
+			pagamento.setOc(this);
+		}
+		this.pagamentos = pagamentos;
 	}
 
 	
-	@OneToMany(mappedBy = "oc", cascade = CascadeType.ALL)
+	@OneToMany(targetEntity = Ocproduto.class, mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public List<Ocproduto> getOcprodutos() {
 		return this.ocprodutos;
 	}
-
+	
 	public void setOcprodutos(List<Ocproduto> ocprodutos) {
 		this.ocprodutos = ocprodutos;
-		for(Ocproduto ocproduto : ocprodutos){	
+		for(Ocproduto ocproduto : ocprodutos){
 			ocproduto.setOc(this);
 		}
 		this.ocprodutos = ocprodutos;
+		
 	}
-	
+
+
 	@Column(name="valorcomissao", nullable = false)
 	public Float getValorcomissao() {
 		if(this.valorcomissao == null){

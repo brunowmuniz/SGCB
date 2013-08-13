@@ -2,7 +2,9 @@ package br.com.casabemestilo.model;
 
 // Generated 24/05/2013 18:36:37 by Hibernate Tools 4.0.0
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -16,6 +18,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Max;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.validator.constraints.Length;
 
 /**
@@ -23,6 +27,7 @@ import org.hibernate.validator.constraints.Length;
  */
 @Entity
 @Table(name = "fornecedor", catalog = "lacodevidas02")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Fornecedor implements java.io.Serializable {
 
 	private Integer id;
@@ -33,8 +38,8 @@ public class Fornecedor implements java.io.Serializable {
 	private String endereco;
 	private String cidade;
 	private Boolean deleted;
-	private Set produtos = new HashSet(0);
-	private Set pedidos = new HashSet(0);
+	private List<Produto> produtos = new ArrayList<Produto>();
+	private List<Pedido> pedidos = new ArrayList<Pedido>();
 
 	public Fornecedor() {
 	}
@@ -45,7 +50,7 @@ public class Fornecedor implements java.io.Serializable {
 
 	public Fornecedor(Integer id, String nome, Boolean ehrede, String cnpj,
 			String telefone, String endereco, String cidade, Boolean deleted,
-			Set produtos, Set pedidos) {
+			List<Produto> produtos, List<Pedido> pedidos) {
 		super();
 		this.id = id;
 		this.nome = nome;
@@ -135,21 +140,21 @@ public class Fornecedor implements java.io.Serializable {
 		this.cidade = cidade;
 	}
 
-	@OneToMany(targetEntity = Produto.class, mappedBy = "fornecedor")
-	public Set getProdutos() {
+	@OneToMany(targetEntity = Produto.class, mappedBy = "fornecedor", fetch = FetchType.LAZY)
+	public List<Produto> getProdutos() {
 		return this.produtos;
 	}
 
-	public void setProdutos(Set produtos) {
+	public void setProdutos(List<Produto> produtos) {
 		this.produtos = produtos;
 	}
 
-	@OneToMany(targetEntity = Pedido.class, mappedBy = "fornecedor")
-	public Set getPedidos() {
+	@OneToMany(targetEntity = Pedido.class, mappedBy = "fornecedor", fetch = FetchType.LAZY)
+	public List<Pedido> getPedidos() {
 		return this.pedidos;
 	}
 
-	public void setPedidos(Set pedidos) {
+	public void setPedidos(List<Pedido> pedidos) {
 		this.pedidos = pedidos;
 	}
 
