@@ -130,6 +130,7 @@
 												<p:outputLabel for="valorsugerido" value="Valor sugerido: " />
 												<p:inputText disabled="#{ocProdutoControl.ocproduto.produto.id != null}" value="#{ocProdutoControl.ocproduto.produto.valorsugerido}" id="valorsugerido">
 													<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1"/>
+													<p:ajax event="blur" process="@this" update="@this"/>
 												</p:inputText>
 												
 												<p:outputLabel value="Showroom: " />
@@ -196,10 +197,12 @@
 								 				actionListener="#{ocControl.removerProdutoOc(ocControl.ocproduto)}"/>
 								 </p:contextMenu>							 
 								<p:outputPanel id="updLista">																										 
-									<p:dataTable id="listaprodutooc" selection="#{ocControl.ocproduto}" selectionMode="single" value="#{ocControl.listaOcprodutos}"
-									 var="ocproduto" rowKey="#{ocproduto.produto.id}" emptyMessage="Sem proddutos cadastrados para a OC" rowIndexVar="linha" editable="true">
+									<p:dataTable id="listaprodutooc" value="#{ocControl.oc.ocprodutos}" selection="#{ocControl.ocproduto}" selectionMode="single"
+									 var="ocproduto" rowKey="#{ocproduto.produto.id}" emptyMessage="Sem proddutos cadastrados para a OC" 
+									 rowIndexVar="linha" editable="true">
 									 	
-									 	<p:ajax event="rowEdit" listener="#{ocControl.calculaValorTotalProdutos}" update=":form:oc:valoroc,:form:oc:valorfinaloc" process=":form:oc:valorfinaloc,listaprodutooc"/>
+									 	<p:ajax event="rowEdit" listener="#{ocControl.calculaValorTotalProdutos}" update=":form:oc:valoroc,:form:oc:valorfinaloc,statusout" 
+									 			process=":form:oc:valorfinaloc,listaprodutooc,statusin"/>
 									 									 
 										<p:column headerText="Item">
 								            <h:outputText value="#{linha + 1}" />
@@ -213,7 +216,7 @@
 								            <h:outputText value="#{ocproduto.produto.fornecedor.nome} - #{ocproduto.produto.descricao}" />
 								        </p:column>
 								        
-								        <p:column headerText="Tipo de Saída" width="100px;">
+								        <p:column headerText="Tipo de Saída">
 								        	<p:cellEditor>
 								        		<f:facet name="output" >
 								        			<h:outputText value="Estoque" rendered="#{ocproduto.tiposaida == 'estoque'}" />
@@ -221,7 +224,7 @@
 						        					<h:outputText value="Showroom" rendered="#{ocproduto.tiposaida == 'showroom'}" />
 								        		</f:facet>
 								        		<f:facet name="input" >
-								        			<p:selectOneMenu value="#{ocproduto.tiposaida}" id="tiposaidalista" size="1" >
+								        			<p:selectOneMenu value="#{ocproduto.tiposaida}" id="tiposaidalista" size="1" style="width: 120px;">
 														<p:ajax event="change" process="@this"/>
 														<f:selectItem noSelectionOption="true" itemLabel="Escolha uma Saída"/>
 														<f:selectItem itemValue="estoque" itemLabel="Estoque" itemDisabled="#{ocproduto.produto.estoque == 0}"/>
@@ -231,16 +234,30 @@
 								        		</f:facet>
 								        	</p:cellEditor>
 								        </p:column>
+								        
+								        <p:column headerText="Status" rendered="#{ocControl.oc.id != null}" id="status">
+								        	<p:cellEditor>
+								        		<f:facet name="output" >
+								        			<h:outputText value="#{ocproduto.status.descricao}" id="statusout"/>
+								        		</f:facet>
+								        		<f:facet name="input" >
+								        			<p:selectOneMenu value="#{ocproduto.status.id}" id="statusin" size="1" style="width: 120px;">								        																		
+														<f:selectItem itemLabel="" itemValue=""/>
+														<f:selectItems value="#{statusControl.listaStatusCombo}"/>
+													</p:selectOneMenu>
+								        		</f:facet>
+								        	</p:cellEditor>
+								        </p:column>
 								             
 								        <p:column headerText="Valor Unitário">
 								        	<p:cellEditor>
 								        		<f:facet name="output">
 								        			<h:outputText value="#{ocproduto.valorunitario}">
-										        		<f:convertNumber type="currency" locale="pt_BR" maxFractionDigits="2" minFractionDigits="2" maxIntegerDigits="6" minIntegerDigits="1"/>		
+										        		<f:convertNumber type="currency" locale="pt_BR" maxFractionDigits="2" minFractionDigits="2" maxIntegerDigits="6" minIntegerDigits="1"/>										        			
 										        	</h:outputText>
 								        		</f:facet>
 								        		<f:facet name="input">
-								        			<p:inputText value="#{ocproduto.valorunitario}" id="valorunitariolista" immediate="true" >
+								        			<p:inputText value="#{ocproduto.valorunitario}" id="valorunitariolista">
 														<p:ajax event="blur"  process="@this,valortotallista" update="valorunitariolista,valortotallista" />
 														<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1"/>												
 													</p:inputText>
@@ -266,7 +283,7 @@
 								        <p:column headerText="Total">
 								        	<p:cellEditor>
 								        		<f:facet name="output">
-								        			<h:outputText value="#{ocproduto.valortotal}" >
+								        			<h:outputText value="#{ocproduto.valortotal}" id="valortotalout">
 										        		<f:convertNumber type="currency" locale="pt_BR" maxFractionDigits="2" minFractionDigits="2" maxIntegerDigits="6" minIntegerDigits="1"/>
 										        	</h:outputText>	
 								        		</f:facet>
@@ -339,10 +356,10 @@
 												<p:message for="valorfinaloc"/>
 											</h:panelGrid>
 										</p:panel>
-										<p:panel rendered="#{sessionScope.UsuarioLogado.perfil.id != 2}">
-											<p:panel>											
+										<p:panel rendered="#{sessionScope.UsuarioLogado.perfil.id != 2 and (ocControl.oc.status.id == 2 or ocControl.oc.status.id == 1)}">
+											<p:panel rendered="#{not ocControl.habilitaCondicoesPagamento()}">											
 												<p:outputPanel id="updSelecaoCondicao">
-													<h:panelGrid columns="2" id="formapagamentodet" rendered="#{not ocControl.habilitaCondicoesPagamento()}">
+													<h:panelGrid columns="2" id="formapagamentodet">
 														<p:outputLabel for="formapagamento" value="Forma de Pagamento: "/>
 														<p:selectOneMenu id="formapagamento" value="#{ocControl.pagamento.condicoesPagamento.formapagamento.id}"
 														 				 required="true" requiredMessage="Selecionar uma forma de pagamento">						
@@ -407,7 +424,7 @@
 		</ui:define>
 		<ui:define name="rodape">
 			<p:panel header="Descritivo Tela" styleClass="rodape">
-	    		<p:outputLabel value="Tela para cadastro e edição de comissão dos funcionários." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="Tela para cadastro e edição de OC." styleClass="rodape_esquerda"/>
 	    		<p:outputLabel value="cadastracomissao.jsf" styleClass="rodape_direita"/>
 	    	</p:panel>
 		</ui:define>

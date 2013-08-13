@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form id="form">
+				<p:panel header="Manutenção de OC">
+			     	<p:messages id="msgs"/>
+			     	<p:contextMenu for="ocs">
+			     		<p:menuitem value="Editar" action="#{ocControl.alterarCadastro(oc)}" ajax="false"/>
+				        <p:menuitem value="Deletar" update="ocs,:form:msgs" icon="ui-icon-close" actionListener="#{ocControl.deletar}"/>
+			     	</p:contextMenu>
+					<p:dataTable var="oc" value="#{ocControl.listarAtivos()}" id="ocs" rowKey="#{oc.id}"  
+                		 emptyMessage="Sem OC cadastrada!" paginator="true" rows="10" lazy="true" selection="#{ocControl.oc}" selectionMode="single">                		  		
+				        <p:column headerText="Codigo">
+				            <h:outputText value="#{oc.id}" />
+				        </p:column>
+				
+				        <p:column headerText="Nome">
+				            <h:outputText value="#{oc.cliente.nome}" />
+				        </p:column>
+				        
+				        <p:column headerText="Valor Total">
+				        	<h:outputText value="R$ "/>
+				        	<h:outputText value="#{oc.valorfinal}">
+				        		<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+				        	</h:outputText>				        					            
+				        </p:column>
+				        
+				        <p:column headerText="Status">
+				            <h:outputText value="#{oc.status.descricao}"/> 
+				        </p:column>
+						
+						<p:column headerText="Vendedor">
+							<h:outputText value="#{oc.usuario.nome}" />
+				        </p:column>	        
+				    </p:dataTable>
+		     	</p:panel>
+			</h:form>
+		</ui:define>
+		<ui:define name="rodape">		
+		</ui:define>
+	</ui:composition>
+</html>

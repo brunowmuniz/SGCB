@@ -28,6 +28,12 @@
 	vertical-align: top;
 	width: 50%;
 }
+
+.vAlCenter{
+	vertical-align: middle;
+	width: 50%
+}
+
 .nome{
 	text-decoration: none;
 	margin-left: 20px;
