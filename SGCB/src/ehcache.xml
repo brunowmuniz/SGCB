@@ -86,4 +86,29 @@
 	    timeToLiveSeconds="10000"
 	    overflowToDisk="True"
 	    memoryStoreEvictionPolicy="LRU"/>
+    
+     <cache name="br.com.casabemestilo.model.Status"
+	    maxElementsInMemory="10000"
+	    eternal="false"
+	    timeToIdleSeconds="1800"
+	    timeToLiveSeconds="10000"
+	    overflowToDisk="True"
+	    memoryStoreEvictionPolicy="LRU"/>
+     
+      <cache name="br.com.casabemestilo.model.CondicoesPagamento"
+	    maxElementsInMemory="10000"
+	    eternal="false"
+	    timeToIdleSeconds="1800"
+	    timeToLiveSeconds="10000"
+	    overflowToDisk="True"
+	    memoryStoreEvictionPolicy="LRU"/>
+      
+       <cache name="br.com.casabemestilo.model.Formapagamento"
+	    maxElementsInMemory="10000"
+	    eternal="false"
+	    timeToIdleSeconds="1800"
+	    timeToLiveSeconds="10000"
+	    overflowToDisk="True"
+	    memoryStoreEvictionPolicy="LRU"/>
+    
 </ehcache>
