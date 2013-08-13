@@ -26,6 +26,7 @@
 						<p:outputLabel for="login" value="Login: "/>
 						<p:inputText value="#{usuarioControl.usuario.login}" id="login" size="15">
 							<f:validateBean/>
+							<p:ajax event="blur" process="@this" update="@this,msgs" listener="#{usuarioControl.verificaLoginExistente}"/>
 						</p:inputText>
 						<p:outputLabel for="filialUsuario" value="Filial: "/>					
 						<p:selectManyMenu id="filialUsuario" value="#{usuarioControl.listaUsuarioFilial}"

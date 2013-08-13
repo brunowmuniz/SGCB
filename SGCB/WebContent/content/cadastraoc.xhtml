@@ -59,7 +59,7 @@
 															disabled="#{ocControl.oc.cliente.id != null}">
 												<p:ajax event="itemSelect" update="dadoscliente" process="@this"/>
 										</p:autoComplete>
-										<p:commandButton value="Limpar" actionListener="#{ocControl.limparCliente}" update="dadoscliente" id="limparcliente" rendered="#{ocControl.oc.cliente.id != null}" process="@this" />										
+										<p:commandButton value="Limpar" actionListener="#{ocControl.limparCliente}" update="dadoscliente" id="limparcliente" rendered="#{ocControl.oc.cliente.id != null}" process="@this" />
 									</h:panelGrid>
 									<h:panelGrid columns="2">
 										<p:outputLabel value="Nome: " for="nomeclienteoc"/>
@@ -223,7 +223,7 @@
 						        					<h:outputText value="Encomenda" rendered="#{ocproduto.tiposaida == 'encomenda'}" />
 						        					<h:outputText value="Showroom" rendered="#{ocproduto.tiposaida == 'showroom'}" />
 								        		</f:facet>
-								        		<f:facet name="input" >
+								        		<f:facet name="input">
 								        			<p:selectOneMenu value="#{ocproduto.tiposaida}" id="tiposaidalista" size="1" style="width: 120px;">
 														<p:ajax event="change" process="@this"/>
 														<f:selectItem noSelectionOption="true" itemLabel="Escolha uma Saída"/>
@@ -240,7 +240,7 @@
 								        		<f:facet name="output" >
 								        			<h:outputText value="#{ocproduto.status.descricao}" id="statusout"/>
 								        		</f:facet>
-								        		<f:facet name="input" >
+								        		<f:facet name="input">
 								        			<p:selectOneMenu value="#{ocproduto.status.id}" id="statusin" size="1" style="width: 120px;">								        																		
 														<f:selectItem itemLabel="" itemValue=""/>
 														<f:selectItems value="#{statusControl.listaStatusCombo}"/>
@@ -253,13 +253,13 @@
 								        	<p:cellEditor>
 								        		<f:facet name="output">
 								        			<h:outputText value="#{ocproduto.valorunitario}">
-										        		<f:convertNumber type="currency" locale="pt_BR" maxFractionDigits="2" minFractionDigits="2" maxIntegerDigits="6" minIntegerDigits="1"/>										        			
+										        		<f:convertNumber type="currency" locale="pt_BR" maxFractionDigits="2" minFractionDigits="2" maxIntegerDigits="6" minIntegerDigits="1"/>										        												        			
 										        	</h:outputText>
 								        		</f:facet>
 								        		<f:facet name="input">
 								        			<p:inputText value="#{ocproduto.valorunitario}" id="valorunitariolista">
-														<p:ajax event="blur"  process="@this,valortotallista" update="valorunitariolista,valortotallista" />
-														<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1"/>												
+														<p:ajax event="blur"  process="@this,valortotallista" update="valorunitariolista,valortotallista" listener="#{ocControl.calculaValorTotalProdutos}"/>
+														<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1"/>																										
 													</p:inputText>
 								        		</f:facet>
 								        	</p:cellEditor>            
@@ -271,10 +271,10 @@
 								        			<h:outputText value="#{ocproduto.quantidade}" />
 								        		</f:facet>
 								        		<f:facet name="input">
-								        		<p:spinner  value="#{ocproduto.quantidade}" id="quantidadelista" immediate="true" min="1" max="999">
+								        		<p:spinner  value="#{ocproduto.quantidade}" id="quantidadelista" min="1" max="999">
 													<f:validateBean />
-													<p:ajax event="change"  process="@this,valortotallista,tiposaidalista" update="valortotallista,tiposaidalista" />
-													<p:ajax event="blur"  process="@this,valortotallista,tiposaidalista" update="valortotallista,tiposaidalista" />
+													<p:ajax event="change"  process="@this,valortotallista" update="quantidadelista,valorunitariolista,valortotallista,tiposaidalista" listener="#{ocControl.calculaValorTotalProdutos}"/>
+													<p:ajax event="blur"  process="@this,valortotallista" update="quantidadelista,valorunitariolista,valortotallista,tiposaidalista" listener="#{ocControl.calculaValorTotalProdutos}"/>
 												</p:spinner>
 								        		</f:facet>
 								        	</p:cellEditor>            
@@ -415,7 +415,7 @@
 											</p:panel>											
 										</p:panel>
 									</h:panelGrid>
-								</p:outputPanel>						
+								</p:outputPanel>
 							</p:tab>
 						</p:tabView>												
 					</h:panelGrid>
@@ -425,7 +425,7 @@
 		<ui:define name="rodape">
 			<p:panel header="Descritivo Tela" styleClass="rodape">
 	    		<p:outputLabel value="Tela para cadastro e edição de OC." styleClass="rodape_esquerda"/>
-	    		<p:outputLabel value="cadastracomissao.jsf" styleClass="rodape_direita"/>
+	    		<p:outputLabel value="cadastraoc.jsf" styleClass="rodape_direita"/>
 	    	</p:panel>
 		</ui:define>
 	</ui:composition>
