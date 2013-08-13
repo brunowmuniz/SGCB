@@ -224,6 +224,10 @@ public class ClienteControl extends Control implements Serializable,InterfaceCon
 		cliente.setDeleted(false);
 		try {
 			listaCliente = new ClienteDAO().listaSelecao(cliente);
+			if(listaCliente.isEmpty()){
+				cliente.setNome(nomeCliente);
+				listaCliente.add(cliente);
+			}
 		} catch (ConstraintViolationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -73,7 +73,7 @@ public class CondicoesPagamento implements java.io.Serializable {
 		this.id = id;
 	}
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "formapagamento", nullable = false)
 	public Formapagamento getFormapagamento() {
 		if(formapagamento == null){

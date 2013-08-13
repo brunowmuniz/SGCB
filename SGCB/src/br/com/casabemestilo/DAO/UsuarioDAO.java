@@ -130,6 +130,16 @@ public class UsuarioDAO implements InterfaceDAO, Serializable {
 		return this.usuario;
 	}
 	
+	public boolean verificaLoginExistente(String login) {
+		session = Conexao.getInstance();
+		this.usuario = new Usuario();
+		this.usuario = (Usuario) session.createQuery("From Usuario u where u.login= :login")
+										.setString("login", login)
+										.uniqueResult();
+		
+		return this.usuario.getId() != null;
+	}
+	
 	/*
 	 * GETTERS & SETTERS
 	 * */
@@ -148,6 +158,8 @@ public class UsuarioDAO implements InterfaceDAO, Serializable {
 	public void setListaUsuario(List<Usuario> listaUsuario) {
 		this.listaUsuario = listaUsuario;
 	}
+
+	
 
 	
 

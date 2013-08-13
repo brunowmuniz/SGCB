@@ -311,6 +311,16 @@ public class UsuarioControl extends Control implements InterfaceControl,
 		ELFlash.getFlash().put("usuarioComissao", usuario);
 		return "cadastracomissao?faces-redirect=true";
 	}
+	
+	public void verificaLoginExistente(){
+		boolean isLoginExiste;
+		usuarioDAO = new UsuarioDAO();
+		isLoginExiste = usuarioDAO.verificaLoginExistente(usuario.getLogin());
+		if(isLoginExiste){
+			usuario.setLogin("");
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Login já existe, favor informar outro!", ""));
+		}
+	}
 
 	/*
 	 * GETTERS & SETTERS

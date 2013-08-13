@@ -1,29 +1,20 @@
 package br.com.casabemestilo.control;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ActionListener;
-import javax.swing.event.ChangeEvent;
-
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
-import org.hibernate.sql.Select;
-import org.primefaces.component.calendar.Calendar;
 import org.primefaces.event.SelectEvent;
-import org.primefaces.event.TabChangeEvent;
-
 import com.sun.faces.context.flash.ELFlash;
-
 import br.com.casabemestilo.DAO.ComissaoDAO;
 import br.com.casabemestilo.DAO.CondicoesPagamentoDAO;
 import br.com.casabemestilo.DAO.FormaPagamentoDAO;
@@ -93,7 +84,7 @@ public class OcControl extends Control implements InterfaceControl,
 	public void init(){		
 		if(ELFlash.getFlash().get("oc") != null){
 			oc = (Oc) ELFlash.getFlash().get("oc");
-			//oc = buscaObjetoId(oc.getId());
+			ELFlash.getFlash().put("oc",null);
 		}
 	}
 	    
@@ -169,9 +160,13 @@ public class OcControl extends Control implements InterfaceControl,
 	}
 	
 	public void calculaValorTotalProdutos(){
-		oc.setValor(0);
+		oc.setValor(0);		
+		for(Ocproduto ocproduto : oc.getOcprodutos()){
+			ocproduto.setValortotal(ocproduto.getValorunitario() * ocproduto.getQuantidade());
+		}
+		
 		for(Iterator<Ocproduto> iterOcProd = oc.getOcprodutos().iterator(); iterOcProd.hasNext();){
-			Ocproduto ocproduto =  iterOcProd.next();
+			Ocproduto ocproduto =  iterOcProd.next();			
 			oc.setValor(oc.getValor() + ocproduto.getValortotal());
 		}		
 		ocproduto = new Ocproduto();
@@ -232,8 +227,8 @@ public class OcControl extends Control implements InterfaceControl,
 			ocDAO = new OcDAO();
 			oc.setStatus((Status) new StatusDAO().buscaObjetoId(1));
 			calculaValorComissao();
-			//oc = ocDAO.insertOc(oc);
-			ocDAO.insert(oc);
+			oc = ocDAO.insertOc(oc);
+			//ocDAO.insert(oc);
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("OC " + oc.getId() + " foi gravada!"));
 			logger.info("Salvo Oc: " + oc.getId());
 			oc = new Oc();
@@ -294,6 +289,7 @@ public class OcControl extends Control implements InterfaceControl,
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));
 			logger.error("[alterar] Erro Constraint: " + super.mensagem + "-" + oc.getId());
 		} catch (HibernateException e) {
+			e.printStackTrace();
 			super.mensagem = e.getMessage();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Hibernate: " + super.mensagem, ""));
 			logger.error("[alterar] Erro Hibernate: " + super.mensagem + "-" + oc.getId());
@@ -305,8 +301,8 @@ public class OcControl extends Control implements InterfaceControl,
 
 	}
 	
-	public String alterarCadastro(Oc oc){
-		ELFlash.getFlash().put("oc", oc);
+	public String alterarCadastro(){
+		ELFlash.getFlash().put("oc", this.oc);
 		return "cadastraoc?faces-redirect=true";
 	}
 
@@ -425,9 +421,8 @@ public class OcControl extends Control implements InterfaceControl,
 				}
 				produtoDAO.update(produto);
 			}			
-			oc.setStatus((Status) new StatusDAO().buscaObjetoId(7));
-			
-			//lancaParcelas();
+			oc.setStatus((Status) new StatusDAO().buscaObjetoId(7));			
+			lancaParcelas();
 			alterar();			
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Produtos da OC separados!"));
 			logger.info(oc.getId() + " - com produtos separados!");
@@ -448,26 +443,57 @@ public class OcControl extends Control implements InterfaceControl,
 	
 	public void lancaParcelas(){
 		Float valorParcelas = new Float(0.0);
-		Calendar hoje = new Calendar();
-		for(Pagamento pagamento : oc.getPagamentos()){
-			if(pagamento.getCondicoesPagamento().getFormapagamento().getEhantecipacao()){
-				
-			}else if(pagamento.getCondicoesPagamento().getAvista()){
-				
-			}else{							
-				percentualRetencao = null;
-				valorLiquido = null;			
-				percentualRetencao = pagamento.getCondicoesPagamento().getPercentual() / 100;				
-				valorLiquido = pagamento.getValor() - (pagamento.getValor() * percentualRetencao);				
-				valorParcelas = valorLiquido / pagamento.getCondicoesPagamento().getParcelas();
-				for(int i = 1; i <= pagamento.getCondicoesPagamento().getParcelas(); i++){
+		Calendar c = Calendar.getInstance();		
+		try {
+			for(Pagamento pagamento : oc.getPagamentos()){
+				if(pagamento.getCondicoesPagamento().getFormapagamento().getEhantecipacao()){
+					Parcela parcela = new Parcela();
+					c.setTime(new Date());
+					c.add(Calendar.DAY_OF_MONTH, 1);
+					percentualRetencao = pagamento.getCondicoesPagamento().getPercentual() / 100;
+					valorLiquido = pagamento.getValor() - (pagamento.getValor() * percentualRetencao);				
+					valorParcelas = valorLiquido / pagamento.getCondicoesPagamento().getParcelas();
+					if(pagamento.getCondicoesPagamento().getFormapagamento().getEhantecipacao()){
+						percentualRetencao +=  pagamento.getCondicoesPagamento().getFormapagamento().getPercentualAntecipacao() /100;
+					}
+					valorLiquido = pagamento.getValor() - (pagamento.getValor() * percentualRetencao);
+					parcela.setPagamento(pagamento);
+					parcela.setNumeroParcela(1);
+					parcela.setValor(valorLiquido);
+					parcela.setDataentrada(c.getTime());
+					pagamento.getParcelas().add(parcela);
+				}else if(pagamento.getCondicoesPagamento().getAvista()){
+					c.setTime(new Date());
 					Parcela parcela = new Parcela();
 					parcela.setPagamento(pagamento);
-					parcela.setNumeroParcela(i);
-					parcela.setValor(valorLiquido);					
+					parcela.setNumeroParcela(1);
+					parcela.setValor(pagamento.getValor());
+					parcela.setDataentrada(c.getTime());
+					pagamento.getParcelas().add(parcela);
+				}else{		
+					percentualRetencao = pagamento.getCondicoesPagamento().getPercentual() / 100;				
+					valorLiquido = pagamento.getValor() - (pagamento.getValor() * percentualRetencao);				
+					valorParcelas = valorLiquido / pagamento.getCondicoesPagamento().getParcelas();
+					for(int i = 1; i <= pagamento.getCondicoesPagamento().getParcelas(); i++){
+						Parcela parcela = new Parcela();
+						c.add(Calendar.DAY_OF_MONTH,30);
+						parcela.setPagamento(pagamento);
+						parcela.setNumeroParcela(i);
+						parcela.setValor(valorParcelas);
+						parcela.setDataentrada(c.getTime());
+						pagamento.getParcelas().add(parcela);
+					}
 				}
 			}
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Parcelas lançadas!"));
+			logger.info("Parcelas lançadas: " + oc.getId());
+		} catch (Exception e) {
+			e.printStackTrace();
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro no lançamento das parcelas [OC:" + oc.getId() + "]", ""));
+			logger.error("Erro genérico - Lançamento parcelas: [OC:" + oc.getId() + "] - " + super.mensagem);
 		}
+		
 	}
 	
 	/*
