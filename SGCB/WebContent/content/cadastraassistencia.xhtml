@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+	<ui:composition template="../template/template.xhtml">
+		<p:ajaxStatus onstart="PF('aguarde').show();" onsuccess="PF('aguarde').hide();"/> 
+		<p:dialog modal="true" widgetVar="aguarde" header="Aguarde..." draggable="false" closable="false">
+			<p:graphicImage value="../imagens/loading.gif" />
+		</p:dialog>
+		<ui:define name="conteudo">
+			<h:form>
+				<p:panel header="Cadastro de Assitêwncia Técnica">
+				
+			     	<p:messages id="msgs"/>			     	
+					<h:panelGrid columns="2" id="oc">
+						<p:outputLabel>OC: </p:outputLabel>
+						<p:inputText value="" id="nome" size="20"/>
+						<p:outputLabel>Cliente: </p:outputLabel>
+						<p:inputText value="" id="cliente" size="40"/>
+						<p:outputLabel>Produto:</p:outputLabel>
+						<p:inputText value="" id="produto" size="40"/>
+						
+						<p:outputLabel>Data:</p:outputLabel>
+						<p:calendar value="#{calendarBean.date2}" id="popupCal" />
+						<p:outputLabel>Descrição</p:outputLabel>
+						<p:inputTextarea rows="5" cols="30"></p:inputTextarea>  
+						<p:commandButton value="Cadastrar" actionListener="#{pprBean.savePerson}" ajax="false" /> 
+					</h:panelGrid>
+			     </p:panel>
+			</h:form>	     
+	    </ui:define>
+	    <ui:define name="rodape">
+	    	<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela para cadastro e edição assitência técnica" styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="cadastraassistencia.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
+	    </ui:define>
+	</ui:composition>
+</html>
