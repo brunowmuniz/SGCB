@@ -1,6 +1,7 @@
 package br.com.casabemestilo.control;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -14,6 +15,8 @@ import javax.faces.context.FacesContext;
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.model.LazyDataModel;
+
 import com.sun.faces.context.flash.ELFlash;
 import br.com.casabemestilo.DAO.ComissaoDAO;
 import br.com.casabemestilo.DAO.CondicoesPagamentoDAO;
@@ -34,6 +37,7 @@ import br.com.casabemestilo.model.Pagamento;
 import br.com.casabemestilo.model.Parcela;
 import br.com.casabemestilo.model.Produto;
 import br.com.casabemestilo.model.Status;
+import br.com.casabemestilo.util.LazyOcDataModel;
 
 @ManagedBean
 @ViewScoped
@@ -59,6 +63,8 @@ public class OcControl extends Control implements InterfaceControl,
 
 	private Float valorLiquido;
 	
+	private LazyDataModel<Oc> listarOcGeral;
+	
 	
 	/*
 	 * CONSTRUTORES
@@ -83,7 +89,7 @@ public class OcControl extends Control implements InterfaceControl,
 	@PostConstruct
 	public void init(){		
 		if(ELFlash.getFlash().get("oc") != null){
-			oc = (Oc) ELFlash.getFlash().get("oc");
+			oc = (Oc) ELFlash.getFlash().get("oc");			
 			ELFlash.getFlash().put("oc",null);
 		}
 	}
@@ -302,12 +308,13 @@ public class OcControl extends Control implements InterfaceControl,
 	}
 	
 	public String alterarCadastro(){
-		ELFlash.getFlash().put("oc", this.oc);
+		ELFlash.getFlash().put("oc", this.getOc());
 		return "cadastraoc?faces-redirect=true";
 	}
 
 	@Override
 	public List<Oc> listarAtivos() {
+		//List listaOcAtivo = new ArrayList();
 		try{
 			ocDAO = new OcDAO();
 			listaOc = ocDAO.listaAtivos();
@@ -549,5 +556,24 @@ public class OcControl extends Control implements InterfaceControl,
 	public void setOcproduto(Ocproduto ocproduto) {
 		this.ocproduto = ocproduto;
 	}
+
+	
+	public LazyDataModel<Oc> getListarOcGeral() {		
+		return listarOcGeral;
+	}
+
+	public void setListarOcGeral(LazyDataModel<Oc> listarOcGeral) {
+		this.listarOcGeral = listarOcGeral;
+	}
+	
+	public LazyDataModel<Oc> getListarOcGeralAll(){
+		if(listarOcGeral == null){
+			listarOcGeral = new LazyOcDataModel();
+		}
+		
+		return listarOcGeral;
+	}
+	
+	
 
 }
