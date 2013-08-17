@@ -16,7 +16,7 @@ import javax.validation.constraints.Null;
 
 
 @Entity
-@Table(name = "perfil", catalog = "lacodevidas02")
+@Table(name = "perfil", catalog = "blankerc_sgcb")
 public class Perfil implements java.io.Serializable {
 
 	private Integer id;
