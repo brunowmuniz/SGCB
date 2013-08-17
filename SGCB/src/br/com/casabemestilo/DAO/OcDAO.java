@@ -167,18 +167,18 @@ public class OcDAO implements InterfaceDAO, Serializable {
 	}
 	
 	public int totalOc() {
-		int linhas = 0;
+		Long linhas = new Long(0);
 		session = Conexao.getInstance();
 		session.beginTransaction();
-		linhas = session.createQuery("from Oc o " +
+		linhas = (Long) session.createQuery("select count(*) " +
+										" from Oc o " +
 									 " where " +
 									 	" o.deleted=0" +
 									 " and" +
-									 	" o.status.id < 9 " +
-									 " order by o.id desc")
-						.setCacheable(true).list().size();
+									 	" o.status.id < 9 ")
+						.setCacheable(true).uniqueResult();
 		
-		return linhas;
+		return linhas.intValue();
 	}
 	
 	/*
