@@ -1,7 +1,8 @@
 <ehcache>
 
-    <defaultCache
-        maxElementsInMemory="10000"
+    <diskStore path="java.io.tmpdir" />
+    
+    <defaultCache maxElementsInMemory="10000"
         eternal="false"
         timeToIdleSeconds="120"
         timeToLiveSeconds="120"
@@ -10,15 +11,13 @@
         diskExpiryThreadIntervalSeconds="120"
         memoryStoreEvictionPolicy="LRU" />
 
-    <cache
-        name="org.hibernate.cache.StandardQueryCache"
+    <cache  name="org.hibernate.cache.StandardQueryCache"
         maxElementsInMemory="5"
         eternal="false"
         timeToLiveSeconds="120"
         overflowToDisk="true"/>
     
-    <cache
-        name="org.hibernate.cache.UpdateTimestampsCache"
+    <cache name="org.hibernate.cache.UpdateTimestampsCache"
         maxElementsInMemory="5000"
         eternal="true"
         overflowToDisk="true"/>
@@ -104,6 +103,14 @@
 	    memoryStoreEvictionPolicy="LRU"/>
       
        <cache name="br.com.casabemestilo.model.Formapagamento"
+	    maxElementsInMemory="10000"
+	    eternal="false"
+	    timeToIdleSeconds="1800"
+	    timeToLiveSeconds="10000"
+	    overflowToDisk="True"
+	    memoryStoreEvictionPolicy="LRU"/>
+       
+        <cache name="br.com.casabemestilo.model.Usuario"
 	    maxElementsInMemory="10000"
 	    eternal="false"
 	    timeToIdleSeconds="1800"
