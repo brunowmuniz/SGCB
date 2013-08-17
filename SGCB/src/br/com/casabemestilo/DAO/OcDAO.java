@@ -108,8 +108,6 @@ public class OcDAO implements InterfaceDAO, Serializable {
 	@Override
 	public List listaAtivos() throws Exception, HibernateException,
 			ConstraintViolationException {
-		List listaOcGen = new ArrayList();
-		
 		session = Conexao.getInstance();
 		session.beginTransaction();		
 		listaOc = session.createQuery("from Oc o " +
@@ -120,23 +118,6 @@ public class OcDAO implements InterfaceDAO, Serializable {
 									 " order by o.id desc")						
 						.setFetchSize(20)
 						.setCacheable(true).list();
-		/*listaOcGen = session.createSQLQuery("select" +
-												" o.id,"+
-												" c.nome as cliente,"+
-												" o.valorfinal,"+
-												" s.descricao,"+
-												" u.nome as usuario"+
-											" from"+
-												" oc o" +
-												" inner join cliente c on o.cliente = c.id"+
-												" inner join status s on o.status = s.id"+
-												" inner join usuario u on o.vendedor = u.id" +
-											" where"+
-												" o.deleted= 0" +
-											" and" +
-												" o.status < 9" +												
-											" order by o.id desc")									
-									.list();*/
 		System.out.println("buscar");
 		session.close();
 		return listaOc;
