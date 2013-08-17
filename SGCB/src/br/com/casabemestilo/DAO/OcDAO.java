@@ -1,10 +1,12 @@
 package br.com.casabemestilo.DAO;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.StatelessSession;
 import org.hibernate.exception.ConstraintViolationException;
 
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
@@ -19,6 +21,8 @@ public class OcDAO implements InterfaceDAO, Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	Session session;
+	
+	StatelessSession sessionStateless;
 	
 	private List<Oc> listaOc;
 	
@@ -102,11 +106,38 @@ public class OcDAO implements InterfaceDAO, Serializable {
 	}
 
 	@Override
-	public List<Oc> listaAtivos() throws Exception, HibernateException,
+	public List listaAtivos() throws Exception, HibernateException,
 			ConstraintViolationException {
+		List listaOcGen = new ArrayList();
+		
 		session = Conexao.getInstance();
 		session.beginTransaction();		
-		listaOc = session.createQuery("from Oc o where o.deleted=0 order by o.id desc").setCacheable(true).list();
+		listaOc = session.createQuery("from Oc o " +
+									 " where " +
+									 	" o.deleted=0" +
+									 " and" +
+									 	" o.status.id < 9 " +
+									 " order by o.id desc")						
+						.setFetchSize(20)
+						.setCacheable(true).list();
+		/*listaOcGen = session.createSQLQuery("select" +
+												" o.id,"+
+												" c.nome as cliente,"+
+												" o.valorfinal,"+
+												" s.descricao,"+
+												" u.nome as usuario"+
+											" from"+
+												" oc o" +
+												" inner join cliente c on o.cliente = c.id"+
+												" inner join status s on o.status = s.id"+
+												" inner join usuario u on o.vendedor = u.id" +
+											" where"+
+												" o.deleted= 0" +
+											" and" +
+												" o.status < 9" +												
+											" order by o.id desc")									
+									.list();*/
+		System.out.println("buscar");
 		session.close();
 		return listaOc;
 	}
@@ -118,6 +149,37 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		return null;
 	}
 
+	public List<Oc> listaLazy(int startingAt, int maxPerPage){
+		session = Conexao.getInstance();
+		session.beginTransaction();		
+		listaOc = session.createQuery("from Oc o " +
+									 " where " +
+									 	" o.deleted=0" +
+									 " and" +
+									 	" o.status.id < 9 " +
+									 " order by o.id desc")						
+						.setFirstResult(startingAt)
+						.setMaxResults(maxPerPage)
+						.setCacheable(true).list();
+		
+		session.close();
+		return listaOc;
+	}
+	
+	public int totalOc() {
+		int linhas = 0;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		linhas = session.createQuery("from Oc o " +
+									 " where " +
+									 	" o.deleted=0" +
+									 " and" +
+									 	" o.status.id < 9 " +
+									 " order by o.id desc")
+						.setCacheable(true).list().size();
+		
+		return linhas;
+	}
 	
 	/*
 	 * GETTERS & SETTERS
@@ -137,6 +199,8 @@ public class OcDAO implements InterfaceDAO, Serializable {
 	public void setOc(Oc oc) {
 		this.oc = oc;
 	}
+
+	
 	
 
 }
