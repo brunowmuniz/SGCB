@@ -177,7 +177,7 @@ public class OcDAO implements InterfaceDAO, Serializable {
 									 " and" +
 									 	" o.status.id < 9 ")
 						.setCacheable(true).uniqueResult();
-		
+		session.close();
 		return linhas.intValue();
 	}
 	

@@ -1,6 +1,7 @@
 package br.com.casabemestilo.DAO;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.HibernateException;
@@ -9,6 +10,7 @@ import org.hibernate.exception.ConstraintViolationException;
 
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
 import br.com.casabemestilo.model.Parcela;
+import br.com.casabemestilo.util.Conexao;
 
 public class ParcelaDAO implements InterfaceDAO, Serializable {
 
@@ -49,7 +51,11 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 	@Override
 	public void update(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
+		parcela = (Parcela) obj;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		session.update(obj);
+		session.getTransaction().commit();		
 
 	}
 
@@ -87,6 +93,32 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	public int totalParcelasAVencer() {
+		Long linhas = new Long(0);
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		linhas = (Long) session.createQuery("select count(*) from Parcela p where p.dataentrada >= :hoje")
+						.setDate("hoje", new Date())
+						.setCacheable(true)
+						.uniqueResult();
+		
+		session.close();
+		return linhas.intValue();
+	}
+
+	public List<Parcela> listaParcelasAVencer(int first, int pageSize) {
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		listaParcela = session.createQuery("from Parcela p where p.dataentrada >= :hoje")
+							  .setDate("hoje", new Date())
+							  .setFirstResult(first)
+							  .setMaxResults(pageSize)
+							  .setCacheable(true)
+							  .list();
+		session.close();
+		return listaParcela;
+	}
 
 	
 	/*
@@ -107,5 +139,5 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 	public void setListaParcela(List<Parcela> listaParcela) {
 		this.listaParcela = listaParcela;
 	}
-
+	
 }

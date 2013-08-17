@@ -116,5 +116,17 @@ public class PagamentoDAO implements InterfaceDAO, Serializable {
 	public void setListaPagamento(List<Pagamento> listaPagamento) {
 		this.listaPagamento = listaPagamento;
 	}
+
+
+	public List<Pagamento> listaPagamentosAVencer(int first, int pageSize) {
+		
+		return null;
+	}
+
+
+	public int totalPagamentosAVencer() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 	
 }
