@@ -207,6 +207,106 @@ public class Ocproduto implements java.io.Serializable {
 		}
 		
 	}
-	
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime
+				* result
+				+ ((assistenciatecnicas == null) ? 0 : assistenciatecnicas
+						.hashCode());
+		result = prime * result + ((fretes == null) ? 0 : fretes.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result
+				+ ((montagems == null) ? 0 : montagems.hashCode());
+		result = prime * result + ((oc == null) ? 0 : oc.hashCode());
+		result = prime * result + ((produto == null) ? 0 : produto.hashCode());
+		result = prime * result
+				+ ((quantidade == null) ? 0 : quantidade.hashCode());
+		result = prime * result + ((status == null) ? 0 : status.hashCode());
+		result = prime * result
+				+ ((tiposaida == null) ? 0 : tiposaida.hashCode());
+		result = prime * result
+				+ ((valorsugerido == null) ? 0 : valorsugerido.hashCode());
+		result = prime * result
+				+ ((valortotal == null) ? 0 : valortotal.hashCode());
+		result = prime * result
+				+ ((valorunitario == null) ? 0 : valorunitario.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Ocproduto other = (Ocproduto) obj;
+		if (assistenciatecnicas == null) {
+			if (other.assistenciatecnicas != null)
+				return false;
+		} else if (!assistenciatecnicas.equals(other.assistenciatecnicas))
+			return false;
+		if (fretes == null) {
+			if (other.fretes != null)
+				return false;
+		} else if (!fretes.equals(other.fretes))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (montagems == null) {
+			if (other.montagems != null)
+				return false;
+		} else if (!montagems.equals(other.montagems))
+			return false;
+		if (oc == null) {
+			if (other.oc != null)
+				return false;
+		} else if (!oc.equals(other.oc))
+			return false;
+		if (produto == null) {
+			if (other.produto != null)
+				return false;
+		} else if (!produto.equals(other.produto))
+			return false;
+		if (quantidade == null) {
+			if (other.quantidade != null)
+				return false;
+		} else if (!quantidade.equals(other.quantidade))
+			return false;
+		if (status == null) {
+			if (other.status != null)
+				return false;
+		} else if (!status.equals(other.status))
+			return false;
+		if (tiposaida == null) {
+			if (other.tiposaida != null)
+				return false;
+		} else if (!tiposaida.equals(other.tiposaida))
+			return false;
+		if (valorsugerido == null) {
+			if (other.valorsugerido != null)
+				return false;
+		} else if (!valorsugerido.equals(other.valorsugerido))
+			return false;
+		if (valortotal == null) {
+			if (other.valortotal != null)
+				return false;
+		} else if (!valortotal.equals(other.valortotal))
+			return false;
+		if (valorunitario == null) {
+			if (other.valorunitario != null)
+				return false;
+		} else if (!valorunitario.equals(other.valorunitario))
+			return false;
+		return true;
+	}
+	
+	
 }

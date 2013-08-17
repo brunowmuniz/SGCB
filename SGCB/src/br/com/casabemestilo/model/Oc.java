@@ -28,6 +28,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.IndexColumn;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.NotFound;
@@ -253,7 +254,10 @@ public class Oc implements java.io.Serializable {
 		this.deleted = deleted;
 	}
 
-	@OneToMany(targetEntity = Pagamento.class, mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = Pagamento.class, mappedBy = "oc", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+	@BatchSize(size = 5)
+	@Fetch(FetchMode.SUBSELECT)
+	@LazyCollection(LazyCollectionOption.EXTRA)
 	public List<Pagamento> getPagamentos() {
 		return this.pagamentos;
 	}
@@ -267,7 +271,10 @@ public class Oc implements java.io.Serializable {
 	}
 
 	
-	@OneToMany(targetEntity = Ocproduto.class, mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = Ocproduto.class, mappedBy = "oc",cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+	@BatchSize(size = 10)
+	@Fetch(FetchMode.SUBSELECT)
+	@LazyCollection(LazyCollectionOption.EXTRA)
 	public List<Ocproduto> getOcprodutos() {
 		return this.ocprodutos;
 	}
@@ -293,5 +300,126 @@ public class Oc implements java.io.Serializable {
 	public void setValorcomissao(Float valorcomissao) {
 		this.valorcomissao = valorcomissao;
 	}
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((cliente == null) ? 0 : cliente.hashCode());
+		result = prime * result
+				+ ((datalancamento == null) ? 0 : datalancamento.hashCode());
+		result = prime * result + ((deleted == null) ? 0 : deleted.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result
+				+ ((observacoes == null) ? 0 : observacoes.hashCode());
+		result = prime * result
+				+ ((ocprodutos == null) ? 0 : ocprodutos.hashCode());
+		result = prime * result
+				+ ((pagamentos == null) ? 0 : pagamentos.hashCode());
+		result = prime * result
+				+ ((prazoentrega == null) ? 0 : prazoentrega.hashCode());
+		result = prime * result + ((status == null) ? 0 : status.hashCode());
+		result = prime * result + ((usuario == null) ? 0 : usuario.hashCode());
+		result = prime * result + Float.floatToIntBits(valor);
+		result = prime * result
+				+ ((valorcomissao == null) ? 0 : valorcomissao.hashCode());
+		result = prime * result + Float.floatToIntBits(valorfinal);
+		result = prime * result
+				+ ((valorfinanciado == null) ? 0 : valorfinanciado.hashCode());
+		result = prime * result + Float.floatToIntBits(valorfrete);
+		result = prime * result + Float.floatToIntBits(valorliquido);
+		result = prime * result + Float.floatToIntBits(valormontagem);
+		return result;
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Oc other = (Oc) obj;
+		if (cliente == null) {
+			if (other.cliente != null)
+				return false;
+		} else if (!cliente.equals(other.cliente))
+			return false;
+		if (datalancamento == null) {
+			if (other.datalancamento != null)
+				return false;
+		} else if (!datalancamento.equals(other.datalancamento))
+			return false;
+		if (deleted == null) {
+			if (other.deleted != null)
+				return false;
+		} else if (!deleted.equals(other.deleted))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (observacoes == null) {
+			if (other.observacoes != null)
+				return false;
+		} else if (!observacoes.equals(other.observacoes))
+			return false;
+		if (ocprodutos == null) {
+			if (other.ocprodutos != null)
+				return false;
+		} else if (!ocprodutos.equals(other.ocprodutos))
+			return false;
+		if (pagamentos == null) {
+			if (other.pagamentos != null)
+				return false;
+		} else if (!pagamentos.equals(other.pagamentos))
+			return false;
+		if (prazoentrega == null) {
+			if (other.prazoentrega != null)
+				return false;
+		} else if (!prazoentrega.equals(other.prazoentrega))
+			return false;
+		if (status == null) {
+			if (other.status != null)
+				return false;
+		} else if (!status.equals(other.status))
+			return false;
+		if (usuario == null) {
+			if (other.usuario != null)
+				return false;
+		} else if (!usuario.equals(other.usuario))
+			return false;
+		if (Float.floatToIntBits(valor) != Float.floatToIntBits(other.valor))
+			return false;
+		if (valorcomissao == null) {
+			if (other.valorcomissao != null)
+				return false;
+		} else if (!valorcomissao.equals(other.valorcomissao))
+			return false;
+		if (Float.floatToIntBits(valorfinal) != Float
+				.floatToIntBits(other.valorfinal))
+			return false;
+		if (valorfinanciado == null) {
+			if (other.valorfinanciado != null)
+				return false;
+		} else if (!valorfinanciado.equals(other.valorfinanciado))
+			return false;
+		if (Float.floatToIntBits(valorfrete) != Float
+				.floatToIntBits(other.valorfrete))
+			return false;
+		if (Float.floatToIntBits(valorliquido) != Float
+				.floatToIntBits(other.valorliquido))
+			return false;
+		if (Float.floatToIntBits(valormontagem) != Float
+				.floatToIntBits(other.valormontagem))
+			return false;
+		return true;
+	}
+	
+	
 
 }

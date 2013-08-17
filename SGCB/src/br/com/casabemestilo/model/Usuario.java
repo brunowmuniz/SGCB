@@ -19,6 +19,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.Length;
 
 /**
@@ -26,6 +31,7 @@ import org.hibernate.validator.constraints.Length;
  */
 @Entity
 @Table(name = "usuario", catalog = "lacodevidas02")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Usuario implements java.io.Serializable {
 
 	private Integer id;
@@ -35,7 +41,7 @@ public class Usuario implements java.io.Serializable {
 	private String login;
 	private String senha;
 	private Set comissaos = new HashSet(0);
-	private Set ocs = new HashSet(0);
+	private List<Oc> ocs= new ArrayList<Oc>();
 	private Set fretes = new HashSet(0);
 	private Set vales = new HashSet(0);
 	private Set montagems = new HashSet(0);
@@ -52,7 +58,7 @@ public class Usuario implements java.io.Serializable {
 	}
 
 	public Usuario(Perfil perfil, String nome, Boolean deleted,
-			Set comissaos, Set ocs, Set fretes, Set vales, Set montagems,
+			Set comissaos, List<Oc> ocs, Set fretes, Set vales, Set montagems,
 			Set assistenciatecnicas, String login,String senha) {
 		this.perfil = perfil;
 		this.nome = nome;
@@ -139,12 +145,12 @@ public class Usuario implements java.io.Serializable {
 		this.comissaos = comissaos;
 	}
 
-	@OneToMany(targetEntity = Oc.class, mappedBy = "usuario")
-	public Set getOcs() {
+	@OneToMany(targetEntity = Oc.class, mappedBy = "usuario", fetch = FetchType.EAGER)
+	public List<Oc> getOcs() {
 		return this.ocs;
 	}
 
-	public void setOcs(Set ocs) {
+	public void setOcs(List<Oc> ocs) {
 		this.ocs = ocs;
 	}
 
@@ -199,7 +205,6 @@ public class Usuario implements java.io.Serializable {
 				+ nome + ", deleted=" + deleted + "]";
 	}
 
-	
 	
 	
 

@@ -2,8 +2,10 @@ package br.com.casabemestilo.model;
 
 // Generated 24/05/2013 18:36:37 by Hibernate Tools 4.0.0
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,7 +41,7 @@ public class Cliente implements java.io.Serializable {
 	private String rg;
 	private Date datadenascimento;
 	private Boolean deleted;
-	private Set ocs = new HashSet(0);
+	private List<Oc> ocs = new ArrayList<Oc>();
 
 	public Cliente() {
 	}
@@ -56,7 +58,7 @@ public class Cliente implements java.io.Serializable {
 
 	public Cliente(String nome, String endereco, String cidade,
 			String telefone, String telefoneadicional, String cpf, String rg,
-			Date datadenascimento, Set ocs) {
+			Date datadenascimento, List<Oc> ocs) {
 		this.nome = nome;
 		this.endereco = endereco;
 		this.cidade = cidade;
@@ -159,12 +161,12 @@ public class Cliente implements java.io.Serializable {
 		this.datadenascimento = datadenascimento;
 	}
 
-	@OneToMany(targetEntity = Oc.class, mappedBy = "cliente")
-	public Set getOcs() {
+	@OneToMany(targetEntity = Oc.class, mappedBy = "cliente", fetch = FetchType.EAGER)
+	public List<Oc> getOcs() {
 		return this.ocs;
 	}
 
-	public void setOcs(Set ocs) {
+	public void setOcs(List<Oc> ocs) {
 		this.ocs = ocs;
 	}
 	
@@ -185,7 +187,6 @@ public class Cliente implements java.io.Serializable {
 				+ ", rg=" + rg + ", datadenascimento=" + datadenascimento
 				+ ", deleted=" + deleted + "]";
 	}
-	
 	
 
 }

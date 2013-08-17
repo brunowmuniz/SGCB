@@ -77,7 +77,7 @@ public class Status implements java.io.Serializable {
 		this.descricao = descricao;
 	}
 
-	@OneToMany(targetEntity = Oc.class, mappedBy = "status", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(targetEntity = Oc.class, mappedBy = "status", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	public List<Oc> getOcs() {
 		return this.ocs;
 	}
@@ -95,4 +95,5 @@ public class Status implements java.io.Serializable {
 		this.ocprodutos = ocprodutos;
 	}
 
+	
 }
