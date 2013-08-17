@@ -26,10 +26,10 @@ public class Conexao {
 	    return sessionFactory;
 	}
 	 
-	public static Session getInstance(){		 
+	public static Session getInstance(){	   
 	   Session session = sessionFactory.openSession();
 	   session.setFlushMode(FlushMode.COMMIT);
-	   session.setCacheMode(CacheMode.REFRESH);
+	   session.setCacheMode(CacheMode.NORMAL);
 	   return session;
 	}
 	

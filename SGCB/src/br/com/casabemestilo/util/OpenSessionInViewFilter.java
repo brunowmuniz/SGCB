@@ -17,7 +17,7 @@ import org.hibernate.Transaction;
 
 import br.com.casabemestilo.control.Control;
 
-@WebFilter(urlPatterns = "/*", asyncSupported = true)
+@WebFilter(urlPatterns = "/*")
 public class OpenSessionInViewFilter implements Filter  {
 
 	public OpenSessionInViewFilter() {}
