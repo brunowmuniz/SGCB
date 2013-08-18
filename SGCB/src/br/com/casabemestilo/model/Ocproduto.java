@@ -44,7 +44,8 @@ public class Ocproduto implements java.io.Serializable {
 	private Integer quantidade;
 	private Float valorsugerido;
 	private Float valorunitario;
-	private Float valortotal;	
+	private Float valortotal;
+	private List<Pedidoproduto> pedidoprodutos;
 	private Set montagems = new HashSet(0);
 	private Set fretes = new HashSet(0);
 	private Set assistenciatecnicas = new HashSet(0);
@@ -206,6 +207,19 @@ public class Ocproduto implements java.io.Serializable {
 			this.valortotal = valortotal;
 		}
 		
+	}
+	
+	@OneToMany(targetEntity = Pedidoproduto.class, mappedBy = "ocproduto", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	public List<Pedidoproduto> getPedidoprodutos() {
+		return pedidoprodutos;
+	}
+
+	public void setPedidoprodutos(List<Pedidoproduto> pedidoprodutos) {
+		this.pedidoprodutos = pedidoprodutos;
+		for(Pedidoproduto pedidoproduto : pedidoprodutos){
+			pedidoproduto.setOcproduto(this);
+		}
+		this.pedidoprodutos = pedidoprodutos;
 	}
 
 	@Override

@@ -187,6 +187,7 @@ public class OcProdutoControl extends Control implements InterfaceControl,
 				pedidoproduto.setProduto(ocproduto.getProduto());
 				pedidoproduto.setQuantidade(ocproduto.getQuantidade());
 				pedidoproduto.setPedido(pedido);
+				pedidoproduto.setOcproduto(ocproduto);
 				pedidoprodutos.add(pedidoproduto);
 			}			
 			pedido.setPedidoprodutos(pedidoprodutos);			

@@ -4,15 +4,20 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
+import com.sun.faces.context.flash.ELFlash;
+
 import br.com.casabemestilo.DAO.ParcelaDAO;
 import br.com.casabemestilo.DAO.PedidoDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
+import br.com.casabemestilo.model.Oc;
 import br.com.casabemestilo.model.Parcela;
 import br.com.casabemestilo.model.Pedido;
 
@@ -57,6 +62,18 @@ public class PedidoControl extends Control implements InterfaceControl,
 	/*
 	 * MÉTODOS
 	 * */
+	
+	@PostConstruct
+	public void init(){		
+		if(ELFlash.getFlash().get("pedido") != null){
+			pedido = (Pedido) ELFlash.getFlash().get("pedido");			
+			ELFlash.getFlash().clear();
+		}
+	}
+	    
+	@PreDestroy
+	public void destroy() {}
+	
 	@Override
 	public void gravar() {
 		// TODO Auto-generated method stub
@@ -134,6 +151,11 @@ public class PedidoControl extends Control implements InterfaceControl,
 			};
 		}
 		return listaPedidoGeral;
+	}
+	
+	public String detalharPedido(){
+		ELFlash.getFlash().put("pedido", getPedido());
+		return "edicaopedido?faces-redirect=true";
 	}
 	
 	/*
