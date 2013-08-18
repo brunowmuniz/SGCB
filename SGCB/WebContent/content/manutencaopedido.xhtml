@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form id="form">
+				<p:messages id="msgs"/>
+				<p:contextMenu for="pedido">
+					<p:menuitem value="Editar Pedido"/>
+				</p:contextMenu>				
+				<p:panel id="principal" header="Lista de Pedidos de produto aos fornecedores">					
+					<p:dataTable var="pedido" value="#{pedidoControl.listaPedidoGeralAll}" id="pedido" emptyMessage="Sem produto para encomendar!" paginator="true"
+										selection="#{pedidoControl.pedido}" selectionMode="single" lazy="true" rows="10" rowKey="#{pedido.id}"
+										paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                 						rowsPerPageTemplate="10,25,50">
+        				
+                 		<p:column headerText="Cód.">
+                 			<h:outputText value="#{pedido.id}" />
+                 		</p:column>
+                 		<p:column headerText="Fornecedor">
+                 			<h:outputText value="#{pedido.fornecedor.nome}" />
+                 		</p:column>
+                 		<p:column headerText="Data da Solicitação">
+                 			<h:outputText value="#{pedido.datasolicitacao}">
+                 				<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
+                 			</h:outputText>
+                 		</p:column>
+                 		<p:column headerText="Data de Chegada">
+                 			<h:outputText value="#{pedido.datachegada}">
+                 				<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
+                 			</h:outputText>
+                 		</p:column>
+                 		<p:column headerText="Observação">
+                 			<h:outputText value="#{pedido.observacao}" />
+                 		</p:column>
+					</p:dataTable>
+				</p:panel>
+			</h:form>
+		</ui:define>
+		<ui:define name="rodape">
+			<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela que lista os pedidos." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="manutencaopedido.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
+		</ui:define>
+	</ui:composition>
+</html>
