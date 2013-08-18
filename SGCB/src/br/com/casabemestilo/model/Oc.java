@@ -59,6 +59,7 @@ public class Oc implements java.io.Serializable {
 	private Date datalancamento;
 	private Float valorcomissao;
 	private Boolean deleted;
+	private String tipoFrete;
 	private List<Pagamento> pagamentos = new ArrayList<Pagamento>();
 	private List<Ocproduto> ocprodutos = new ArrayList<Ocproduto>();
 
@@ -299,6 +300,16 @@ public class Oc implements java.io.Serializable {
 
 	public void setValorcomissao(Float valorcomissao) {
 		this.valorcomissao = valorcomissao;
+	}
+	
+	@Column(name="tipofrete", nullable = false)
+	public String getTipoFrete() {
+		return tipoFrete;
+	}
+
+
+	public void setTipoFrete(String tipoFrete) {
+		this.tipoFrete = tipoFrete;
 	}
 
 
