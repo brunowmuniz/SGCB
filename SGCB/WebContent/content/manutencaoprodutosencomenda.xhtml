@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form id="form">
+				<p:messages id="msgs"/>				
+				<p:panel id="principal" header="Lista Produtos a serem encomendados por fornecedor">
+					<h:panelGrid columns="3" id="pnlacao">
+						<p:outputLabel for="fornecedor" value="Fornecedor: "/>
+						<p:selectOneMenu required="true" value="#{ocProdutoControl.fornecedor.id}" id="fornecedor">
+							<f:selectItem itemValue="0" itemLabel="Todos"/>							
+							<f:selectItems value="#{fornecedoresControl.listaFornecedorCombo}"/>
+							<p:ajax event="change" process="pnlacao" update="produtoencomenda,pnlacao"/>
+						</p:selectOneMenu>						
+						<p:commandButton value="Gerar Pedido" id="gerarencomenda" rendered="#{ocProdutoControl.fornecedor.id != null and ocProdutoControl.fornecedor.id != 0}"
+										actionListener="#{ocProdutoControl.gravarPedido}" update="msgs"/>
+					</h:panelGrid>
+					
+					<p:dataTable var="ocproduto" value="#{ocProdutoControl.listaProdutosEncomendaAll}" id="produtoencomenda" emptyMessage="Sem produto para encomendar!" paginator="true"
+										selection="#{ocProdutoControl.listaOcproduto}" selectionMode="multiple" lazy="true" rows="10" rowKey="#{ocproduto.id}"
+										paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                 						rowsPerPageTemplate="10,25,50">
+                 						
+                 		<p:ajax event="rowSelect" listener="#{ocProdutoControl.addProdutoPedido}" />
+                    			  
+        				<p:ajax event="rowUnselect" listener="#{ocProdutoControl.subProdutoPedido}"/> 
+        				
+                 		<p:column headerText="OC">
+                 			<h:outputText value="#{ocproduto.oc.id}" />
+                 		</p:column>
+                 		<p:column headerText="Data da Compra">
+                 			<h:outputText value="#{ocproduto.oc.datalancamento}">
+                 				<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
+                 			</h:outputText>
+                 		</p:column>
+                 		<p:column headerText="Cód. Produto">
+                 			<h:outputText value="#{ocproduto.produto.codigo}" />
+                 		</p:column>
+                 		<p:column headerText="Produto">
+                 			<h:outputText value="#{ocproduto.produto.descricao}" />
+                 		</p:column>
+                 		<p:column headerText="Fornecedor">
+                 			<h:outputText value="#{ocproduto.produto.fornecedor.nome}" />
+                 		</p:column>
+                 		<p:column headerText="Quantidade">
+                 			<h:outputText value="#{ocproduto.quantidade}" />
+                 		</p:column>
+					</p:dataTable>
+				</p:panel>
+			</h:form>			
+		</ui:define>
+		<ui:define name="rodape">
+			<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela que lista todos os produtos a serem encomendados." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="manutencaoprodutosencomenda.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
+		</ui:define>
+	</ui:composition>
+</html>
