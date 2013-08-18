@@ -28,8 +28,8 @@ public class Conexao {
 	 
 	public static Session getInstance(){	   
 	   Session session = sessionFactory.openSession();
-	   session.setFlushMode(FlushMode.COMMIT);
-	   session.setCacheMode(CacheMode.NORMAL);
+	   session.setFlushMode(FlushMode.ALWAYS);
+	   session.setCacheMode(CacheMode.REFRESH);
 	   return session;
 	}
 	
