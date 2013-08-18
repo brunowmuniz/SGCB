@@ -233,9 +233,8 @@ public class OcControl extends Control implements InterfaceControl,
 			ocDAO = new OcDAO();
 			oc.setStatus((Status) new StatusDAO().buscaObjetoId(1));
 			calculaValorComissao();
-			oc = ocDAO.insertOc(oc);
-			//ocDAO.insert(oc);
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("OC " + oc.getId() + " foi gravada!"));
+			ocDAO.insert(oc);
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("OC foi gravada!"));
 			logger.info("Salvo Oc: " + oc.getId());
 			oc = new Oc();
 		} catch (ConstraintViolationException e) {
