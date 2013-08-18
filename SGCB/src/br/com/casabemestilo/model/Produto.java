@@ -84,7 +84,7 @@ public class Produto implements java.io.Serializable {
 		this.id = id;
 	}
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "fornecedor", nullable = false)
 	public Fornecedor getFornecedor() {
 		if(this.fornecedor == null){
