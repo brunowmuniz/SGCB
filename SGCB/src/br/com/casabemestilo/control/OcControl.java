@@ -65,6 +65,8 @@ public class OcControl extends Control implements InterfaceControl,
 	
 	private LazyDataModel<Oc> listarOcGeral;
 	
+	private List<String> listaTipoFrete;
+	
 	
 	/*
 	 * CONSTRUTORES
@@ -197,30 +199,51 @@ public class OcControl extends Control implements InterfaceControl,
 			}
 		}
 		
-		if((totalPagamento + getPagamento().getValor()) > getOc().getValorfinal()){
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "As condições de pagamento excedem o valor da compra", ""));
+		if(getOc().getTipoFrete().equalsIgnoreCase("loja")){
+			if((totalPagamento + getPagamento().getValor()) > getOc().getValorfinal()){
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "As condições de pagamento excedem o valor da compra", ""));
+			}else{
+				getPagamento().setOc(getOc());
+				getOc().getPagamentos().add(getOc().getPagamentos().size(), getPagamento());
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Condições de pagamento: " + 
+																					pagamento.getCondicoesPagamento().getFormapagamento().getNome() + " " +
+																					pagamento.getCondicoesPagamento().getNome() + " inserida!"));
+				setPagamento(new Pagamento());
+			}
 		}else{
-			getPagamento().setOc(getOc());
-			getOc().getPagamentos().add(getOc().getPagamentos().size(), getPagamento());
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Condições de pagamento: " + 
-																				pagamento.getCondicoesPagamento().getFormapagamento().getNome() + " " +
-																				pagamento.getCondicoesPagamento().getNome() + " inserida!"));
-			setPagamento(new Pagamento());
+			if((totalPagamento + getPagamento().getValor()) > (getOc().getValorfinal() - getOc().getValorfrete())){
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "As condições de pagamento excedem o valor da compra", ""));
+			}else{
+				getPagamento().setOc(getOc());
+				getOc().getPagamentos().add(getOc().getPagamentos().size(), getPagamento());
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Condições de pagamento: " + 
+																					pagamento.getCondicoesPagamento().getFormapagamento().getNome() + " " +
+																					pagamento.getCondicoesPagamento().getNome() + " inserida!"));
+				setPagamento(new Pagamento());
+			}
 		}
 		
 	}
 	
-	public boolean habilitaCondicoesPagamento(){		 
-		if(getTotalPagamento() < oc.getValorfinal()){
-			return false;
-		}else{
-			try {
-				if(oc.getStatus().getId() <= 2){
+	public boolean habilitaCondicoesPagamento(){
+		if(getOc().getTipoFrete().equalsIgnoreCase("loja")){
+			if(getTotalPagamento() < oc.getValorfinal()){
+				return false;
+			}else{
+				try {
+					if(oc.getStatus().getId() <= 2){
+						return true;
+					}else{
+						return false;
+					}
+				} catch(NullPointerException e) {
 					return true;
-				}else{
-					return false;
 				}
-			} catch(NullPointerException e) {
+			}
+		}else{
+			if(getTotalPagamento() < (oc.getValorfinal() - oc.getValorfrete())){
+				return false;
+			}else{
 				return true;
 			}
 		}		
@@ -568,11 +591,22 @@ public class OcControl extends Control implements InterfaceControl,
 	public LazyDataModel<Oc> getListarOcGeralAll(){
 		if(listarOcGeral == null){
 			listarOcGeral = new LazyOcDataModel();
-		}
-		
+		}		
 		return listarOcGeral;
 	}
-	
-	
 
+	public List<String> getListaTipoFrete() {
+		if(listaTipoFrete == null){
+			listaTipoFrete = new ArrayList<String>();
+			listaTipoFrete.add("Local");
+			listaTipoFrete.add("Loja");
+			listaTipoFrete.add("Brinde");
+		}
+		return listaTipoFrete;
+	}
+
+	public void setListaTipoFrete(List<String> listaTipoFrete) {
+		this.listaTipoFrete = listaTipoFrete;
+	}
+	
 }
