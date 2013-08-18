@@ -303,6 +303,14 @@
 													<p:ajax event="blur" process="@this" update="@this,valorfinaloc"/>
 												</p:inputText>
 												
+												<p:outputLabel value="Tipo de Frete: " for="tipofrete"/>
+												<p:selectOneMenu value="#{ocControl.oc.tipoFrete}" size="1" required="true" id="tipofrete">
+													<f:validateBean />
+													<f:selectItem noSelectionOption="true" itemLabel=""/>
+													<f:selectItems value="#{ocControl.listaTipoFrete}"/>
+													<p:ajax event="change" process="@this"/>
+												</p:selectOneMenu>
+												
 												<p:outputLabel value="Montagem: " />
 												<p:inputText value="#{ocControl.oc.valormontagem}">
 													<f:validateBean />
