@@ -2,11 +2,22 @@ package br.com.casabemestilo.control;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
+import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
+
+import br.com.casabemestilo.DAO.ParcelaDAO;
 import br.com.casabemestilo.DAO.PedidoDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
+import br.com.casabemestilo.model.Parcela;
 import br.com.casabemestilo.model.Pedido;
 
+@ManagedBean
+@ViewScoped
 public class PedidoControl extends Control implements InterfaceControl,
 		Serializable {
 
@@ -18,6 +29,8 @@ public class PedidoControl extends Control implements InterfaceControl,
 	private List<Pedido> listaPedido;
 	
 	private PedidoDAO pedidoDAO;
+	
+	private LazyDataModel<Pedido> listaPedidoGeral;
 	
 	
 	/*
@@ -86,6 +99,42 @@ public class PedidoControl extends Control implements InterfaceControl,
 		return null;
 	}
 
+	public LazyDataModel<Pedido> getListaPedidoGeralAll(){
+		if(listaPedidoGeral == null){
+			listaPedidoGeral = new LazyDataModel<Pedido>() {
+				 private List<Pedido> listaLazyPedido;
+				 
+				 public Pedido getRowData(String idPedido) {
+				    	Integer id = Integer.valueOf(idPedido);
+				    	
+				        for(Pedido pedido : listaLazyPedido) {
+				            if(pedido.getId().equals(id))
+				                return pedido;
+				        }
+				        
+				        return null;
+				    }
+
+				    @Override
+				    public Object getRowKey(Pedido pedido) {
+				        return pedido.getId();
+				    }
+
+				    @Override
+				    public List<Pedido> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,String> filters) {
+				    	PedidoDAO pedidoDAO = new PedidoDAO();
+				    	listaLazyPedido = pedidoDAO.listaPedidos(first, pageSize);
+				    	if (getRowCount() <= 0) {  
+				            setRowCount(pedidoDAO.totalPedidos());  
+				        }  
+				        // set the page dize  
+				        setPageSize(pageSize);  
+				        return listaLazyPedido;  
+				    }
+			};
+		}
+		return listaPedidoGeral;
+	}
 	
 	/*
 	 * GETTERS & SETTERS
@@ -113,5 +162,15 @@ public class PedidoControl extends Control implements InterfaceControl,
 	public void setPedidoDAO(PedidoDAO pedidoDAO) {
 		this.pedidoDAO = pedidoDAO;
 	}
+
+	public LazyDataModel<Pedido> getListaPedidoGeral() {
+		return listaPedidoGeral;
+	}
+
+	public void setListaPedidoGeral(LazyDataModel<Pedido> listaPedidoGeral) {
+		this.listaPedidoGeral = listaPedidoGeral;
+	}
+	
+	
 
 }
