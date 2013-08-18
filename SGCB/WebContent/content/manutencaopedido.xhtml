@@ -10,7 +10,7 @@
 			<h:form id="form">
 				<p:messages id="msgs"/>
 				<p:contextMenu for="pedido">
-					<p:menuitem value="Editar Pedido"/>
+					<p:menuitem value="Editar Pedido" action="#{pedidoControl.detalharPedido}" ajax="false"/>
 				</p:contextMenu>				
 				<p:panel id="principal" header="Lista de Pedidos de produto aos fornecedores">					
 					<p:dataTable var="pedido" value="#{pedidoControl.listaPedidoGeralAll}" id="pedido" emptyMessage="Sem produto para encomendar!" paginator="true"
