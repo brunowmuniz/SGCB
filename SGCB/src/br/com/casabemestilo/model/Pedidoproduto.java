@@ -22,6 +22,7 @@ public class Pedidoproduto implements java.io.Serializable {
 	private Integer id;
 	private Produto produto;
 	private Pedido pedido;
+	private Ocproduto ocproduto;
 	private int quantidade;
 
 	public Pedidoproduto() {
@@ -72,5 +73,17 @@ public class Pedidoproduto implements java.io.Serializable {
 	public void setQuantidade(int quantidade) {
 		this.quantidade = quantidade;
 	}
+
+	@ManyToOne
+	@JoinColumn(name="ocproduto", nullable = true)
+	public Ocproduto getOcproduto() {
+		return ocproduto;
+	}
+
+	public void setOcproduto(Ocproduto ocproduto) {
+		this.ocproduto = ocproduto;
+	}
+	
+	
 
 }
