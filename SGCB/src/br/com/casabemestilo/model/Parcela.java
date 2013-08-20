@@ -72,7 +72,7 @@ public class Parcela implements java.io.Serializable {
 		this.dataentrada = dataentrada;
 	}
 
-	@Column(name = "valor", nullable = false, scale = 5, precision = 2)
+	@Column(name = "valor", nullable = false, scale = 7, precision = 2)
 	public float getValor() {
 		return this.valor;
 	}

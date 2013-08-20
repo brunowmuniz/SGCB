@@ -18,6 +18,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.Constraint;
 import javax.validation.constraints.Min;
 
 import org.hibernate.annotations.BatchSize;
@@ -209,16 +210,12 @@ public class Ocproduto implements java.io.Serializable {
 		
 	}
 	
-	@OneToMany(targetEntity = Pedidoproduto.class, mappedBy = "ocproduto", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToMany(targetEntity = Pedidoproduto.class, mappedBy = "ocproduto", fetch = FetchType.LAZY)
 	public List<Pedidoproduto> getPedidoprodutos() {
 		return pedidoprodutos;
 	}
 
 	public void setPedidoprodutos(List<Pedidoproduto> pedidoprodutos) {
-		this.pedidoprodutos = pedidoprodutos;
-		for(Pedidoproduto pedidoproduto : pedidoprodutos){
-			pedidoproduto.setOcproduto(this);
-		}
 		this.pedidoprodutos = pedidoprodutos;
 	}
 
