@@ -35,10 +35,7 @@ public class OpenSessionInViewFilter implements Filter  {
 			transaction = session.beginTransaction();
 			chain.doFilter(req, res);
 			transaction.commit();
-			System.out.println("Ok Filter");
 		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Erro filter");
 			logger.error(e.getMessage());
 		}finally{
 			if (transaction != null && transaction.isActive()) {
@@ -50,7 +47,6 @@ public class OpenSessionInViewFilter implements Filter  {
 
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
-		// TODO Auto-generated method stub
 
 	}
 
