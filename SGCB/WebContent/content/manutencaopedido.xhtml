@@ -9,14 +9,18 @@
 		<ui:define name="conteudo">
 			<h:form id="form">
 				<p:messages id="msgs"/>
-				<p:contextMenu for="pedido">
+				<p:contextMenu for="pedido" id="ctxPedido">
 					<p:menuitem value="Editar Pedido" action="#{pedidoControl.detalharPedido}" ajax="false"/>
-				</p:contextMenu>				
+					<p:menuitem value="Pedido Entregue" actionListener="#{pedidoControl.informaEntregaPedido}" update="msgs,pedido" disabled="#{pedidoControl.pedido.datachegada != null}"/>					
+				</p:contextMenu>
+					
 				<p:panel id="principal" header="Lista de Pedidos de produto aos fornecedores">					
 					<p:dataTable var="pedido" value="#{pedidoControl.listaPedidoGeralAll}" id="pedido" emptyMessage="Sem produto para encomendar!" paginator="true"
 										selection="#{pedidoControl.pedido}" selectionMode="single" lazy="true" rows="10" rowKey="#{pedido.id}"
 										paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
                  						rowsPerPageTemplate="10,25,50">
+                 		
+                 		<p:ajax event="rowSelect" update=":form:ctxPedido"/>
         				
                  		<p:column headerText="Cód.">
                  			<h:outputText value="#{pedido.id}" />
@@ -34,7 +38,7 @@
                  				<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
                  			</h:outputText>
                  		</p:column>
-                 		<p:column headerText="Observação">
+                 		<p:column headerText="Observação" rendered="false">
                  			<h:outputText value="#{pedido.observacao}" />
                  		</p:column>
 					</p:dataTable>
