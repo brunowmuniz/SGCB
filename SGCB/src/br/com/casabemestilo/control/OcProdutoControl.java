@@ -77,8 +77,7 @@ public class OcProdutoControl extends Control implements InterfaceControl,
 	 * */	
 	@Override
 	public void gravar() {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override

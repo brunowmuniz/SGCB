@@ -148,6 +148,22 @@ public class ProdutoDAO implements InterfaceDAO, Serializable {
 		return produto;
 	}
 	
+	public List<Produto> listaProdutoCodigoNomeFornecedor(Produto produtoBusca) {
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		listaProduto = session.createQuery("from Produto p where " +
+											" p.deleted =0" +
+											" and (p.codigo like :codigo" +
+											" or p.descricao like :descricao)" +
+											" and p.fornecedor.id = :fornecedor")
+											.setString("codigo","%" + produtoBusca.getCodigo() + "%")
+											.setString("descricao","%" + produtoBusca.getDescricao() + "%")
+											.setInteger("fornecedor", produtoBusca.getFornecedor().getId())
+											.list();
+		session.close();
+		return listaProduto;
+	}
+	
 	/*
 	 * GETTERS & SETTERS
 	 * */
@@ -165,11 +181,6 @@ public class ProdutoDAO implements InterfaceDAO, Serializable {
 
 	public void setListaProduto(List<Produto> listaProduto) {
 		this.listaProduto = listaProduto;
-	}
-
-	
-
-	
-	
+	}	
 	
 }

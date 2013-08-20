@@ -58,8 +58,11 @@ public class PedidoDAO implements InterfaceDAO, Serializable {
 	@Override
 	public void update(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
-
+		pedido = (Pedido) obj;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		session.update(pedido);		
+		session.getTransaction().commit();
 	}
 
 	@Override
@@ -72,8 +75,11 @@ public class PedidoDAO implements InterfaceDAO, Serializable {
 	@Override
 	public Pedido buscaObjetoId(Integer id) throws Exception,
 			HibernateException, ConstraintViolationException {
-		// TODO Auto-generated method stub
-		return null;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		pedido = (Pedido) session.get(Pedido.class, id);
+		session.close();
+		return pedido;		
 	}
 
 	@Override
