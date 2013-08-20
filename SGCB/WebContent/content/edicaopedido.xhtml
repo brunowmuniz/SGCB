@@ -7,120 +7,99 @@
 
 	<ui:composition template="../template/template.xhtml">
 		<ui:define name="conteudo">
-			<h:form>
+			<h:form id="form">
 				<p:panel header="Edição de Pedido">
-					<h:panelGrid columns="5">
+					<p:messages id="msgs"/>
+					<h:panelGrid columns="5">						
 						<p:outputLabel for="numpedido" value="Nº Pedido: "/>
 						<h:outputText value="#{pedidoControl.pedido.id}" id="numpedido" styleClass="negrito"/>
+						
 						<p:spacer width="40px"/>
+						
 						<p:outputLabel for="fornecedor" value="Fornecedor: "/>
-						<h:outputText value="#{pedidoControl.pedido.fornecedor.nome}" id="fornecedor" styleClass="negrito"/>
+						<h:outputText value="#{pedidoControl.pedido.fornecedor.nome}" id="fornecedor" styleClass="negrito" rendered="#{pedidoControl.pedido.id != null}"/>
+						<p:inplace event="click" id="fornecedorins" label="Selecione um fornecedor" rendered="#{pedidoControl.pedido.id == null}">
+							<p:selectOneMenu required="true" value="#{pedidoControl.pedido.fornecedor.id}" id="fornecedorsel">
+								<f:selectItem itemValue="0" itemLabel="Selecione Fornecedor" noSelectionOption="true"/>							
+								<f:selectItems value="#{fornecedoresControl.listaFornecedorCombo}"/>
+								<p:ajax event="change" process="@this"/>						
+							</p:selectOneMenu>
+						</p:inplace>
 												
 						<p:outputLabel for="datapedido" value="Data de Solicitação: "/>
-						<h:outputText value="#{pedidoControl.pedido.datasolicitacao}" id="datapedido" styleClass="negrito">
+						<h:outputText value="#{pedidoControl.pedido.datasolicitacao}" id="datapedido" styleClass="negrito" rendered="#{pedidoControl.pedido.id != null}">
 							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 						</h:outputText>
+						<p:calendar value="#{pedidoControl.pedido.datasolicitacao}" id="data" pattern="dd/MM/yyyy" locale="pt" rendered="#{pedidoControl.pedido.id == null}" />
+						
 						<p:spacer width="40px"/>
+						
 						<p:outputLabel for="datachegada" value="Data de Chegada: "/>
 						<h:outputText value="#{pedidoControl.pedido.datachegada}" id="datachegada" styleClass="negrito">
 							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 						</h:outputText>
-						<p:commandLink value="Adicionar Produto" id="btnbuscaproduto" oncomplete="modalbuscaproduto.show()" action="#{ocProdutoControl.limparOcProduto}" actionListener="#{ocProdutoControl.limparProduto}" update="modalbuscaproduto" process="@this"/> <br />
-						<p:spacer width="10px"/>									
-						<p:dialog widgetVar="modalbuscaproduto" header="Buscar Produto" resizable="false" id="modalbuscaproduto">
-							<p:outputPanel id="updProduto">									
-								<h:panelGrid id="dadosproduto">
-									<h:panelGrid columns="3">
-										<p:outputLabel for="buscaproduto" value="Código/Nome: "/>
-										<p:autoComplete id="buscaproduto" value="#{ocProdutoControl.ocproduto.produto}" minQueryLength="3"
-																completeMethod="#{produtoControl.buscaProdutoCodigoNome}"											 
-																forceSelection="true"  converter="converter.ProdutoConverter"
-																var="produto" itemValue="#{produto}" itemLabel="#{produto.fornecedor.nome} - #{produto.descricao}">
-											<p:ajax event="itemSelect" update="dadosproduto" process="@this" />
-										</p:autoComplete>																						
-										<p:commandButton value="Limpar" actionListener="#{ocProdutoControl.limparOcProduto}" update="dadosproduto" id="limparproduto" disabled="#{ocProdutoControl.ocproduto.produto.id == null}" process="@this,dadosproduto" />											
-									</h:panelGrid>									
-									<h:panelGrid columns="2" id="descproduto">																					
-										<p:outputLabel for="codigoproduto" value="Código: " />
-										<p:inputText disabled="#{ocProdutoControl.ocproduto.produto.id != null}" value="#{ocProdutoControl.ocproduto.produto.codigo}" id="codigoproduto"/>
-										
-										<p:outputLabel for="nomeproduto" value="Nome: " />
-										<p:inputText disabled="#{ocProdutoControl.ocproduto.produto.id != null}" value="#{ocProdutoControl.ocproduto.produto.descricao}" id="nomeproduto"/>
-										
-										<p:outputLabel for="nomefornecedor" value="Fornecedor: " />
-										<p:inputText disabled="#{ocProdutoControl.ocproduto.produto.id != null}" value="#{ocProdutoControl.ocproduto.produto.fornecedor.nome}" id="nomefornecedor" rendered="#{ocProdutoControl.ocproduto.produto.id != null}"/>
-										<p:selectOneMenu value="#{ocProdutoControl.ocproduto.produto.fornecedor.id}" rendered="#{ocProdutoControl.ocproduto.produto.id == null}">
-											<f:selectItem itemValue="0" itemLabel="Selecione Fornecedor" noSelectionOption="true"/>							
-											<f:selectItems value="#{fornecedoresControl.listaFornecedorCombo}"/>																									
-										</p:selectOneMenu>
-										
-										<p:outputLabel for="valorsugerido" value="Valor sugerido: " />
-										<p:inputText disabled="#{ocProdutoControl.ocproduto.produto.id != null}" value="#{ocProdutoControl.ocproduto.produto.valorsugerido}" id="valorsugerido">
-											<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1"/>
-											<p:ajax event="blur" process="@this" update="@this"/>
-										</p:inputText>
-										
-										<p:outputLabel value="Showroom: " />
-										<p:inputText disabled="true" value="#{ocProdutoControl.ocproduto.produto.showroom}" id="qtdeshowroomvis" rendered="#{ocProdutoControl.ocproduto.produto.id != null}"/>
-										<p:spinner value="#{ocProdutoControl.ocproduto.produto.showroom}" required="true" id="qtdeshowroomedit" max="999" min="0" rendered="#{ocProdutoControl.ocproduto.produto.id == null}">
-											<f:validateBean/>
-											<f:convertNumber maxIntegerDigits="3"/>
-										</p:spinner>
-										
-										<p:outputLabel value="Estoque: " />
-										<p:inputText disabled="true" value="#{ocProdutoControl.ocproduto.produto.estoque}" id="qtdeestoquevis" rendered="#{ocProdutoControl.ocproduto.produto.id != null}"/>
-										<p:spinner value="#{ocProdutoControl.ocproduto.produto.estoque}" required="true" id="qtdeestoqueedit" max="999" min="0" rendered="#{ocProdutoControl.ocproduto.produto.id == null}">
-											<f:validateBean/>
-											<f:convertNumber maxIntegerDigits="3"/>
-										</p:spinner>
-										
-										<p:outputLabel value="Encomenda: " />
-										<p:inputText disabled="true" value="#{ocProdutoControl.ocproduto.produto.encomenda}" id="qtdeencomendavis" rendered="#{ocProdutoControl.ocproduto.produto.id != null}"/>
-										<p:spinner value="#{ocProdutoControl.ocproduto.produto.encomenda}" required="true" id="qtdeencomendaedit" max="999" min="0" rendered="#{ocProdutoControl.ocproduto.produto.id == null}">
-											<f:validateBean/>
-											<f:convertNumber maxIntegerDigits="3"/>
-										</p:spinner>
-										<p:outputLabel for="tiposaida" value="Tipo de Saída: "/>
-										<p:selectOneMenu value="#{ocProdutoControl.ocproduto.tiposaida}" id="tiposaida" size="1">
-											<p:ajax event="change" process="@this"/>
-											<f:selectItem noSelectionOption="true" itemLabel="Escolha uma Saída"/>
-											<f:selectItem itemValue="estoque" itemLabel="Estoque" itemDisabled="#{ocProdutoControl.ocproduto.produto.estoque == 0}"/>
-											<f:selectItem itemValue="showroom" itemLabel="Showroom" itemDisabled="#{ocProdutoControl.ocproduto.produto.showroom == 0}" />
-											<f:selectItem itemValue="encomenda" itemLabel="Encomenda" />
-										</p:selectOneMenu>
-										
-										<p:outputLabel for="quantidade" value="Quantidade: " />
-										<p:spinner  value="#{ocProdutoControl.ocproduto.quantidade}" id="quantidade" immediate="true" min="1" max="999">
-											<f:validateBean />
-											<p:ajax event="change"  process="@this,valortotal,tiposaida" update="valortotal,tiposaida" />
-											<p:ajax event="blur"  process="@this,valortotal,tiposaida" update="valortotal,tiposaida" />
-										</p:spinner>
-										
-										<p:outputLabel for="valorunitario" value="Valor Unitário: " />
-										<p:inputText value="#{ocProdutoControl.ocproduto.valorunitario}" id="valorunitario" immediate="true" >
-											<p:ajax event="blur"  process="@this,valortotal" update="valorunitario,valortotal" />
-											<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1"/>												
-										</p:inputText>											
 									
-										<p:outputLabel for="valortotal" value="Valor Total: " />
-										<p:inputText value="#{ocProdutoControl.ocproduto.valortotal}" id="valortotal">
-											<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1" />		
-										</p:inputText>																																	
-										
-										<p:commandButton value="Insere Produto" actionListener="#{ocControl.adicionarProdutoOc(ocProdutoControl.ocproduto)}" 
-														 onclick="modalbuscaproduto.hide()"
-														 action="#{ocProdutoControl.limparOcProduto}" rendered="#{ocProdutoControl.ocproduto.produto.id != null}"/>
-														 
-										<p:commandButton value="Insere Produto/OC"  actionListener="#{ocControl.gravarProdutoAdicionaOc(ocProdutoControl.ocproduto)}" 
-														 onclick="modalbuscaproduto.hide()"	
-														 action="#{ocProdutoControl.limparOcProduto}" rendered="#{ocProdutoControl.ocproduto.produto.id == null}"/>
-										
-									</h:panelGrid>
-								</h:panelGrid>
-							</p:outputPanel>
-						</p:dialog>
+						<p:commandButton value="Adicionar Produto" id="btnbuscaproduto" oncomplete="modalbuscaproduto.show()" action="#{pedidoControl.limparPedidoProduto}" actionListener="#{pedidoControl.limparProduto}" update="modalbuscaproduto" process="@this"
+									rendered="#{pedidoControl.pedido.datachegada == null or pedidoControl.pedido.id == null}" />
+																						
+						<p:commandButton value="Alterar Pedido" actionListener="#{pedidoControl.alterar}" update=":form:msgs,listaproduto"
+									 rendered="#{pedidoControl.pedido.datachegada == null and pedidoControl.pedido.id != null}"/>
+									 					
+						<p:commandButton value="Gravar Pedido" actionListener="#{pedidoControl.gravar}" update=":form:msgs,listaproduto" id="gravarpedido"
+									 rendered="#{pedidoControl.pedido.datachegada == null and pedidoControl.pedido.id == null and not empty pedidoControl.pedido.pedidoprodutos}"/>
+						
+						<p:outputLabel for="observacao" value="Observação: " rendered="false"/>
+						<p:inputTextarea id="observacao" value="#{pedidoControl.pedido.observacao}" cols="20" rows="5" rendered="false"/>
+						
 					</h:panelGrid>
-					<p:dataTable value="#{pedidoControl.pedido.pedidoprodutos}" var="produtos">
+												
+															
+					<p:dialog widgetVar="modalbuscaproduto" header="Buscar Produto" resizable="false" id="modalbuscaproduto">
+						<p:outputPanel id="updProduto">									
+							<h:panelGrid id="dadosproduto">
+								<h:panelGrid columns="3">
+									<p:outputLabel for="buscaproduto" value="Código/Nome: "/>
+									<p:autoComplete id="buscaproduto" value="#{pedidoControl.pedidoproduto.produto}" minQueryLength="3"
+															completeMethod="#{pedidoControl.buscaProdutoCodigoNomeFornecedor}"											 
+															forceSelection="true"  converter="converter.ProdutoConverter"
+															var="produto" itemValue="#{produto}" itemLabel="#{produto.fornecedor.nome} - #{produto.descricao}">
+										<p:ajax event="itemSelect" update="dadosproduto" process="@this" />
+									</p:autoComplete>																						
+								</h:panelGrid>									
+								<h:panelGrid columns="2" id="descproduto">																					
+									<p:outputLabel for="codigoproduto" value="Código: " />
+									<p:inputText disabled="#{pedidoControl.pedidoproduto.produto.id != null}" value="#{pedidoControl.pedidoproduto.produto.codigo}" id="codigoproduto"/>
+									
+									<p:outputLabel for="nomeproduto" value="Nome: " />
+									<p:inputText disabled="#{pedidoControl.pedidoproduto.produto.id != null}" value="#{pedidoControl.pedidoproduto.produto.descricao}" id="nomeproduto"/>
+									
+									<p:outputLabel for="valorsugerido" value="Valor sugerido: " />
+									<p:inputText disabled="#{pedidoControl.pedidoproduto.produto.id != null}" value="#{pedidoControl.pedidoproduto.produto.valorsugerido}" id="valorsugerido">
+										<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1"/>
+										<p:ajax event="blur" process="@this" update="@this"/>
+									</p:inputText>
+									
+									<p:outputLabel for="quantidade" value="Quantidade: " />
+									<p:spinner  value="#{pedidoControl.pedidoproduto.quantidade}" id="quantidade" immediate="true" min="1" max="999">
+										<f:validateBean />
+										<p:ajax event="change"  process="@this" />
+										<p:ajax event="blur"  process="@this" />
+									</p:spinner>
+									
+									<p:commandButton value="Insere Produto" actionListener="#{pedidoControl.adicionarProdutoPedido}" 
+													 onclick="modalbuscaproduto.hide()" update="listaproduto,gravarpedido"
+													 action="#{pedidoControl.limparPedidoProduto}" rendered="#{pedidoControl.pedidoproduto.produto.id != null}"/>
+													 
+									<p:commandButton value="Insere Produto/Pedido"  actionListener="#{pedidoControl.gravarAdicionarProduto}" 
+													 onclick="modalbuscaproduto.hide()"	update="listaproduto,gravarpedido"
+													 action="#{pedidoControl.limparPedidoProduto}" rendered="#{pedidoControl.pedidoproduto.produto.id == null}"/>
+									
+								</h:panelGrid>
+							</h:panelGrid>
+						</p:outputPanel>
+					</p:dialog>
+					
+					<p:dataTable value="#{pedidoControl.pedido.pedidoprodutos}" var="produtos" id="listaproduto" emptyMessage="Sem produtos para o pedido">
 						<p:column headerText="OC">
                  			<h:outputText value="#{produtos.ocproduto.oc.id}" />
                  		</p:column>
