@@ -11,8 +11,8 @@
 				<p:panel header="Manutenção de Filial">
 			     	<p:messages id="msgs"/>
 					 <p:contextMenu for="filial">
-					 	<p:menuitem value="Deletar" update="filial,msgs" icon="ui-icon-close" actionListener="#{filialControl.deletar}"/>
-					 	<p:menuitem value="Editar" action="#{filialControl.alterarCadastro}" ajax="false"/>
+					 	<p:menuitem value="Deletar" update="filial,msgs" icon="ui-icon-trash" actionListener="#{filialControl.deletar}"/>
+					 	<p:menuitem value="Editar" icon="ui-icon-pencil" action="#{filialControl.alterarCadastro}" ajax="false"/>
 					 	
 					 </p:contextMenu>
 					 

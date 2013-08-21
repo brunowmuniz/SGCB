@@ -10,8 +10,8 @@
 			<h:form id="form">
 				<p:messages id="msgs"/>
 				<p:contextMenu for="pedido" id="ctxPedido">
-					<p:menuitem value="Editar Pedido" action="#{pedidoControl.detalharPedido}" ajax="false"/>
-					<p:menuitem value="Pedido Entregue" actionListener="#{pedidoControl.informaEntregaPedido}" update="msgs,pedido" disabled="#{pedidoControl.pedido.datachegada != null}"/>					
+					<p:menuitem value="Editar Pedido" icon="ui-icon-pencil" action="#{pedidoControl.detalharPedido}" ajax="false"/>
+					<p:menuitem value="Pedido Entregue" icon="ui-icon-locked" actionListener="#{pedidoControl.informaEntregaPedido}" update="msgs,pedido" disabled="#{pedidoControl.pedido.datachegada != null}"/>					
 				</p:contextMenu>
 					
 				<p:panel id="principal" header="Lista de Pedidos de produto aos fornecedores">					

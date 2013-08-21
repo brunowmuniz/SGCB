@@ -11,7 +11,7 @@
 				<p:panel header="Manutenção de Clientes">
 			     	<p:messages id="msgs"/>
 					 <p:contextMenu for="clientes">
-					 	<p:menuitem value="Deletar" update="clientes,msgs" icon="ui-icon-close" actionListener="#{clienteControl.deletar}"/>
+					 	<p:menuitem value="Deletar" update="clientes,msgs" icon="ui-icon-trash" actionListener="#{clienteControl.deletar}"/>
 					 	<p:menuitem value="Editar" icon="ui-icon-pencil" action="#{clienteControl.alterarCadastro}" ajax="false"/>
 					 </p:contextMenu>
 					 

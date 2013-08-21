@@ -11,9 +11,9 @@
 				<p:panel header="Manutenção de Usuário">
 			     	<p:messages id="msgs"/>
 					 <p:contextMenu for="usuarios">
-					 	<p:menuitem value="Deletar" update="usuarios,msgs" icon="ui-icon-close" actionListener="#{usuarioControl.deletar}"/>
-					 	<p:menuitem value="Editar" action="#{usuarioControl.alterarCadastro}" ajax="false"/>
-					 	<p:menuitem value="Editar Comissão" action="#{usuarioControl.alterarComissao}" ajax="false"/>
+					 	<p:menuitem value="Deletar" update="usuarios,msgs" icon="ui-icon-trash" actionListener="#{usuarioControl.deletar}"/>
+					 	<p:menuitem value="Editar" icon="ui-icon-pencil" action="#{usuarioControl.alterarCadastro}" ajax="false"/>
+					 	<p:menuitem value="Editar Comissão" icon="ui-icon-bookmark" action="#{usuarioControl.alterarComissao}" ajax="false"/>
 					 </p:contextMenu>
 					 
 					 <p:dataTable var="usuario" value="#{usuarioControl.listarAtivos()}" id="usuarios" rowKey="#{usuario.id}"  

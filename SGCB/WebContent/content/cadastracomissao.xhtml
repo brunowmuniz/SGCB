@@ -84,9 +84,9 @@
 						</h:panelGrid>
 						
 						<h:panelGrid columns="2">
-							<p:commandButton rendered="#{comissaoControl.comissao.id != null}" actionListener="#{comissaoControl.alterar}" value="Alterar" update="msgs,cadastro" id="gravar"/>
-							<p:commandButton rendered="#{comissaoControl.comissao.id == null}" actionListener="#{comissaoControl.gravar}" value="Gravar" update="msgs,cadastro" id="alterar"/>
-							<p:commandButton action="#{comissaoControl.sairAlteracao}" value="Sair" id="sair" ajax="false"/>
+							<p:commandButton rendered="#{comissaoControl.comissao.id != null}" actionListener="#{comissaoControl.alterar}" value="Alterar" icon="ui-icon-arrowrefresh-1-e" update="msgs,cadastro" id="gravar"/>
+							<p:commandButton rendered="#{comissaoControl.comissao.id == null}" actionListener="#{comissaoControl.gravar}" value="Gravar" icon="ui-icon-disk" update="msgs,cadastro" id="alterar"/>
+							<p:commandButton action="#{comissaoControl.sairAlteracao}" value="Sair" icon="ui-icon-close" id="sair" ajax="false"/>
 						</h:panelGrid>						
 					</h:panelGrid>
 			     </p:panel>
