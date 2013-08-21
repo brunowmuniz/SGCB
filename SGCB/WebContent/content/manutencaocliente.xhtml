@@ -12,7 +12,7 @@
 			     	<p:messages id="msgs"/>
 					 <p:contextMenu for="clientes">
 					 	<p:menuitem value="Deletar" update="clientes,msgs" icon="ui-icon-close" actionListener="#{clienteControl.deletar}"/>
-					 	<p:menuitem value="Editar" action="#{clienteControl.alterarCadastro}" ajax="false"/>
+					 	<p:menuitem value="Editar" icon="ui-icon-pencil" action="#{clienteControl.alterarCadastro}" ajax="false"/>
 					 </p:contextMenu>
 					 
 					 <p:dataTable var="cliente" value="#{clienteControl.listarAtivos()}" id="clientes" rowKey="#{cliente.id}"  
