@@ -10,8 +10,8 @@
 				<p:panel header="Manutenção de Fornecedores">
 			     	<p:messages id="msgs"/>
 					 <p:contextMenu for="fornecedores">
-					 	<p:menuitem value="Deletar" update="fornecedores,msgs" icon="ui-icon-close" actionListener="#{fornecedoresControl.deletar}"/>
-					 	<p:menuitem value="Editar" action="#{fornecedoresControl.alterarCadastro}" ajax="false"/>
+					 	<p:menuitem value="Deletar" update="fornecedores,msgs" icon="ui-icon-trash" actionListener="#{fornecedoresControl.deletar}"/>
+					 	<p:menuitem value="Editar" icon="ui-icon-pencil" action="#{fornecedoresControl.alterarCadastro}" ajax="false"/>
 					 </p:contextMenu>
 					 
 					 <p:dataTable var="fornecedor" value="#{fornecedoresControl.listarAtivos()}" id="fornecedores" rowKey="#{fornecedor.id}"  

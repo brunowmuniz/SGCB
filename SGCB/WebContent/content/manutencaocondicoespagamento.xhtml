@@ -11,8 +11,8 @@
 				<p:panel header="Manutenção de Retenção">
 			     	<p:messages id="msgs"/>
 					 <p:contextMenu for="retencoes">
-					 	<p:menuitem value="Deletar" update="retencoes,msgs" icon="ui-icon-close" actionListener="#{condicoesPagamentoControl.deletar}"/>
-					 	<p:menuitem value="Editar" action="#{condicoesPagamentoControl.alterarCadastro}" ajax="false"/>
+					 	<p:menuitem value="Deletar" update="retencoes,msgs" icon="ui-icon-trash" actionListener="#{condicoesPagamentoControl.deletar}"/>
+					 	<p:menuitem value="Editar" icon="ui-icon-pencil" action="#{condicoesPagamentoControl.alterarCadastro}" ajax="false"/>
 					 </p:contextMenu>
 					 
 					 <p:dataTable var="condicoesPagamento" value="#{condicoesPagamentoControl.listarAtivos()}" id="retencoes" rowKey="#{condicoesPagamento.id}"  

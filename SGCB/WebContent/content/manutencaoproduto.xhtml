@@ -11,8 +11,8 @@
 				<p:panel header="Manutenção de Produtos">
 			     	<p:messages id="msgs"/>
 					 <p:contextMenu for="produtos">
-					 	<p:menuitem value="Deletar" update="produtos,msgs" icon="ui-icon-close" actionListener="#{produtoControl.deletar}"/>
-					 	<p:menuitem value="Editar" action="#{produtoControl.alterarCadastro}" ajax="false"/>
+					 	<p:menuitem value="Deletar" update="produtos,msgs" icon="ui-icon-trash" actionListener="#{produtoControl.deletar}"/>
+					 	<p:menuitem value="Editar" action="#{produtoControl.alterarCadastro}" icon="ui-icon-pencil" ajax="false"/>
 					 </p:contextMenu>
 					 
 					 <p:dataTable var="produto" value="#{produtoControl.listarAtivos()}" id="produtos" rowKey="#{produto.id}"  
