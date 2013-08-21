@@ -11,31 +11,34 @@
 				<p:panel header="Edição de Pedido">
 					<p:messages id="msgs"/>
 					<h:panelGrid columns="5">						
-						<p:outputLabel for="numpedido" value="Nº Pedido: "/>
-						<h:outputText value="#{pedidoControl.pedido.id}" id="numpedido" styleClass="negrito"/>
+						<p:outputLabel for="numpedido" value="Nº Pedido: " rendered="#{pedidoControl.pedido.id != null}"/>
+						<h:outputText value="#{pedidoControl.pedido.id}" id="numpedido" styleClass="negrito" rendered="#{pedidoControl.pedido.id != null}"/>
 						
-						<p:spacer width="40px"/>
+						<p:spacer width="40px" rendered="#{pedidoControl.pedido.id != null}"/>
 						
 						<p:outputLabel for="fornecedor" value="Fornecedor: "/>
 						<h:outputText value="#{pedidoControl.pedido.fornecedor.nome}" id="fornecedor" styleClass="negrito" rendered="#{pedidoControl.pedido.id != null}"/>
 						<p:inplace event="click" id="fornecedorins" label="Selecione um fornecedor" rendered="#{pedidoControl.pedido.id == null}">
-							<p:selectOneMenu required="true" value="#{pedidoControl.pedido.fornecedor.id}" id="fornecedorsel">
+							<p:selectOneMenu required="true" value="#{pedidoControl.pedido.fornecedor.id}" id="fornecedorsel" requiredMessage="Selecione um fornecedor!">
 								<f:selectItem itemValue="0" itemLabel="Selecione Fornecedor" noSelectionOption="true"/>							
 								<f:selectItems value="#{fornecedoresControl.listaFornecedorCombo}"/>
 								<p:ajax event="change" process="@this"/>						
 							</p:selectOneMenu>
 						</p:inplace>
+						
+						<p:spacer width="40px" rendered="#{pedidoControl.pedido.id == null}"/>
 												
 						<p:outputLabel for="datapedido" value="Data de Solicitação: "/>
 						<h:outputText value="#{pedidoControl.pedido.datasolicitacao}" id="datapedido" styleClass="negrito" rendered="#{pedidoControl.pedido.id != null}">
 							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 						</h:outputText>
-						<p:calendar value="#{pedidoControl.pedido.datasolicitacao}" id="data" pattern="dd/MM/yyyy" locale="pt" rendered="#{pedidoControl.pedido.id == null}" />
+						<p:calendar value="#{pedidoControl.pedido.datasolicitacao}" id="data" pattern="dd/MM/yyyy" locale="pt"
+									rendered="#{pedidoControl.pedido.id == null}" required="true" requiredMessage="Selecione uma data para o pedido!"/>
 						
-						<p:spacer width="40px"/>
+						<p:spacer width="40px" rendered="#{pedidoControl.pedido.id != null}"/>
 						
-						<p:outputLabel for="datachegada" value="Data de Chegada: "/>
-						<h:outputText value="#{pedidoControl.pedido.datachegada}" id="datachegada" styleClass="negrito">
+						<p:outputLabel for="datachegada" value="Data de Chegada: " rendered="#{pedidoControl.pedido.id != null}"/>
+						<h:outputText value="#{pedidoControl.pedido.datachegada}" id="datachegada" styleClass="negrito" rendered="#{pedidoControl.pedido.id != null}">
 							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 						</h:outputText>
 									
@@ -46,7 +49,7 @@
 									 rendered="#{pedidoControl.pedido.datachegada == null and pedidoControl.pedido.id != null}"/>
 									 					
 						<p:commandButton value="Gravar Pedido" actionListener="#{pedidoControl.gravar}" update=":form:msgs,listaproduto" id="gravarpedido"
-									 rendered="#{pedidoControl.pedido.datachegada == null and pedidoControl.pedido.id == null and not empty pedidoControl.pedido.pedidoprodutos}"/>
+									 rendered="#{pedidoControl.pedido.datachegada == null and pedidoControl.pedido.id == null}"/>
 						
 						<p:outputLabel for="observacao" value="Observação: " rendered="false"/>
 						<p:inputTextarea id="observacao" value="#{pedidoControl.pedido.observacao}" cols="20" rows="5" rendered="false"/>
