@@ -24,6 +24,7 @@ import br.com.casabemestilo.DAO.FornecedoresDAO;
 import br.com.casabemestilo.DAO.OcProdutoDAO;
 import br.com.casabemestilo.DAO.ParcelaDAO;
 import br.com.casabemestilo.DAO.PedidoDAO;
+import br.com.casabemestilo.DAO.ProdutoDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Fornecedor;
 import br.com.casabemestilo.model.Ocproduto;
@@ -178,6 +179,7 @@ public class OcProdutoControl extends Control implements InterfaceControl,
 		List<Pedidoproduto> pedidoprodutos = new ArrayList<Pedidoproduto>();
 		Pedido pedido = new Pedido();		
 		ocProdutoDAO = new OcProdutoDAO();
+		ProdutoDAO produtoDAO = new ProdutoDAO();
 		try {			
 			pedido.setDatasolicitacao(new Date());	
 			pedido.getFornecedor().setId(fornecedor.getId());
@@ -188,6 +190,7 @@ public class OcProdutoControl extends Control implements InterfaceControl,
 				pedidoproduto.setPedido(pedido);
 				pedidoproduto.setOcproduto(ocproduto);
 				pedidoprodutos.add(pedidoproduto);
+				
 			}			
 			pedido.setPedidoprodutos(pedidoprodutos);			
 			pedidoDAO.insert(pedido);
@@ -195,6 +198,11 @@ public class OcProdutoControl extends Control implements InterfaceControl,
 			for(Ocproduto ocproduto : listaOcproduto){
 				ocproduto.getStatus().setId(4);
 				ocProdutoDAO.update(ocproduto);
+			}
+			for(Ocproduto ocproduto : listaOcproduto){
+				Produto produto = ocproduto.getProduto();
+				produto.setEncomenda(produto.getEncomenda() - ocproduto.getQuantidade());
+				produtoDAO.update(produto);
 			}
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Pedido para o fornecedor " + fornecedor.getNome() + " foi gravado!"));
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Alterado o status do produto para 'Pendente de Chegada'"));
