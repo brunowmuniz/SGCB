@@ -11,7 +11,7 @@
 				<p:panel header="Manutenção de OC">
 			     	<p:messages id="msgs"/>
 			     	<p:contextMenu for="ocs">
-			     		<p:menuitem value="Editar" action="#{ocControl.alterarCadastro()}" ajax="false"/>
+			     		<p:menuitem value="Editar" action="#{ocControl.alterarCadastro()}" ajax="false" icon="ui-icon-pencil"/>
 				        <p:menuitem value="Deletar" update="ocs,:form:msgs" icon="ui-icon-close" actionListener="#{ocControl.deletar}"/>
 			     	</p:contextMenu>
 			     	
