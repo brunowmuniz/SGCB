@@ -95,9 +95,13 @@ public class PedidoControl extends Control implements InterfaceControl,
 	public void gravar() {
 		pedidoDAO = new PedidoDAO();
 		try {
-			pedidoDAO.insert(pedido);
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Pedido avulso foi criado!"));
-			logger.info("Pedido: " + pedido.getId() + " foi gravado");
+			if(pedido.getPedidoprodutos().size() == 0){
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Adicione um produto ao menos no pedido", ""));
+			}else{
+				pedidoDAO.insert(pedido);
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Pedido avulso foi criado!"));
+				logger.info("Pedido: " + pedido.getId() + " foi gravado");
+			}			
 		} catch (ConstraintViolationException e) {			
 			e.printStackTrace();
 			super.mensagem = e.getMessage();
