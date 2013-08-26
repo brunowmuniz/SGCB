@@ -17,7 +17,7 @@
 					<p:messages id="msgs"/>					
 					<h:panelGrid id="cadastro" columns="1" width="100%">
 						
-						<h:panelGrid  columns="7">
+						<h:panelGrid  columns="#{ocControl.oc.id != null and (ocControl.oc.status.id == 1 or ocControl.oc.status.id == 2) ? 8 : 7}">
 							<p:outputLabel for="numero" value="Número OC:"/>							
 							<h:outputText value="#{ocControl.oc.id == null ? 'Nova OC' : ocControl.oc.id}"  id="numero" style="width: 100px; " styleClass="negrito" update="cadastro"/>
 							<p:spacer width="10px"/>
