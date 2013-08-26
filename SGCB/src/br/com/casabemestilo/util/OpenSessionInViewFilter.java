@@ -36,6 +36,7 @@ public class OpenSessionInViewFilter implements Filter  {
 			chain.doFilter(req, res);
 			transaction.commit();
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error(e.getMessage());
 		}finally{
 			if (transaction != null && transaction.isActive()) {

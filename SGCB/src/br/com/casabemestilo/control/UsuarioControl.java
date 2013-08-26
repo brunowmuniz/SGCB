@@ -321,6 +321,18 @@ public class UsuarioControl extends Control implements InterfaceControl,
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Login já existe, favor informar outro!", ""));
 		}
 	}
+	
+	public List getListaUsuarioMontador(){
+		usuarioDAO = new UsuarioDAO();
+		List listaUsuarioMontador = new ArrayList();
+		listaUsuario = usuarioDAO.listaMontador();
+		for(Usuario usuario: listaUsuario){
+			SelectItem si = new SelectItem(usuario.getId(),usuario.getNome());
+			listaUsuarioMontador.add(si);
+		}
+		return listaUsuarioMontador;
+	}
+	
 
 	/*
 	 * GETTERS & SETTERS

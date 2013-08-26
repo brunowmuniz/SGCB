@@ -42,7 +42,6 @@ public class Usuario implements java.io.Serializable {
 	private String senha;
 	private Set comissaos = new HashSet(0);
 	private List<Oc> ocs= new ArrayList<Oc>();
-	private Set fretes = new HashSet(0);
 	private Set vales = new HashSet(0);
 	private Set montagems = new HashSet(0);
 	private Set assistenciatecnicas = new HashSet(0);
@@ -58,7 +57,7 @@ public class Usuario implements java.io.Serializable {
 	}
 
 	public Usuario(Perfil perfil, String nome, Boolean deleted,
-			Set comissaos, List<Oc> ocs, Set fretes, Set vales, Set montagems,
+			Set comissaos, List<Oc> ocs, Set vales, Set montagems,
 			Set assistenciatecnicas, String login,String senha) {
 		this.perfil = perfil;
 		this.nome = nome;
@@ -67,7 +66,6 @@ public class Usuario implements java.io.Serializable {
 		this.senha = senha;
 		this.comissaos = comissaos;
 		this.ocs = ocs;
-		this.fretes = fretes;
 		this.vales = vales;
 		this.montagems = montagems;
 		this.assistenciatecnicas = assistenciatecnicas;
@@ -152,15 +150,6 @@ public class Usuario implements java.io.Serializable {
 
 	public void setOcs(List<Oc> ocs) {
 		this.ocs = ocs;
-	}
-
-	@OneToMany(targetEntity = Frete.class, mappedBy = "usuario")
-	public Set getFretes() {
-		return this.fretes;
-	}
-
-	public void setFretes(Set fretes) {
-		this.fretes = fretes;
 	}
 
 	@OneToMany(targetEntity = Vale.class, mappedBy = "usuario")
