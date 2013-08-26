@@ -28,9 +28,19 @@
 						</p:column>
 						
 						<p:column headerText="Data da Parcela">
-							<h:outputText value="#{entrada.dataentrada}">
-								<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
-							</h:outputText>
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{entrada.dataentrada}">
+										<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
+									</h:outputText>
+								</f:facet>
+								<f:facet name="input">
+									<p:calendar value="#{entrada.dataentrada}" pattern="dd/MM/yyyy" locale="pt">
+										<p:ajax event="dateSelect" process="@this"/>
+									</p:calendar>
+								</f:facet>
+							</p:cellEditor>
+							
 						</p:column>
 						
 						<p:column headerText="Parcela">
