@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form id="form">
+				<p:panel header="Lista de Fretes" id="principal">
+					<p:messages id="msgs"/>					
+					<h:panelGrid columns="2">
+						<p:outputLabel value="Data Inicial: " for="dtInicial" />
+						<p:calendar value="#{freteControl.dataInicial}" pattern="dd/MM/yyyy" id="dtInicial"/>
+						
+						<p:outputLabel value="Data Final: " for="dtFinal" />
+						<p:calendar value="#{freteControl.dataFinal}" pattern="dd/MM/yyyy" id="dtFinal"/>
+						
+						<p:commandButton value="Pesquisar" update="@form"/>						
+					</h:panelGrid>
+						
+							
+                 	<p:dataTable var="frete" value="#{freteControl.listaFreteGeralAll}" id="frete" emptyMessage="Sem frete cadastrado para o período!" paginator="true"
+							selection="#{freteControl.frete}" selectionMode="single" lazy="true" rows="20" rowKey="#{frete.id}"
+							paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+	         				rowsPerPageTemplate="20,30,50">
+		                  <p:column headerText="Cód.">
+		                 	<h:outputText value="#{frete.id}"/>
+		                 </p:column>
+		                 <p:column headerText="Valor Frete">
+		                 	<h:outputText value="R$ " />
+		                 	<h:outputText value="#{frete.valor}">
+		                 		<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+		                 	</h:outputText>
+		                 </p:column>
+		                 <p:column headerText="Data">
+		                 	<h:outputText value="#{frete.datainicio}">
+		                 		<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"/>
+		                 	</h:outputText>
+		                 </p:column>
+		                 <p:column headerText="Observações">
+		                 	<h:outputText value="#{frete.observacoes}" />
+		                 </p:column>
+		                 <p:column headerText="Produto(s)">
+		                 	<p:dataList value="#{frete.ocprodutos}" var="ocproduto">
+		                 		<h:outputText value="#{ocproduto.produto.fornecedor.nome} - #{ocproduto.produto.descricao} - #{ocproduto.quantidade} unid." />
+		                 		<br />               		
+		                 	</p:dataList>	                 	
+		                 </p:column>
+		                 <p:column headerText="OC">
+		                 	<h:outputText value="#{frete.ocprodutos.get(0).oc.id}" />
+		                 </p:column>
+	            	 </p:dataTable>
+	            	 <h:panelGrid columns="2">
+						<h:outputText value="Total Frete Local: R$ "/>
+	                 	<h:outputText value="#{freteControl.totalLocal}" id="valorLocal" styleClass="negrito">
+	                 		<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+	                 	</h:outputText>
+	                 	
+	                 	<h:outputText value="Total Frete Loja: R$ "/>
+	                 	<h:outputText value="#{freteControl.totalLoja}" id="valorLoja" styleClass="negrito">
+	                 		<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+	                 	</h:outputText>
+	                 	
+	                 	<h:outputText value="Total Frete Brinde: R$ "/>
+	                 	<h:outputText value="#{freteControl.totalBrinde}" id="valorBrinde" styleClass="negrito">
+	                 		<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+	                 	</h:outputText>
+					</h:panelGrid>
+             	</p:panel>
+			</h:form>			
+		</ui:define>
+		<ui:define name="rodape">
+			<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela com informação a respeito do frete e do tipo de pagamento do mesmo." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="cadastraoc.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
+		</ui:define>
+	</ui:composition>
+</html>
