@@ -148,6 +148,7 @@ public class FreteDAO implements InterfaceDAO, Serializable {
 									  .setInteger("frete", idFrete)
 									  .setCacheable(true)
 									  .list();
+		session.close();
 		return listaOcprodutosFrete;
 	}
 	
