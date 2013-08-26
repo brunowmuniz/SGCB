@@ -25,7 +25,9 @@ import org.hibernate.validator.constraints.NotEmpty;
 @Entity
 @Table(name = "pedidoproduto", catalog = "blankerc_sgcb")
 public class Pedidoproduto implements java.io.Serializable {
+	
 
+	private static final long serialVersionUID = 1L;	
 	private Integer id;
 	private Produto produto;
 	private Pedido pedido;

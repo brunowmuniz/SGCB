@@ -12,9 +12,13 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ValueChangeEvent;
+
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.LazyDataModel;
 
 import com.sun.faces.context.flash.ELFlash;
@@ -31,6 +35,7 @@ import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Cliente;
 import br.com.casabemestilo.model.Comissao;
 import br.com.casabemestilo.model.CondicoesPagamento;
+import br.com.casabemestilo.model.Frete;
 import br.com.casabemestilo.model.Oc;
 import br.com.casabemestilo.model.Ocproduto;
 import br.com.casabemestilo.model.Pagamento;
@@ -66,6 +71,8 @@ public class OcControl extends Control implements InterfaceControl,
 	private LazyDataModel<Oc> listarOcGeral;
 	
 	private List<String> listaTipoFrete;
+	
+	private List<Ocproduto> listaOcProdutoAcao = new ArrayList<Ocproduto>();
 	
 	
 	/*
@@ -392,9 +399,11 @@ public class OcControl extends Control implements InterfaceControl,
 	public void calculaValorComissao(){				
 		Float valorImpermeabilizacao = new Float(0);
 		Float valorLiquidoImpermeabilizacao = new Float(0);
+		float percentualFreteValorTotal = 0;		
 		oc.setValorcomissao(new Float(0));
 		percentualRetencao = new Float(0);
 		valorLiquido = null;
+		
 		
 		for(Ocproduto ocproduto : oc.getOcprodutos()){
 			if(ocproduto.getProduto().getDescricao().equalsIgnoreCase("Impermeabilização")){				
@@ -404,7 +413,7 @@ public class OcControl extends Control implements InterfaceControl,
 		
 		for(Pagamento pagamentoOc : oc.getPagamentos()){			
 			percentualRetencao = null;
-			valorLiquido = null;			
+			valorLiquido = null;
 			percentualRetencao = pagamentoOc.getCondicoesPagamento().getPercentual() / 100;
 			if(pagamentoOc.getCondicoesPagamento().getFormapagamento().getEhantecipacao()){
 				percentualRetencao +=  pagamentoOc.getCondicoesPagamento().getFormapagamento().getPercentualAntecipacao() /100;
@@ -412,6 +421,10 @@ public class OcControl extends Control implements InterfaceControl,
 			valorLiquido = pagamentoOc.getValor() - (pagamentoOc.getValor() * percentualRetencao);
 			
 			oc.setValorliquido(oc.getValorliquido() + valorLiquido);
+		}
+		
+		if(oc.getTipoFrete().equalsIgnoreCase("Loja") && oc.getValorfrete() > 0){
+			percentualFreteValorTotal = oc.getValorfrete() / oc.getValorfinal();
 		}
 		
 		if(valorImpermeabilizacao != 0){
@@ -423,10 +436,10 @@ public class OcControl extends Control implements InterfaceControl,
 		
 		if(comissao != null){
 			if(comissao.getEhComissaoIndividual()){			
-				oc.setValorcomissao(((oc.getValorliquido() - valorLiquidoImpermeabilizacao) * (comissao.getPercentualComissaoIndividual() / 100))
+				oc.setValorcomissao(((oc.getValorliquido() - valorLiquidoImpermeabilizacao - (oc.getValorliquido() * percentualFreteValorTotal)) * (comissao.getPercentualComissaoIndividual() / 100))
 									+ new Float(valorLiquidoImpermeabilizacao * 0.25));
 			}else{
-				oc.setValorcomissao(((oc.getValorliquido() - valorLiquidoImpermeabilizacao) * (comissao.getPercentualComissaoConjunta() / 100))
+				oc.setValorcomissao(((oc.getValorliquido() - valorLiquidoImpermeabilizacao - (oc.getValorliquido() * percentualFreteValorTotal)) * (comissao.getPercentualComissaoConjunta() / 100))
 									+ new Float(valorLiquidoImpermeabilizacao * 0.25));
 			}
 		}
@@ -521,8 +534,76 @@ public class OcControl extends Control implements InterfaceControl,
 			super.mensagem = e.getMessage();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro no lançamento das parcelas [OC:" + oc.getId() + "]", ""));
 			logger.error("Erro genérico - Lançamento parcelas: [OC:" + oc.getId() + "] - " + super.mensagem);
+		}		
+	}
+	
+	public void addProdutoAcao(SelectEvent selectEvent){
+		ocproduto = (Ocproduto) selectEvent.getObject();
+		if(listaOcProdutoAcao.size() == 0){
+			listaOcProdutoAcao.add(ocproduto);
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Produto " + ocproduto.getProduto().getDescricao() + " adicionado a lista de ações!"));
+		}else{
+			if(listaOcProdutoAcao.get(0).getStatus().getId() == ocproduto.getStatus().getId()){
+				listaOcProdutoAcao.add(ocproduto);
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Produto " + ocproduto.getProduto().getDescricao() + " adicionado a lista de ações!"));
+			}else{
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Produto não adicionado, pois tem status diferente dos demais selecionados", ""));
+			}
+		}
+	}
+	
+	public void subProdutoAcao(UnselectEvent unselectEvent){
+		try {
+			ocproduto = (Ocproduto) unselectEvent.getObject();
+			listaOcProdutoAcao.remove(ocproduto);
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Produto " + ocproduto.getProduto().getDescricao() + " retirado da lista de ações!"));
+		} catch (Exception e) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Produto não retirado da lista!", ""));
 		}
 		
+	}
+	
+	public void acaoPoduto(Long idAcao, List<Integer> listaMontadores) {	
+		try {
+			ocDAO = new OcDAO();
+			if(listaOcProdutoAcao.size() > 0){
+				Status status = (Status) new StatusDAO().buscaObjetoId(idAcao.intValue());
+				Frete frete = new Frete();
+				if(idAcao.intValue() == 6){
+					frete = new FreteControl().gravarFreteOcProduto(getListaOcProdutoAcao(), listaMontadores);
+				}
+				for(Ocproduto ocprodutoAcao : listaOcProdutoAcao){					
+					for(Ocproduto ocproduto : getOc().getOcprodutos()){
+						if(ocproduto.equals(ocprodutoAcao)){
+							ocproduto.setStatus(status);
+							if(idAcao.intValue() == 6){
+								ocproduto.setFrete(frete);
+							}							
+						}
+					}
+				}
+				ocDAO.update(oc);
+				logger.info("Ação: " + status.getDescricao() + " da OC " + getOc().getId() + " foi gravado");
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Produtos alterados com sucesso para o status " + status.getDescricao()));
+			}else{
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Favor selecionar um produto da OC para a ação!", ""));
+			}
+		} catch (ConstraintViolationException e) {
+			e.printStackTrace();
+			super.mensagem = e.getMessage();			
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));
+			logger.error("[alterar_status] Erro Constraint: " + super.mensagem + "-" + "Alteração de status não gravada");
+		} catch (HibernateException e) {
+			e.printStackTrace();
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Hibernate: " + super.mensagem, ""));
+			logger.error("[alterar_status] Erro Hibernate: " + super.mensagem + "-" + "Alteração de status não gravada");			
+		} catch (Exception e) {
+			e.printStackTrace();
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Genérico: " + super.mensagem, ""));
+			logger.error("[alterar_status] Erro Hibernate: " + super.mensagem + "-" + "Alteração de status não gravada");
+		}
 	}
 	
 	/*
@@ -608,5 +689,12 @@ public class OcControl extends Control implements InterfaceControl,
 	public void setListaTipoFrete(List<String> listaTipoFrete) {
 		this.listaTipoFrete = listaTipoFrete;
 	}
-	
+
+	public List<Ocproduto> getListaOcProdutoAcao() {
+		return listaOcProdutoAcao;
+	}
+
+	public void setListaOcProdutoAcao(List<Ocproduto> listaOcProdutoAcao) {
+		this.listaOcProdutoAcao = listaOcProdutoAcao;
+	}
 }

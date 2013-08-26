@@ -1,6 +1,8 @@
 package br.com.casabemestilo.DAO;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.HibernateException;
@@ -9,6 +11,8 @@ import org.hibernate.exception.ConstraintViolationException;
 
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
 import br.com.casabemestilo.model.Frete;
+import br.com.casabemestilo.model.Ocproduto;
+import br.com.casabemestilo.util.Conexao;
 
 public class FreteDAO implements InterfaceDAO, Serializable {
 
@@ -42,8 +46,21 @@ public class FreteDAO implements InterfaceDAO, Serializable {
 	@Override
 	public void insert(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
-
+		frete = (Frete) obj;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		session.merge(frete);
+		session.getTransaction().commit();
+	}
+	
+	public Frete insertFrete(Object obj) throws Exception, HibernateException,
+	ConstraintViolationException {
+		frete = (Frete) obj;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		frete = (Frete) session.merge(frete);
+		session.getTransaction().commit();
+		return frete;
 	}
 
 	@Override
@@ -87,7 +104,52 @@ public class FreteDAO implements InterfaceDAO, Serializable {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	public List<Frete> listaFrete(int first, int pageSize, Date dataInicial,
+			Date dataFinal) {
+		session = Conexao.getInstance();
+		listaFrete = session.createQuery("from Frete f " +
+											" left join fetch f.ocprodutos " +
+											" where f.datainicio between :periodoInicial and :periodoFinal" +
+											" order by f.id desc")
+							.setDate("periodoInicial", dataInicial)
+							.setDate("periodoFinal", dataFinal)
+							.setFirstResult(first)
+							.setMaxResults(pageSize)
+							.setCacheable(true)
+							.list();
+		session.close();
+		return listaFrete;
+	}
 
+	public int totalFrete(Date dataInicial, Date dataFinal) {
+		Long linhas = new Long(0);
+		session = Conexao.getInstance();
+		linhas = (Long) session.createQuery("select count(*) " +
+												"from Frete f " +
+												"where f.datainicio " +
+													"between :periodoInicial " +
+												"and " +
+													":periodoFinal")
+									.setDate("periodoInicial", dataInicial)
+									.setDate("periodoFinal", dataFinal)
+									.setCacheable(true)
+									.uniqueResult();
+		
+		session.close();
+		return linhas.intValue();
+	}
+	
+	public List<Ocproduto> buscaOcProdutoFrete(Integer idFrete) {
+		List<Ocproduto> listaOcprodutosFrete = new ArrayList<Ocproduto>();
+		session = Conexao.getInstance();
+		listaOcprodutosFrete = session.createQuery("from Ocproduto op" +
+													" where op.frete.id = :frete")
+									  .setInteger("frete", idFrete)
+									  .setCacheable(true)
+									  .list();
+		return listaOcprodutosFrete;
+	}
 	
 	/*
 	 * GETTERS & SETTERS

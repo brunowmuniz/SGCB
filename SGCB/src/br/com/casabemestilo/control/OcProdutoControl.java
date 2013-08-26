@@ -10,10 +10,13 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ValueChangeEvent;
 
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.RowSelection;
 import org.hibernate.exception.ConstraintViolationException;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.component.selectbooleancheckbox.SelectBooleanCheckbox;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
@@ -21,17 +24,23 @@ import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
 import br.com.casabemestilo.DAO.FornecedoresDAO;
+import br.com.casabemestilo.DAO.FreteDAO;
+import br.com.casabemestilo.DAO.OcDAO;
 import br.com.casabemestilo.DAO.OcProdutoDAO;
 import br.com.casabemestilo.DAO.ParcelaDAO;
 import br.com.casabemestilo.DAO.PedidoDAO;
 import br.com.casabemestilo.DAO.ProdutoDAO;
+import br.com.casabemestilo.DAO.StatusDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Fornecedor;
+import br.com.casabemestilo.model.Frete;
+import br.com.casabemestilo.model.Oc;
 import br.com.casabemestilo.model.Ocproduto;
 import br.com.casabemestilo.model.Parcela;
 import br.com.casabemestilo.model.Pedido;
 import br.com.casabemestilo.model.Pedidoproduto;
 import br.com.casabemestilo.model.Produto;
+import br.com.casabemestilo.model.Status;
 
 @ManagedBean
 @ViewScoped
@@ -50,6 +59,10 @@ public class OcProdutoControl extends Control implements InterfaceControl,
 	private LazyDataModel<Ocproduto> listaOcProdutoGeral;
 	
 	private Fornecedor fornecedor;
+	
+	private List<Ocproduto> listaOutrosProdOc;
+	
+	private List<Ocproduto> listaOcProdutoAcao = new ArrayList<Ocproduto>();
 	
 	
 	/*
@@ -209,16 +222,16 @@ public class OcProdutoControl extends Control implements InterfaceControl,
 			logger.info("Pedido: " + pedido.getId() + " foi gravado");
 		} catch (ConstraintViolationException e) {
 			super.mensagem = e.getMessage();
-			e.printStackTrace();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));
 			logger.error("[gravar_pedido] Erro Constraint: " + super.mensagem + "-" + "Pedido: " + pedido.getId() + "para o fornecedor " + fornecedor.getNome() + "não foi gravado!");
 		} catch (HibernateException e) {
-			super.mensagem = e.getMessage();
 			e.printStackTrace();
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Hibernate: " + super.mensagem, ""));
 			logger.error("[gravar_pedido] Erro Hibernate: " + super.mensagem + "-" + "Pedido: " + pedido.getId() + "para o fornecedor " + fornecedor.getNome() + "não foi gravado!");
 		} catch (Exception e) {
 			super.mensagem = e.getMessage();
-			e.printStackTrace();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Genérico: " + super.mensagem, ""));
 			logger.error("[gravar_pedido] Erro Genérico: " + super.mensagem + "-" + "Pedido: " + pedido.getId() + "para o fornecedor " + fornecedor.getNome() + "não foi gravado!");
 		}
 		
@@ -232,6 +245,13 @@ public class OcProdutoControl extends Control implements InterfaceControl,
 	public void subProdutoPedido(UnselectEvent unselectEvent){
 		listaOcproduto.remove((Ocproduto) unselectEvent.getObject());
 	}
+	
+	public void verOutrosProdutosOc(Ocproduto ocproduto){
+		ocProdutoDAO = new OcProdutoDAO();
+		listaOutrosProdOc = ocProdutoDAO.buscaOcProdutoOc(ocproduto);
+	}
+	
+	
 	
 	/*
 	 * GETTERS & SETTERS
@@ -280,6 +300,22 @@ public class OcProdutoControl extends Control implements InterfaceControl,
 
 	public void setFornecedor(Fornecedor fornecedor) {
 		this.fornecedor = fornecedor;
+	}
+
+	public List<Ocproduto> getListaOutrosProdOc() {
+		return listaOutrosProdOc;
+	}
+
+	public void setListaOutrosProdOc(List<Ocproduto> listaOutrosProdOc) {
+		this.listaOutrosProdOc = listaOutrosProdOc;
+	}
+
+	public List<Ocproduto> getListaOcProdutoAcao() {
+		return listaOcProdutoAcao;
+	}
+
+	public void setListaOcProdutoAcao(List<Ocproduto> listaOcProdutoAcao) {
+		this.listaOcProdutoAcao = listaOcProdutoAcao;
 	}
 	
 }

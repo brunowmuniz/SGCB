@@ -3,6 +3,8 @@ package br.com.casabemestilo.model;
 // Generated 24/05/2013 18:36:37 by Hibernate Tools 4.0.0
 
 import java.util.Date;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,6 +13,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -23,28 +26,27 @@ import javax.persistence.TemporalType;
 public class Frete implements java.io.Serializable {
 
 	private Integer id;
-	private Usuario usuario;
-	private Ocproduto ocproduto;
+	private List<Ocproduto> ocprodutos;
 	private float valor;
 	private Date datainicio;
 	private Date datafim;
-	private String observacoes;
+	private String observacoes;	
+	private String freteiro;
+	
 
 	public Frete() {
 	}
 
-	public Frete(Usuario usuario, Ocproduto ocproduto, float valor,
+	public Frete(List<Ocproduto> ocprodutos, float valor,
 			Date datainicio) {
-		this.usuario = usuario;
-		this.ocproduto = ocproduto;
+		this.ocprodutos = ocprodutos;
 		this.valor = valor;
 		this.datainicio = datainicio;
 	}
 
-	public Frete(Usuario usuario, Ocproduto ocproduto, float valor,
+	public Frete(List<Ocproduto> ocprodutos, float valor,
 			Date datainicio, Date datafim, String observacoes) {
-		this.usuario = usuario;
-		this.ocproduto = ocproduto;
+		this.ocprodutos = ocprodutos;
 		this.valor = valor;
 		this.datainicio = datainicio;
 		this.datafim = datafim;
@@ -62,24 +64,13 @@ public class Frete implements java.io.Serializable {
 		this.id = id;
 	}
 
-	@ManyToOne
-	@JoinColumn(name = "freteiro", nullable = false)
-	public Usuario getUsuario() {
-		return this.usuario;
+	@OneToMany(targetEntity = Ocproduto.class, mappedBy = "frete", fetch = FetchType.LAZY)
+	public List<Ocproduto> getOcprodutos() {
+		return this.ocprodutos;
 	}
 
-	public void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
-	}
-
-	@ManyToOne
-	@JoinColumn(name = "ocproduto", nullable = false)
-	public Ocproduto getOcproduto() {
-		return this.ocproduto;
-	}
-
-	public void setOcproduto(Ocproduto ocproduto) {
-		this.ocproduto = ocproduto;
+	public void setOcprodutos(List<Ocproduto> ocprodutos) {
+		this.ocprodutos = ocprodutos;
 	}
 
 	@Column(name = "valor", nullable = false, precision = 5)
@@ -120,4 +111,16 @@ public class Frete implements java.io.Serializable {
 		this.observacoes = observacoes;
 	}
 
+	@Column(name="freteiro", nullable = false)
+	public String getFreteiro() {
+		if(freteiro == null){
+		freteiro = "";
+		}
+		return freteiro;
+	}
+
+	public void setFreteiro(String freteiro) {
+		this.freteiro = freteiro;
+	}
+	
 }

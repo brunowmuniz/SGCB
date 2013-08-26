@@ -138,6 +138,9 @@ public class Oc implements java.io.Serializable {
 	@ManyToOne
 	@JoinColumn(name = "status", nullable = false)
 	public Status getStatus() {
+		if(status == null){
+			status = new Status();
+		}
 		return this.status;
 	}
 
