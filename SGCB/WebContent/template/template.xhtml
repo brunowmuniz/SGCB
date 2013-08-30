@@ -94,5 +94,13 @@
     </ui:insert>
     <ui:insert name="rodape">     	
     </ui:insert>
+    <ui:insert name="lendo">
+    	<p:ajaxStatus onstart="aguarde.show();" onsuccess="aguarde.hide();"/>
+			
+<p:dialog modal="true" widgetVar="aguarde" header="Aguarde.." 
+        draggable="false" closable="false" closeOnEscape="false" resizable="false">
+	<p:graphicImage value="/imagens/loading.gif" style="margin-left:6px;" />
+</p:dialog>
+    </ui:insert>
 </h:body>	
 </html>
