@@ -44,14 +44,16 @@
       	</p:submenu>
       	<p:submenu label="Controle">
       		<p:menuitem value="Controle de Frete" url="controlefrete.jsf"/>
-      		<p:menuitem value="Compra Parceiros (REDE)" url="controlecompraparceiros.jsf"/>      		
+      		<p:menuitem value="Compra Parceiros (REDE)" url="controlecompraparceiros.jsf"/>
+      		<p:menuitem value="Produtos Para Montagem/Frete" url="manuntencaofretemontagem.jsf"/>
+      		<p:menuitem value="OC por status de produto" url="controleocstatusproduto.jsf"/>
       	</p:submenu>
       	<p:submenu label="Contas a Receber">
 			<p:menuitem value="Parcelas a Vencer" url="manutencaoentradas.jsf" />
       	</p:submenu>
       	<p:submenu label="Contas a Pagar">
-			<p:menuitem value="Lançamentos Avulsos" url="#" />
-			<p:menuitem value="Lista de Contas a Pagar" url="#" />
+			<p:menuitem value="Cadastro de Lançamentos" url="cadastralancamentos.jsf" />
+			<p:menuitem value="Lista de Contas a Pagar" url="listalancamentos.jsf" />
       	</p:submenu>
       	<p:submenu label="Cadastros Básicos">
       		<p:submenu label="Usuário">
@@ -81,13 +83,13 @@
       		<p:submenu label="Condições de Pagamento">
       			<p:menuitem value="Cadastra Condições de Pagamento" url="cadastracondicoespagamento.jsf"/>
       			<p:menuitem value="Manutenção de Condição de Pagamento" url="manutencaocondicoespagamento.jsf"/>      			
-      		</p:submenu>      		      		
+      		</p:submenu>
+      		<p:submenu label="Conta Contábil">
+      			<p:menuitem value="Cadastra Conta Contábil" url="cadastracontacontabil.jsf"/>
+      			<p:menuitem value="Manutenção de Conta Contábil" url="manutencaocontacontabil.jsf"/>      			
+      		</p:submenu>     		      		
       	</p:submenu>      	      	
       </p:menubar>
-      <!-- p:ajaxStatus onstart="aguarde.show()" onsuccess="aguarde.hide()" />
-      <p:dialog id="aguarde" modal="true" header="Aguarde..." draggable="false" closable="false" closeOnEscape="true">
-      		teste
-      </p:dialog>-->
     </ui:insert>        
     <ui:insert name="conteudo">
       <h:outputLabel value="Teste Conteudo" />
@@ -97,10 +99,10 @@
     <ui:insert name="lendo">
     	<p:ajaxStatus onstart="aguarde.show();" onsuccess="aguarde.hide();"/>
 			
-<p:dialog modal="true" widgetVar="aguarde" header="Aguarde.." 
-        draggable="false" closable="false" closeOnEscape="false" resizable="false">
-	<p:graphicImage value="/imagens/loading.gif" style="margin-left:6px;" />
-</p:dialog>
+		<p:dialog modal="true" widgetVar="aguarde" header="Aguarde.." 
+		        draggable="false" closable="false" closeOnEscape="false" resizable="false">
+			<p:graphicImage value="/imagens/loading.gif" style="margin-left:6px;" />
+		</p:dialog>
     </ui:insert>
 </h:body>	
 </html>
