@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form id="form">
+				<p:panel header="Lista de Lançamentos Por Data" id="principal">
+					<p:messages id="msgs"/>
+					<h:panelGrid columns="2" id="dataslancamento">
+						<p:outputLabel for="datainicial" value="Data Inicial: "/>
+						<p:calendar value="#{lancamentoControl.dataInicial}" id="datainicial" pattern="dd/MM/yyyy" locale="pt">
+							<p:ajax event="change" process="@this" />
+						</p:calendar>
+						
+						<p:outputLabel for="datafinal" value="Data Final: "/>
+						<p:calendar value="#{lancamentoControl.dataFinal}" id="datafinal" pattern="dd/MM/yyyy" locale="pt">
+							<p:ajax event="change" process="@this" />
+						</p:calendar>
+						
+						<p:commandButton value="Buscar" update="form"/>
+					</h:panelGrid>
+					<p:contextMenu for="entradalancamento" id="ctxlancamento">
+					 	<p:menuitem value="Deletar Essa" update="entradalancamento,msgs" icon="ui-icon-trash" actionListener="#{lancamentoControl.deletar}"/>
+					 	<p:menuitem value="Deletar à partir dessa" icon="ui-icon-closethick" update="entradalancamento,msgs"
+					 				disabled="#{lancamentoControl.lancamento.qtdeParcela == 1 or lancamentoControl.lancamento.qtdeParcela == lancamentoControl.lancamento.parcela}"
+					 				actionListener="#{lancamentoControl.deletarLote}"/>
+					 </p:contextMenu>
+					<p:dataTable id="entradalancamento" value="#{lancamentoControl.listaLancamentoGeralAll}" var="lancamento" lazy="true" emptyMessage="Sem parcelas a vencer" paginator="true"
+								selection="#{lancamentoControl.lancamento}" selectionMode="single" rows="25"
+								paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+		             			rowsPerPageTemplate="25,50,100" rowKey="#{lancamento.id}" editable="true">
+		             			
+		             	<p:ajax event="rowEdit" listener="#{lancamentoControl.alterar}" process="entradalancamento" update=":form:msgs"/>
+		             	<p:ajax event="rowSelect" update=":form:ctxlancamento"/>
+						
+						<p:column headerText="Conta Contábil">
+							<h:outputText value="#{lancamento.contacontabil.nome}" />
+						</p:column>
+									
+						<p:column headerText="Descrição">
+							<h:outputText value="#{lancamento.descricao}" />
+						</p:column>
+						
+						<p:column headerText="É Parcelado">
+							<h:outputText value="#{lancamento.qtdeParcela == 1 ? 'Não' : 'Sim'}" style="color:#{lancamento.qtdeParcela == 1 ? 'red' : 'green'}"/>
+						</p:column>
+						
+						<p:column headerText="Parcela">
+							<h:outputText value="Parcela Única" rendered="#{lancamento.qtdeParcela == 1}"/>
+							<h:outputText value="#{lancamento.parcela}/#{lancamento.qtdeParcela}" rendered="#{lancamento.qtdeParcela != 1}"/>
+						</p:column>
+						
+						<p:column headerText="Valor da Parcela">
+							<p:cellEditor id="valorparcela">
+								<f:facet name="output">
+									<h:outputText value="R$ "/>
+						        	<h:outputText value="#{lancamento.valor}">
+						        		<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+						        	</h:outputText>
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{lancamento.valor}">
+										<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+										<p:ajax event="blur" update="@this"/>
+									</p:inputText>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						
+						<p:column headerText="Data do Lançamento">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{lancamento.dataLancamento}">
+										<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
+									</h:outputText>
+								</f:facet>
+								<f:facet name="input">
+									<p:calendar value="#{lancamento.dataLancamento}" pattern="dd/MM/yyyy" locale="pt">
+										<p:ajax event="dateSelect" process="@this"/>
+									</p:calendar>
+								</f:facet>
+							</p:cellEditor>							
+						</p:column>
+						
+						<p:column headerText="Editar" icon="ui-icon-pencil" style="width: 6px;">
+				        	<p:rowEditor />
+				        </p:column>
+					</p:dataTable>
+				</p:panel>
+			</h:form>
+		</ui:define>
+		<ui:define name="rodape">
+		</ui:define>
+	</ui:composition>
+</html>

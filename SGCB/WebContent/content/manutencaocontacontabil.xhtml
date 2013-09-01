@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form id="form">
+				<p:panel header="Lista de Conta Contábeis">
+					<p:contextMenu for="contascontabeis">					 	
+					 	<p:menuitem value="Editar" icon="ui-icon-pencil" action="#{contaContabilControl.alterarCadastro()}" ajax="false"/>
+					 </p:contextMenu>
+					<p:dataTable value="#{contaContabilControl.listarTodos()}" var="conta" id="contascontabeis" rowKey="#{conta.id}"  
+                		selection="#{contaContabilControl.contacontabil}" selectionMode="single"  paginator="true" rows="10"  
+                		paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                 		rowsPerPageTemplate="10,25,50">
+						<p:column headerText="Cód.">
+							<h:outputText value="#{conta.id}" />
+						</p:column>
+						<p:column headerText="Nome">
+							<h:outputText value="#{conta.nome}" />
+						</p:column>
+						<p:column headerText="Tipo">
+							<h:outputText value="#{conta.tipo == 'D' ? 'Débito' : 'Crédito'}" styleClass="negrito"
+								style="color: #{conta.tipo == 'D' ? 'red' : 'green'}"/>
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+			</h:form>
+		</ui:define>
+		<ui:define name="rodape">
+		</ui:define>
+	</ui:composition>
+</html>

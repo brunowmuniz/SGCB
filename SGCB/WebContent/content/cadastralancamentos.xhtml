@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form id="form">
+				<p:panel id="principal" header="Lançamentoss">
+					<p:messages id="msgs"/>
+					<h:panelGrid columns="2">
+						<p:outputLabel value="Descrição: " for="desclancamento"/>
+						<p:inputText id="desclancamento" value="#{lancamentoControl.lancamento.descricao}" size="40" required="true"
+									requiredMessage="Favor informar descritivo do lançamento">
+							<f:validateBean />
+						</p:inputText>
+						
+						<p:outputLabel value="Valor: " for="valorlancamento"/>
+						<p:inputText id="valorlancamento" value="#{lancamentoControl.lancamento.valor}" required="true" requiredMessage="Insira o valor do lançamento">
+							<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+							<p:ajax event="blur" update="@this,totallanc" process="@this" />
+							<f:validateBean />
+						</p:inputText>
+						
+						<p:outputLabel value="Conta Contábil: " for="conta"/>
+						<p:selectOneMenu id="conta" value="#{lancamentoControl.lancamento.contacontabil.id}" required="true">
+							<f:selectItem noSelectionOption="Escolha uma conta" itemLabel=""/>
+							<f:selectItems value="#{contaContabilControl.listaContasCombo()}"/>							
+						</p:selectOneMenu>
+						
+						<p:outputLabel for="ehreincidente" value="Parcelado: "/>
+						<p:selectBooleanCheckbox value="#{lancamentoControl.ehParcelado}" id="ehreincidente">
+							<p:ajax event="change" process="@this" update="qtdeparcelas,totallanc"/>
+						</p:selectBooleanCheckbox>
+						
+						<p:outputLabel for="qtdeparcelas" value="Quantidade de Parcelas: "/>
+						<p:spinner id="qtdeparcelas" value="#{lancamentoControl.lancamento.qtdeParcela}" min="2" max="99" disabled="#{not lancamentoControl.ehParcelado}"
+									required="#{lancamentoControl.ehParcelado}">
+							<p:ajax event="blur" process="@this" update="totalparcelas"/>
+							<p:ajax event="change" process="@this" update="totalparcelas"/>
+						</p:spinner>					 
+						
+						<p:outputLabel for="datalancamento" value="Data Lançamento: " id="lbldatalancamento"/>
+						<p:calendar value="#{lancamentoControl.lancamento.dataLancamento}" id="datalancamento" pattern="dd/MM/yyyy" locale="pt_BR" 
+									required="true" requiredMessage="Favor informar a data da primeira parcela"/>							
+						<p:tooltip for="lbldatalancamento" value="Se for várias parcelas a data da primeira, senão a data do lançamento!" showEffect="fade" hideEffect="fade" rendered="false"/>
+						
+						<p:outputLabel for="totallanc" value="Total do Lançamento: "/>
+						<p:outputPanel id="totalparcelas">							
+							<h:outputText value="#{lancamentoControl.totalLancamento}" id="totallanc" styleClass="negrito">
+								<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+							</h:outputText>
+						</p:outputPanel>	
+						
+						<p:commandButton actionListener="#{lancamentoControl.gravar}" update="msgs,principal" value="Gravar"/>
+					</h:panelGrid>					
+				</p:panel>
+			</h:form>
+		</ui:define>
+		<ui:define name="rodape">
+		</ui:define>
+	</ui:composition>
+</html>

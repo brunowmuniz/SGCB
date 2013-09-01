@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form id="form">
+				<p:panel header="Cadastrar Conta Contábil" id="princpal">
+					<p:messages id="msgs"/>
+					<h:panelGrid columns="2">
+						<p:outputLabel for="nomecc" value="Nome: "/>
+						<p:inputText id="nomecc" value="#{contaContabilControl.contacontabil.nome}" required="true" size="40"/>
+						<p:outputLabel for="tipocc" value="Tipo: "/>
+						<p:selectOneMenu id="tipocc" value="#{contaContabilControl.contacontabil.tipo}" required="true">
+							<f:selectItem noSelectionOption="true" itemLabel="Selecione o tipo"/>
+							<f:selectItem itemValue="D" itemLabel="Debito"/>
+							<f:selectItem itemValue="C" itemLabel="Crédito"/>
+						</p:selectOneMenu>
+						<p:commandButton value="Salvar" actionListener="#{contaContabilControl.gravar}" rendered="#{contaContabilControl.contacontabil.id == null}" update="msgs,princpal"/>
+						<p:commandButton value="Alterar" actionListener="#{contaContabilControl.alterar}" rendered="#{contaContabilControl.contacontabil.id != null}" update="msgs,princpal"/>
+					</h:panelGrid>
+				</p:panel>
+			</h:form>
+		</ui:define>
+		<ui:define name="rodape">
+		</ui:define>
+	</ui:composition>
+</html>

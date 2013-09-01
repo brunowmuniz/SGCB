@@ -7,17 +7,13 @@
       xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 	<ui:composition template="../template/template.xhtml">
-		<p:ajaxStatus onstart="PF('aguarde').show();" onsuccess="PF('aguarde').hide();"/> 
-		<p:dialog modal="true" widgetVar="aguarde" header="Aguarde..." draggable="false" closable="false">
-			<p:graphicImage value="../imagens/loading.gif" />
-		</p:dialog>
 		<ui:define name="conteudo">			
 			<h:form id="form">
 				<p:panel header="Cadastro de OC">
 					<p:messages id="msgs"/>					
 					<h:panelGrid id="cadastro" columns="1" width="100%">
 						
-						<h:panelGrid  columns="#{ocControl.oc.id != null and (ocControl.oc.status.id == 1 or ocControl.oc.status.id == 2) ? 8 : 7}">
+						<h:panelGrid  columns="#{ocControl.oc.id != null and (ocControl.oc.status.id == 1 or ocControl.oc.status.id == 2 or ocControl.oc.status.id == 7) ? 8 : 7}">
 							<p:outputLabel for="numero" value="Número OC:"/>							
 							<h:outputText value="#{ocControl.oc.id == null ? 'Nova OC' : ocControl.oc.id}"  id="numero" style="width: 100px; " styleClass="negrito" update="cadastro"/>
 							<p:spacer width="10px"/>
@@ -34,7 +30,7 @@
 							<p:spacer width="10px"/>
 							
 							<p:commandButton value="Gravar OC" action="#{ocControl.gravar}" ajax="false" rendered="#{ocControl.oc.id == null}"/>							
-							<p:commandButton value="Alterar OC" action="#{ocControl.alterar}" ajax="false" rendered="#{ocControl.oc.id != null and (ocControl.oc.status.id == 1 or ocControl.oc.status.id == 2)}"/>
+							<p:commandButton value="Alterar OC" action="#{ocControl.alterar}" ajax="false" rendered="#{ocControl.oc.id != null and (ocControl.oc.status.id == 1 or ocControl.oc.status.id == 2 or ocControl.oc.status.id == 7)}"/>
 							<br />
 							<p:outputLabel for="status" value="Status OC:"/>
 							<h:outputText value="#{ocControl.oc.status.descricao}" id="status" styleClass="negrito status_#{ocControl.oc.status.id}"/>
@@ -261,7 +257,7 @@
 								        	</p:cellEditor>
 								        </p:column>
 								        
-								        <p:column headerText="Status" rendered="#{ocControl.oc.id != null}">							        		
+								        <p:column headerText="Status" rendered="#{ocControl.oc.id != null}" styleClass="status_#{oc.status.id}">							        		
 							        		<h:outputText value="#{ocproduto.status.descricao}" />
 								        </p:column>
 								             
@@ -356,7 +352,7 @@
 								        	</p:cellEditor>
 								        </p:column>
 								        
-								        <p:column headerText="Status" rendered="#{ocControl.oc.id != null}">							        		
+								        <p:column headerText="Status" rendered="#{ocControl.oc.id != null}" styleClass="status_#{ocproduto.status.id}">							        		
 							        		<h:outputText value="#{ocproduto.status.descricao}" />
 								        </p:column>
 								             
