@@ -148,6 +148,14 @@ public class UsuarioDAO implements InterfaceDAO, Serializable {
 		return listaUsuario;
 	}
 	
+	public List<Usuario> listaVendedor() {
+		session = Conexao.getInstance();
+		listaUsuario = new ArrayList<Usuario>();
+		listaUsuario = session.createQuery("from Usuario u where u.perfil.id= 2").list();
+		session.close();
+		return listaUsuario;
+	}
+	
 	/*
 	 * GETTERS & SETTERS
 	 * */

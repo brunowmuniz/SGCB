@@ -107,7 +107,8 @@ public class PedidoDAO implements InterfaceDAO, Serializable {
 		listaPedido = new ArrayList<Pedido>();  
 		session = Conexao.getInstance();
 		session.beginTransaction();
-		listaPedido = session.createQuery("from Pedido p order by p.id desc")
+		listaPedido = session.createQuery("from Pedido p " +	
+											"order by p.id desc")
 							 .setFirstResult(first)
 							 .setMaxResults(pageSize)
 							 .setCacheable(true)

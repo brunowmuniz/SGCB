@@ -3,10 +3,16 @@ package br.com.casabemestilo.DAO;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import javax.persistence.criteria.CriteriaBuilder;
+
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.StatelessSession;
+import org.hibernate.criterion.Property;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
@@ -130,34 +136,140 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		return null;
 	}
 
-	public List<Oc> listaLazy(int startingAt, int maxPerPage){
+	public List<Oc> listaLazy(int startingAt, int maxPerPage, Map<String, String> filters){
 		session = Conexao.getInstance();
-		session.beginTransaction();		
-		listaOc = session.createQuery("from Oc o " +
-									 " where " +
-									 	" o.deleted=0" +
-									 " and" +
-									 	" o.status.id < 9 " +
-									 " order by o.id desc")						
+		session.beginTransaction();
+		
+		String hql = "from Oc o " +
+						 " where " +
+						 	" o.deleted=0";
+		
+		if(filters.containsKey("cliente.nome")){
+			hql += " and o.cliente.nome like '%" + filters.get("cliente.nome") + "%'";
+		}
+		if(filters.containsKey("status.id")){
+			hql += " and o.status.id=" + filters.get("status.id");
+		}
+		
+		if(filters.containsKey("usuario.id")){
+			hql += " and o.usuario.id=" + filters.get("usuario.id");
+		}else{
+			hql += " and o.status.id < 9 ";
+		}
+		
+		hql += " order by o.id desc";
+		
+		listaOc = session.createQuery(hql)
 						.setFirstResult(startingAt)
 						.setMaxResults(maxPerPage)
-						.setCacheable(true).list();
-		
+						.setCacheable(true)
+						.list();
+						 
 		session.close();
 		return listaOc;
 	}
 	
-	public int totalOc() {
+	public int totalOc(Map<String, String> filters) {
 		Long linhas = new Long(0);
 		session = Conexao.getInstance();
 		session.beginTransaction();
-		linhas = (Long) session.createQuery("select count(*) " +
-										" from Oc o " +
-									 " where " +
-									 	" o.deleted=0" +
-									 " and" +
-									 	" o.status.id < 9 ")
+		String hql = "select count(*) " +
+							" from Oc o " +
+						 " where " +
+						 	" o.deleted=0";
+		
+		if(filters.containsKey("cliente.nome")){
+			hql += " and o.cliente.nome like '%" + filters.get("cliente.nome") + "%'";
+		}
+		
+		if(filters.containsKey("status.id")){
+			hql += " and o.status.id=" + filters.get("status.id");
+		}
+		
+		if(filters.containsKey("usuario.id")){
+			hql += " and o.usuario.id=" + filters.get("usuario.id");
+		}else{
+			hql += " and o.status.id < 9 ";
+		}
+		
+		linhas = (Long) session.createQuery(hql)
 						.setCacheable(true).uniqueResult();
+		
+		session.close();
+		return linhas.intValue();
+	}
+	
+	public List<Oc> listaLazyMontFrete(int first, int pageSize) {
+		listaOc = new ArrayList<Oc>();
+		session = Conexao.getInstance();
+		listaOc = session.createQuery("select oc from Oc oc" +
+									" right join oc.ocprodutos ocproduto with ocproduto.status.id = 5" +
+									" where " +
+										" oc.status.id < 9"+
+									" group by oc.id")
+						.setFirstResult(first)
+						.setMaxResults(pageSize)
+						.setCacheable(true)
+						.list();
+		session.close();
+		return listaOc;
+	}
+
+	public int totalOcMontFrete() {
+		Long linhas = new Long(0);
+		session = Conexao.getInstance();
+		linhas = (Long) session.createQuery("select count(oc.id) from Oc oc" +
+												" right join oc.ocprodutos ocproduto with ocproduto.status.id = 5" +
+												" where " +
+													" oc.status.id < 9")
+								.setCacheable(true)
+								.uniqueResult();
+		session.close();
+		return linhas.intValue();
+	}
+	
+	public List<Oc> listaLazyStatusProduto(int first, int pageSize,  Map<String, String> filters) {
+		listaOc = new ArrayList<Oc>();
+		session = Conexao.getInstance();
+		String hql = "select oc from Oc oc" +
+						" left join oc.ocprodutos ocproduto ";
+		
+		if(filters.containsKey("status.id")){
+			hql += "with ocproduto.status.id= " + filters.get("status.id");
+		}
+		
+		if(filters.containsKey("usuario.id")){
+			hql +=  " and oc.usuario.id = " + filters.get("usuario.id"); 
+		}
+		
+		hql += " group by oc.id";
+		
+		listaOc = session.createQuery(hql)
+						.setFirstResult(first)
+						.setMaxResults(pageSize)
+						.setCacheable(true)
+						.list();
+		session.close();
+		return listaOc;
+	}
+
+	public int totalOcStatusProduto(Map<String, String> filters) {
+		Long linhas = new Long(0);
+		session = Conexao.getInstance();
+		String hql = "select count(oc.id) from Oc oc" +
+						" left join oc.ocprodutos ocproduto ";
+		
+		if(filters.containsKey("status.id")){
+			hql += "with ocproduto.status.id= " + filters.get("status.id");
+		}
+		
+		if(filters.containsKey("usuario.id")){
+			hql +=  " and oc.usuario.id = " + filters.get("usuario.id"); 
+		}
+		
+		linhas = (Long) session.createQuery(hql)								
+								.setCacheable(true)
+								.uniqueResult();
 		session.close();
 		return linhas.intValue();
 	}
@@ -180,7 +292,6 @@ public class OcDAO implements InterfaceDAO, Serializable {
 	public void setOc(Oc oc) {
 		this.oc = oc;
 	}
-
 	
 	
 

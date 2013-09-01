@@ -2,7 +2,9 @@ package br.com.casabemestilo.model;
 
 // Generated 24/05/2013 18:36:37 by Hibernate Tools 4.0.0
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,7 +25,8 @@ public class Contacontabil implements java.io.Serializable {
 	private Integer id;
 	private String tipo;
 	private String nome;
-	private Set lancamentos = new HashSet(0);
+	private List<Lancamento> lancamentos = new ArrayList<Lancamento>();
+	
 
 	public Contacontabil() {
 	}
@@ -33,7 +36,7 @@ public class Contacontabil implements java.io.Serializable {
 		this.nome = nome;
 	}
 
-	public Contacontabil(String tipo, String nome, Set lancamentos) {
+	public Contacontabil(String tipo, String nome, List<Lancamento> lancamentos) {
 		this.tipo = tipo;
 		this.nome = nome;
 		this.lancamentos = lancamentos;
@@ -68,13 +71,18 @@ public class Contacontabil implements java.io.Serializable {
 		this.nome = nome;
 	}
 
-	@OneToMany(targetEntity = Lancamento.class, mappedBy = "contacontabil")
-	public Set getLancamentos() {
+	@OneToMany(targetEntity = Lancamento.class, mappedBy = "contacontabil", fetch = FetchType.LAZY)
+	public List<Lancamento> getLancamentos() {
 		return this.lancamentos;
 	}
 
-	public void setLancamentos(Set lancamentos) {
+	public void setLancamentos(List<Lancamento> lancamentos) {
+		for(Lancamento lancamento : lancamentos){
+			lancamento.setContacontabil(this);
+		}
 		this.lancamentos = lancamentos;
 	}
+	
+	
 
 }

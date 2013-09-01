@@ -129,6 +129,18 @@ public class PedidoProdutoDAO implements InterfaceDAO, Serializable {
 		return linhas.intValue();
 	}
 	
+	public List<Pedidoproduto> listaPedidoProdutoPorPedido(Integer idPedido){
+		session = Conexao.getInstance();
+		listaPedidoProduto = session.createQuery("From Pedidoproduto pp" +
+													" where pp.pedido.id= :pedido")
+									.setInteger("pedido", idPedido)
+									.setCacheable(true)
+									.list();
+		
+		session.close();
+		return listaPedidoProduto;
+	}
+	
 	/*
 	 * GETTERS & SETTERS
 	 * */

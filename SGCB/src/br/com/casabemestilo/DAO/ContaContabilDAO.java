@@ -1,6 +1,7 @@
 package br.com.casabemestilo.DAO;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.HibernateException;
@@ -9,6 +10,9 @@ import org.hibernate.exception.ConstraintViolationException;
 
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
 import br.com.casabemestilo.model.Contacontabil;
+import br.com.casabemestilo.model.Oc;
+import br.com.casabemestilo.model.Pedido;
+import br.com.casabemestilo.util.Conexao;
 
 public class ContaContabilDAO implements InterfaceDAO, Serializable {
 
@@ -43,15 +47,21 @@ public class ContaContabilDAO implements InterfaceDAO, Serializable {
 	@Override
 	public void insert(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
-		
+		contacontabil = (Contacontabil) obj; 
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		session.save(contacontabil);
+		session.getTransaction().commit();		
 	}
 
 	@Override
 	public void update(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
-		
+		contacontabil = (Contacontabil) obj; 
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		session.update(contacontabil);
+		session.getTransaction().commit();		
 	}
 
 	@Override
@@ -64,15 +74,20 @@ public class ContaContabilDAO implements InterfaceDAO, Serializable {
 	@Override
 	public Contacontabil buscaObjetoId(Integer id) throws Exception,
 			HibernateException, ConstraintViolationException {
-		// TODO Auto-generated method stub
-		return null;
+		session = Conexao.getInstance();
+		contacontabil = (Contacontabil) session.get(Contacontabil.class, id);
+		session.close();
+		return contacontabil;
 	}
 
 	@Override
 	public List<Contacontabil> listaTodos() throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
-		return null;
+		listaContacontabil = new ArrayList<Contacontabil>();
+		session = Conexao.getInstance();
+		listaContacontabil = session.createQuery("from Contacontabil cc").setCacheable(true).list();
+		session.close();
+		return listaContacontabil;
 	}
 
 	@Override

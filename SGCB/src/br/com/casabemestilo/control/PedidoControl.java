@@ -1,7 +1,9 @@
 package br.com.casabemestilo.control;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +26,7 @@ import br.com.casabemestilo.DAO.FornecedoresDAO;
 import br.com.casabemestilo.DAO.OcProdutoDAO;
 import br.com.casabemestilo.DAO.ParcelaDAO;
 import br.com.casabemestilo.DAO.PedidoDAO;
+import br.com.casabemestilo.DAO.PedidoProdutoDAO;
 import br.com.casabemestilo.DAO.ProdutoDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Fornecedor;
@@ -303,6 +306,30 @@ public class PedidoControl extends Control implements InterfaceControl,
 	
 	public String gerarPedidoAvulso(){
 		return "edicaopedido?faces-redirect=true";
+	}
+	
+	public String verificaPrevisaoOc(Pedido pedido){
+		String status = "";
+		Date hoje = new Date();
+		
+		Calendar c = Calendar.getInstance();
+		c.setTime(new Date());
+		c.add(Calendar.DAY_OF_MONTH,5);
+		
+		Date cincoDias = c.getTime();
+		List<Pedidoproduto> pedidoprodutos = new PedidoProdutoDAO().listaPedidoProdutoPorPedido(pedido.getId());
+		for(Pedidoproduto pedidoproduto : pedidoprodutos){
+			if(pedidoproduto.getOcproduto() != null){
+				if(pedidoproduto.getOcproduto().getOc().getPrazoentrega().before(hoje)){
+					status = "atrasado";
+				}
+				if(pedidoproduto.getOcproduto().getOc().getPrazoentrega().before(cincoDias) && status == ""){
+					status = "atencao";
+				}
+			}
+			
+		}
+		return status;
 	}
 	
 	/*

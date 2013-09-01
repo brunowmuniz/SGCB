@@ -54,7 +54,7 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 		parcela = (Parcela) obj;
 		session = Conexao.getInstance();
 		session.beginTransaction();
-		session.update(obj);
+		session.update(parcela);
 		session.getTransaction().commit();		
 
 	}
