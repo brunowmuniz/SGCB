@@ -260,8 +260,6 @@ public class Oc implements java.io.Serializable {
 
 	@OneToMany(targetEntity = Pagamento.class, mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@BatchSize(size = 5)
-	@Fetch(FetchMode.SUBSELECT)
-	@LazyCollection(LazyCollectionOption.EXTRA)
 	public List<Pagamento> getPagamentos() {
 		return this.pagamentos;
 	}
@@ -277,8 +275,6 @@ public class Oc implements java.io.Serializable {
 	
 	@OneToMany(targetEntity = Ocproduto.class, mappedBy = "oc",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@BatchSize(size = 10)
-	@Fetch(FetchMode.SUBSELECT)
-	@LazyCollection(LazyCollectionOption.EXTRA)
 	public List<Ocproduto> getOcprodutos() {
 		return this.ocprodutos;
 	}

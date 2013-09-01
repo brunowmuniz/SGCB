@@ -6,21 +6,20 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ValueChangeEvent;
-
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
-import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.LazyDataModel;
-
+import org.primefaces.model.SortOrder;
 import com.sun.faces.context.flash.ELFlash;
 import br.com.casabemestilo.DAO.ComissaoDAO;
 import br.com.casabemestilo.DAO.CondicoesPagamentoDAO;
@@ -42,7 +41,6 @@ import br.com.casabemestilo.model.Pagamento;
 import br.com.casabemestilo.model.Parcela;
 import br.com.casabemestilo.model.Produto;
 import br.com.casabemestilo.model.Status;
-import br.com.casabemestilo.util.LazyOcDataModel;
 
 @ManagedBean
 @ViewScoped
@@ -653,6 +651,9 @@ public class OcControl extends Control implements InterfaceControl,
 	}
 
 	public Ocproduto getOcproduto() {
+		if(ocproduto == null){
+			ocproduto = new Ocproduto();
+		}
 		return ocproduto;
 	}
 
@@ -671,11 +672,123 @@ public class OcControl extends Control implements InterfaceControl,
 	
 	public LazyDataModel<Oc> getListarOcGeralAll(){
 		if(listarOcGeral == null){
-			listarOcGeral = new LazyOcDataModel();
+			listarOcGeral = new LazyDataModel<Oc>() {
+								private List<Oc> listaLazyOc;
+								
+								@Override
+							    public Oc getRowData(String idOc) {
+							    	Integer id = Integer.valueOf(idOc);
+							    	
+							        for(Oc oc : listaLazyOc) {
+							            if(oc.getId().equals(id))
+							                return oc;
+							        }
+							        
+							        return null;
+							    }
+
+							    @Override
+							    public Object getRowKey(Oc oc) {
+							        return oc.getId();
+							    }
+
+							    @Override
+							    public List<Oc> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,String> filters) {
+							    	OcDAO ocDAO = new OcDAO();  
+							    	
+							    	listaLazyOc = ocDAO.listaLazy(first, pageSize,filters);
+							    	if (getRowCount() <= 0) {  
+							            setRowCount(ocDAO.totalOc(filters));  
+							        }  
+							       
+							        setPageSize(pageSize);  
+							        return listaLazyOc;  
+							    }
+				};
 		}		
 		return listarOcGeral;
 	}
+	
+	public LazyDataModel<Oc> getListarOcMontFreteAll(){
+		if(listarOcGeral == null){
+			listarOcGeral = new LazyDataModel<Oc>() {
+								private List<Oc> listaLazyOc;
+								
+								@Override
+							    public Oc getRowData(String idOc) {
+							    	Integer id = Integer.valueOf(idOc);
+							    	
+							        for(Oc oc : listaLazyOc) {
+							            if(oc.getId().equals(id))
+							                return oc;
+							        }
+							        
+							        return null;
+							    }
 
+							    @Override
+							    public Object getRowKey(Oc oc) {
+							        return oc.getId();
+							    }
+
+							    @Override
+							    public List<Oc> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,String> filters) {
+							    	OcDAO ocDAO = new OcDAO(); 
+							    	
+							    	listaLazyOc = ocDAO.listaLazyMontFrete(first, pageSize);
+							    	
+							    	if (getRowCount() <= 0) { 
+							            setRowCount(ocDAO.totalOcMontFrete());  
+							        }  
+							    	
+							        setPageSize(pageSize);  
+							        return listaLazyOc;
+							    }
+				};
+		}		
+		return listarOcGeral;
+	}
+	
+	public LazyDataModel<Oc> getListaOcStatusProduto(){
+		if(listarOcGeral == null){
+			listarOcGeral = new LazyDataModel<Oc>() {
+								private List<Oc> listaLazyOc;
+								
+								@Override
+							    public Oc getRowData(String idOc) {
+							    	Integer id = Integer.valueOf(idOc);
+							    	
+							        for(Oc oc : listaLazyOc) {
+							            if(oc.getId().equals(id))
+							                return oc;
+							        }
+							        
+							        return null;
+							    }
+
+							    @Override
+							    public Object getRowKey(Oc oc) {
+							        return oc.getId();
+							    }
+
+							    @Override
+							    public List<Oc> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,String> filters) {
+							    	OcDAO ocDAO = new OcDAO();
+							    	
+							    	listaLazyOc = ocDAO.listaLazyStatusProduto(first, pageSize, filters);
+							    	
+							    	if (getRowCount() <= 0) { 
+							            setRowCount(ocDAO.totalOcStatusProduto(filters));  
+							        }  
+							    	
+							        setPageSize(pageSize);  
+							        return listaLazyOc;
+							    }
+				};
+		}		
+		return listarOcGeral;
+	}
+	
 	public List<String> getListaTipoFrete() {
 		if(listaTipoFrete == null){
 			listaTipoFrete = new ArrayList<String>();
