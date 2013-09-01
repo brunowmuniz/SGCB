@@ -1,30 +1,24 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:ui="http://java.sun.com/jsf/facelets">
 
 	<ui:composition template="../template/template.xhtml">
 		<ui:define name="conteudo">
 			<h:form id="form">
-				<p:panel header="Manutenção de OC">
-			     	<p:messages id="msgs"/>
-			     	<p:contextMenu for="ocs">
-			     		<p:menuitem value="Editar"  action="#{ocControl.alterarCadastro()}" ajax="false" icon="ui-icon-pencil"/>
-				        <p:menuitem value="Deletar" update="ocs,:form:msgs" icon="ui-icon-trash" actionListener="#{ocControl.deletar}"/>
-			     	</p:contextMenu>
-			     	
-					<p:dataTable var="oc" value="#{ocControl.listarOcGeralAll}" id="ocs" emptyMessage="Sem OC cadastrada!" paginator="true"
+				<p:panel header="Lista OC por status dos produtos">					
+					<p:dataTable var="oc" value="#{ocControl.listaOcStatusProduto}" id="ocstatusprod" emptyMessage="Sem OC com produto para frete/montagem!" paginator="true"
 										selection="#{ocControl.oc}" selectionMode="single" lazy="true" rows="10" rowKey="#{oc.id}"
 										paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
                  						rowsPerPageTemplate="10,25,50">
-						                		  		
-				        <p:column headerText="Codigo">
+                 		
+                 		<p:column headerText="Codigo">
 				            <h:outputText value="#{oc.id}" />
 				        </p:column>
 				
-				        <p:column headerText="Nome" filterBy="#{oc.cliente.nome}" filterMatchMode="startsWith">
+				        <p:column headerText="Nome">
 				            <h:outputText value="#{oc.cliente.nome}" />
 				        </p:column>
 				        
@@ -35,23 +29,25 @@
 				        	</h:outputText>				        					            
 				        </p:column>
 				        
-				        <p:column headerText="Status" styleClass="status_#{oc.status.id}" filterBy="#{oc.status.id}" filterOptions="#{statusControl.listaStatusCombo}" filterMatchMode="exact" filterStyle="width: 80px;">
+				        <p:column headerText="Status" styleClass="status_#{oc.status.id}">
 				            <h:outputText value="#{oc.status.descricao}"/> 
 				        </p:column>
 						
 						<p:column headerText="Vendedor" filterBy="#{oc.usuario.id}" filterOptions="#{usuarioControl.listaUsuarioVendedor}" filterMatchMode="exact">
 							<h:outputText value="#{oc.usuario.nome}" />
-				        </p:column>				        	        
-				    </p:dataTable>
-		
-		     	</p:panel>
+				        </p:column>
+				        	        
+				        <p:column headerText="Produto(s)">				        	
+			        		<p:dataList value="#{oc.ocprodutos}" var="ocproduto">
+                 				<h:outputText value="#{ocproduto.produto.fornecedor.nome} - #{ocproduto.produto.descricao} - #{ocproduto.status.descricao} - #{ocproduto.quantidade} unid."
+                 				 			  styleClass="#{ocproduto.status.id == ocControl.ocproduto.status.id ? 'negrito' : ''} status_#{ocproduto.status.id}"/>
+	                 		</p:dataList>				        			                 		                 	
+		                 </p:column>
+                 	</p:dataTable>
+				</p:panel>
 			</h:form>
 		</ui:define>
 		<ui:define name="rodape">
-			<p:panel header="Descritivo Tela" styleClass="rodape">
-	    		<p:outputLabel value="Tela que lista todas as OC's ativas." styleClass="rodape_esquerda"/>
-	    		<p:outputLabel value="manutencaooc.jsf" styleClass="rodape_direita"/>
-	    	</p:panel>	
 		</ui:define>
 	</ui:composition>
 </html>

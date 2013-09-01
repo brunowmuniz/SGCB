@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form id="form">
+				<p:contextMenu for="ocs">
+		     		<p:menuitem value="Entrar na OC"  action="#{ocControl.alterarCadastro()}" ajax="false" icon="ui-icon-zoomin"/>			        
+		     	</p:contextMenu>
+				<p:panel header="Lista de OC's com produtos para montagem/frete">
+					<p:dataTable var="oc" value="#{ocControl.listarOcMontFreteAll}" id="ocs" emptyMessage="Sem OC com produto para frete/montagem!" paginator="true"
+										selection="#{ocControl.oc}" selectionMode="single" lazy="true" rows="10" rowKey="#{oc.id}"
+										paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                 						rowsPerPageTemplate="10,25,50">
+                 		
+                 		<p:column headerText="Codigo">
+				            <h:outputText value="#{oc.id}" />
+				        </p:column>
+				
+				        <p:column headerText="Nome">
+				            <h:outputText value="#{oc.cliente.nome}" />
+				        </p:column>
+				        
+				        <p:column headerText="Valor Total">
+				        	<h:outputText value="R$ "/>
+				        	<h:outputText value="#{oc.valorfinal}">
+				        		<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+				        	</h:outputText>				        					            
+				        </p:column>
+				        
+				        <p:column headerText="Status" styleClass="status_#{oc.status.id}">
+				            <h:outputText value="#{oc.status.descricao}"/> 
+				        </p:column>
+						
+						<p:column headerText="Vendedor">
+							<h:outputText value="#{oc.usuario.nome}" />
+				        </p:column>
+				        	        
+				        <p:column headerText="Produto(s)">				        	
+			        		<p:dataList value="#{oc.ocprodutos}" var="ocproduto">
+                 				<h:outputText value="#{ocproduto.produto.fornecedor.nome} - #{ocproduto.produto.descricao} - #{ocproduto.status.descricao} - #{ocproduto.quantidade} unid."
+                 				 			  styleClass="#{ocproduto.status.id == 5 ? 'negrito' : ''}"/>
+	                 		</p:dataList>				        			                 		                 	
+		                 </p:column>
+                 	</p:dataTable>
+				</p:panel>
+			</h:form>
+		</ui:define>
+		<ui:define name="rodape">
+			<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela que lista todos os produtos de OC's que precisam de montagem/frete" styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="manuntencaofretemontagem.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
+		</ui:define>
+	</ui:composition>
+</html>
