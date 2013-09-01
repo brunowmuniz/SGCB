@@ -62,3 +62,11 @@
 .status_6{
 	color: #333333;
 }
+
+.atrasado{
+	background: #FFBABA !important;
+}
+
+.atencao{
+	background: #FAFFBD !important;
+}
