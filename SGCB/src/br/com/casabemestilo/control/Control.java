@@ -10,8 +10,7 @@ public class Control implements Serializable{
 	
 	protected Logger logger = Logger.getLogger(Control.class);
 	
-	
-	
+	private String texto;
 
 	public Control(String messagem) {
 		super();
@@ -31,5 +30,15 @@ public class Control implements Serializable{
 	public void setmensagem(String mensagem) {
 		this.mensagem = mensagem;
 	}
+
+	public String getTexto() {
+		return texto;
+	}
+
+	public void setTexto(String texto) {
+		this.texto = texto;
+	}
+	
+	
 	
 }
