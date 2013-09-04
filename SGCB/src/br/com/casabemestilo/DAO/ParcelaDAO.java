@@ -3,6 +3,7 @@ package br.com.casabemestilo.DAO;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -98,7 +99,8 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 		Long linhas = new Long(0);
 		session = Conexao.getInstance();
 		session.beginTransaction();
-		linhas = (Long) session.createQuery("select count(*) from Parcela p where p.dataentrada >= :hoje")
+		linhas = (Long) session.createQuery("select count(*) from Parcela p where p.dataentrada >= :hoje" +
+											" and p.pagamento.condicoesPagamento.formapagamento.id <> 4")
 						.setDate("hoje", new Date())
 						.setCacheable(true)
 						.uniqueResult();
@@ -110,8 +112,58 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 	public List<Parcela> listaParcelasAVencer(int first, int pageSize) {
 		session = Conexao.getInstance();
 		session.beginTransaction();
-		listaParcela = session.createQuery("from Parcela p where p.dataentrada >= :hoje")
+		
+		listaParcela = session.createQuery("from Parcela p where p.dataentrada >= :hoje and p.pagamento.condicoesPagamento.formapagamento.id <> 4")
 							  .setDate("hoje", new Date())
+							  .setFirstResult(first)
+							  .setMaxResults(pageSize)
+							  .setCacheable(true)
+							  .list();
+		session.close();
+		return listaParcela;
+	}
+	
+	public int totalParcelasAVencerCheque(Date dataInicial, Date dataFinal, Map<String, String> filter) {
+		Long linhas = new Long(0);
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		String hql = "select count(*) " +
+							"from Parcela p " +
+							"where " +
+								"p.dataentrada between :dataInicial and :dataFinal" +
+							" and " +
+								"p.pagamento.condicoesPagamento.formapagamento.id = 4";
+		
+		if(filter.containsKey("situacaoCheque")){
+			hql += " and p.situacaoCheque = '" + filter.get("situacaoCheque") + "'"; 
+		}
+		
+		linhas = (Long) session.createQuery(hql)
+								.setDate("dataInicial", dataInicial)
+								.setDate("dataFinal", dataFinal)								
+								.setCacheable(true)
+								.uniqueResult();
+		
+		session.close();
+		return linhas.intValue();
+	}
+
+	public List<Parcela> listaParcelasAVencerCheque(int first, int pageSize, Date dataInicial, Date dataFinal, Map<String, String> filter) {
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		String hql = "from Parcela p " +
+						"where " +
+							"p.dataentrada between :dataInicial and :dataFinal " +
+						"and " +
+							"p.pagamento.condicoesPagamento.formapagamento.id = 4";
+		
+		if(filter.containsKey("situacaoCheque")){
+			hql += " and p.situacaoCheque = '" + filter.get("situacaoCheque") + "'"; 
+		}
+		
+		listaParcela = session.createQuery(hql)
+							  .setDate("dataInicial", dataInicial)
+							  .setDate("dataFinal", dataFinal)							  
 							  .setFirstResult(first)
 							  .setMaxResults(pageSize)
 							  .setCacheable(true)

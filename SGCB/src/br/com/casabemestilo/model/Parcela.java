@@ -31,6 +31,7 @@ public class Parcela implements java.io.Serializable {
 	private Date dataentrada;
 	private float valor;
 	private Integer numeroParcela;
+	private String situacaoCheque;
 
 	public Parcela() {
 	}
@@ -88,6 +89,15 @@ public class Parcela implements java.io.Serializable {
 
 	public void setNumeroParcela(Integer numeroParcela) {
 		this.numeroParcela = numeroParcela;
+	}
+
+	@Column(name = "situacaocheque", nullable = true)
+	public String getSituacaoCheque() {
+		return situacaoCheque;
+	}
+
+	public void setSituacaoCheque(String situacaoCheque) {
+		this.situacaoCheque = situacaoCheque;
 	}
 
 }

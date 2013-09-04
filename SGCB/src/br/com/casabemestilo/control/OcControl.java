@@ -482,13 +482,13 @@ public class OcControl extends Control implements InterfaceControl,
 	}
 	
 	public void lancaParcelas(){
-		Float valorParcelas = new Float(0.0);
-		Calendar c = Calendar.getInstance();		
+		Float valorParcelas = new Float(0.0);				
 		try {
 			for(Pagamento pagamento : oc.getPagamentos()){
+				Calendar c = Calendar.getInstance();
+				c.setTime(new Date());
 				if(pagamento.getCondicoesPagamento().getFormapagamento().getEhantecipacao()){
 					Parcela parcela = new Parcela();
-					c.setTime(new Date());
 					c.add(Calendar.DAY_OF_MONTH, 1);
 					percentualRetencao = pagamento.getCondicoesPagamento().getPercentual() / 100;
 					valorLiquido = pagamento.getValor() - (pagamento.getValor() * percentualRetencao);				
@@ -501,14 +501,15 @@ public class OcControl extends Control implements InterfaceControl,
 					parcela.setNumeroParcela(1);
 					parcela.setValor(valorLiquido);
 					parcela.setDataentrada(c.getTime());
+					parcela.setSituacaoCheque(parcela.getPagamento().getCondicoesPagamento().getFormapagamento().getId() == 4 ? "Emitido" : null);
 					pagamento.getParcelas().add(parcela);
-				}else if(pagamento.getCondicoesPagamento().getAvista()){
-					c.setTime(new Date());
+				}else if(pagamento.getCondicoesPagamento().getAvista()){					
 					Parcela parcela = new Parcela();
 					parcela.setPagamento(pagamento);
 					parcela.setNumeroParcela(1);
 					parcela.setValor(pagamento.getValor());
 					parcela.setDataentrada(c.getTime());
+					parcela.setSituacaoCheque(parcela.getPagamento().getCondicoesPagamento().getFormapagamento().getId() == 4 ? "Emitido" : null);
 					pagamento.getParcelas().add(parcela);
 				}else{		
 					percentualRetencao = pagamento.getCondicoesPagamento().getPercentual() / 100;				
@@ -521,6 +522,7 @@ public class OcControl extends Control implements InterfaceControl,
 						parcela.setNumeroParcela(i);
 						parcela.setValor(valorParcelas);
 						parcela.setDataentrada(c.getTime());
+						parcela.setSituacaoCheque(parcela.getPagamento().getCondicoesPagamento().getFormapagamento().getId() == 4 ? "Emitido" : null);
 						pagamento.getParcelas().add(parcela);
 					}
 				}
