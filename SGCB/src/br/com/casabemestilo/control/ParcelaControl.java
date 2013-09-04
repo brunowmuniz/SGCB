@@ -1,6 +1,9 @@
 package br.com.casabemestilo.control;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -8,6 +11,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
@@ -36,6 +40,12 @@ public class ParcelaControl extends Control implements InterfaceControl,
 	private ParcelaDAO parcelaDAO;
 	
 	private LazyDataModel<Parcela> listaParcelaGeral;
+	
+	private Date dataInicial;
+	
+	private Date dataFinal;
+	
+	private List listaStatusCheque = new ArrayList();
 	
 	
 	/*
@@ -153,6 +163,43 @@ public class ParcelaControl extends Control implements InterfaceControl,
 		}
 		return listaParcelaGeral;
 	}
+	
+	public LazyDataModel<Parcela> getListaParcelaAVencerCheque(){
+		if(listaParcelaGeral == null){
+			listaParcelaGeral = new LazyDataModel<Parcela>() {
+									 private List<Parcela> listaLazyParcela;
+									 
+									 public Parcela getRowData(String idOc) {
+									    	Integer id = Integer.valueOf(idOc);
+									    	
+									        for(Parcela parcela : listaLazyParcela) {
+									            if(parcela.getId().equals(id))
+									                return parcela;
+									        }
+									        
+									        return null;
+									    }
+					
+									    @Override
+									    public Object getRowKey(Parcela parcela) {
+									        return parcela.getId();
+									    }
+					
+									    @Override
+									    public List<Parcela> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,String> filters) {
+									    	ParcelaDAO parcelaDAO = new ParcelaDAO();
+									    	listaLazyParcela = parcelaDAO.listaParcelasAVencerCheque(first, pageSize, getDataInicial(), getDataFinal(),filters);
+									    	if (getRowCount() <= 0) {  
+									            setRowCount(parcelaDAO.totalParcelasAVencerCheque(getDataInicial(), getDataFinal(),filters));  
+									        }  
+									        // set the page dize  
+									        setPageSize(pageSize);  
+									        return listaLazyParcela;  
+									    }
+								};
+		}
+		return listaParcelaGeral;
+	}
  
 	
 	/*
@@ -195,7 +242,47 @@ public class ParcelaControl extends Control implements InterfaceControl,
 	public void setListaParcelaGeral(LazyDataModel<Parcela> listaParcelaGeral) {
 		this.listaParcelaGeral = listaParcelaGeral;
 	}
-	
-	
 
+	public Date getDataInicial() {
+		if(dataInicial == null){
+			dataInicial = new Date();
+		}
+		return dataInicial;
+	}
+
+	public void setDataInicial(Date dataInicial) {
+		this.dataInicial = dataInicial;
+	}
+
+	public Date getDataFinal() {
+		if(dataFinal == null){
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(new Date());
+			calendar.add(Calendar.DAY_OF_MONTH, 30);
+			dataFinal = calendar.getTime();
+		}
+		return dataFinal;
+	}
+
+	public void setDataFinal(Date dataFinal) {
+		this.dataFinal = dataFinal;
+	}
+
+	public List getListaStatusCheque() {
+		if(listaStatusCheque.size() == 0){
+			SelectItem si = new SelectItem();
+			si.setLabel("");
+			si.setNoSelectionOption(true);			
+			listaStatusCheque.add(si);
+			listaStatusCheque.add(new SelectItem("Emitido"));
+			listaStatusCheque.add(new SelectItem("Quitado"));
+			listaStatusCheque.add(new SelectItem("Pendente"));
+		}		
+		return listaStatusCheque;
+	}
+
+	public void setListaStatusCheque(List<String> listaStatusCheque) {
+		this.listaStatusCheque = listaStatusCheque;
+	}
+	
 }
