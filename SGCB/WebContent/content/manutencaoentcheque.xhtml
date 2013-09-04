@@ -9,8 +9,17 @@
 		<ui:define name="conteudo">
 			<h:form id="form">
 				<p:panel header="Manutenção de Parcelas à Vencer">				
-					<p:messages id="msgs"/>				
-					<p:dataTable id="entradaparcela" value="#{parcelaControl.listaParcelaAVencer}" var="entrada" lazy="true" emptyMessage="Sem parcelas a vencer" paginator="true"
+					<p:messages id="msgs"/>
+					<h:panelGrid columns="2">
+						<p:outputLabel value="Data Inicial: " for="dtInicial" />
+						<p:calendar value="#{parcelaControl.dataInicial}" pattern="dd/MM/yyyy" id="dtInicial"/>
+						
+						<p:outputLabel value="Data Final: " for="dtFinal" />
+						<p:calendar value="#{parcelaControl.dataFinal}" pattern="dd/MM/yyyy" id="dtFinal"/>
+						
+						<p:commandButton value="Pesquisar" update="@form"/>						
+					</h:panelGrid>			
+					<p:dataTable id="entradaparcela" value="#{parcelaControl.listaParcelaAVencerCheque}" var="entrada" lazy="true" emptyMessage="Sem parcelas a vencer" paginator="true"
 								selection="#{parcelaControl.parcela}" selectionMode="single" rows="25"
 								paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
 		             			rowsPerPageTemplate="25,50,100" rowKey="#{entrada.id}" editable="true">
@@ -39,9 +48,24 @@
 										<p:ajax event="dateSelect" process="@this"/>
 									</p:calendar>
 								</f:facet>
-							</p:cellEditor>
-							
+							</p:cellEditor>							
 						</p:column>
+						<p:column headerText="Status" filterBy="#{entrada.situacaoCheque}" filterMatchMode="exact" filterOptions="#{parcelaControl.listaStatusCheque}" filterStyle="width: 80px;">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{entrada.situacaoCheque}">
+										<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
+									</h:outputText>
+								</f:facet>
+								<f:facet name="input">
+									<p:selectOneMenu size="1" value="#{entrada.situacaoCheque}" style="width: 80px;">										
+										<f:selectItems value="#{parcelaControl.listaStatusCheque}"/>
+										<p:ajax event="change" process="@this" />
+									</p:selectOneMenu>
+								</f:facet>
+							</p:cellEditor>							
+						</p:column>
+						
 						
 						<p:column headerText="Parcela">
 							<p:outputLabel value="#{entrada.numeroParcela} / #{entrada.pagamento.condicoesPagamento.parcelas}"/>
@@ -78,8 +102,8 @@
 		</ui:define>
 		<ui:define name="rodape">
 			<p:panel header="Descritivo Tela" styleClass="rodape">
-	    		<p:outputLabel value="Tela que lista as parcelas a vencer, exceto cheque." styleClass="rodape_esquerda"/>
-	    		<p:outputLabel value="manutencaoentrada.jsf" styleClass="rodape_direita"/>
+	    		<p:outputLabel value="Tela que lista as parcelas a vencer quando o pagamento for cheque." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="manutencaoentcheque.jsf" styleClass="rodape_direita"/>
 	    	</p:panel>	
 		</ui:define>
 	</ui:composition>
