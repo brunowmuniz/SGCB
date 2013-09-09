@@ -31,6 +31,7 @@ import br.com.casabemestilo.DAO.PagamentoDAO;
 import br.com.casabemestilo.DAO.ProdutoDAO;
 import br.com.casabemestilo.DAO.StatusDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
+import br.com.casabemestilo.model.Assistenciatecnica;
 import br.com.casabemestilo.model.Cliente;
 import br.com.casabemestilo.model.Comissao;
 import br.com.casabemestilo.model.CondicoesPagamento;
@@ -71,6 +72,10 @@ public class OcControl extends Control implements InterfaceControl,
 	private List<String> listaTipoFrete;
 	
 	private List<Ocproduto> listaOcProdutoAcao = new ArrayList<Ocproduto>();
+	
+	private Date dataInicial;
+	
+	private Date dataFinal;
 	
 	
 	/*
@@ -569,8 +574,12 @@ public class OcControl extends Control implements InterfaceControl,
 			if(listaOcProdutoAcao.size() > 0){
 				Status status = (Status) new StatusDAO().buscaObjetoId(idAcao.intValue());
 				Frete frete = new Frete();
+				Assistenciatecnica assistenciatecnica = new Assistenciatecnica();				
 				if(idAcao.intValue() == 6){
 					frete = new FreteControl().gravarFreteOcProduto(getListaOcProdutoAcao(), listaMontadores);
+				}
+				if(idAcao.intValue() == 8){
+					assistenciatecnica = new AssistenciaTecnicaControl().gravarAssistTecnicaProduto(getListaOcProdutoAcao(), listaMontadores);
 				}
 				for(Ocproduto ocprodutoAcao : listaOcProdutoAcao){					
 					for(Ocproduto ocproduto : getOc().getOcprodutos()){
@@ -578,7 +587,9 @@ public class OcControl extends Control implements InterfaceControl,
 							ocproduto.setStatus(status);
 							if(idAcao.intValue() == 6){
 								ocproduto.setFrete(frete);
-							}							
+							}if(idAcao.intValue() == 8){
+								ocproduto.setAssistenciatecnica(assistenciatecnica);
+							}
 						}
 					}
 				}
@@ -606,10 +617,61 @@ public class OcControl extends Control implements InterfaceControl,
 		}
 	}
 	
+	public List<Oc> getListaCalculaVendasPorVendedor(){
+		ocDAO = new OcDAO();
+		listaOc = new ArrayList<Oc>();
+		listaOc = ocDAO.calculaVendasPorVendedor(getDataInicial(),getDataFinal());
+		return listaOc;
+	}
+	
+	public void buscaOcPorDataLancamento(){
+		listarOcGeral = null;
+		getListarOcGeralAll();
+	}
+
+	public List<Oc> getListaVendasMesAno(){
+		ocDAO = new OcDAO();
+		List listaVendasMesAno = new ArrayList();
+		listaVendasMesAno = ocDAO.calcultaTotalVendasMesAno(getDataInicial(),getDataFinal());		
+		return listaVendasMesAno;
+	}
+	
+	public void buscarVendasMesAno(){
+		Calendar calendar = Calendar.getInstance();
+		
+		calendar.setTime(dataInicial);
+		calendar.set(calendar.DATE, 1);
+		dataInicial = calendar.getTime();
+		
+		calendar.setTime(dataFinal);
+		calendar.set(calendar.DATE, calendar.getActualMaximum(calendar.DAY_OF_MONTH));
+		dataFinal = calendar.getTime();
+		
+	}
+	
+	public void definirDataRelatorio(){
+		Calendar calendar = Calendar.getInstance();		
+		dataInicial = new Date();
+		dataFinal = new Date();
+		
+		calendar.setTime(dataInicial);		
+		calendar.set(Calendar.DATE, 1);
+		calendar.set(Calendar.MONTH, 1);
+		dataInicial = calendar.getTime();
+		
+		calendar.setTime(dataFinal);
+		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(calendar.DAY_OF_MONTH));
+		dataFinal = calendar.getTime();
+		
+	}
+	
 	/*
 	 * GETTERS & SETTERS
 	 * */
 	public Oc getOc() {
+		if(oc == null){
+			oc = new Oc();
+		}
 		return oc;
 	}
 
@@ -698,9 +760,10 @@ public class OcControl extends Control implements InterfaceControl,
 							    public List<Oc> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,String> filters) {
 							    	OcDAO ocDAO = new OcDAO();  
 							    	
-							    	listaLazyOc = ocDAO.listaLazy(first, pageSize,filters);
+							    	listaLazyOc = ocDAO.listaLazy(first, pageSize, filters, getDataInicial(), getDataFinal());
+							    	
 							    	if (getRowCount() <= 0) {  
-							            setRowCount(ocDAO.totalOc(filters));  
+							            setRowCount(ocDAO.totalOc(filters, getDataInicial(), getDataFinal()));  
 							        }  
 							       
 							        setPageSize(pageSize);  
@@ -812,4 +875,31 @@ public class OcControl extends Control implements InterfaceControl,
 	public void setListaOcProdutoAcao(List<Ocproduto> listaOcProdutoAcao) {
 		this.listaOcProdutoAcao = listaOcProdutoAcao;
 	}
+
+	public Date getDataInicial() {		
+		if(dataInicial == null){
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(new Date());
+			calendar.add(Calendar.DAY_OF_MONTH,-30);
+			dataInicial = calendar.getTime();			
+		}
+		return dataInicial;
+	}
+
+	public void setDataInicial(Date dataInicial) {
+		this.dataInicial = dataInicial;
+	}
+
+	public Date getDataFinal() {
+		if(dataFinal == null ){
+			dataFinal = new Date();
+		}
+
+		return dataFinal;
+	}
+
+	public void setDataFinal(Date dataFinal) {
+		this.dataFinal = dataFinal;
+	}
+		
 }

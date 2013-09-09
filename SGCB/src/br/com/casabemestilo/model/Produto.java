@@ -44,6 +44,7 @@ public class Produto implements java.io.Serializable {
 	private Integer encomenda;
 	private String codigo;
 	private Boolean deleted;
+	private Boolean temMontagem;
 	private List<Ocproduto> ocprodutos = new ArrayList<Ocproduto>();
 	private List<Pedidoproduto> pedidoprodutos = new ArrayList<Pedidoproduto>();
 
@@ -176,6 +177,18 @@ public class Produto implements java.io.Serializable {
 
 	public void setDeleted(Boolean deleted) {
 		this.deleted = deleted;
+	}
+	
+	@Column(name="temmontagem", nullable = false)
+	public Boolean getTemMontagem() {
+		if(temMontagem == null){
+			temMontagem = true;
+		}
+		return temMontagem;
+	}
+
+	public void setTemMontagem(Boolean temMontagem) {
+		this.temMontagem = temMontagem;
 	}
 
 	@OneToMany(targetEntity = Ocproduto.class, mappedBy = "produto", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.model.SelectItem;
@@ -152,6 +153,7 @@ public class FormaPagamentoControl extends Control implements Serializable,Inter
 		this.formaPagamentoDAO = formaPagamentoDAO;
 	}
 
+	@PostConstruct
 	public List getListaFormaPagamentoCombo() {
 		listaFormaPagamentoCombo = new ArrayList();
 		listarAtivos();

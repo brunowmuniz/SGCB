@@ -2,6 +2,7 @@ package br.com.casabemestilo.DAO;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -136,7 +137,7 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		return null;
 	}
 
-	public List<Oc> listaLazy(int startingAt, int maxPerPage, Map<String, String> filters){
+	public List<Oc> listaLazy(int startingAt, int maxPerPage, Map<String, String> filters, Date dataInicial, Date dataFinal){
 		session = Conexao.getInstance();
 		session.beginTransaction();
 		
@@ -157,19 +158,23 @@ public class OcDAO implements InterfaceDAO, Serializable {
 			hql += " and o.status.id < 9 ";
 		}
 		
-		hql += " order by o.id desc";
+				
+		hql += " and o.datalancamento between :dataInicial and :dataFinal" +
+			   " order by o.id desc";
 		
 		listaOc = session.createQuery(hql)
-						.setFirstResult(startingAt)
-						.setMaxResults(maxPerPage)
-						.setCacheable(true)
-						.list();
+						 .setDate("dataInicial",dataInicial)
+						 .setDate("dataFinal", dataFinal)
+						 .setFirstResult(startingAt)
+						 .setMaxResults(maxPerPage)
+						 .setCacheable(true)
+						 .list();
 						 
 		session.close();
 		return listaOc;
 	}
 	
-	public int totalOc(Map<String, String> filters) {
+	public int totalOc(Map<String, String> filters, Date dataInicial, Date dataFinal) {
 		Long linhas = new Long(0);
 		session = Conexao.getInstance();
 		session.beginTransaction();
@@ -192,8 +197,13 @@ public class OcDAO implements InterfaceDAO, Serializable {
 			hql += " and o.status.id < 9 ";
 		}
 		
+		hql += " and o.datalancamento between :dataInicial and :dataFinal";
+		
 		linhas = (Long) session.createQuery(hql)
-						.setCacheable(true).uniqueResult();
+							   .setDate("dataInicial",dataInicial)
+				 			   .setDate("dataFinal", dataFinal)
+							   .setCacheable(true)
+							   .uniqueResult();
 		
 		session.close();
 		return linhas.intValue();
@@ -274,6 +284,51 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		return linhas.intValue();
 	}
 	
+	public List<Oc> calculaVendasPorVendedor(Date dataInicial, Date dataFinal) {
+		session = Conexao.getInstance();
+		listaOc = new ArrayList<Oc>();
+		List<Integer> listaStatus = new ArrayList<Integer>();
+		
+		listaStatus.add(1);
+		listaStatus.add(2);
+		listaStatus.add(10);
+		
+		listaOc = session.createQuery("from Oc o " +										
+										"where "+
+											"o.deleted = :ocDeleted " +
+										"and " +
+											"o.status.id not in(:listaStatus) " +
+										"and " +
+											"o.datalancamento between :dataInicial and :dataFinal "+
+										"group by o.usuario")
+							.setBoolean("ocDeleted", false)
+							.setParameterList("listaStatus", listaStatus)
+							.setDate("dataInicial", dataInicial)
+							.setDate("dataFinal", dataFinal)
+							.setCacheable(true)
+							.list();
+		
+		session.close();
+		return listaOc;
+	}
+	
+	public List calcultaTotalVendasMesAno(Date dataInicial, Date dataFinal) {
+		List listaVendasMesAno = new ArrayList();
+		session = Conexao.getInstance();
+		listaVendasMesAno = session.createSQLQuery("select oc.datalancamento, " +
+											" sum(oc.valorliquido)," +
+											" sum(oc.valorfinal)" +
+										" from oc" +
+										" where datalancamento between :dataInicial and :dataFinal" +
+										" group by date_format(oc.datalancamento,'%Y-%m')")
+						 .setDate("dataInicial", dataInicial)
+						 .setDate("dataFinal", dataFinal)				
+						 .list();
+		
+		session.close();
+		return listaVendasMesAno;
+	}
+	
 	/*
 	 * GETTERS & SETTERS
 	 * */
@@ -291,8 +346,7 @@ public class OcDAO implements InterfaceDAO, Serializable {
 
 	public void setOc(Oc oc) {
 		this.oc = oc;
-	}
-	
+	}	
 	
 
 }

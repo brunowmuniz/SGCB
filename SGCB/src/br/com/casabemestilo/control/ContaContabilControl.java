@@ -170,9 +170,17 @@ public class ContaContabilControl extends Control implements InterfaceControl, S
 		return "cadastracontacontabil?faces-redirect=true";
 	}
 	
-	public List listaContasCombo(){
+	public List listaContasCombo(String filter){
 		listarTodos();
 		List listaContaContabilCombo = new ArrayList();
+		
+		if(filter.equals("filter")){
+			SelectItem si = new SelectItem();
+			si.setLabel("Todos");
+			si.setNoSelectionOption(true);
+			listaContaContabilCombo.add(si);
+		}
+		
 		for(Contacontabil contacontabil : listaContaContabil){			
 			listaContaContabilCombo.add(new SelectItem(contacontabil.getId(), contacontabil.getNome()));
 		}

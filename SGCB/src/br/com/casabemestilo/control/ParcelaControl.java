@@ -151,9 +151,9 @@ public class ParcelaControl extends Control implements InterfaceControl,
 									    @Override
 									    public List<Parcela> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,String> filters) {
 									    	ParcelaDAO parcelaDAO = new ParcelaDAO();
-									    	listaLazyParcela = parcelaDAO.listaParcelasAVencer(first, pageSize);
+									    	listaLazyParcela = parcelaDAO.listaParcelasAVencer(first, pageSize, getDataInicial(), getDataFinal());
 									    	if (getRowCount() <= 0) {  
-									            setRowCount(parcelaDAO.totalParcelasAVencer());  
+									            setRowCount(parcelaDAO.totalParcelasAVencer(getDataInicial(), getDataFinal()));  
 									        }  
 									        // set the page dize  
 									        setPageSize(pageSize);  
@@ -192,7 +192,7 @@ public class ParcelaControl extends Control implements InterfaceControl,
 									    	if (getRowCount() <= 0) {  
 									            setRowCount(parcelaDAO.totalParcelasAVencerCheque(getDataInicial(), getDataFinal(),filters));  
 									        }  
-									        // set the page dize  
+									        
 									        setPageSize(pageSize);  
 									        return listaLazyParcela;  
 									    }
@@ -201,6 +201,15 @@ public class ParcelaControl extends Control implements InterfaceControl,
 		return listaParcelaGeral;
 	}
  
+	public void buscaParcelasAvencer(){
+		listaParcelaGeral = null;
+		getListaParcelaAVencer();
+	}
+	
+	public void buscaParcelasAVencerCheque(){
+		listaParcelaGeral = null;
+		getListaParcelaAVencerCheque();
+	}
 	
 	/*
 	 * GETTERS & SETTERS

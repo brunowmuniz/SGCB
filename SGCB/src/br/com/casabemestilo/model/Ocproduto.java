@@ -49,7 +49,7 @@ public class Ocproduto implements java.io.Serializable {
 	private List<Pedidoproduto> pedidoprodutos;
 	private Set montagems = new HashSet(0);
 	private Frete frete; 
-	private Set assistenciatecnicas = new HashSet(0);
+	private Assistenciatecnica assistenciatecnica;
 
 	public Ocproduto() {
 	}
@@ -61,14 +61,14 @@ public class Ocproduto implements java.io.Serializable {
 	}
 
 	public Ocproduto(Status status, Produto produto, Oc oc, String tiposaida,
-			Set montagems, Frete frete, Set assistenciatecnicas, Integer quantidade) {
+			Set montagems, Frete frete, Assistenciatecnica assistenciatecnica, Integer quantidade) {
 		this.status = status;
 		this.produto = produto;
 		this.oc = oc;
 		this.tiposaida = tiposaida;
 		this.montagems = montagems;
 		this.frete = frete;
-		this.assistenciatecnicas = assistenciatecnicas;
+		this.assistenciatecnica = assistenciatecnica;
 		this.quantidade = quantidade;
 	}
 
@@ -150,13 +150,14 @@ public class Ocproduto implements java.io.Serializable {
 		this.frete = frete;
 	}
 
-	@OneToMany(targetEntity = Assistenciatecnica.class,mappedBy = "ocproduto")
-	public Set getAssistenciatecnicas() {
-		return this.assistenciatecnicas;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="assistenciatecnica")
+	public Assistenciatecnica getAssistenciatecnica() {
+		return this.assistenciatecnica;
 	}
 
-	public void setAssistenciatecnicas(Set assistenciatecnicas) {
-		this.assistenciatecnicas = assistenciatecnicas;
+	public void setAssistenciatecnica(Assistenciatecnica assistenciatecnica) {
+		this.assistenciatecnica = assistenciatecnica;
 	}
 
 
