@@ -37,7 +37,7 @@
 		             	<p:ajax event="rowEdit" listener="#{lancamentoControl.alterar}" process="entradalancamento" update=":form:msgs"/>
 		             	<p:ajax event="rowSelect" update=":form:ctxlancamento"/>
 						
-						<p:column headerText="Conta Contábil">
+						<p:column headerText="Conta Contábil" filterBy="#{lancamento.contacontabil.id}" filterOptions="#{contaContabilControl.listaContasCombo('filter')}" filterMatchMode="exact">
 							<h:outputText value="#{lancamento.contacontabil.nome}" />
 						</p:column>
 									
@@ -57,8 +57,9 @@
 						<p:column headerText="Valor da Parcela">
 							<p:cellEditor id="valorparcela">
 								<f:facet name="output">
-									<h:outputText value="R$ "/>
-						        	<h:outputText value="#{lancamento.valor}">
+									<h:outputText value="R$ " styleClass="#{lancamento.contacontabil.tipo == 'D' ? 'debito' : 'credito'}"/>
+									<h:outputText value="#{lancamento.contacontabil.tipo == 'D' ? '-' : ''}" styleClass="debito"/>
+						        	<h:outputText value="#{lancamento.valor}" styleClass="#{lancamento.contacontabil.tipo == 'D' ? 'debito' : 'credito'}">
 						        		<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
 						        	</h:outputText>
 								</f:facet>

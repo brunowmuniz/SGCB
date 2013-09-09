@@ -17,7 +17,7 @@
 						<p:outputLabel value="Data Final: " for="dtFinal" />
 						<p:calendar value="#{parcelaControl.dataFinal}" pattern="dd/MM/yyyy" id="dtFinal"/>
 						
-						<p:commandButton value="Pesquisar" update="@form"/>						
+						<p:commandButton value="Pesquisar" action="#{parcelaControl.buscaParcelasAVencerCheque}" update="@form" />						
 					</h:panelGrid>			
 					<p:dataTable id="entradaparcela" value="#{parcelaControl.listaParcelaAVencerCheque}" var="entrada" lazy="true" emptyMessage="Sem parcelas a vencer" paginator="true"
 								selection="#{parcelaControl.parcela}" selectionMode="single" rows="25"

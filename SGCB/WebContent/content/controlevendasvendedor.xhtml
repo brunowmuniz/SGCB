@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form id="form">
+				<p:panel header="Controle de Vendas - Vendedor">
+					<h:panelGrid columns="2">
+						<p:outputLabel for="dataInicial" value="Período Inicial: "/>
+						<p:calendar value="#{ocControl.dataInicial}" pattern="dd/MM/yyyy" locale="pt" id="dataInicial">
+							<p:ajax event="dateSelect" process="@this"/>
+						</p:calendar>
+						<p:outputLabel for="dataFinal" value="Período Final: "/>
+						<p:calendar value="#{ocControl.dataFinal}" pattern="dd/MM/yyyy" locale="pt" id="dataFinal">
+							<p:ajax event="dateSelect" process="@this"/>
+						</p:calendar>
+						<p:commandButton value="Pesquisar" update="@form"/>
+					</h:panelGrid>					
+					<p:dataTable value="#{ocControl.listaCalculaVendasPorVendedor}" var="vendedor" style="width: 50%;">
+						<p:column headerText="Vendedor">
+							<h:outputText value="#{vendedor.usuario.nome}" />
+						</p:column>
+						<p:column headerText="Valor Liquído" style="text-align: center;">
+							<h:outputText value="R$ " />
+							<h:outputText value="#{vendedor.valorliquido}">
+								<f:convertNumber maxIntegerDigits="7" minFractionDigits="2" locale="pt_BR"/>
+							</h:outputText>
+						</p:column>
+					</p:dataTable>			
+				</p:panel>
+			</h:form>
+		</ui:define>
+		<ui:define name="rodape">
+			<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela que informa o total de vendas do período, por vendedor." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="controlevendasvendedor.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
+		</ui:define>
+	</ui:composition>
+</html>

@@ -3,8 +3,7 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:c="http://java.sun.com/jsp/jstl/core">
+      xmlns:p="http://primefaces.org/ui">
 
 	<ui:composition template="../template/template.xhtml">
 		<ui:define name="conteudo">			
@@ -13,7 +12,7 @@
 					<p:messages id="msgs"/>					
 					<h:panelGrid id="cadastro" columns="1" width="100%">
 						
-						<h:panelGrid  columns="#{ocControl.oc.id != null and (ocControl.oc.status.id == 1 or ocControl.oc.status.id == 2 or ocControl.oc.status.id == 7) ? 8 : 7}">
+						<h:panelGrid  columns="#{(ocControl.oc.id != null and (ocControl.oc.status.id == 1 or ocControl.oc.status.id == 2 or ocControl.oc.status.id == 7)) or ocControl.oc.id == null ? 8 : 7}">
 							<p:outputLabel for="numero" value="Número OC:"/>							
 							<h:outputText value="#{ocControl.oc.id == null ? 'Nova OC' : ocControl.oc.id}"  id="numero" style="width: 100px; " styleClass="negrito" update="cadastro"/>
 							<p:spacer width="10px"/>
@@ -100,7 +99,7 @@
 								
 								<p:commandButton value="Encerrar Produto" id="encerrarAcao" actionListener="#{ocControl.acaoPoduto(9,freteControl.listaMontadores)}" update=":form:msgs,listaprodutoocfechada" rendered="#{ocControl.oc.status.id != 2 and ocControl.oc.status.id != 1 and ocControl.oc.id != null}"/>
 								 
-								<p:commandButton value="Assistência Técnica" id="assistTecAcao" actionListener="#{ocControl.acaoPoduto(8,freteControl.listaMontadores)}" update=":form:msgs,listaprodutoocfechada" rendered="#{ocControl.oc.status.id != 2 and ocControl.oc.status.id != 1 and ocControl.oc.id != null}"/>
+								<p:commandButton value="Assistência Técnica" id="assistTecAcao" onclick="modalAssistenciaTecnica.show()"  rendered="#{ocControl.oc.status.id != 2 and ocControl.oc.status.id != 1 and ocControl.oc.id != null}"/>
 								
 								<p:commandButton value="Frete/Execução" id="freteExecAcao" onclick="modalFreteMontagem.show()" rendered="#{ocControl.oc.status.id != 2 and ocControl.oc.status.id != 1 and ocControl.oc.id != null}"/>
 								
@@ -116,6 +115,20 @@
 												<p:ajax event="change" process="@this" update="freteExecucaoAcao,listaMontadores"/> 
 											</p:selectManyMenu>
 											<p:commandButton actionListener="#{ocControl.acaoPoduto(6,freteControl.listaMontadores)}" oncomplete="modalFreteMontagem.hide()" id="freteExecucaoAcao" value="Gravar Frete/Execução" disabled="#{freteControl.listaMontadores.size() == 0}" update=":form:msgs,listaprodutoocfechada"/>
+										</h:panelGrid>		
+									</p:outputPanel>
+								</p:dialog>
+								
+								<p:dialog widgetVar="modalAssistenciaTecnica" id="modalAssistenciaTecnica" resizable="false" header="Montadores">
+									<p:outputPanel id="updAssistTec" autoUpdate="true">
+										<h:panelGrid columns="2">
+											<p:outputLabel for="listaMontadores" value="Montador"/>
+											<p:selectManyMenu value="#{assistenciaTecnicaControl.listaMontadores}" id="listaMontadoresAT">
+												<f:selectItem itemValue="" noSelectionOption="true"/>
+												<f:selectItems value="#{usuarioControl.listaUsuarioMontador}" />
+												<p:ajax event="change" process="@this" update="AssistenciaTecnicaAcao,listaMontadoresAT"/> 
+											</p:selectManyMenu>
+											<p:commandButton actionListener="#{ocControl.acaoPoduto(8,assistenciaTecnicaControl.listaMontadores)}" oncomplete="modalAssistenciaTecnica.hide()" id="AssistenciaTecnicaAcao" value="Gravar Assist. Técnica" disabled="#{assistenciaTecnicaControl.listaMontadores.size() == 0}" update=":form:msgs,listaprodutoocfechada"/>
 										</h:panelGrid>		
 									</p:outputPanel>
 								</p:dialog>
@@ -182,6 +195,10 @@
 													<f:selectItem itemValue="encomenda" itemLabel="Encomenda" />
 												</p:selectOneMenu>
 												
+												<p:outputLabel for="temmontagem" value="Montagem: "/>
+												<p:selectBooleanCheckbox id="temmontagem" value="#{ocProdutoControl.ocproduto.produto.temMontagem}"
+																	  disabled="#{ocProdutoControl.ocproduto.produto.id != null}"/>
+																								
 												<p:outputLabel for="quantidade" value="Quantidade: " />
 												<p:spinner  value="#{ocProdutoControl.ocproduto.quantidade}" id="quantidade" immediate="true" min="1" max="999">
 													<f:validateBean />
@@ -198,7 +215,7 @@
 												<p:outputLabel for="valortotal" value="Valor Total: " />
 												<p:inputText value="#{ocProdutoControl.ocproduto.valortotal}" id="valortotal">
 													<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1" />		
-												</p:inputText>																																
+												</p:inputText>																															
 												
 												<p:commandButton value="Insere Produto" actionListener="#{ocControl.adicionarProdutoOc(ocProdutoControl.ocproduto)}" 
 																 process="@this,dadosproduto,valoroc" update="updLista,valoroc,:form:oc:valorfinaloc"  onclick="modalbuscaproduto.hide()"
