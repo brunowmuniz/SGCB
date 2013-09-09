@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form id="form">
+				<p:panel header="Listagem de Caixa">				
+					<p:dataTable id="dataTable" var="car" value="#{tableBean.cars}"
+                 paginator="true" rows="10"
+                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                 rowsPerPageTemplate="5,10,15">
+                  <p:column>
+            <f:facet name="header">
+                <h:outputText value="Data Lançamento" />
+            </f:facet>
+            <h:outputText value="#{caixa.data}" />
+        </p:column>
+
+        <p:column>
+            <f:facet name="header">
+                <h:outputText value="Descrição" />
+            </f:facet>
+            <h:outputText value="#{caixa.descricao}" />
+        </p:column>
+
+        <p:column>
+            <f:facet name="header">
+                <h:outputText value="Entrada" />
+            </f:facet>
+            <h:outputText value="#{caixa.entrada}" />
+        </p:column>
+
+        <p:column>
+            <f:facet name="header">
+                <h:outputText value="Saída" />
+            </f:facet>
+            <h:outputText value="#{caixa.saida}" />
+        </p:column>
+                 
+                 </p:dataTable>
+				</p:panel>
+			</h:form>
+		</ui:define>
+		<ui:define name="rodape">
+			<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela que lista os lancamentos em Caixa" styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="manutencaocaixa.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>	
+		</ui:define>
+	</ui:composition>
+</html>
