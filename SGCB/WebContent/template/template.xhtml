@@ -1,5 +1,4 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
@@ -47,6 +46,8 @@
       		<p:menuitem value="Compra Parceiros (REDE)" url="controlecompraparceiros.jsf"/>
       		<p:menuitem value="Produtos Para Montagem/Frete" url="manuntencaofretemontagem.jsf"/>
       		<p:menuitem value="OC por status de produto" url="controleocstatusproduto.jsf"/>
+      		<p:menuitem value="Controle Vendas - Vendedor" url="controlevendasvendedor.jsf"/>
+      		<p:menuitem value="Controle Vendas - Mês" url="controlevendasmes.jsf"/>
       	</p:submenu>
       	<p:submenu label="Contas a Receber">
 			<p:menuitem value="Parcelas a Vencer" url="manutencaoentradas.jsf" />
@@ -93,12 +94,12 @@
       </p:menubar>
     </ui:insert>        
     <ui:insert name="conteudo">
-      <h:outputLabel value="Teste Conteudo" />
+      <h:outputLabel value="Conteudo" />
     </ui:insert>
     <ui:insert name="rodape">     	
     </ui:insert>
     <ui:insert name="lendo">
-    	<p:ajaxStatus onstart="aguarde.show();" onsuccess="aguarde.hide();"/>
+    	<p:ajaxStatus onstart="aguarde.show();" onsuccess="aguarde.hide();" onerror="aguarde.hide();"/>
 			
 		<p:dialog modal="true" widgetVar="aguarde" header="Aguarde.." 
 		        draggable="false" closable="false" closeOnEscape="false" resizable="false">

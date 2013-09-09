@@ -8,7 +8,7 @@
 	<ui:composition template="../template/template.xhtml">
 		<ui:define name="conteudo">
 			<h:form id="form">
-				<p:panel id="principal" header="Lançamentoss">
+				<p:panel id="principal" header="Lançamentos">
 					<p:messages id="msgs"/>
 					<h:panelGrid columns="2">
 						<p:outputLabel value="Descrição: " for="desclancamento"/>
@@ -27,7 +27,7 @@
 						<p:outputLabel value="Conta Contábil: " for="conta"/>
 						<p:selectOneMenu id="conta" value="#{lancamentoControl.lancamento.contacontabil.id}" required="true">
 							<f:selectItem noSelectionOption="Escolha uma conta" itemLabel=""/>
-							<f:selectItems value="#{contaContabilControl.listaContasCombo()}"/>							
+							<f:selectItems value="#{contaContabilControl.listaContasCombo('')}"/>							
 						</p:selectOneMenu>
 						
 						<p:outputLabel for="ehreincidente" value="Parcelado: "/>

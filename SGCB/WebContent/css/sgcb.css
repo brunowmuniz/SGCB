@@ -70,3 +70,11 @@
 .atencao{
 	background: #FAFFBD !important;
 }
+
+.debito{
+	color: red;
+}
+
+.credito{
+	color: green;
+}

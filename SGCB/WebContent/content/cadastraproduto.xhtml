@@ -45,6 +45,9 @@
 							<f:validateBean/>
 							<f:convertNumber maxIntegerDigits="3"/>
 						</p:spinner>
+						<p:outputLabel for="temmontagem" value="Montagem: "/>
+						<p:selectBooleanCheckbox id="temmontagem" value="#{produtoControl.produto.temMontagem}"/>
+						
 						<p:commandButton rendered="#{produtoControl.produto.id != null}" actionListener="#{produtoControl.alterar}" value="Alterar" update="msgs,cadastro" id="gravar"/>
 						<p:commandButton rendered="#{produtoControl.produto.id == null}" actionListener="#{produtoControl.gravar}" value="Gravar" update="msgs,cadastro" id="alterar"/>
 						<p:commandButton rendered="#{produtoControl.produto.id != null}" action="#{produtoControl.sairAlteracao}" value="Sair" id="sair" ajax="false"/>

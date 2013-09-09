@@ -10,6 +10,19 @@
 			<h:form id="form">
 				<p:panel header="Manutenção de OC">
 			     	<p:messages id="msgs"/>
+			     	
+			     	<h:panelGrid columns="2">
+						<p:outputLabel for="dataInicial" value="Período Inicial: "/>
+						<p:calendar value="#{ocControl.dataInicial}" pattern="dd/MM/yyyy" locale="pt" id="dataInicial">
+							<p:ajax event="dateSelect" process="@this"/>
+						</p:calendar>
+						<p:outputLabel for="dataFinal" value="Período Final: "/>
+						<p:calendar value="#{ocControl.dataFinal}" pattern="dd/MM/yyyy" locale="pt" id="dataFinal">
+							<p:ajax event="dateSelect" process="@this"/>
+						</p:calendar>
+						<p:commandButton value="Pesquisar" action="#{ocControl.buscaOcPorDataLancamento}" update="ocs"/>
+					</h:panelGrid>
+					
 			     	<p:contextMenu for="ocs">
 			     		<p:menuitem value="Editar"  action="#{ocControl.alterarCadastro()}" ajax="false" icon="ui-icon-pencil"/>
 				        <p:menuitem value="Deletar" update="ocs,:form:msgs" icon="ui-icon-trash" actionListener="#{ocControl.deletar}"/>
@@ -22,6 +35,12 @@
 						                		  		
 				        <p:column headerText="Codigo">
 				            <h:outputText value="#{oc.id}" />
+				        </p:column>
+				        
+				       	<p:column headerText="Data da Compra">
+				            <h:outputText value="#{oc.datalancamento}">
+				            	<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
+				            </h:outputText>
 				        </p:column>
 				
 				        <p:column headerText="Nome" filterBy="#{oc.cliente.nome}" filterMatchMode="startsWith">
@@ -41,7 +60,13 @@
 						
 						<p:column headerText="Vendedor" filterBy="#{oc.usuario.id}" filterOptions="#{usuarioControl.listaUsuarioVendedor}" filterMatchMode="exact">
 							<h:outputText value="#{oc.usuario.nome}" />
-				        </p:column>				        	        
+				        </p:column>
+				        
+				        <p:column headerText="Prazo de Entrega">
+				            <h:outputText value="#{oc.prazoentrega}">
+				            	<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
+				            </h:outputText>
+				        </p:column>		        	        
 				    </p:dataTable>
 		
 		     	</p:panel>
