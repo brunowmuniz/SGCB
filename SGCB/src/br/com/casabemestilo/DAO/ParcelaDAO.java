@@ -95,26 +95,28 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 		return null;
 	}
 	
-	public int totalParcelasAVencer() {
+	public int totalParcelasAVencer(Date dataInicial, Date dataFinal) {
 		Long linhas = new Long(0);
 		session = Conexao.getInstance();
 		session.beginTransaction();
-		linhas = (Long) session.createQuery("select count(*) from Parcela p where p.dataentrada >= :hoje" +
+		linhas = (Long) session.createQuery("select count(*) from Parcela p where p.dataentrada between :dataInicial and :dataFinal" +
 											" and p.pagamento.condicoesPagamento.formapagamento.id <> 4")
-						.setDate("hoje", new Date())
-						.setCacheable(true)
-						.uniqueResult();
+							   .setDate("dataInicial", dataInicial)
+							   .setDate("dataFinal", dataFinal)
+							   .setCacheable(true)
+							   .uniqueResult();
 		
 		session.close();
 		return linhas.intValue();
 	}
 
-	public List<Parcela> listaParcelasAVencer(int first, int pageSize) {
+	public List<Parcela> listaParcelasAVencer(int first, int pageSize, Date dataInicial, Date dataFinal) {
 		session = Conexao.getInstance();
 		session.beginTransaction();
 		
-		listaParcela = session.createQuery("from Parcela p where p.dataentrada >= :hoje and p.pagamento.condicoesPagamento.formapagamento.id <> 4")
-							  .setDate("hoje", new Date())
+		listaParcela = session.createQuery("from Parcela p where p.dataentrada between :dataInicial and :dataFinal and p.pagamento.condicoesPagamento.formapagamento.id <> 4")
+							  .setDate("dataInicial", dataInicial)
+							  .setDate("dataFinal", dataFinal)
 							  .setFirstResult(first)
 							  .setMaxResults(pageSize)
 							  .setCacheable(true)

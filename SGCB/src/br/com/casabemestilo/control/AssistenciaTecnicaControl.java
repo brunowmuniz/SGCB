@@ -1,6 +1,8 @@
 package br.com.casabemestilo.control;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -15,9 +17,12 @@ import org.hibernate.TransactionException;
 import org.hibernate.exception.ConstraintViolationException;
 
 import br.com.casabemestilo.DAO.AssistenciaTecnicaDAO;
+import br.com.casabemestilo.DAO.FreteDAO;
 import br.com.casabemestilo.DAO.PerfilDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Assistenciatecnica;
+import br.com.casabemestilo.model.Frete;
+import br.com.casabemestilo.model.Ocproduto;
 import br.com.casabemestilo.model.Perfil;
 
 @ManagedBean
@@ -32,6 +37,8 @@ public class AssistenciaTecnicaControl extends Control implements Serializable,I
 	private List<Assistenciatecnica> listaAssitenciaTecnica;
 	
 	private AssistenciaTecnicaDAO assistenciaTecnicaDAO;
+	
+	private List<Integer> listaMontadores = new ArrayList<Integer>();
 	
 	/*
 	 * CONSTRUTORES
@@ -70,9 +77,9 @@ public class AssistenciaTecnicaControl extends Control implements Serializable,I
 	public void gravar() {
 		try{
     		assistenciaTecnicaDAO = new AssistenciaTecnicaDAO();
-        	assistenciaTecnica.setDeleted(false);        	
+        	//assistenciaTecnica.setDeleted(false);        	
         	assistenciaTecnicaDAO.insert(assistenciaTecnica);
-        	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Assistência Técnica do produto: " + assistenciaTecnica.getOcproduto().getProduto().getDescricao() + " - da OC:" + assistenciaTecnica.getOcproduto().getOc().getId() +  " foi gravada!"));
+        	//FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Assistência Técnica do produto: " + assistenciaTecnica.getOcproduto().getProduto().getDescricao() + " - da OC:" + assistenciaTecnica.getOcproduto().getOc().getId() +  " foi gravada!"));
         	assistenciaTecnica = new Assistenciatecnica();
     	}catch(TransactionException e){
     		super.mensagem = e.getMessage();
@@ -96,9 +103,9 @@ public class AssistenciaTecnicaControl extends Control implements Serializable,I
 		try{
     		assistenciaTecnicaDAO = new AssistenciaTecnicaDAO();
     		assistenciaTecnica = this.buscaObjetoId(assistenciaTecnica.getId());
-    		assistenciaTecnica.setDeleted(true);
+    		//assistenciaTecnica.setDeleted(true);
         	assistenciaTecnicaDAO.delete(assistenciaTecnica);
-        	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Assistência Técnica da OC: " + assistenciaTecnica.getOcproduto().getProduto().getDescricao() + " deletado!"));
+        	//FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Assistência Técnica da OC: " + assistenciaTecnica.getOcproduto().getProduto().getDescricao() + " deletado!"));
         	assistenciaTecnica = new Assistenciatecnica();
     	}catch(ConstraintViolationException e){
     		super.mensagem = e.getMessage();
@@ -117,7 +124,7 @@ public class AssistenciaTecnicaControl extends Control implements Serializable,I
 		try{
     		assistenciaTecnicaDAO = new AssistenciaTecnicaDAO();
         	assistenciaTecnicaDAO.update(assistenciaTecnica);
-        	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Assistência Técnica da OC: " + assistenciaTecnica.getOcproduto().getProduto().getDescricao() + " alterado!"));
+        	//FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Assistência Técnica da OC: " + assistenciaTecnica.getOcproduto().getProduto().getDescricao() + " alterado!"));
         	assistenciaTecnica = new Assistenciatecnica();
     	}catch(ConstraintViolationException e){
     		super.mensagem = e.getMessage();
@@ -205,6 +212,30 @@ public class AssistenciaTecnicaControl extends Control implements Serializable,I
 		return assistenciaTecnica;
 	}
 
+	public Assistenciatecnica gravarAssistTecnicaProduto(List<Ocproduto> listaOcProdutos, List<Integer> listaMontadores) {
+		
+		try {
+			assistenciaTecnicaDAO = new AssistenciaTecnicaDAO();
+			assistenciaTecnica = new Assistenciatecnica();
+			assistenciaTecnica.setDatainicio(new Date());
+			assistenciaTecnica.setDatafim(new Date());
+			assistenciaTecnica.setOcprodutos(listaOcProdutos);
+			assistenciaTecnica.setObservacoes("");			
+			for (int i = 0; i < listaMontadores.size(); i++) {				
+				assistenciaTecnica.setMontador(assistenciaTecnica.getMontador().concat((String) (i==0 ? listaMontadores.get(i) : "," + listaMontadores.get(i))));
+			}
+			assistenciaTecnica = assistenciaTecnicaDAO.insertAssistenciaTecnica(assistenciaTecnica);
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Assistência Técnica gerada para os produtos!"));
+		} catch (ConstraintViolationException e) {
+			e.printStackTrace();
+		} catch (HibernateException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return assistenciaTecnica;
+	}
 	
 	/*
 	 * GETTERS & SETTERS
@@ -234,6 +265,14 @@ public class AssistenciaTecnicaControl extends Control implements Serializable,I
 
 	public void setAssistenciaTecnicaDAO(AssistenciaTecnicaDAO assistenciaTecnicaDAO) {
 		this.assistenciaTecnicaDAO = assistenciaTecnicaDAO;
+	}
+
+	public List<Integer> getListaMontadores() {
+		return listaMontadores;
+	}
+
+	public void setListaMontadores(List<Integer> listaMontadores) {
+		this.listaMontadores = listaMontadores;
 	}
 	
 	

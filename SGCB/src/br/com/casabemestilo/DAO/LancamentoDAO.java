@@ -114,13 +114,19 @@ public class LancamentoDAO implements InterfaceDAO, Serializable {
 			Map<String, String> filters, Date dataInicial, Date dataFinal) {
 		session = Conexao.getInstance();
 		listaLancamento = new ArrayList<Lancamento>();
-		listaLancamento = session.createQuery("from Lancamento l" +
-												" left join fetch l.lancamentoPai"+
-												" where " +
-													"l.dataLancamento between :dataInicial" +
-																		" and :dataFinal" +
-													" and" +
-														" l.deleted = 0")
+		String hql = "from Lancamento l" +
+						" left join fetch l.lancamentoPai"+
+						" where " +
+							"l.dataLancamento between :dataInicial" +
+												" and :dataFinal" +
+							" and" +
+								" l.deleted = 0";
+		
+		if(filters.containsKey("contacontabil.id")){
+			hql += " and l.contacontabil.id = " + filters.get("contacontabil.id");
+		}
+		
+		listaLancamento = session.createQuery(hql)
 								.setDate("dataInicial", dataInicial)
 								.setDate("dataFinal", dataFinal)
 								.setFirstResult(first)
@@ -134,14 +140,20 @@ public class LancamentoDAO implements InterfaceDAO, Serializable {
 	public int totalLancamento(Map<String, String> filters,  Date dataInicial, Date dataFinal) {
 		Long linhas = new Long(0);
 		session = Conexao.getInstance();
-		linhas = (Long) session.createQuery("select " +
-												" count(*)" +
-												" from Lancamento l" +
-												" where " +
-													"l.dataLancamento between :dataInicial" +
-																		" and :dataFinal" +
-													" and" +
-														" l.deleted = 0")
+		String hql = "select " +
+						" count(*)" +
+						" from Lancamento l" +
+						" where " +
+							"l.dataLancamento between :dataInicial" +
+												" and :dataFinal" +
+							" and" +
+								" l.deleted = 0";
+		
+		if(filters.containsKey("contacontabil.id")){
+			hql += " and l.contacontabil.id = " + filters.get("contacontabil.id");
+		}
+		
+		linhas = (Long) session.createQuery(hql)
 							 .setDate("dataInicial", dataInicial)
 							 .setDate("dataFinal", dataFinal)
 							 .setCacheable(true)

@@ -11,6 +11,7 @@ import org.hibernate.exception.JDBCConnectionException;
 
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
 import br.com.casabemestilo.model.Assistenciatecnica;
+import br.com.casabemestilo.model.Frete;
 import br.com.casabemestilo.model.Perfil;
 import br.com.casabemestilo.util.Conexao;
 
@@ -107,7 +108,7 @@ public class AssistenciaTecnicaDAO implements Serializable, InterfaceDAO{
 
 	@Override
 	public List<Assistenciatecnica> listaSelecao(Object obj) throws Exception, HibernateException, ConstraintViolationException{
-		assistenciatecnica = (Assistenciatecnica) obj;
+		/*assistenciatecnica = (Assistenciatecnica) obj;
 		session = Conexao.getInstance();
 		session.beginTransaction();
 		listaAssistenciatecnicas = session.createQuery("from Assistenciatecnica at where " +
@@ -118,9 +119,17 @@ public class AssistenciaTecnicaDAO implements Serializable, InterfaceDAO{
 							 .setString("desc", "%" + assistenciatecnica.getUsuario().getNome() + "%")
 							 .list();
 		session.close();
-		return listaAssistenciatecnicas;
+		return listaAssistenciatecnicas;*/
+		return null;
 	}
-	
+
+	public Assistenciatecnica insertAssistenciaTecnica(Assistenciatecnica assistenciaTecnica) {
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		assistenciatecnica = (Assistenciatecnica) session.merge(assistenciaTecnica);
+		session.getTransaction().commit();
+		return assistenciatecnica;
+	}
 	
 	/*
 	 * GETTERS & SETTERS

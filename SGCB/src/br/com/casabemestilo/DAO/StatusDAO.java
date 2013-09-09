@@ -49,7 +49,7 @@ public class StatusDAO implements InterfaceDAO, Serializable {
 	}
 
 	@Override
-	public Object buscaObjetoId(Integer id) throws Exception,
+	public Status buscaObjetoId(Integer id) throws Exception,
 			HibernateException, ConstraintViolationException {
 		session = Conexao.getInstance();
 		session.beginTransaction();

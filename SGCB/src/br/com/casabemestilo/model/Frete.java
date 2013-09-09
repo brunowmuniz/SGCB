@@ -27,11 +27,12 @@ public class Frete implements java.io.Serializable {
 
 	private Integer id;
 	private List<Ocproduto> ocprodutos;
-	private float valor;
+	private Float valor;
 	private Date datainicio;
 	private Date datafim;
 	private String observacoes;	
 	private String freteiro;
+	private Float comissaoMontador;
 	
 
 	public Frete() {
@@ -44,7 +45,7 @@ public class Frete implements java.io.Serializable {
 		this.datainicio = datainicio;
 	}
 
-	public Frete(List<Ocproduto> ocprodutos, float valor,
+	public Frete(List<Ocproduto> ocprodutos, Float valor,
 			Date datainicio, Date datafim, String observacoes) {
 		this.ocprodutos = ocprodutos;
 		this.valor = valor;
@@ -73,12 +74,12 @@ public class Frete implements java.io.Serializable {
 		this.ocprodutos = ocprodutos;
 	}
 
-	@Column(name = "valor", nullable = false, precision = 5)
-	public float getValor() {
+	@Column(name = "valor", nullable = false, precision = 7, scale = 2)
+	public Float getValor() {
 		return this.valor;
 	}
 
-	public void setValor(float valor) {
+	public void setValor(Float valor) {
 		this.valor = valor;
 	}
 
@@ -121,6 +122,15 @@ public class Frete implements java.io.Serializable {
 
 	public void setFreteiro(String freteiro) {
 		this.freteiro = freteiro;
+	}
+
+	@Column(name="comissaomontador", nullable = true)
+	public Float getComissaoMontador() {
+		return comissaoMontador;
+	}
+
+	public void setComissaoMontador(Float comissaoMontador) {
+		this.comissaoMontador = comissaoMontador;
 	}
 	
 }

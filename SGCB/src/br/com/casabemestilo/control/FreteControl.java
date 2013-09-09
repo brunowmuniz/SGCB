@@ -132,7 +132,8 @@ public class FreteControl extends Control implements Serializable,
 			frete.setValor(listaOcprodutos.get(0).getOc().getValorfrete());
 			for (int i = 0; i < listaMontadores.size(); i++) {
 				frete.setFreteiro(frete.getFreteiro().concat((String) (i==0 ? listaMontadores.get(i) : "," + listaMontadores.get(i))));
-			}			
+			}
+			calculaComissaoMontagem();
 			frete = freteDAO.insertFrete(frete);
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Frete gerado para os produtos!"));
 		} catch (ConstraintViolationException e) {
@@ -209,6 +210,18 @@ public class FreteControl extends Control implements Serializable,
 			}
 		}
 	} 
+	
+	public void calculaComissaoMontagem(){
+		Float percentualProdutoOc = null;
+		Float valorLiquidoProduto = null;
+		frete.setComissaoMontador(new Float(0));
+		for(Ocproduto ocproduto : frete.getOcprodutos()){
+			if(ocproduto.getProduto().getTemMontagem()){
+				percentualProdutoOc = ocproduto.getValortotal() / ocproduto.getOc().getValorfinal();
+				valorLiquidoProduto = percentualProdutoOc * ocproduto.getOc().getValorliquido();
+			}
+		}
+	}
 	
 	/*
 	 * GETTERS & SETTERS
