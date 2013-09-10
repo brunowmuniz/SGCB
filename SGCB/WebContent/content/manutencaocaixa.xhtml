@@ -15,7 +15,7 @@
                  rowsPerPageTemplate="5,10,15">
                   <p:column>
             <f:facet name="header">
-                <h:outputText value="Data Lançamento" />
+                <h:outputText value="Data" />
             </f:facet>
             <h:outputText value="#{caixa.data}" />
         </p:column>
@@ -29,18 +29,54 @@
 
         <p:column>
             <f:facet name="header">
-                <h:outputText value="Entrada" />
+                <h:outputText value="Dinheiro" />
             </f:facet>
-            <h:outputText value="#{caixa.entrada}" />
+            <h:outputText value="#{caixa.dinheiro}" />
         </p:column>
-
+		
+		<p:column>
+            <f:facet name="header">
+                <h:outputText value="Cheque" />
+            </f:facet>
+            <h:outputText value="#{caixa.cheque}" />
+        </p:column>
+		
         <p:column>
             <f:facet name="header">
-                <h:outputText value="Saída" />
+                <h:outputText value="Vale" />
             </f:facet>
             <h:outputText value="#{caixa.saida}" />
         </p:column>
-                 
+        <p:column>
+            <f:facet name="header">
+                <h:outputText value="Visa" />
+            </f:facet>
+            <h:outputText value="#{caixa.saida}" />
+        </p:column>
+        <p:column>
+            <f:facet name="header">
+                <h:outputText value="Master Card" />
+            </f:facet>
+            <h:outputText value="#{caixa.saida}" />
+        </p:column>
+               <p:column>
+            <f:facet name="header">
+                <h:outputText value="Hipercard" />
+            </f:facet>
+            <h:outputText value="#{caixa.saida}" />
+        </p:column>  
+        <p:column>
+            <f:facet name="header">
+                <h:outputText value="Banricompras" />
+            </f:facet>
+            <h:outputText value="#{caixa.saida}" />
+        </p:column>
+        <p:column>
+            <f:facet name="header">
+                <h:outputText value="Saldo" />
+            </f:facet>
+            <h:outputText value="#{caixa.saida}" />
+        </p:column>
                  </p:dataTable>
 				</p:panel>
 			</h:form>
