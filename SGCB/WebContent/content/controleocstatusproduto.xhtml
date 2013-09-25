@@ -33,7 +33,7 @@
 				            <h:outputText value="#{oc.status.descricao}"/> 
 				        </p:column>
 						
-						<p:column headerText="Vendedor" filterBy="#{oc.usuario.id}" filterOptions="#{usuarioControl.listaUsuarioVendedor}" filterMatchMode="exact">
+						<p:column headerText="Vendedor" filterBy="#{oc.usuario.id}" filterOptions="#{usuarioControl.listaUsuarioVendedor('filter')}" filterMatchMode="exact">
 							<h:outputText value="#{oc.usuario.nome}" />
 				        </p:column>
 				        	        

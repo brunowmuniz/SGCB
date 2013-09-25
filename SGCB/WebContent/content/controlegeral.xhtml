@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form id="form">				
+				<p:panel header="Controle Geral">
+					<h:panelGrid columns="2" id="dataslancamento">
+						<p:outputLabel for="datainicial" value="Data Inicial: "/>
+						<p:calendar value="#{lancamentoControl.dataInicial}" id="datainicial" pattern="dd/MM/yyyy" locale="pt">
+							<p:ajax event="change" process="@this" />
+						</p:calendar>
+						
+						<p:outputLabel for="datafinal" value="Data Final: "/>
+						<p:calendar value="#{lancamentoControl.dataFinal}" id="datafinal" pattern="dd/MM/yyyy" locale="pt">
+							<p:ajax event="change" process="@this" />
+						</p:calendar>						
+						<p:commandButton value="Buscar" update="form"/>
+					</h:panelGrid>
+					<p:dataGrid columns="5" value="#{lancamentoControl.listaControleGeral()}" var="cc">
+						<p:panel header="#{cc.contacontabil.nome}">
+							<h:panelGrid columns="2">
+								<h:outputText value="R$ " />
+								<h:outputText value="#{cc.valor}">
+									<f:convertNumber minIntegerDigits="1" minFractionDigits="2" maxFractionDigits="2"/>
+								</h:outputText>									
+							</h:panelGrid>		
+						</p:panel>
+					</p:dataGrid>
+					<p:panel  header="Resultado Período">
+						<h:panelGrid columns="2">
+							<p:outputLabel for="valorentradas" value="Entradas: " style="font-weight: bolder;"/>
+							<h:outputText value="#{lancamentoControl.valorEntradas}" id="valorentradas" styleClass="credito negrito">
+								<f:convertNumber maxFractionDigits="2" minFractionDigits="2" minIntegerDigits="1"/>
+							</h:outputText>
+							<p:outputLabel for="valorsaidas" value="Saídas: " style="font-weight: bolder;"/>
+							<h:outputText value="#{lancamentoControl.valorSaidas}" id="valorsaidas" styleClass="debito negrito">
+								<f:convertNumber maxFractionDigits="2" minFractionDigits="2" minIntegerDigits="1"/>
+							</h:outputText>
+							<p:outputLabel for="valortotal" value="Total: " style="font-weight: bolder;"/>
+							<h:outputText value="#{lancamentoControl.valorEntradas - lancamentoControl.valorSaidas}" id="valortotal" styleClass="negrito #{lancamentoControl.valorEntradas >= lancamentoControl.valorSaidas ? 'credito' : 'debito'}">
+								<f:convertNumber maxFractionDigits="2" minFractionDigits="2" minIntegerDigits="1"/>
+							</h:outputText>
+						</h:panelGrid>
+					</p:panel>
+						
+				</p:panel>
+			</h:form>			
+		</ui:define>
+		<ui:define name="rodape">
+			<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela do valor de cada conta contábil." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="cadastraoc.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
+		</ui:define>
+	</ui:composition>
+</html>
