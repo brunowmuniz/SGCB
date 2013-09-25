@@ -110,6 +110,13 @@ public class Oc implements java.io.Serializable {
 		this.pagamentos = pagamentos;
 		this.ocprodutos = ocprodutos;
 	}
+	
+	public Oc(Integer id, Usuario usuario, Double valorLiquido, Double valorComissao){
+		this.id = id;
+		this.usuario = usuario;
+		this.valorliquido = valorLiquido.floatValue();
+		this.valorcomissao = valorComissao.floatValue();
+	}
 
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
@@ -218,7 +225,7 @@ public class Oc implements java.io.Serializable {
 
 	@Column(name = "valorfinal", nullable = false, precision = 8, scale = 2)
 	public float getValorfinal() {
-		this.valorfinal = getValor() + getValorfrete() + getValormontagem();
+		//this.valorfinal = getValor() + getValorfrete() + getValormontagem();
 		return this.valorfinal;
 	}
 

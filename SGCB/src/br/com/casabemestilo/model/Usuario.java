@@ -40,7 +40,7 @@ public class Usuario implements java.io.Serializable {
 	private Boolean deleted;
 	private String login;
 	private String senha;
-	private Set comissaos = new HashSet(0);
+	private List<Comissao> comissaos = new ArrayList<Comissao>();
 	private List<Oc> ocs= new ArrayList<Oc>();
 	private Set vales = new HashSet(0);
 	private Set montagems = new HashSet(0);	
@@ -56,7 +56,7 @@ public class Usuario implements java.io.Serializable {
 	}
 
 	public Usuario(Perfil perfil, String nome, Boolean deleted,
-			Set comissaos, List<Oc> ocs, Set vales, Set montagems, String login, String senha) {
+			List<Comissao> comissaos, List<Oc> ocs, Set vales, Set montagems, String login, String senha) {
 		this.perfil = perfil;
 		this.nome = nome;
 		this.deleted = deleted;
@@ -132,11 +132,11 @@ public class Usuario implements java.io.Serializable {
 	}
 
 	@OneToMany(targetEntity = Comissao.class, mappedBy = "usuario")
-	public Set getComissaos() {
+	public List<Comissao> getComissaos() {
 		return this.comissaos;
 	}
 
-	public void setComissaos(Set comissaos) {
+	public void setComissaos(List<Comissao> comissaos) {
 		this.comissaos = comissaos;
 	}
 

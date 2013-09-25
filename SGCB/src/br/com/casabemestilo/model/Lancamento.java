@@ -55,6 +55,12 @@ public class Lancamento implements java.io.Serializable {
 		this.valor = valor;
 		this.lancamentoPai = lancamentoPai;
 	}
+	
+	public Lancamento(Integer id, Contacontabil contacontabil, Double valor){
+		this.id = id;
+		this.contacontabil = contacontabil;
+		this.valor = valor.floatValue();
+	}
 
 	@Id
 	@GeneratedValue(strategy = IDENTITY)

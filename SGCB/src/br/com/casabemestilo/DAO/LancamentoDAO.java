@@ -206,6 +206,23 @@ public class LancamentoDAO implements InterfaceDAO, Serializable {
 		return lancamento;		
 	}
 	
+	public List<Lancamento> listaControleGeral(Date dataInicial, Date dataFinal) {
+		session = Conexao.getInstance();
+		listaLancamento = new ArrayList<Lancamento>();
+		listaLancamento = session.createQuery("select" +
+														" new Lancamento(l.id, l.contacontabil, sum(l.valor))"+	
+													" from" +
+														" Lancamento l" +
+													" where" +
+														" l.dataLancamento between :dataInicial and :dataFinal"+
+													" group by l.contacontabil")
+								 .setDate("dataInicial", dataInicial)
+								 .setDate("dataFinal", dataFinal)
+								 .list();
+		session.close();
+		return listaLancamento;
+	}
+	
 	/*
 	 * GETTERS & SETTERS
 	 * */
@@ -231,5 +248,6 @@ public class LancamentoDAO implements InterfaceDAO, Serializable {
 	public void setLancamento(Lancamento lancamento) {
 		this.lancamento = lancamento;
 	}
+
 	
 }
