@@ -23,46 +23,46 @@
 						<p:commandButton value="Pesquisar" action="#{ocControl.buscaOcPorDataLancamento}" update="ocs"/>
 					</h:panelGrid>
 					
-			     	<p:contextMenu for="ocs">
+			     	<p:contextMenu for="ocs" id="ctxOcs">
 			     		<p:menuitem value="Editar"  action="#{ocControl.alterarCadastro()}" ajax="false" icon="ui-icon-pencil"/>
-				        <p:menuitem value="Deletar" update="ocs,:form:msgs" icon="ui-icon-trash" actionListener="#{ocControl.deletar}"/>
+				        <p:menuitem value="Deletar" update="ocs,:form:msgs" icon="ui-icon-trash" actionListener="#{ocControl.deletar}" disabled="#{ocControl.oc.status.id == 9 and ocControl.oc.status.id == 10}"/>
 			     	</p:contextMenu>
 			     	
 					<p:dataTable var="oc" value="#{ocControl.listarOcGeralAll}" id="ocs" emptyMessage="Sem OC cadastrada!" paginator="true"
 										selection="#{ocControl.oc}" selectionMode="single" lazy="true" rows="10" rowKey="#{oc.id}"
 										paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
                  						rowsPerPageTemplate="10,25,50">
-						                		  		
-				        <p:column headerText="Codigo">
+                 						
+				        <p:column headerText="Codigo" width="40">
 				            <h:outputText value="#{oc.id}" />
 				        </p:column>
 				        
-				       	<p:column headerText="Data da Compra">
+				       	<p:column headerText="Data da Compra" width="60">
 				            <h:outputText value="#{oc.datalancamento}">
 				            	<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
 				            </h:outputText>
 				        </p:column>
 				
-				        <p:column headerText="Nome" filterBy="#{oc.cliente.nome}" filterMatchMode="startsWith">
+				        <p:column headerText="Nome" filterBy="#{oc.cliente.nome}" filterMatchMode="startsWith" filterStyle="width: 70%;">
 				            <h:outputText value="#{oc.cliente.nome}" />
 				        </p:column>
 				        
-				        <p:column headerText="Valor Total">
+				        <p:column headerText="Valor Total" width="60">
 				        	<h:outputText value="R$ "/>
 				        	<h:outputText value="#{oc.valorfinal}">
 				        		<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
 				        	</h:outputText>				        					            
 				        </p:column>
 				        
-				        <p:column headerText="Status" styleClass="status_#{oc.status.id}" filterBy="#{oc.status.id}" filterOptions="#{statusControl.listaStatusCombo}" filterMatchMode="exact" filterStyle="width: 80px;">
-				            <h:outputText value="#{oc.status.descricao}"/> 
+				        <p:column headerText="Status" filterBy="#{oc.status.id}" filterOptions="#{statusControl.listaStatusCombo}" filterMatchMode="exact" filterStyleClass="filterStatus" width="120">
+				            <h:outputText value="#{oc.status.descricao}" styleClass="status_#{oc.status.id}"/> 
 				        </p:column>
 						
-						<p:column headerText="Vendedor" filterBy="#{oc.usuario.id}" filterOptions="#{usuarioControl.listaUsuarioVendedor}" filterMatchMode="exact">
+						<p:column headerText="Vendedor" filterBy="#{oc.usuario.id}" filterOptions="#{usuarioControl.listaUsuarioVendedor('filter')}" filterMatchMode="exact" filterStyleClass="filterUsuario">
 							<h:outputText value="#{oc.usuario.nome}" />
 				        </p:column>
 				        
-				        <p:column headerText="Prazo de Entrega">
+				        <p:column headerText="Prazo de Entrega" width="60">
 				            <h:outputText value="#{oc.prazoentrega}">
 				            	<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
 				            </h:outputText>

@@ -78,3 +78,12 @@
 .credito{
 	color: green;
 }
+
+.filterStatus{
+	width: 215px !important;
+	padding: 0 !important;
+}
+
+.filterUsuario{
+	width: 185px !important;
+}
