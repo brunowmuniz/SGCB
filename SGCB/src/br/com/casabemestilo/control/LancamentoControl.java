@@ -49,6 +49,10 @@ public class LancamentoControl extends Control implements InterfaceControl,
 	
 	private LazyDataModel<Lancamento> listaLancamentoGeral;
 	
+	private Float valorEntradas;
+	
+	private Float valorSaidas;
+	
 	
 	/*
 	 * CONSTRUTORES
@@ -238,6 +242,39 @@ public class LancamentoControl extends Control implements InterfaceControl,
 		return listaLancamentoGeral;
 	}
 	
+	public List<Lancamento> listaControleGeral(){
+		lancamentoDAO = new LancamentoDAO();
+		OcControl ocControl = new OcControl();
+		Double valorVendasBrutas = ocControl.calculaVendaBruto(getDataInicial(), getDataFinal());
+		Double valorFretePago = ocControl.calculaFretePago(getDataInicial(), getDataFinal());
+		setValorEntradas(new Float(0));
+		setValorSaidas(new Float(0));
+		
+		try {
+			listaLancamento = lancamentoDAO.listaControleGeral(getDataInicial(), getDataFinal());
+			listaLancamento.add(new Lancamento(null,new ContaContabilDAO().buscaObjetoId(4), valorVendasBrutas == null ? new Double(new Float(0).doubleValue()) : valorVendasBrutas));
+			listaLancamento.add(new Lancamento(null,new ContaContabilDAO().buscaObjetoId(11), valorFretePago == null ? new Double(new Float(0).doubleValue()) : valorFretePago));
+			for(Lancamento lancamento : listaLancamento){
+				if(lancamento.getContacontabil().getTipo().equalsIgnoreCase("D")){
+					setValorSaidas(getValorSaidas() + lancamento.getValor()); 
+				}
+				if(lancamento.getContacontabil().getTipo().equalsIgnoreCase("C")){
+					setValorEntradas(getValorEntradas() + lancamento.getValor());
+				}
+			}
+		} catch (ConstraintViolationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (HibernateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return listaLancamento;
+	}
+	
 	/*
 	 * GETTERS & SETTERS
 	 * */
@@ -293,8 +330,16 @@ public class LancamentoControl extends Control implements InterfaceControl,
 	}
 
 	public Date getDataInicial() {
+		String pagina = FacesContext.getCurrentInstance().getViewRoot().getViewId();		
 		if(dataInicial == null){
-			dataInicial = new Date();
+			if(pagina.indexOf("controlegeral") > -1){
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(new Date());
+				calendar.set(Calendar.DAY_OF_MONTH, 1);
+				dataInicial = calendar.getTime(); 
+			}else{
+				dataInicial = new Date();
+			}
 		}
 		return dataInicial;
 	}
@@ -321,6 +366,22 @@ public class LancamentoControl extends Control implements InterfaceControl,
 	public void setListaLancamentoGeral(
 			LazyDataModel<Lancamento> listaLancamentoGeral) {
 		this.listaLancamentoGeral = listaLancamentoGeral;
+	}
+
+	public Float getValorEntradas() {
+		return valorEntradas;
+	}
+
+	public void setValorEntradas(Float valorEntradas) {
+		this.valorEntradas = valorEntradas;
+	}
+
+	public Float getValorSaidas() {
+		return valorSaidas;
+	}
+
+	public void setValorSaidas(Float valorSaidas) {
+		this.valorSaidas = valorSaidas;
 	}
 	
 }

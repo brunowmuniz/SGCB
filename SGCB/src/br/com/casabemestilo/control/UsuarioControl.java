@@ -333,11 +333,13 @@ public class UsuarioControl extends Control implements InterfaceControl,
 		return listaUsuarioMontador;
 	}
 	
-	public List getListaUsuarioVendedor(){
+	public List listaUsuarioVendedor(String filter){
 		usuarioDAO = new UsuarioDAO();
 		List listaUsuarioVendedor = new ArrayList();
 		listaUsuario = usuarioDAO.listaVendedor();
-		listaUsuarioVendedor.add(new SelectItem("","Todos"));
+		if(filter.equals("filter")){
+			listaUsuarioVendedor.add(new SelectItem("","Todos"));
+		}		
 		for(Usuario usuario: listaUsuario){
 			SelectItem si = new SelectItem(usuario.getId(),usuario.getNome());
 			listaUsuarioVendedor.add(si);

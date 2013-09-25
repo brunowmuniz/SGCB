@@ -142,8 +142,9 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		session.beginTransaction();
 		
 		String hql = "from Oc o " +
-						 " where " +
-						 	" o.deleted=0";
+						 " where " /*+
+						 	" o.deleted=0"*/+
+						 	" o.datalancamento between :dataInicial and :dataFinal";
 		
 		if(filters.containsKey("cliente.nome")){
 			hql += " and o.cliente.nome like '%" + filters.get("cliente.nome") + "%'";
@@ -154,13 +155,12 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		
 		if(filters.containsKey("usuario.id")){
 			hql += " and o.usuario.id=" + filters.get("usuario.id");
-		}else{
+		}/*else{
 			hql += " and o.status.id < 9 ";
-		}
+		}*/
 		
 				
-		hql += " and o.datalancamento between :dataInicial and :dataFinal" +
-			   " order by o.id desc";
+		hql += " order by o.id desc";
 		
 		listaOc = session.createQuery(hql)
 						 .setDate("dataInicial",dataInicial)
@@ -180,8 +180,9 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		session.beginTransaction();
 		String hql = "select count(*) " +
 							" from Oc o " +
-						 " where " +
-						 	" o.deleted=0";
+						 " where " /*+
+						 	" o.deleted=0"*/+ 
+						 	"o.datalancamento between :dataInicial and :dataFinal";
 		
 		if(filters.containsKey("cliente.nome")){
 			hql += " and o.cliente.nome like '%" + filters.get("cliente.nome") + "%'";
@@ -193,12 +194,10 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		
 		if(filters.containsKey("usuario.id")){
 			hql += " and o.usuario.id=" + filters.get("usuario.id");
-		}else{
+		}/*else{
 			hql += " and o.status.id < 9 ";
-		}
-		
-		hql += " and o.datalancamento between :dataInicial and :dataFinal";
-		
+		}*/
+				
 		linhas = (Long) session.createQuery(hql)
 							   .setDate("dataInicial",dataInicial)
 				 			   .setDate("dataFinal", dataFinal)
@@ -287,13 +286,12 @@ public class OcDAO implements InterfaceDAO, Serializable {
 	public List<Oc> calculaVendasPorVendedor(Date dataInicial, Date dataFinal) {
 		session = Conexao.getInstance();
 		listaOc = new ArrayList<Oc>();
-		List<Integer> listaStatus = new ArrayList<Integer>();
-		
+		List<Integer> listaStatus = new ArrayList<Integer>();		
 		listaStatus.add(1);
 		listaStatus.add(2);
-		listaStatus.add(10);
-		
-		listaOc = session.createQuery("from Oc o " +										
+		listaStatus.add(10);		
+		listaOc = session.createQuery(" select new Oc(o.id, o.usuario, sum(o.valorliquido), sum(o.valorcomissao)) " +
+											"from Oc o " +										
 										"where "+
 											"o.deleted = :ocDeleted " +
 										"and " +
@@ -329,6 +327,75 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		return listaVendasMesAno;
 	}
 	
+	public List<Oc> listaLazyVendedorAnalitico(int first, int pageSize,Integer idUsuario, Date dataInicial, Date dataFinal) {
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		listaOc = new ArrayList<Oc>();
+		listaOc = session.createQuery("from Oc oc" +
+										" where" +											
+											" oc.datalancamento between :dataInicial and :dataFinal" +
+										" and" +
+											" oc.usuario.id = :usuario" +
+										" and" +
+											" oc.deleted = 0" +
+										" and" +
+											" oc.status.id not in(1,2,10)")
+						 .setDate("dataInicial", dataInicial)
+						 .setDate("dataFinal", dataFinal)
+						 .setInteger("usuario", idUsuario)
+						 .setFirstResult(first)
+						 .setMaxResults(pageSize)
+						 .setCacheable(true)
+						 .list();
+		
+		session.close();
+		return listaOc;
+	}
+
+	public int totalVendedorAnalitico(Integer idUsuario, Date dataInicial, Date dataFinal) {
+		Long linhas = new Long(0);
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		
+		linhas = (Long) session.createQuery("select count(oc.id) from Oc oc" +
+												" where" +													
+													" oc.datalancamento between :dataInicial and :dataFinal" +
+												" and" +
+													" oc.usuario.id = :usuario"+
+												" and" +
+													" oc.deleted = 0" +
+												" and" +
+													" oc.status.id not in(1,2,10)")
+								.setDate("dataInicial", dataInicial)
+								.setDate("dataFinal", dataFinal)
+								.setInteger("usuario", idUsuario)
+								.uniqueResult();
+		session.close();
+		return linhas.intValue();
+	}
+	
+	public Float calculaComissaoVendedor(Integer idUsuario, Date dataInicial, Date dataFinal) {
+		Double totalComissao = new Double(0);
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		
+		totalComissao = (Double) session.createQuery("select sum(oc.valorcomissao) from Oc oc" +
+														" where" +
+															" oc.status.id > 2" +
+														" and" +
+															" oc.datalancamento between :dataInicial and :dataFinal" +
+														" and" +
+															" oc.usuario.id = :usuario"+
+														" and" +
+															" oc.deleted = 0")
+										.setDate("dataInicial", dataInicial)
+										.setDate("dataFinal", dataFinal)
+										.setInteger("usuario", idUsuario)
+										.uniqueResult();
+		session.close();
+		return totalComissao.floatValue();
+	}
+	
 	/*
 	 * GETTERS & SETTERS
 	 * */
@@ -346,7 +413,45 @@ public class OcDAO implements InterfaceDAO, Serializable {
 
 	public void setOc(Oc oc) {
 		this.oc = oc;
-	}	
+	}
+
+	public Double buscaVendasBruto(Date dataInicial, Date dataFinal) {
+		session = Conexao.getInstance();
+		Double totalVendasBruto = (Double) session.createQuery("select" +
+																	" sum(o.valorfinal - o.valorfrete)"+
+																" from" +
+																	" Oc o" +
+																" where" +
+																	" o.deleted = false" +
+																" and" +
+																	" o.status.id not in(1,2,10)" +
+																" and" +
+																	" o.datalancamento between :dataInicial and :dataFinal")
+												 .setDate("dataInicial", dataInicial)
+												 .setDate("dataFinal", dataFinal)
+												 .uniqueResult();
+		session.close();
+		return totalVendasBruto;
+	}
+
+	public Double buscaFretePago(Date dataInicial, Date dataFinal) {
+		session = Conexao.getInstance();
+		Double totalFrete = (Double) session.createQuery("select" +
+														" sum(o.valorfrete)"+
+													" from" +
+														" Oc o" +
+													" where" +
+														" o.tipoFrete <> 'brinde'" +
+													" and" +
+														" o.datalancamento between :dataInicial and :dataFinal")
+											.setDate("dataInicial", dataInicial)
+											.setDate("dataFinal", dataFinal)
+										    .uniqueResult();
+		session.close();
+		return totalFrete;
+	}
+
+	
 	
 
 }
