@@ -19,6 +19,8 @@ import javax.validation.constraints.Null;
 @Table(name = "perfil", catalog = "blankerc_sgcb")
 public class Perfil implements java.io.Serializable {
 
+	
+	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private String descricao;
 	private Boolean deleted;

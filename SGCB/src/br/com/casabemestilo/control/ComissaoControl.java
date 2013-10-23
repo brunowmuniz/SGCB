@@ -1,7 +1,10 @@
 package br.com.casabemestilo.control;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Iterator;
 import javax.annotation.PostConstruct;
@@ -19,9 +22,15 @@ import org.hibernate.exception.ConstraintViolationException;
 import com.sun.faces.context.flash.ELFlash;
 
 import br.com.casabemestilo.DAO.ComissaoDAO;
+import br.com.casabemestilo.DAO.ComissaoMontadorDAO;
+import br.com.casabemestilo.DAO.ComissaoVendedorDAO;
+import br.com.casabemestilo.DAO.LancamentoDAO;
+import br.com.casabemestilo.DAO.OcDAO;
 import br.com.casabemestilo.DAO.UsuarioDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Comissao;
+import br.com.casabemestilo.model.ComissaoMontador;
+import br.com.casabemestilo.model.Lancamento;
 import br.com.casabemestilo.model.Usuario;
 
 @ManagedBean
@@ -41,6 +50,9 @@ public class ComissaoControl extends Control implements Serializable,InterfaceCo
 	
 	private List listaUsuarioCombo;
 	
+	private Date dataInicial;
+	
+	private Date dataFinal;
 	
 	/*
 	 * CONSTRUTORES
@@ -256,7 +268,7 @@ public class ComissaoControl extends Control implements Serializable,InterfaceCo
 		return null;
 	}
 
-	@Override
+	
 	public List<Comissao> listaSelecao(Object obj) {
 		// TODO Auto-generated method stub
 		return null;
@@ -268,6 +280,101 @@ public class ComissaoControl extends Control implements Serializable,InterfaceCo
 		return null;
 	}
 
+	public List<Usuario> listaComissaoUsuarios() throws ConstraintViolationException, NumberFormatException, HibernateException, Exception{
+		comissaoDAO = new ComissaoDAO();
+		List<Comissao> listaComissaoPerfil = new ArrayList<Comissao>();
+		List<Usuario> listaComissaoUsuario = new ArrayList<Usuario>();
+		Double totalVendas = new Double("0");		
+		
+		totalVendas = new OcDAO().calculaTotalVendasPeriodo(getDataInicial(), getDataFinal());
+		
+		if(totalVendas != 0){
+			listaComissaoPerfil = comissaoDAO.listaComissaoOutros();
+			for(Comissao comissao : listaComissaoPerfil){
+				BigDecimal valorComissao = new BigDecimal("0");
+				valorComissao = new BigDecimal(totalVendas * (comissao.getPercentualComissaoLoja() / 100));
+				comissao.getUsuario().setTotalComissaoLoja(valorComissao);
+				comissao.getUsuario().setTotalComissaoMontador(new BigDecimal("0"));
+				comissao.getUsuario().setTotalComissaoVendedor(new BigDecimal("0"));
+				listaComissaoUsuario.add(comissao.getUsuario());
+			}
+		
+			listaComissaoPerfil = new ArrayList<Comissao>();
+			listaComissaoPerfil = comissaoDAO.buscaComissaoVendedor();
+				
+			for(Comissao comissao : listaComissaoPerfil){
+				Float totalVendedorComissao = new Float("0");
+				Double totalVendasGrupoVendedor = new Double("0");
+				if(comissao.getEhComissaoIndividual()){
+					totalVendedorComissao = new ComissaoVendedorDAO().calculaComissaoVendedor(comissao.getUsuario().getId(), getDataInicial(), getDataFinal());										
+					comissao.getUsuario().setTotalComissaoVendedor(new BigDecimal(totalVendedorComissao.toString()));
+					comissao.getUsuario().setTotalComissaoMontador(new BigDecimal("0"));
+					if(comissao.getEhComissaoLoja()){
+						totalVendasGrupoVendedor = new OcDAO().buscaTotalVendasGrupoComissao(comissao.getUsuario().getId().toString(), getDataInicial(), getDataFinal());
+						comissao.getUsuario().setTotalComissaoLoja(new BigDecimal((totalVendas - totalVendasGrupoVendedor) * (comissao.getPercentualComissaoLoja() / 100)));
+					}else{
+						comissao.getUsuario().setTotalComissaoLoja(new BigDecimal("0"));
+					}
+					listaComissaoUsuario.add(comissao.getUsuario());
+				}else{
+					totalVendedorComissao = new ComissaoVendedorDAO().calculaComissaoVendedor(comissao.getUsuario().getId(), getDataInicial(), getDataFinal());				
+					comissao.getUsuario().setTotalComissaoMontador(new BigDecimal("0"));
+					comissao.getUsuario().setTotalComissaoVendedor(new BigDecimal(totalVendedorComissao));
+					if(comissao.getEhComissaoLoja()){
+						totalVendasGrupoVendedor = new OcDAO().buscaTotalVendasGrupoComissao(comissao.getUsuario().getId().toString() + "," + comissao.getUsuarioComissaoConjunta(), getDataInicial(), getDataFinal());
+						comissao.getUsuario().setTotalComissaoLoja(new BigDecimal((totalVendas - totalVendasGrupoVendedor) * (comissao.getPercentualComissaoLoja() / 100)));
+					}else{
+						comissao.getUsuario().setTotalComissaoLoja(new BigDecimal("0"));
+					}
+					listaComissaoUsuario.add(comissao.getUsuario());
+					for(int i = 0; i < comissao.getUsuarioComissaoConjunta().split(",").length; i++){
+						Usuario usuario = new UsuarioDAO().buscaObjetoId(Integer.parseInt(comissao.getUsuarioComissaoConjunta().split(",")[i]));					
+						totalVendedorComissao = new ComissaoVendedorDAO().calculaComissaoVendedor(usuario.getId(), getDataInicial(), getDataFinal());
+						comissao.setUsuario(usuario);
+						comissao.getUsuario().setTotalComissaoMontador(new BigDecimal("0"));
+						comissao.getUsuario().setTotalComissaoVendedor(new BigDecimal(totalVendedorComissao));
+						if(comissao.getEhComissaoLoja()){
+							comissao.getUsuario().setTotalComissaoLoja(new BigDecimal((totalVendas - totalVendasGrupoVendedor) * (comissao.getPercentualComissaoLoja() / 100)));
+						}else{
+							comissao.getUsuario().setTotalComissaoLoja(new BigDecimal("0"));
+						}
+						listaComissaoUsuario.add(comissao.getUsuario());
+					}
+				}
+			}
+		}	
+		
+		List<ComissaoMontador> listaComissaoMontador = new ArrayList<ComissaoMontador>();
+		listaComissaoMontador = new ComissaoMontadorDAO().listaTotalComissaoMontador(dataInicial, dataFinal);
+		
+		if(listaComissaoMontador != null){			
+			for(ComissaoMontador comissaoMontador : listaComissaoMontador){
+				Usuario usuario = new Usuario(comissaoMontador.getMontador().getPerfil(), comissaoMontador.getMontador().getId(),
+											  comissaoMontador.getMontador().getNome(),comissaoMontador.getValor());
+				usuario.setTotalComissaoLoja(new BigDecimal("0"));
+				usuario.setTotalComissaoVendedor(new BigDecimal("0"));
+				listaComissaoUsuario.add(usuario);
+			}		
+		}
+		
+		List<Lancamento> listaLancamentoVale = new LancamentoDAO().buscaTotalValeFuncionarios(dataInicial, dataFinal);
+		for(Lancamento lancamento : listaLancamentoVale){
+			boolean existeUsuarioLista = false;
+			for(Usuario usuario : listaComissaoUsuario){
+				if(usuario.getId() == lancamento.getUsuario().getId()){
+					usuario.setTotalValeFuncionario(usuario.getTotalValeFuncionario().add(new BigDecimal(lancamento.getValor())));
+					existeUsuarioLista = true;
+				}
+			}
+			if(!existeUsuarioLista){
+				Usuario usuario = new Usuario();
+				usuario = lancamento.getUsuario();
+				usuario.setTotalValeFuncionario(usuario.getTotalValeFuncionario().add(new BigDecimal(lancamento.getValor())));
+				listaComissaoUsuario.add(usuario);
+			}
+		}
+		return listaComissaoUsuario;
+	}
 	
 	/*
 	 * GETTERS & SETTERS
@@ -291,7 +398,7 @@ public class ComissaoControl extends Control implements Serializable,InterfaceCo
 		this.comissaoDAO = comissaoDAO;
 	}
 
-	public List<Comissao> getListaComissao() {
+	public List<Comissao> getListaComissao() {		
 		return listaComissao;
 	}
 
@@ -338,5 +445,29 @@ public class ComissaoControl extends Control implements Serializable,InterfaceCo
 	public void setListaUsuarioCombo(List listaUsuarioCombo) {
 		this.listaUsuarioCombo = listaUsuarioCombo;
 	}
-	
+
+	public Date getDataInicial() {
+		if(dataInicial == null){
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(new Date());
+			calendar.add(Calendar.DAY_OF_MONTH,-30);
+			dataInicial = calendar.getTime();			
+		}
+		return dataInicial;
+	}
+
+	public void setDataInicial(Date dataInicial) {
+		this.dataInicial = dataInicial;
+	}
+
+	public Date getDataFinal() {
+		if(dataFinal == null){
+			dataFinal = new Date();
+		}
+		return dataFinal;
+	}
+
+	public void setDataFinal(Date dataFinal) {
+		this.dataFinal = dataFinal;
+	}
 }

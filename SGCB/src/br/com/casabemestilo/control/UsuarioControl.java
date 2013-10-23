@@ -23,6 +23,8 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.w3c.dom.ls.LSInput;
 
 import com.sun.faces.context.flash.ELFlash;
+
+import br.com.casabemestilo.DAO.ComissaoDAO;
 import br.com.casabemestilo.DAO.UsuarioDAO;
 import br.com.casabemestilo.DAO.UsuarioFilialDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
@@ -345,6 +347,19 @@ public class UsuarioControl extends Control implements InterfaceControl,
 			listaUsuarioVendedor.add(si);
 		}
 		return listaUsuarioVendedor;
+	}
+	
+	public List listaTodosUsuariosAtivosCombo(String filter){
+		List listaUsuariosAtivos = new ArrayList();
+		listarAtivos();
+		if(filter.equals("filter")){
+			listaUsuariosAtivos.add(new SelectItem("","Todos"));
+		}
+		for(Usuario usuarioAtivo : listaUsuario){
+			SelectItem item = new SelectItem(usuarioAtivo.getId(), usuarioAtivo.getNome());
+			listaUsuariosAtivos.add(item);
+		}
+		return listaUsuariosAtivos;
 	}
 	
 

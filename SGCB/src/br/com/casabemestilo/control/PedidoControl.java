@@ -225,6 +225,7 @@ public class PedidoControl extends Control implements InterfaceControl,
 	public void limparPedidoProduto(){
 		pedidoproduto = new Pedidoproduto();
 		pedidoproduto.setProduto(new Produto());
+		FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Favor informar o fornecedor!", ""));
 	}
 	
 	public void limparProduto(){

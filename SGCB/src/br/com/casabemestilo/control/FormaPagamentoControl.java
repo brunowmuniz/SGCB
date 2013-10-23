@@ -153,7 +153,7 @@ public class FormaPagamentoControl extends Control implements Serializable,Inter
 		this.formaPagamentoDAO = formaPagamentoDAO;
 	}
 
-	@PostConstruct
+	
 	public List getListaFormaPagamentoCombo() {
 		listaFormaPagamentoCombo = new ArrayList();
 		listarAtivos();

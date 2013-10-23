@@ -24,8 +24,9 @@ import javax.persistence.TemporalType;
 @Table(name = "lancamento", catalog = "blankerc_sgcb")
 public class Lancamento implements java.io.Serializable {
 
+	
+	private static final long serialVersionUID = 1L;
 	private Integer id;
-	private Vale vale;
 	private Contacontabil contacontabil;
 	private String descricao;
 	private float valor;
@@ -34,6 +35,9 @@ public class Lancamento implements java.io.Serializable {
 	private Integer parcela;
 	private Integer qtdeParcela;
 	private Date dataLancamento;
+	private Formapagamento formapagamento;	
+	private Boolean ehVale;
+	private Usuario usuario;
 
 	public Lancamento() {
 	}
@@ -45,11 +49,16 @@ public class Lancamento implements java.io.Serializable {
 		this.descricao = descricao;
 		this.valor = valor;
 	}
+	
+	public Lancamento(Integer id, Usuario funcionario, float valor){
+		this.id = id;
+		this.usuario = funcionario;
+		this.valor = valor;
+	}
 
-	public Lancamento(int id, Vale vale, Contacontabil contacontabil,
+	public Lancamento(int id, Contacontabil contacontabil,
 			String descricao, float valor, Boolean deleted, Lancamento lancamentoPai) {
 		this.id = id;
-		this.vale = vale;
 		this.contacontabil = contacontabil;
 		this.descricao = descricao;
 		this.valor = valor;
@@ -73,15 +82,6 @@ public class Lancamento implements java.io.Serializable {
 		this.id = id;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "vale")
-	public Vale getVale() {
-		return this.vale;
-	}
-
-	public void setVale(Vale vale) {
-		this.vale = vale;
-	}
 
 	@ManyToOne
 	@JoinColumn(name = "contacontabil", nullable = false)
@@ -162,5 +162,42 @@ public class Lancamento implements java.io.Serializable {
 
 	public void setDataLancamento(Date dataLancamento) {
 		this.dataLancamento = dataLancamento;
-	}	
+	}
+
+	@ManyToOne
+	@JoinColumn(name="formapagamento", nullable = false)
+	public Formapagamento getFormapagamento() {
+		if(formapagamento == null){
+			formapagamento = new Formapagamento();
+		}
+		return formapagamento;
+	}
+
+	public void setFormapagamento(Formapagamento formapagamento) {
+		this.formapagamento = formapagamento;
+	}
+	
+	@Column
+	public Boolean getEhVale() {
+		if(ehVale == null){
+			ehVale = false;
+			usuario = new Usuario();
+		}
+		return ehVale;
+	}
+
+	public void setEhVale(Boolean ehVale) {
+		this.ehVale = ehVale;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="funcionario")
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+	
 }

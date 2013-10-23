@@ -2,6 +2,7 @@ package br.com.casabemestilo.model;
 
 // Generated 24/05/2013 18:36:37 by Hibernate Tools 4.0.0
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,6 +11,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.IDENTITY;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -25,14 +28,23 @@ import javax.persistence.TemporalType;
 @Table(name = "frete", catalog = "blankerc_sgcb")
 public class Frete implements java.io.Serializable {
 
+	
+	private static final long serialVersionUID = 1L;
+
 	private Integer id;
+	
 	private List<Ocproduto> ocprodutos;
+	
 	private Float valor;
+	
 	private Date datainicio;
+	
 	private Date datafim;
-	private String observacoes;	
-	private String freteiro;
-	private Float comissaoMontador;
+	
+	private String observacoes;
+	
+	private List<ComissaoMontador> comissaoMontadores = new ArrayList<ComissaoMontador>();
+	
 	
 
 	public Frete() {
@@ -112,25 +124,17 @@ public class Frete implements java.io.Serializable {
 		this.observacoes = observacoes;
 	}
 
-	@Column(name="freteiro", nullable = false)
-	public String getFreteiro() {
-		if(freteiro == null){
-		freteiro = "";
+	@OneToMany(targetEntity = ComissaoMontador.class, mappedBy="freteMontagem", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	public List<ComissaoMontador> getComissaoMontadores() {
+		return comissaoMontadores;
+	}
+
+	public void setComissaoMontadores(List<ComissaoMontador> comissaoMontadores) {
+		this.comissaoMontadores = comissaoMontadores;
+		for(ComissaoMontador comissaoMontador : comissaoMontadores){
+			comissaoMontador.setFreteMontagem(this);
 		}
-		return freteiro;
-	}
-
-	public void setFreteiro(String freteiro) {
-		this.freteiro = freteiro;
-	}
-
-	@Column(name="comissaomontador", nullable = true)
-	public Float getComissaoMontador() {
-		return comissaoMontador;
-	}
-
-	public void setComissaoMontador(Float comissaoMontador) {
-		this.comissaoMontador = comissaoMontador;
+		this.comissaoMontadores = comissaoMontadores;
 	}
 	
 }

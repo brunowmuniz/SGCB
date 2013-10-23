@@ -22,6 +22,8 @@ import javax.persistence.Table;
 @Table(name = "contacontabil", catalog = "blankerc_sgcb")
 public class Contacontabil implements java.io.Serializable {
 
+	
+	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private String tipo;
 	private String nome;

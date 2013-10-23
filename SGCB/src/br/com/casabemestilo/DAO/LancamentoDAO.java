@@ -111,24 +111,32 @@ public class LancamentoDAO implements InterfaceDAO, Serializable {
 	}
 	
 	public List<Lancamento> listaLazyLancamento(int first, int pageSize,
-			Map<String, String> filters, Date dataInicial, Date dataFinal) {
+			Map<String, String> filters, Date dataInicial, Date dataFinal, Boolean ehVale) {
 		session = Conexao.getInstance();
 		listaLancamento = new ArrayList<Lancamento>();
 		String hql = "from Lancamento l" +
-						" left join fetch l.lancamentoPai"+
+						" left join fetch l.lancamentoPai" +
+						" inner join fetch l.usuario"+
 						" where " +
 							"l.dataLancamento between :dataInicial" +
 												" and :dataFinal" +
 							" and" +
-								" l.deleted = 0";
+								" l.deleted = 0" +
+							" and" +
+								" l.ehVale = :ehVale";
 		
 		if(filters.containsKey("contacontabil.id")){
 			hql += " and l.contacontabil.id = " + filters.get("contacontabil.id");
 		}
 		
+		if(filters.containsKey("usuario.id")){
+			hql += " and l.usuario.id = " + filters.get("usuario.id");
+		}
+		
 		listaLancamento = session.createQuery(hql)
 								.setDate("dataInicial", dataInicial)
 								.setDate("dataFinal", dataFinal)
+								.setBoolean("ehVale", ehVale)
 								.setFirstResult(first)
 								.setMaxResults(pageSize)
 								.setCacheable(true)
@@ -137,7 +145,7 @@ public class LancamentoDAO implements InterfaceDAO, Serializable {
 		return listaLancamento;
 	}
 
-	public int totalLancamento(Map<String, String> filters,  Date dataInicial, Date dataFinal) {
+	public int totalLancamento(Map<String, String> filters,  Date dataInicial, Date dataFinal, Boolean ehVale) {
 		Long linhas = new Long(0);
 		session = Conexao.getInstance();
 		String hql = "select " +
@@ -147,15 +155,22 @@ public class LancamentoDAO implements InterfaceDAO, Serializable {
 							"l.dataLancamento between :dataInicial" +
 												" and :dataFinal" +
 							" and" +
-								" l.deleted = 0";
+								" l.deleted = 0" +
+							" and" +
+								" l.ehVale = :ehVale";
 		
 		if(filters.containsKey("contacontabil.id")){
 			hql += " and l.contacontabil.id = " + filters.get("contacontabil.id");
 		}
 		
+		if(filters.containsKey("usuario.id")){
+			hql += " and l.usuario.id = " + filters.get("usuario.id");
+		}
+		
 		linhas = (Long) session.createQuery(hql)
 							 .setDate("dataInicial", dataInicial)
 							 .setDate("dataFinal", dataFinal)
+							 .setBoolean("ehVale", ehVale)
 							 .setCacheable(true)
 							 .uniqueResult();
 		session.close();
@@ -223,6 +238,24 @@ public class LancamentoDAO implements InterfaceDAO, Serializable {
 		return listaLancamento;
 	}
 	
+	public List<Lancamento> buscaTotalValeFuncionarios(Date dataInicial, Date dataFinal) {
+		session = Conexao.getInstance();
+		listaLancamento = new ArrayList<Lancamento>();
+		listaLancamento = session.createQuery(" from" +
+													" Lancamento l" +
+												" inner join fetch l.usuario" +
+												" where" +														
+													" l.dataLancamento between" +
+														" :dataInicial" +
+													" and" +
+														" :dataFinal")
+									.setDate("dataInicial", dataInicial)
+									.setDate("dataFinal", dataFinal)
+									.list();
+		session.close();
+		return listaLancamento;
+	}
+	
 	/*
 	 * GETTERS & SETTERS
 	 * */
@@ -248,6 +281,13 @@ public class LancamentoDAO implements InterfaceDAO, Serializable {
 	public void setLancamento(Lancamento lancamento) {
 		this.lancamento = lancamento;
 	}
+
+	public List<Lancamento> lancamentoDia(Date dataLancamento) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
 
 	
 }

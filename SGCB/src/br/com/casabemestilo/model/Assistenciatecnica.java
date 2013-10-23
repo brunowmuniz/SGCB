@@ -23,7 +23,7 @@ public class Assistenciatecnica implements java.io.Serializable {
 
 
 	private static final long serialVersionUID = 1L;
-	private int id;
+	private Integer id;
 	private String montador;
 	private List<Ocproduto> ocprodutos;
 	private Date datainicio;
@@ -33,7 +33,7 @@ public class Assistenciatecnica implements java.io.Serializable {
 	public Assistenciatecnica() {
 	}
 
-	public Assistenciatecnica(int id, String montador, List<Ocproduto> ocprodutos,
+	public Assistenciatecnica(Integer id, String montador, List<Ocproduto> ocprodutos,
 			Date datainicio, Date datafim) {
 		this.id = id;
 		this.montador = montador;
@@ -42,7 +42,7 @@ public class Assistenciatecnica implements java.io.Serializable {
 		this.datafim = datafim;
 	}
 
-	public Assistenciatecnica(int id, String montador, List<Ocproduto> ocprodutos,
+	public Assistenciatecnica(Integer id, String montador, List<Ocproduto> ocprodutos,
 			Date datainicio, Date datafim, String observacoes) {
 		this.id = id;
 		this.montador = montador;
@@ -55,11 +55,11 @@ public class Assistenciatecnica implements java.io.Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", unique = true, nullable = false)
-	public int getId() {
+	public Integer getId() {
 		return this.id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

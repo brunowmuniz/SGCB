@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="solicitacaofretemontagem_subreport2" pageWidth="802" pageHeight="555" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="161bde0e-7d44-45ac-ab10-6a854047c1c1">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SGCB-JDBC"/>
+	<parameter name="IDATPRODUTOOC" class="java.lang.Integer" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[SELECT
+     assistenciatecnica.`id` AS assistenciatecnica_id,
+     ocproduto.`produto` AS ocproduto_produto,
+     produto.`descricao` AS produto_descricao,
+     produto.`fornecedor` AS produto_fornecedor,
+     produto.`codigo` AS produto_codigo,
+     fornecedor.`nome` AS fornecedor_nome
+FROM
+     `assistenciatecnica` assistenciatecnica INNER JOIN `ocproduto` ocproduto ON assistenciatecnica.`id` = ocproduto.`assistenciatecnica`
+     INNER JOIN `produto` produto ON ocproduto.`produto` = produto.`id`
+     INNER JOIN `fornecedor` fornecedor ON produto.`fornecedor` = fornecedor.`id`
+WHERE
+     assistenciatecnica.id = $P{IDATPRODUTOOC}]]>
+	</queryString>
+	<field name="assistenciatecnica_id" class="java.lang.Integer"/>
+	<field name="ocproduto_produto" class="java.lang.Integer"/>
+	<field name="produto_descricao" class="java.lang.String"/>
+	<field name="produto_fornecedor" class="java.lang.Integer"/>
+	<field name="produto_codigo" class="java.lang.String"/>
+	<field name="fornecedor_nome" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="d68a0eb6-ee58-4e3e-8fc5-47240c030637" x="0" y="0" width="303" height="20"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Produto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c945386a-2885-43ec-8b0e-01952069a23c" x="303" y="0" width="177" height="20"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fornecedor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1fb44657-30c1-4250-9a8c-89f55d8f6b20" x="480" y="0" width="154" height="20"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Código do Produto]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="36" splitType="Stretch">
+			<textField>
+				<reportElement uuid="10316a1e-cbb6-4030-998b-4bc1b078b9e3" x="0" y="0" width="303" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{produto_descricao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="304c6867-6565-4458-abec-25239e345fff" x="303" y="0" width="177" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{fornecedor_nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="2090e6bd-665d-4cd9-b17a-40203842ebf1" x="480" y="0" width="154" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{produto_codigo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

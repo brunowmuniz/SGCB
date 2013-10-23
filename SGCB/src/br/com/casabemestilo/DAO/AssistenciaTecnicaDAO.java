@@ -1,6 +1,8 @@
 package br.com.casabemestilo.DAO;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.HibernateException;
@@ -108,18 +110,6 @@ public class AssistenciaTecnicaDAO implements Serializable, InterfaceDAO{
 
 	@Override
 	public List<Assistenciatecnica> listaSelecao(Object obj) throws Exception, HibernateException, ConstraintViolationException{
-		/*assistenciatecnica = (Assistenciatecnica) obj;
-		session = Conexao.getInstance();
-		session.beginTransaction();
-		listaAssistenciatecnicas = session.createQuery("from Assistenciatecnica at where " +
-															" at.deleted=:deletado " +
-														" and" +
-															" at.usuario.nome like :desc")
-							 .setBoolean("deletado", assistenciatecnica.getDeleted())
-							 .setString("desc", "%" + assistenciatecnica.getUsuario().getNome() + "%")
-							 .list();
-		session.close();
-		return listaAssistenciatecnicas;*/
 		return null;
 	}
 
@@ -129,6 +119,44 @@ public class AssistenciaTecnicaDAO implements Serializable, InterfaceDAO{
 		assistenciatecnica = (Assistenciatecnica) session.merge(assistenciaTecnica);
 		session.getTransaction().commit();
 		return assistenciatecnica;
+	}
+	
+	public List<Assistenciatecnica> listaAssistenciaTecnica(int first,
+			int pageSize, Date dataInicial, Date dataFinal) {
+		session = Conexao.getInstance();
+		listaAssistenciatecnicas = new ArrayList<Assistenciatecnica>();
+		listaAssistenciatecnicas = session.createQuery("from Assistenciatecnica at" +
+															" inner join fetch at.ocprodutos" +
+														" where " +
+															" at.datainicio between :periodoInicial and :periodoFinal" +
+														" order by at.id desc")
+										.setDate("periodoInicial", dataInicial)
+										.setDate("periodoFinal", dataFinal)
+										.setFirstResult(first)
+										.setMaxResults(pageSize)
+										.setCacheable(true)
+										.list();
+		
+		session.close();
+		return listaAssistenciatecnicas;
+	}
+
+	public int totalAsssitenciaTecnica(Date dataInicial, Date dataFinal) {
+		Long linhas = new Long(0);
+		session = Conexao.getInstance();
+		linhas = (Long) session.createQuery("select count(*) " +
+												" from Assistenciatecnica at " +
+												" where at.datainicio " +
+													" between :periodoInicial " +
+												" and " +
+													":periodoFinal")
+									.setDate("periodoInicial", dataInicial)
+									.setDate("periodoFinal", dataFinal)
+									.setCacheable(true)
+									.uniqueResult();
+		
+		session.close();
+		return linhas.intValue();
 	}
 	
 	/*
@@ -150,5 +178,6 @@ public class AssistenciaTecnicaDAO implements Serializable, InterfaceDAO{
 			List<Assistenciatecnica> listaAssistenciatecnicas) {
 		this.listaAssistenciatecnicas = listaAssistenciatecnicas;
 	}
+
 	
 }

@@ -26,6 +26,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class CondicoesPagamento implements java.io.Serializable {
 
+
+	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private Formapagamento formapagamento;
 	private String nome;

@@ -11,6 +11,7 @@ import org.hibernate.exception.ConstraintViolationException;
 
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
 import br.com.casabemestilo.model.Frete;
+import br.com.casabemestilo.model.Oc;
 import br.com.casabemestilo.model.Ocproduto;
 import br.com.casabemestilo.util.Conexao;
 
@@ -66,8 +67,11 @@ public class FreteDAO implements InterfaceDAO, Serializable {
 	@Override
 	public void update(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
-
+		frete = (Frete) obj;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		session.merge(frete);
+		session.getTransaction().commit();
 	}
 
 	@Override
@@ -80,8 +84,11 @@ public class FreteDAO implements InterfaceDAO, Serializable {
 	@Override
 	public Frete buscaObjetoId(Integer id) throws Exception,
 			HibernateException, ConstraintViolationException {
-		// TODO Auto-generated method stub
-		return null;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		frete = (Frete) session.get(Frete.class, id);
+		session.close();
+		return frete;
 	}
 
 	@Override
@@ -109,7 +116,7 @@ public class FreteDAO implements InterfaceDAO, Serializable {
 			Date dataFinal) {
 		session = Conexao.getInstance();
 		listaFrete = session.createQuery("from Frete f " +
-											" left join fetch f.ocprodutos " +
+											" inner join fetch f.ocprodutos " +
 											" where f.datainicio between :periodoInicial and :periodoFinal" +
 											" order by f.id desc")
 							.setDate("periodoInicial", dataInicial)

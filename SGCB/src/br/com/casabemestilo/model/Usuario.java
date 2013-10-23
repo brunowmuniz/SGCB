@@ -2,6 +2,8 @@ package br.com.casabemestilo.model;
 
 // Generated 24/05/2013 18:36:37 by Hibernate Tools 4.0.0
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,6 +20,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Min;
 
 import org.hibernate.annotations.Cache;
@@ -34,6 +37,8 @@ import org.hibernate.validator.constraints.Length;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Usuario implements java.io.Serializable {
 
+	
+	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private Perfil perfil;
 	private String nome;
@@ -42,9 +47,15 @@ public class Usuario implements java.io.Serializable {
 	private String senha;
 	private List<Comissao> comissaos = new ArrayList<Comissao>();
 	private List<Oc> ocs= new ArrayList<Oc>();
-	private Set vales = new HashSet(0);
 	private Set montagems = new HashSet(0);	
 	private List<UsuarioFilial> usuarioFiliais = new ArrayList<UsuarioFilial>();
+	private List<ComissaoVendedor> comissaoVendedores = new ArrayList<ComissaoVendedor>();
+	private List<ComissaoMontador> comissaoMontadores = new ArrayList<ComissaoMontador>();
+	private BigDecimal totalComissaoLoja;
+	private BigDecimal totalComissaoVendedor;
+	private BigDecimal totalComissaoMontador;
+	private BigDecimal totalValeFuncionario;
+	private List<Lancamento> lancamentos = new ArrayList<Lancamento>();
 
 	public Usuario() {
 	}
@@ -56,7 +67,7 @@ public class Usuario implements java.io.Serializable {
 	}
 
 	public Usuario(Perfil perfil, String nome, Boolean deleted,
-			List<Comissao> comissaos, List<Oc> ocs, Set vales, Set montagems, String login, String senha) {
+			List<Comissao> comissaos, List<Oc> ocs, Set montagems, String login, String senha) {
 		this.perfil = perfil;
 		this.nome = nome;
 		this.deleted = deleted;
@@ -64,8 +75,29 @@ public class Usuario implements java.io.Serializable {
 		this.senha = senha;
 		this.comissaos = comissaos;
 		this.ocs = ocs;
-		this.vales = vales;
 		this.montagems = montagems;
+	}
+	
+	public Usuario(Integer id, String nome, Perfil perfil, Double comissaoLoja, Double comissaoVenda){
+		this.id = id;
+		this.nome = nome;
+		this.perfil = perfil;
+		this.totalComissaoLoja = new BigDecimal(comissaoLoja, MathContext.DECIMAL64);
+		this.totalComissaoVendedor = new BigDecimal(comissaoVenda, MathContext.DECIMAL64);		
+	}	
+	
+	public Usuario(Perfil perfil, Integer id, String nome,  Double comissaoMontador){
+		this.id = id;
+		this.nome = nome;
+		this.perfil = perfil;
+		this.totalComissaoMontador = new BigDecimal(comissaoMontador, MathContext.DECIMAL64);				
+	}
+	
+	public Usuario(Integer id, String nome, Perfil perfil, Double comissaoLoja){
+		this.id = id;
+		this.nome = nome;
+		this.perfil = perfil;
+		this.totalComissaoLoja = new BigDecimal(comissaoLoja, MathContext.DECIMAL64);		
 	}
 
 	@Id
@@ -149,14 +181,6 @@ public class Usuario implements java.io.Serializable {
 		this.ocs = ocs;
 	}
 
-	@OneToMany(targetEntity = Vale.class, mappedBy = "usuario")
-	public Set getVales() {
-		return this.vales;
-	}
-
-	public void setVales(Set vales) {
-		this.vales = vales;
-	}
 
 	@OneToMany(targetEntity = Montagem.class, mappedBy = "usuario")
 	public Set getMontagems() {
@@ -174,6 +198,72 @@ public class Usuario implements java.io.Serializable {
 
 	public void setUsuarioFiliais(List<UsuarioFilial> usuarioFiliais) {
 		this.usuarioFiliais = usuarioFiliais;
+	}
+	
+	@OneToMany(targetEntity = ComissaoVendedor.class, mappedBy = "vendedor", fetch = FetchType.LAZY)
+	public List<ComissaoVendedor> getComissaoVendedores() {
+		return comissaoVendedores;
+	}
+
+	public void setComissaoVendedores(List<ComissaoVendedor> comissaoVendedores) {
+		this.comissaoVendedores = comissaoVendedores;
+	}
+
+	@OneToMany(targetEntity = ComissaoMontador.class, mappedBy = "montador", fetch = FetchType.LAZY)
+	public List<ComissaoMontador> getComissaoMontadores() {
+		return comissaoMontadores;
+	}
+
+	public void setComissaoMontadores(List<ComissaoMontador> comissaoMontadores) {
+		this.comissaoMontadores = comissaoMontadores;
+	}
+
+	@Transient
+	public BigDecimal getTotalComissaoLoja() {
+		return totalComissaoLoja;
+	}
+
+	public void setTotalComissaoLoja(BigDecimal totalComissaoLoja) {
+		this.totalComissaoLoja = totalComissaoLoja;
+	}
+
+	@Transient
+	public BigDecimal getTotalComissaoVendedor() {
+		return totalComissaoVendedor;
+	}
+
+	public void setTotalComissaoVendedor(BigDecimal totalComissaoVendedor) {
+		this.totalComissaoVendedor = totalComissaoVendedor;
+	}
+
+	@Transient
+	public BigDecimal getTotalComissaoMontador() {
+		return totalComissaoMontador;
+	}
+
+	public void setTotalComissaoMontador(BigDecimal totalComissaoMontador) {
+		this.totalComissaoMontador = totalComissaoMontador;
+	}
+	
+	@Transient	
+	public BigDecimal getTotalValeFuncionario() {
+		if(totalValeFuncionario == null){
+			totalValeFuncionario = new BigDecimal("0");
+		}
+		return totalValeFuncionario;
+	}
+
+	public void setTotalValeFuncionario(BigDecimal totalValeFuncionario) {
+		this.totalValeFuncionario = totalValeFuncionario;
+	}
+
+	@OneToMany(targetEntity = Lancamento.class, mappedBy = "usuario", fetch = FetchType.LAZY)
+	public List<Lancamento> getLancamentos() {
+		return lancamentos;
+	}
+
+	public void setLancamentos(List<Lancamento> lancamentos) {
+		this.lancamentos = lancamentos;
 	}
 
 	@Override
