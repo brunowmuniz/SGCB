@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="solicitacaoat" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c703b020-0423-4018-aa89-f3fab2a146a4">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SGCB-JDBC"/>
+	<subDataset name="dataset1" uuid="28c0cfb9-536b-4223-9d49-eb2fcc749342"/>
+	<parameter name="IDAT" class="java.lang.Integer"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\Desenvolvimento\\SGCB\\src\\br\\com\\casabemestilo\\relatorio\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="DATAHORA_IMPRESSAO" class="java.util.Date"/>
+	<parameter name="USUARIO_IMPRESSAO" class="java.lang.String"/>
+	<parameter name="MONTADOR" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+     assistenciatecnica.`datainicio` AS assistenciatecnica_datainicio,
+     assistenciatecnica.`id` AS assistenciatecnica_id,
+     cliente.`nome` AS cliente_nome,
+     cliente.`endereco` AS cliente_endereco,
+     cliente.`cidade` AS cliente_cidade,
+     cliente.`telefone` AS cliente_telefone,
+     cliente.`telefoneadicional` AS cliente_telefoneadicional,
+     cliente.`cpf` AS cliente_cpf,
+     cliente.`rg` AS cliente_rg,
+     oc.`cliente` AS oc_cliente,
+     oc.`id` AS oc_id,
+     ocproduto.`assistenciatecnica` AS ocproduto_assistenciatecnica,
+     ocproduto.`oc` AS ocproduto_oc
+FROM
+     `oc` oc INNER JOIN `cliente` cliente ON oc.`cliente` = cliente.`id`
+     RIGHT JOIN `ocproduto` ocproduto ON oc.`id` = ocproduto.`oc`
+     INNER JOIN `assistenciatecnica` assistenciatecnica ON ocproduto.`assistenciatecnica` = assistenciatecnica.`id`
+WHERE
+     assistenciatecnica.`id` = $P{IDAT}
+GROUP BY
+     assistenciatecnica.id;]]>
+	</queryString>
+	<field name="assistenciatecnica_datainicio" class="java.sql.Date"/>
+	<field name="assistenciatecnica_id" class="java.lang.Integer"/>
+	<field name="cliente_nome" class="java.lang.String"/>
+	<field name="cliente_endereco" class="java.lang.String"/>
+	<field name="cliente_cidade" class="java.lang.String"/>
+	<field name="cliente_telefone" class="java.lang.String"/>
+	<field name="cliente_telefoneadicional" class="java.lang.String"/>
+	<field name="cliente_cpf" class="java.lang.String"/>
+	<field name="cliente_rg" class="java.lang.String"/>
+	<field name="oc_cliente" class="java.lang.Integer"/>
+	<field name="oc_id" class="java.lang.Integer"/>
+	<field name="ocproduto_assistenciatecnica" class="java.lang.Integer"/>
+	<field name="ocproduto_oc" class="java.lang.Integer"/>
+	<detail>
+		<band height="462" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="31fd8469-4260-4283-9887-66684cb00cbf" x="0" y="211" width="786" height="248"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="f2098917-053e-4e93-8730-a89ce573b294" x="0" y="93" width="552" height="117"/>
+			</rectangle>
+			<rectangle>
+				<reportElement uuid="fd0b9d11-c00a-4f8f-b4d8-e0ca106a5337" x="552" y="93" width="234" height="117"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="d7be7507-d632-468f-a93f-7e14d0ddd337" x="18" y="180" width="100" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data da Assistência:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="278f0a8d-b6c8-4740-bfdf-1ecc8501e4a8" x="128" y="180" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{assistenciatecnica_datainicio}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="a0e27b8a-1b5a-482b-be8f-154f313a5d73" x="273" y="180" width="100" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[OC:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5cb90c45-4323-4aee-a24e-9a751ec43903" x="18" y="101" width="100" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="a445cbc8-d9cc-4a32-aa39-88e76dd27432" x="128" y="101" width="409" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{cliente_nome}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="f7599b8f-4901-4075-b93b-18dde8651011" x="18" y="125" width="100" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Endereço:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="7ea0d644-6d7b-47d8-9730-a37be6d92cc7" x="128" y="126" width="145" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{cliente_endereco}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="8f099425-493a-4337-9e7e-af4b5ac3e76a" x="18" y="152" width="100" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Telefone:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="5a82e71b-5e10-4104-af7e-ac0979d10474" x="128" y="152" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{cliente_telefone}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="4a01e2e8-0f3b-45cc-9b75-38792e4b3a70" x="273" y="151" width="100" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Celular:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="3ffedf2e-7746-432b-82f6-3b70734fa0ac" x="384" y="151" width="153" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{cliente_telefoneadicional}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="8334e6e3-768c-42fc-8cc7-2e561088c8d9" x="384" y="180" width="153" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{oc_id}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement uuid="e6923f88-c629-4fb9-a9bc-94ba90bbc9e7" x="18" y="253" width="605" height="196"/>
+				<subreportParameter name="IDATPRODUTOOC">
+					<subreportParameterExpression><![CDATA[$P{IDAT}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "solicitacaoat_subreport2.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement uuid="d57d1020-15d2-4a47-84ea-ed3fe1da3c8e" x="18" y="226" width="605" height="20"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Produtos para assistência:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="99bd4a4e-2916-421c-90da-e3304c2314cb" x="280" y="126" width="131" height="19"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{cliente_cidade}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement uuid="54b9cda2-90bb-463a-b69a-77eb4dadc365" x="0" y="0" width="786" height="93"/>
+			</rectangle>
+			<image>
+				<reportElement uuid="1103ff14-26b5-4527-a515-149ae9b5e03c" x="18" y="8" width="264" height="77"/>
+				<imageExpression><![CDATA["http://www.blanker.com.br/imagens/logo_site.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement uuid="1ee60742-1cb3-4768-ac3d-89e9bf486b78" x="390" y="13" width="243" height="29"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Solicitação de Assistência Técnica]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c93c4728-9466-40ab-bf61-dbb54beb6901" x="390" y="57" width="37" height="20"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nº:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="132a98eb-d26c-41cb-9809-d508662e9407" x="427" y="57" width="142" height="20"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{assistenciatecnica_id}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="ec40d11f-19be-4f9d-b39e-a00b9df44d31" x="569" y="101" width="173" height="20"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Montadores:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="d4cb72f4-eba5-4585-9055-ef10a606da57" x="581" y="132" width="161" height="68"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{MONTADOR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="34">
+			<rectangle>
+				<reportElement uuid="4a522227-a6b4-4f2e-ad15-732091fba5ca" x="0" y="0" width="786" height="31"/>
+			</rectangle>
+			<textField pattern="d/MM/yyyy H:mm " isBlankWhenNull="true">
+				<reportElement uuid="88883b0e-8340-44fe-8753-eb1c52f7e9a4" x="115" y="1" width="150" height="20">
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="local_mesure_unity" value="pixel"/>
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{DATAHORA_IMPRESSAO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="411ac3be-7f68-4d30-a47e-7820c6d738bf" x="20" y="3" width="95" height="20">
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="local_mesure_unity" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data Expedição:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="59b7a844-20a0-48a2-8342-98f4f33a9147" x="410" y="3" width="50" height="20">
+					<property name="local_mesure_unity" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Usuário:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="be2f3405-7d69-47de-a593-02a7c06c5562" x="461" y="4" width="200" height="20">
+					<property name="local_mesure_unity" value="pixel"/>
+					<property name="local_mesure_unitheight" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="local_mesure_unitx" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="local_mesure_unitwidth" value="pixel"/>
+				</reportElement>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{USUARIO_IMPRESSAO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

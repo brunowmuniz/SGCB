@@ -24,6 +24,7 @@ import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 import com.sun.faces.context.flash.ELFlash;
 import br.com.casabemestilo.DAO.ComissaoDAO;
+import br.com.casabemestilo.DAO.ComissaoVendedorDAO;
 import br.com.casabemestilo.DAO.CondicoesPagamentoDAO;
 import br.com.casabemestilo.DAO.FormaPagamentoDAO;
 import br.com.casabemestilo.DAO.FornecedoresDAO;
@@ -37,6 +38,7 @@ import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Assistenciatecnica;
 import br.com.casabemestilo.model.Cliente;
 import br.com.casabemestilo.model.Comissao;
+import br.com.casabemestilo.model.ComissaoVendedor;
 import br.com.casabemestilo.model.CondicoesPagamento;
 import br.com.casabemestilo.model.Frete;
 import br.com.casabemestilo.model.Oc;
@@ -80,9 +82,7 @@ public class OcControl extends Control implements InterfaceControl,
 	private Date dataInicial;
 	
 	private Date dataFinal;
-	
-	private Float totalComissaoVendedor;
-	
+		
 	
 	/*
 	 * CONSTRUTORES
@@ -271,7 +271,7 @@ public class OcControl extends Control implements InterfaceControl,
 		try {
 			ocDAO = new OcDAO();
 			oc.setStatus((Status) new StatusDAO().buscaObjetoId(1));
-			calculaValorComissao();
+			//calculaValorComissao();
 			ocDAO.insert(oc);
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("OC foi gravada!"));
 			logger.info("Salvo Oc: " + oc.getId());
@@ -344,6 +344,7 @@ public class OcControl extends Control implements InterfaceControl,
 			logger.error("[alterar] Erro Hibernate: " + super.mensagem + "-" + oc.getId());
 		} catch (Exception e) {
 			super.mensagem = e.getMessage();
+			e.printStackTrace();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Geral: " + super.mensagem, ""));
 			logger.error("[alterar] Erro genérico: " + super.mensagem + "-" + oc.getId());
 		}
@@ -410,11 +411,12 @@ public class OcControl extends Control implements InterfaceControl,
 		this.listaOc = listaOc;
 	}
 	
-	public void calculaValorComissao(){				
+	public void calculaValorComissao() throws ConstraintViolationException, NumberFormatException, HibernateException, Exception{				
 		Float valorImpermeabilizacao = new Float(0);
 		Float valorLiquidoImpermeabilizacao = new Float(0);
-		float percentualFreteValorTotal = 0;		
-		oc.setValorcomissao(new Float(0));
+		float percentualFreteValorTotal = 0;
+		double valorComissao = 0;  
+		List<ComissaoVendedor> listaComissaoVendedor = new ArrayList<ComissaoVendedor>(); 
 		percentualRetencao = new Float(0);
 		valorLiquido = null;
 		
@@ -446,16 +448,37 @@ public class OcControl extends Control implements InterfaceControl,
 		}
 		
 		ComissaoDAO comissaoDAO = new ComissaoDAO();		
-		Comissao comissao = comissaoDAO.buscaComissaoUsuario(oc.getUsuario());
+		Comissao comissao = comissaoDAO.buscaComissaoUsuarioVendedor(oc.getUsuario());
+		
+		
 		
 		if(comissao != null){
+			ComissaoVendedor comissaoVendedor = new ComissaoVendedor();
 			if(comissao.getEhComissaoIndividual()){
-				oc.setValorcomissao(((oc.getValorliquido() - valorLiquidoImpermeabilizacao - (oc.getValorliquido() * percentualFreteValorTotal)) * (comissao.getPercentualComissaoIndividual() / 100))
-									+ new Float(valorLiquidoImpermeabilizacao * 0.25));
+				valorComissao = ((oc.getValorliquido() - valorLiquidoImpermeabilizacao - (oc.getValorliquido() * percentualFreteValorTotal)) * (comissao.getPercentualComissaoIndividual() / 100))
+								+ new Float(valorLiquidoImpermeabilizacao * 0.25);
+				
+				comissaoVendedor.setOc(oc);
+				comissaoVendedor.setValor(valorComissao);
+				comissaoVendedor.setVendedor(comissao.getUsuario());
+				listaComissaoVendedor.add(comissaoVendedor);				
 			}else{
-				oc.setValorcomissao(((oc.getValorliquido() - valorLiquidoImpermeabilizacao - (oc.getValorliquido() * percentualFreteValorTotal)) * (comissao.getPercentualComissaoConjunta() / 100))
-									+ new Float(valorLiquidoImpermeabilizacao * 0.25));
+				valorComissao = ((oc.getValorliquido() - valorLiquidoImpermeabilizacao - (oc.getValorliquido() * percentualFreteValorTotal)) * (comissao.getPercentualComissaoConjunta() / 100))
+								+ new Float(valorLiquidoImpermeabilizacao * 0.25);
+				
+				comissaoVendedor.setOc(oc);
+				comissaoVendedor.setValor(valorComissao / (comissao.getUsuarioComissaoConjunta().split(",").length + 1));
+				comissaoVendedor.setVendedor(comissao.getUsuario());
+				listaComissaoVendedor.add(comissaoVendedor);
+				for(int i = 0; i < comissao.getUsuarioComissaoConjunta().split(",").length; i++){
+					comissaoVendedor = new ComissaoVendedor();
+					comissaoVendedor.setOc(oc);
+					comissaoVendedor.setValor(valorComissao / (comissao.getUsuarioComissaoConjunta().split(",").length + 1));
+					comissaoVendedor.setVendedor(new UsuarioDAO().buscaObjetoId(Integer.parseInt(comissao.getUsuarioComissaoConjunta().split(",")[i])));
+					listaComissaoVendedor.add(comissaoVendedor);	
+				}				
 			}
+			oc.setComissaoVendedores(listaComissaoVendedor);	
 		}
 	}
 	
@@ -628,10 +651,10 @@ public class OcControl extends Control implements InterfaceControl,
 		}
 	}
 	
-	public List<Oc> getListaCalculaVendasPorVendedor(){
+	public List<Oc> listaCalculaVendasPorVendedor(){
 		ocDAO = new OcDAO();
 		listaOc = new ArrayList<Oc>();
-		listaOc = ocDAO.calculaVendasPorVendedor(getDataInicial(),getDataFinal());
+		listaOc = ocDAO.calculaVendasPorVendedor(getDataInicial(), getDataFinal());
 		return listaOc;
 	}
 	
@@ -676,50 +699,6 @@ public class OcControl extends Control implements InterfaceControl,
 		
 	}
 	
-	public LazyDataModel<Oc> getListarVendasAnalVendedor(){
-		if(listarOcGeral == null){
-			listarOcGeral = new LazyDataModel<Oc>() {
-								private List<Oc> listaLazyOc;
-								
-								@Override
-							    public Oc getRowData(String idOc) {
-							    	Integer id = Integer.valueOf(idOc);
-							    	
-							        for(Oc oc : listaLazyOc) {
-							            if(oc.getId().equals(id))
-							                return oc;
-							        }
-							        
-							        return null;
-							    }
-
-							    @Override
-							    public Object getRowKey(Oc oc) {
-							        return oc.getId();
-							    }
-
-							    @Override
-							    public List<Oc> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,String> filters) {
-							    	OcDAO ocDAO = new OcDAO();						    	
-							    								    		
-						    		setTotalComissaoVendedor(ocDAO.calculaComissaoVendedor(getOc().getUsuario().getId(), getDataInicial(), getDataFinal()));
-						    		listaLazyOc = ocDAO.listaLazyVendedorAnalitico(first, pageSize, getOc().getUsuario().getId(), getDataInicial(), getDataFinal());								    	
-							    	if (getRowCount() <= 0) {  
-							            setRowCount(ocDAO.totalVendedorAnalitico(getOc().getUsuario().getId(), getDataInicial(), getDataFinal()));  
-							        }  
-							    	
-							        setPageSize(pageSize);  
-							        return listaLazyOc;  
-							    }
-				};
-		}		
-		return listarOcGeral;
-	}
-	
-	public void buscaVendasVendedorAnalitico(){
-		listarOcGeral = null;		
-		getListarVendasAnalVendedor();
-	}
 	
 	public void calculaValorTotal(){
 		oc.setValorfinal(oc.getValor() + oc.getValorfrete() + oc.getValormontagem());
@@ -972,14 +951,6 @@ public class OcControl extends Control implements InterfaceControl,
 
 	public void setDataFinal(Date dataFinal) {
 		this.dataFinal = dataFinal;
-	}
-
-	public Float getTotalComissaoVendedor() {
-		return totalComissaoVendedor;
-	}
-
-	public void setTotalComissaoVendedor(Float totalComissaoVendedor) {
-		this.totalComissaoVendedor = totalComissaoVendedor;
 	}
 		
 }

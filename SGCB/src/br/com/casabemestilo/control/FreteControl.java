@@ -1,30 +1,68 @@
 package br.com.casabemestilo.control;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.data.JRBeanArrayDataSource;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.view.JasperViewer;
+
+import org.apache.jasper.compiler.ServletWriter;
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
+import br.com.casabemestilo.util.ConnectionFactory;
 
+import br.com.casabemestilo.DAO.ComissaoDAO;
 import br.com.casabemestilo.DAO.FreteDAO;
 import br.com.casabemestilo.DAO.OcProdutoDAO;
 import br.com.casabemestilo.DAO.ParcelaDAO;
+import br.com.casabemestilo.DAO.UsuarioDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
+import br.com.casabemestilo.model.Comissao;
+import br.com.casabemestilo.model.ComissaoMontador;
+import br.com.casabemestilo.model.ComissaoVendedor;
 import br.com.casabemestilo.model.Frete;
+import br.com.casabemestilo.model.Oc;
 import br.com.casabemestilo.model.Ocproduto;
 import br.com.casabemestilo.model.Parcela;
 import br.com.casabemestilo.model.Usuario;
+
+
+
 
 @ManagedBean
 @ViewScoped
@@ -41,6 +79,8 @@ public class FreteControl extends Control implements Serializable,
 	private FreteDAO freteDAO;
 
 	private List<Integer> listaMontadores = new ArrayList<Integer>();
+	
+	private List<Integer> listaUsuarioMontadores = new ArrayList<Integer>();
 	
 	private LazyDataModel<Frete> listaFreteGeral;
 	
@@ -130,9 +170,7 @@ public class FreteControl extends Control implements Serializable,
 			frete.setOcprodutos(listaOcprodutos);		
 			frete.setObservacoes("Frete " + listaOcprodutos.get(0).getOc().getTipoFrete());
 			frete.setValor(listaOcprodutos.get(0).getOc().getValorfrete());
-			for (int i = 0; i < listaMontadores.size(); i++) {
-				frete.setFreteiro(frete.getFreteiro().concat((String) (i==0 ? listaMontadores.get(i) : "," + listaMontadores.get(i))));
-			}
+			this.listaMontadores = listaMontadores;
 			calculaComissaoMontagem();
 			frete = freteDAO.insertFrete(frete);
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Frete gerado para os produtos!"));
@@ -211,14 +249,116 @@ public class FreteControl extends Control implements Serializable,
 		}
 	} 
 	
-	public void calculaComissaoMontagem(){
-		Float percentualProdutoOc = null;
-		Float valorLiquidoProduto = null;
-		frete.setComissaoMontador(new Float(0));
+	public void calculaComissaoMontagem() throws ConstraintViolationException, HibernateException, Exception{
+		Oc oc = new Oc();
+		float valorLiquidoProduto = 0;
+		float valorTotalBrutoProdutoMontagem = 0;
+		float valorComissao = 0;
+		String[] montadoresComissaoCjta = null;
+		List<ComissaoMontador> listaComissaoMontador = new ArrayList<ComissaoMontador>();
+
+		oc = frete.getOcprodutos().get(0).getOc();
+		
 		for(Ocproduto ocproduto : frete.getOcprodutos()){
 			if(ocproduto.getProduto().getTemMontagem()){
-				percentualProdutoOc = ocproduto.getValortotal() / ocproduto.getOc().getValorfinal();
-				valorLiquidoProduto = percentualProdutoOc * ocproduto.getOc().getValorliquido();
+				valorTotalBrutoProdutoMontagem += ocproduto.getValortotal();
+			}			
+		}
+		
+		if(valorTotalBrutoProdutoMontagem != 0){			
+			valorLiquidoProduto = valorTotalBrutoProdutoMontagem * (oc.getValorliquido() / oc.getValorfinal());
+			
+			for(Iterator iterMontador = listaMontadores.iterator(); iterMontador.hasNext();){
+				Integer idUsuarioMontador = Integer.parseInt(iterMontador.next().toString());
+				Comissao comissao = new ComissaoDAO().buscaComissaoUsuarioMontador(idUsuarioMontador);				
+				if(comissao.getEhComissaoMontadorIndividual()){
+					if(!listaUsuarioMontadores.contains(comissao.getUsuario().getId())){						
+						listaUsuarioMontadores.add(comissao.getUsuario().getId());
+					}
+				}else{
+					if(!listaUsuarioMontadores.contains(comissao.getUsuario().getId())){
+						listaUsuarioMontadores.add(comissao.getUsuario().getId());
+					}
+					montadoresComissaoCjta = comissao.getUsuarioComissaoMontadorConjunta().split(",");
+					for(int i = 0; i < montadoresComissaoCjta.length; i++){
+						Usuario usuario =  new UsuarioDAO().buscaObjetoId(Integer.parseInt(montadoresComissaoCjta[i]));
+						if(!listaUsuarioMontadores.contains(usuario.getId())){
+							listaUsuarioMontadores.add(usuario.getId());
+						}
+					}
+					
+				}				
+			}
+			
+			for(Integer idUsuario : listaUsuarioMontadores){
+				Comissao comissao = new ComissaoDAO().buscaComissaoUsuarioMontador(idUsuario);
+				ComissaoMontador comissaoMontador = new ComissaoMontador();
+				
+				
+				comissaoMontador.setMontador(new UsuarioDAO().buscaObjetoId(idUsuario));
+				comissaoMontador.setFreteMontagem(frete);
+				
+				if(comissao.getEhComissaoMontadorIndividual()){
+					valorComissao = (comissao.getPercentualComissaoMontadorIndividual() / 100) * valorLiquidoProduto;
+					comissaoMontador.setValor(new Double(valorComissao));
+				}else{
+					valorComissao = (comissao.getPercentualComissaoMontadorConjunta() / 100) * valorLiquidoProduto;
+					comissaoMontador.setValor(new Double(valorComissao / (comissao.getUsuarioComissaoMontadorConjunta().split(",").length + 1)));
+				}
+				listaComissaoMontador.add(comissaoMontador);
+			}
+			frete.setComissaoMontadores(listaComissaoMontador);
+		}		
+	}
+	
+	public void impressaoFrete(Frete frete){
+		Connection conexaoFactory = null;		
+		try {
+			conexaoFactory = new ConnectionFactory().getConexao();
+			FacesContext context = FacesContext.getCurrentInstance();
+			HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+			Map<String, Object> parametros = new HashMap<String, Object>();
+			InputStream caminho = null;
+			HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+			Usuario usuarioLogado = (Usuario) request.getSession().getAttribute("UsuarioLogado");
+					
+			caminho = getClass().getResourceAsStream("../relatorio/solicitacaofretemontagem.jrxml");
+			response.setContentType("application/pdf");			
+			parametros.put("IDFRETE", frete.getId());
+			parametros.put("DATAHORA_IMPRESSAO", new Date());
+			parametros.put("USUARIO_IMPRESSAO", usuarioLogado.getNome());
+			response.setHeader("Content-Disposition","attachment; filename=\"Solicitação_Frete-" + frete.getId() +".pdf\"");
+			JasperReport pathReport = JasperCompileManager.compileReport(caminho);
+			
+			//frete = new FreteDAO().buscaObjetoId(16);
+			//listaFrete.add(frete);
+			
+			//JRDataSource jrds = new JRBeanArrayDataSource(listaFrete.toArray());
+			
+			JasperPrint preencher = JasperFillManager.fillReport(pathReport,parametros,conexaoFactory);		
+			JasperExportManager.exportReportToPdfStream(preencher, response.getOutputStream());
+			
+			response.getOutputStream().flush();
+			response.getOutputStream().close();
+			context.renderResponse();
+			context.responseComplete();
+		} catch (IOException e) {
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro IO: " + super.mensagem, ""));
+			e.printStackTrace();
+		} catch(JRException e){
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro JasperReport: " + super.mensagem, ""));
+			e.printStackTrace();
+		}catch (Exception e) {
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Genérico: " + super.mensagem, ""));
+			e.printStackTrace();
+		}finally{
+			try {
+				conexaoFactory.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -273,7 +413,7 @@ public class FreteControl extends Control implements Serializable,
 		if(dataInicial == null){
 			Calendar c = Calendar.getInstance();
 			c.setTime(new Date());
-			c.add(Calendar.DAY_OF_MONTH, -1);
+			c.add(Calendar.MONTH, -1);
 			dataInicial = c.getTime();
 		}
 		return dataInicial;

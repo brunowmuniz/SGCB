@@ -27,12 +27,15 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Formapagamento implements java.io.Serializable {
 
+
+	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private String nome;
 	private Boolean deleted;
 	private Boolean ehantecipacao;
 	private Float percentualAntecipacao;
 	private List<CondicoesPagamento> condicoesPagamentos = new ArrayList<CondicoesPagamento>();
+	private List<Lancamento> lancamentos = new ArrayList<Lancamento>();
 
 	public Formapagamento() {
 	}
@@ -109,5 +112,13 @@ public class Formapagamento implements java.io.Serializable {
 		this.percentualAntecipacao = percentualAntecipacao;
 	}
 
+	@OneToMany(targetEntity = Lancamento.class, mappedBy = "formapagamento", fetch = FetchType.LAZY)
+	public List<Lancamento> getLancamentos() {
+		return lancamentos;
+	}
+
+	public void setLancamentos(List<Lancamento> lancamentos) {
+		this.lancamentos = lancamentos;
+	}
 	
 }

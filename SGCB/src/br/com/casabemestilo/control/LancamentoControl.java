@@ -54,6 +54,7 @@ public class LancamentoControl extends Control implements InterfaceControl,
 	private Float valorSaidas;
 	
 	
+	
 	/*
 	 * CONSTRUTORES
 	 * */
@@ -84,6 +85,9 @@ public class LancamentoControl extends Control implements InterfaceControl,
 			lancamentoDAO = new LancamentoDAO();
 			lancamento.setDeleted(false);
 			lancamento.setContacontabil(new ContaContabilDAO().buscaObjetoId(lancamento.getContacontabil().getId()));
+			if(!lancamento.getEhVale()){
+				lancamento.setUsuario(null);
+			}
 			if(getEhParcelado()){
 				Integer idLancamentoPai = 0; 				
 				for(int i = 1; i <= getLancamento().getQtdeParcela(); i++){
@@ -100,7 +104,7 @@ public class LancamentoControl extends Control implements InterfaceControl,
 						lancamentoDAO.insert(lancamento);
 					}
 				}				
-			}else{
+			}else{				
 				lancamento.setQtdeParcela(1);
 				lancamento.setParcela(1);
 				lancamentoDAO.insert(lancamento);
@@ -202,7 +206,11 @@ public class LancamentoControl extends Control implements InterfaceControl,
 		return null;
 	}
 	
-	public LazyDataModel<Lancamento> getListaLancamentoGeralAll(){
+	public LazyDataModel<Lancamento> listaLancamentoGeralAll(String tipoLancamento){
+		/*if(tipoLancamento.equalsIgnoreCase("vale")){
+			lancamento.setEhVale(true);
+		}*/
+		
 		if(listaLancamentoGeral == null){
 			listaLancamentoGeral = new LazyDataModel<Lancamento>() {
 				private List<Lancamento> listaLazyLancamentos;
@@ -228,10 +236,10 @@ public class LancamentoControl extends Control implements InterfaceControl,
 			    public List<Lancamento> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,String> filters) {
 			    	LancamentoDAO lancamentoDAO = new LancamentoDAO();
 			    	
-			    	listaLazyLancamentos = lancamentoDAO.listaLazyLancamento(first, pageSize, filters, getDataInicial(), getDataFinal());
+			    	listaLazyLancamentos = lancamentoDAO.listaLazyLancamento(first, pageSize, filters, getDataInicial(), getDataFinal(), true);
 			    	
 			    	if (getRowCount() <= 0) { 
-			            setRowCount(lancamentoDAO.totalLancamento(filters, getDataInicial(), getDataFinal()));  
+			            setRowCount(lancamentoDAO.totalLancamento(filters, getDataInicial(), getDataFinal(), true));  
 			        }  
 			    	
 			        setPageSize(pageSize);  
@@ -275,6 +283,11 @@ public class LancamentoControl extends Control implements InterfaceControl,
 		return listaLancamento;
 	}
 	
+	public List<LancamentoControl> listaCaixa(){
+		lancamento = new Lancamento();
+		return null;
+	}
+	
 	/*
 	 * GETTERS & SETTERS
 	 * */
@@ -306,6 +319,9 @@ public class LancamentoControl extends Control implements InterfaceControl,
 	}
 
 	public Boolean getEhParcelado() {
+		if(lancamento.getEhVale()){
+			ehParcelado = false;
+		}
 		return ehParcelado;
 	}
 
@@ -382,6 +398,7 @@ public class LancamentoControl extends Control implements InterfaceControl,
 
 	public void setValorSaidas(Float valorSaidas) {
 		this.valorSaidas = valorSaidas;
-	}
+	}	
+	
 	
 }

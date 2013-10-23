@@ -1,6 +1,7 @@
 package br.com.casabemestilo.DAO;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.HibernateException;
@@ -105,7 +106,7 @@ public class ComissaoDAO implements Serializable, InterfaceDAO {
 		return null;
 	}
 	
-	public Comissao buscaComissaoUsuario(Usuario usuario){		
+	public Comissao buscaComissaoUsuarioVendedor(Usuario usuario){		
 		session = Conexao.getInstance();
 		session.beginTransaction();
 		comissao = null;
@@ -132,10 +133,68 @@ public class ComissaoDAO implements Serializable, InterfaceDAO {
 		}
 		
 		session.close();
-		return comissao;
-		
+		return comissao;		
 	}
 
+	public Comissao buscaComissaoUsuarioMontador(Integer IdUsuario) {
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		comissao = null;
+		listaComissao = session.createQuery("from Comissao c where deleted = 0").list();
+		for(Comissao comissaoUsuario: listaComissao){
+			if(comissaoUsuario.getUsuario().getId() == IdUsuario){
+				comissao = comissaoUsuario;
+			}
+		}
+		
+		if(comissao == null){
+			for(Comissao comissaoUsuario: listaComissao){
+				if(comissaoUsuario.getEhComissaoMontadorConjunta()){
+					String[] idUsuarioComissaoConjunta = comissaoUsuario.getUsuarioComissaoMontadorConjunta().split(",");
+					int i = 0;
+					while(idUsuarioComissaoConjunta.length > i){
+						if (Integer.parseInt(idUsuarioComissaoConjunta[i]) == IdUsuario){
+							comissao = comissaoUsuario;
+						}
+						i++;
+					}
+				}				
+			}
+		}
+		
+		session.close();
+		return comissao;
+	}
+	
+	public List<Comissao> listaComissaoOutros() {
+		session = Conexao.getInstance();
+		listaComissao = new ArrayList<Comissao>();
+		listaComissao = session.createQuery("from Comissao comissao" +
+													" where" +
+														" comissao.usuario.perfil.id not in(2,5)" +
+													" and" +
+														" comissao.ehComissaoLoja = true" +
+													" and" +
+														" comissao.ehComissaoIndividual = false" +
+													" and" +
+														" comissao.ehComissaoConjunta = false").list();
+		session.close();
+		return listaComissao;
+	}
+	
+	public List<Comissao> buscaComissaoVendedor() {
+		session = Conexao.getInstance();
+		listaComissao = new ArrayList<Comissao>();
+		listaComissao = session.createQuery("from Comissao comissao" +
+												" where" +
+													" comissao.usuario.perfil.id in(2)" +
+												" and" +
+													" (comissao.ehComissaoIndividual = true" +
+														" or comissao.ehComissaoConjunta = true)")
+								.list();
+		session.close();		
+		return listaComissao;
+	}
 	
 	/*
 	 * GETTERS & SETTERS
@@ -158,5 +217,6 @@ public class ComissaoDAO implements Serializable, InterfaceDAO {
 	public void setComissao(Comissao comissao) {
 		this.comissao = comissao;
 	}
+	
 	
 }

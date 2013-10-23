@@ -143,7 +143,7 @@ public class UsuarioDAO implements InterfaceDAO, Serializable {
 	public List<Usuario> listaMontador() {
 		session = Conexao.getInstance();
 		listaUsuario = new ArrayList<Usuario>();
-		listaUsuario = session.createQuery("from Usuario u where u.perfil.id= 5").list();
+		listaUsuario = session.createQuery("from Usuario u where u.perfil.id= 5 and deleted = 0").list();
 		session.close();
 		return listaUsuario;
 	}
@@ -152,9 +152,10 @@ public class UsuarioDAO implements InterfaceDAO, Serializable {
 		session = Conexao.getInstance();
 		listaUsuario = new ArrayList<Usuario>();
 		listaUsuario = session.createQuery("from Usuario u where u.perfil.id= 2").list();
-		session.close();
-		return listaUsuario;
+		session.close();		
+		return listaUsuario;		
 	}
+	
 	
 	/*
 	 * GETTERS & SETTERS
@@ -174,6 +175,6 @@ public class UsuarioDAO implements InterfaceDAO, Serializable {
 	public void setListaUsuario(List<Usuario> listaUsuario) {
 		this.listaUsuario = listaUsuario;
 	}
-	
+
 	
 }

@@ -29,8 +29,6 @@ public class OcDAO implements InterfaceDAO, Serializable {
 	
 	Session session;
 	
-	StatelessSession sessionStateless;
-	
 	private List<Oc> listaOc;
 	
 	private Oc oc;
@@ -241,14 +239,14 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		listaOc = new ArrayList<Oc>();
 		session = Conexao.getInstance();
 		String hql = "select oc from Oc oc" +
-						" left join oc.ocprodutos ocproduto ";
+						" inner join oc.ocprodutos ocproduto ";
 		
 		if(filters.containsKey("status.id")){
 			hql += "with ocproduto.status.id= " + filters.get("status.id");
 		}
 		
 		if(filters.containsKey("usuario.id")){
-			hql +=  " and oc.usuario.id = " + filters.get("usuario.id"); 
+			hql +=  " where oc.usuario.id = " + filters.get("usuario.id"); 
 		}
 		
 		hql += " group by oc.id";
@@ -266,14 +264,15 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		Long linhas = new Long(0);
 		session = Conexao.getInstance();
 		String hql = "select count(oc.id) from Oc oc" +
-						" left join oc.ocprodutos ocproduto ";
+						" inner join oc.ocprodutos ocproduto ";
 		
 		if(filters.containsKey("status.id")){
-			hql += "with ocproduto.status.id= " + filters.get("status.id");
-		}
+			hql += "with ocproduto.status.id=" + filters.get("status.id");
+		}		
+		
 		
 		if(filters.containsKey("usuario.id")){
-			hql +=  " and oc.usuario.id = " + filters.get("usuario.id"); 
+			hql +=  " where oc.usuario.id = " + filters.get("usuario.id"); 
 		}
 		
 		linhas = (Long) session.createQuery(hql)								
@@ -290,8 +289,9 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		listaStatus.add(1);
 		listaStatus.add(2);
 		listaStatus.add(10);		
-		listaOc = session.createQuery(" select new Oc(o.id, o.usuario, sum(o.valorliquido), sum(o.valorcomissao)) " +
-											"from Oc o " +										
+		listaOc = session.createQuery("select new Oc(o.id, o.usuario, sum(o.valorliquido), sum(o.valorfinal)) " +
+											"from Oc o " +
+										" left join o.comissaoVendedores comissaoVendedor "+
 										"where "+
 											"o.deleted = :ocDeleted " +
 										"and " +
@@ -310,6 +310,30 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		return listaOc;
 	}
 	
+	public Double calculaTotalVendasPeriodo(Date dataInicial, Date dataFinal){
+		session = Conexao.getInstance();
+		Double totalVendas = new Double("0");
+		List<Integer> listaStatus = new ArrayList<Integer>();		
+		
+		totalVendas = (Double) session.createQuery("select " +
+														"sum(oc.valorliquido)" +
+													" from Oc oc" +
+														" where" +
+															" oc.deleted= false" +
+														" and" +
+															" oc.status.id not in(1,2,10)" +
+														" and" +
+															" oc.datalancamento between :dataInicial and :dataFinal")
+									  .setDate("dataInicial", dataInicial)
+									  .setDate("dataFinal", dataFinal)
+									  .uniqueResult();
+		
+		totalVendas = totalVendas == null ? new Double("0") : totalVendas;
+		
+		session.close();
+		return totalVendas;
+	}
+	
 	public List calcultaTotalVendasMesAno(Date dataInicial, Date dataFinal) {
 		List listaVendasMesAno = new ArrayList();
 		session = Conexao.getInstance();
@@ -325,75 +349,6 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		
 		session.close();
 		return listaVendasMesAno;
-	}
-	
-	public List<Oc> listaLazyVendedorAnalitico(int first, int pageSize,Integer idUsuario, Date dataInicial, Date dataFinal) {
-		session = Conexao.getInstance();
-		session.beginTransaction();
-		listaOc = new ArrayList<Oc>();
-		listaOc = session.createQuery("from Oc oc" +
-										" where" +											
-											" oc.datalancamento between :dataInicial and :dataFinal" +
-										" and" +
-											" oc.usuario.id = :usuario" +
-										" and" +
-											" oc.deleted = 0" +
-										" and" +
-											" oc.status.id not in(1,2,10)")
-						 .setDate("dataInicial", dataInicial)
-						 .setDate("dataFinal", dataFinal)
-						 .setInteger("usuario", idUsuario)
-						 .setFirstResult(first)
-						 .setMaxResults(pageSize)
-						 .setCacheable(true)
-						 .list();
-		
-		session.close();
-		return listaOc;
-	}
-
-	public int totalVendedorAnalitico(Integer idUsuario, Date dataInicial, Date dataFinal) {
-		Long linhas = new Long(0);
-		session = Conexao.getInstance();
-		session.beginTransaction();
-		
-		linhas = (Long) session.createQuery("select count(oc.id) from Oc oc" +
-												" where" +													
-													" oc.datalancamento between :dataInicial and :dataFinal" +
-												" and" +
-													" oc.usuario.id = :usuario"+
-												" and" +
-													" oc.deleted = 0" +
-												" and" +
-													" oc.status.id not in(1,2,10)")
-								.setDate("dataInicial", dataInicial)
-								.setDate("dataFinal", dataFinal)
-								.setInteger("usuario", idUsuario)
-								.uniqueResult();
-		session.close();
-		return linhas.intValue();
-	}
-	
-	public Float calculaComissaoVendedor(Integer idUsuario, Date dataInicial, Date dataFinal) {
-		Double totalComissao = new Double(0);
-		session = Conexao.getInstance();
-		session.beginTransaction();
-		
-		totalComissao = (Double) session.createQuery("select sum(oc.valorcomissao) from Oc oc" +
-														" where" +
-															" oc.status.id > 2" +
-														" and" +
-															" oc.datalancamento between :dataInicial and :dataFinal" +
-														" and" +
-															" oc.usuario.id = :usuario"+
-														" and" +
-															" oc.deleted = 0")
-										.setDate("dataInicial", dataInicial)
-										.setDate("dataFinal", dataFinal)
-										.setInteger("usuario", idUsuario)
-										.uniqueResult();
-		session.close();
-		return totalComissao.floatValue();
 	}
 	
 	/*
@@ -449,6 +404,42 @@ public class OcDAO implements InterfaceDAO, Serializable {
 										    .uniqueResult();
 		session.close();
 		return totalFrete;
+	}
+
+	public Double buscaTotalVendasGrupoComissao(String grupoUsuario, Date dataInicial, Date dataFinal) {
+		session = Conexao.getInstance();		
+		List<Integer> listaGrupoUsuario = new ArrayList<Integer>();
+		
+		for(int i = 0; i < grupoUsuario.split(",").length; i++){
+			listaGrupoUsuario.add(Integer.parseInt(grupoUsuario.split(",")[i].toString()));
+		}	
+		
+		Double totalVendaGrupoComissao = (Double) session.createQuery("select" +
+																			" sum(oc.valorliquido)" +
+																		" from Oc oc" +
+																			" where" +
+																				" oc.deleted= false" +
+																			" and" +
+																				" oc.usuario.id in(:grupoUsuario)"+
+																			" and" +
+																				" oc.status.id not in(1,2,10)" +
+																			" and" +
+																				" oc.datalancamento between :dataInicial and :dataFinal")
+															.setDate("dataInicial", dataInicial)
+															.setDate("dataFinal",dataFinal)
+															.setParameterList("grupoUsuario",listaGrupoUsuario)
+															.uniqueResult();
+		
+		
+		totalVendaGrupoComissao = totalVendaGrupoComissao == null ? new Double("0") : totalVendaGrupoComissao; 
+		
+		session.close();
+		return totalVendaGrupoComissao;									
+	}
+
+	public List<Oc> buscaOcDia(Date dataLancamento) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	

@@ -22,6 +22,8 @@ import javax.persistence.TemporalType;
 @Table(name = "montagem", catalog = "blankerc_sgcb")
 public class Montagem implements java.io.Serializable {
 
+	
+	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private Usuario usuario;
 	private Ocproduto ocproduto;

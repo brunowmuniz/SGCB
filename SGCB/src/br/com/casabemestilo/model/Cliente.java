@@ -31,6 +31,8 @@ import org.hibernate.validator.constraints.Length;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Cliente implements java.io.Serializable {
 
+	
+	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private String nome;
 	private String endereco;

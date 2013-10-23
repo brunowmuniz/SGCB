@@ -37,6 +37,8 @@ import org.hibernate.annotations.ForeignKey;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Ocproduto implements java.io.Serializable {
 
+	
+	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private Status status;
 	private Produto produto;
