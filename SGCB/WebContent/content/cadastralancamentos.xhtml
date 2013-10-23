@@ -30,8 +30,25 @@
 							<f:selectItems value="#{contaContabilControl.listaContasCombo('')}"/>							
 						</p:selectOneMenu>
 						
+						<p:outputLabel value="Forma de Pagamento/Recebimento: " for="formapgtorecbmto"/>
+						<p:selectOneMenu id="formapgtorecbmto" value="#{lancamentoControl.lancamento.formapagamento.id}" required="true">
+							<f:selectItem noSelectionOption="Escolha uma Forma" itemLabel=""/>
+							<f:selectItems value="#{formaPagamentoControl.listaFormaPagamentoCombo}"/>							
+						</p:selectOneMenu>
+						
+						<p:outputLabel for="ehvale" value="É Vale?: "/>
+						<p:selectBooleanCheckbox value="#{lancamentoControl.lancamento.ehVale}" id="ehvale">
+							<p:ajax event="change" process="@this" update="funcionariovale,ehreincidente"/>
+						</p:selectBooleanCheckbox>
+						
+						<p:outputLabel for="funcionariovale" value="Funcionário: " />
+						<p:selectOneMenu id="funcionariovale" value="#{lancamentoControl.lancamento.usuario.id}" required="#{lancamentoControl.lancamento.ehVale}" disabled="#{not lancamentoControl.lancamento.ehVale}">
+							<f:selectItems value="#{usuarioControl.listaTodosUsuariosAtivosCombo('')}"/>	
+							<p:ajax event="change" process="@this" />						
+						</p:selectOneMenu>
+						
 						<p:outputLabel for="ehreincidente" value="Parcelado: "/>
-						<p:selectBooleanCheckbox value="#{lancamentoControl.ehParcelado}" id="ehreincidente">
+						<p:selectBooleanCheckbox value="#{lancamentoControl.ehParcelado}" id="ehreincidente" disabled="#{lancamentoControl.lancamento.ehVale}">
 							<p:ajax event="change" process="@this" update="qtdeparcelas,totallanc"/>
 						</p:selectBooleanCheckbox>
 						
@@ -40,7 +57,7 @@
 									required="#{lancamentoControl.ehParcelado}">
 							<p:ajax event="blur" process="@this" update="totalparcelas"/>
 							<p:ajax event="change" process="@this" update="totalparcelas"/>
-						</p:spinner>					 
+						</p:spinner>		
 						
 						<p:outputLabel for="datalancamento" value="Data Lançamento: " id="lbldatalancamento"/>
 						<p:calendar value="#{lancamentoControl.lancamento.dataLancamento}" id="datalancamento" pattern="dd/MM/yyyy" locale="pt_BR" 
@@ -60,6 +77,10 @@
 			</h:form>
 		</ui:define>
 		<ui:define name="rodape">
+			<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela para cadastro de lançamentos de entrada/saída e de vales dos funcionários." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="cadastralancamento.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
 		</ui:define>
 	</ui:composition>
 </html>

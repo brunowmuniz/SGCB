@@ -20,28 +20,22 @@
 						</p:calendar>
 						<p:commandButton value="Pesquisar" update="@form"/>
 					</h:panelGrid>					
-					<p:dataTable value="#{ocControl.listaCalculaVendasPorVendedor}" var="vendedor" style="width: 50%;">
+					<p:dataTable value="#{ocControl.listaCalculaVendasPorVendedor()}" var="vendedor" style="width: 50%;">
 						<p:column headerText="Vendedor">
 							<h:outputText value="#{vendedor.usuario.nome}" />
+						</p:column>
+						<p:column headerText="Valor Bruto" style="text-align: center;">
+							<h:outputText value="R$ " />
+							<h:outputText value="#{vendedor.valorfinal}">
+								<f:convertNumber maxIntegerDigits="7" minFractionDigits="2" locale="pt_BR"/>
+							</h:outputText>
 						</p:column>
 						<p:column headerText="Valor Liquído" style="text-align: center;">
 							<h:outputText value="R$ " />
 							<h:outputText value="#{vendedor.valorliquido}">
 								<f:convertNumber maxIntegerDigits="7" minFractionDigits="2" locale="pt_BR"/>
 							</h:outputText>
-						</p:column>
-						<p:column headerText="Comissão Individual" style="text-align: center;">
-							<h:outputText value="R$ " />
-							<h:outputText value="#{vendedor.valorcomissao}">
-								<f:convertNumber maxIntegerDigits="7" minFractionDigits="2" locale="pt_BR"/>
-							</h:outputText>
-						</p:column>
-						<p:column headerText="Comissão Loja" style="text-align: center;">
-							<h:outputText value="R$ " />
-							<h:outputText value="#{vendedor.valorcomissao}">
-								<f:convertNumber maxIntegerDigits="7" minFractionDigits="2" locale="pt_BR"/>
-							</h:outputText>
-						</p:column>						
+						</p:column>		
 					</p:dataTable>			
 				</p:panel>
 			</h:form>

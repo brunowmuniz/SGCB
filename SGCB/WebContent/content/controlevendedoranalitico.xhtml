@@ -10,45 +10,51 @@
 		<ui:define name="conteudo">
 			<h:form id="form">
 				<p:panel header="Controle Vendas - Analítico">
+					<p:messages id="msgs"/>
+					
 					<h:panelGrid columns="2" id="filtro">
 						<p:outputLabel for="dataInicial" value="Período Inicial: "/>
-						<p:calendar value="#{ocControl.dataInicial}" pattern="dd/MM/yyyy" locale="pt" id="dataInicial">
+						<p:calendar value="#{comissaoVendedorControl.dataInicial}" pattern="dd/MM/yyyy" locale="pt" id="dataInicial">
 							<p:ajax event="dateSelect" process="@this"/>
 						</p:calendar>
 						<p:outputLabel for="dataFinal" value="Período Final: "/>
-						<p:calendar value="#{ocControl.dataFinal}" pattern="dd/MM/yyyy" locale="pt" id="dataFinal">
+						<p:calendar value="#{comissaoVendedorControl.dataFinal}" pattern="dd/MM/yyyy" locale="pt" id="dataFinal">
 							<p:ajax event="dateSelect" process="@this"/>
 						</p:calendar>
 						<p:outputLabel for="vendedorbusca" value="Vendedor: "/>
-						<p:selectOneMenu id="vendedorbusca" value="#{ocControl.oc.usuario.id}" size="1">
+						<p:selectOneMenu id="vendedorbusca" value="#{comissaoVendedorControl.comissaoVendedor.vendedor.id}" size="1">
 							<f:selectItem noSelectionOption="true" itemLabel="Selecione Vendedor"/>
 							<f:selectItems value="#{usuarioControl.listaUsuarioVendedor('')}"/>							
 						</p:selectOneMenu>
-						<p:commandButton process="filtro" update="@form" value="Pesquisar" actionL="#{ocControl.buscaVendasVendedorAnalitico}"/>
+						<p:commandButton process="filtro" update="@form" value="Pesquisar" actionListener="#{comissaoVendedorControl.buscaVendasVendedorAnalitico}"/>
 					</h:panelGrid>
 					 
-					<p:dataTable var="oc" value="#{ocControl.listarVendasAnalVendedor}" id="ocs" emptyMessage="Sem vendas para este vendedor!" paginator="true"
-										selection="#{ocControl.oc}" selectionMode="single" lazy="true" rows="5" rowKey="#{oc.id}"
+					<p:dataTable var="comissao" value="#{comissaoVendedorControl.listarComissaoVendedorGeral}" id="comissao" emptyMessage="Sem vendas para este vendedor!" paginator="true"
+										selection="#{comissaoVendedorControl.comissaoVendedor}" selectionMode="single" lazy="true" rows="5" rowKey="#{comissao.id}"
 										paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                 						rowsPerPageTemplate="5,25,50"  draggableColumns="true" rendered="#{ocControl.oc.usuario.id != null}">
+                 						rowsPerPageTemplate="5,25,50"  draggableColumns="true" rendered="#{comissaoVendedorControl.comissaoVendedor.vendedor.id != null}">
                  		<p:column headerText="Data">
-                 			<h:outputText value="#{oc.datalancamento}">
+                 			<h:outputText value="#{comissao.oc.datalancamento}">
                  				<f:convertDateTime pattern="dd/MM/yyyy"/>
                  			</h:outputText>
                  		</p:column>
                  		
                  		<p:column headerText="OC">
-                 			#{oc.id}
+                 			#{comissao.oc.id}
+                 		</p:column>
+                 		
+                 		<p:column headerText="Vendedor">
+                 			#{comissao.oc.usuario.nome}
                  		</p:column>
                  		
                  		<p:column headerText="Total Venda">
-                 			<h:outputText value="#{oc.valorfinal}">
+                 			<h:outputText value="#{comissao.oc.valorfinal}">
                  				<f:convertNumber maxIntegerDigits="7" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2" locale="pt_BR"/>
                  			</h:outputText>	
                  		</p:column>
                  		
                  		<p:column headerText="Retenção">
-                 			<h:outputText value="#{(1 - (oc.valorliquido / oc.valorfinal)) * 100}">
+                 			<h:outputText value="#{(1 - (comissao.oc.valorliquido / comissao.oc.valorfinal)) * 100}">
                  				<f:convertNumber maxIntegerDigits="2" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="1" locale="pt"/>		
                  			</h:outputText>
                  			<h:outputText value="%" />	
@@ -56,7 +62,7 @@
                  		
                  		<p:column headerText="Valor Líquido">
                  			<h:outputText value="R$ " />
-                 			<h:outputText value="#{oc.valorliquido}">
+                 			<h:outputText value="#{comissao.oc.valorliquido}">
                  				<f:convertNumber maxIntegerDigits="7" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2" locale="pt_BR"/>
                  			</h:outputText>
                  		</p:column>
@@ -64,7 +70,7 @@
                  			<f:facet name="header">
                  				#{formaspagamento.nome}
                  			</f:facet>
-                 			<ui:repeat var="pagamento" value="#{oc.pagamentos}">                 				
+                 			<ui:repeat var="pagamento" value="#{comissao.oc.pagamentos}">                 				
                  				<h:outputText value="R$ " rendered="#{pagamento.condicoesPagamento.formapagamento.id == formaspagamento.id}"/>
                  				<h:outputText value="#{pagamento.valor}" rendered="#{pagamento.condicoesPagamento.formapagamento.id == formaspagamento.id}">
                  					<f:convertNumber maxFractionDigits="2" minFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="7"/>
@@ -74,12 +80,12 @@
                  		</p:columns>
                  		<p:column headerText="Comissão">                 			               			
                  			<h:outputText value="R$ "/>
-                				<h:outputText value="#{oc.valorcomissao}">
+                				<h:outputText value="#{comissao.valor}">
                 					<f:convertNumber maxFractionDigits="2" minFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="7"/>
                 				</h:outputText>
                 				<f:facet name="footer">
                 					<h:outputText value="Total: R$ " style="float: left;"/> 
-                					<h:outputText value="#{ocControl.totalComissaoVendedor}" style="float: left;">
+                					<h:outputText value="#{comissaoVendedorControl.totalComissaoVendedor}" style="float: left;">
                 						<f:convertNumber maxFractionDigits="2" minFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="7"/>
                 					</h:outputText>
                 				</f:facet>
