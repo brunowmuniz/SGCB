@@ -8,7 +8,7 @@
 	<ui:composition template="../template/template.xhtml">
 		<ui:define name="conteudo">
 			<h:form id="form">
-				<p:panel header="Lista de Lançamentos Por Data" id="principal">
+				<p:panel header="Lista de Vales Por Data" id="principal">
 					<p:messages id="msgs"/>
 					<h:panelGrid columns="2" id="dataslancamento">
 						<p:outputLabel for="datainicial" value="Data Inicial: "/>
@@ -29,7 +29,7 @@
 					 				disabled="#{lancamentoControl.lancamento.qtdeParcela == 1 or lancamentoControl.lancamento.qtdeParcela == lancamentoControl.lancamento.parcela}"
 					 				actionListener="#{lancamentoControl.deletarLote}"/>
 					 </p:contextMenu>
-					<p:dataTable id="entradalancamento" value="#{lancamentoControl.listaLancamentoGeralAll('lancamento')}" var="lancamento" lazy="true" emptyMessage="Sem parcelas a vencer" paginator="true"
+					<p:dataTable id="entradalancamento" value="#{lancamentoControl.listaLancamentoGeralAll('vale')}" var="lancamento" lazy="true" emptyMessage="Sem parcelas a vencer" paginator="true"
 								selection="#{lancamentoControl.lancamento}" selectionMode="single" rows="25"
 								paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
 		             			rowsPerPageTemplate="25,50,100" rowKey="#{lancamento.id}" editable="true">
@@ -37,8 +37,8 @@
 		             	<p:ajax event="rowEdit" listener="#{lancamentoControl.alterar}" process="entradalancamento" update=":form:msgs"/>
 		             	<p:ajax event="rowSelect" update=":form:ctxlancamento"/>
 						
-						<p:column headerText="Conta Contábil" filterBy="#{lancamento.contacontabil.id}" filterOptions="#{contaContabilControl.listaContasCombo('filter')}" filterMatchMode="exact">
-							<h:outputText value="#{lancamento.contacontabil.nome}" />
+						<p:column headerText="Funcionário" filterBy="#{lancamento.usuario.id}" filterOptions="#{usuarioControl.listaTodosUsuariosAtivosCombo('filter')}" filterMatchMode="exact">
+							<h:outputText value="#{lancamento.usuario.nome}" />
 						</p:column>
 									
 						<p:column headerText="Descrição">
@@ -100,8 +100,8 @@
 		</ui:define>
 		<ui:define name="rodape">
 			<p:panel header="Descritivo Tela" styleClass="rodape">
-	    		<p:outputLabel value="Tela com a lista de todos os lançamentos (entrada/saída) do período (exceto vales)." styleClass="rodape_esquerda"/>
-	    		<p:outputLabel value="listalancamento.jsf" styleClass="rodape_direita"/>
+	    		<p:outputLabel value="Tela com a lista de todos os lançamentos que são vales." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="listalancamentovales.jsf" styleClass="rodape_direita"/>
 	    	</p:panel>
 		</ui:define>
 	</ui:composition>

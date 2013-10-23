@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form id="form">
+				<p:panel header="Lista de Assistências Técnicas" id="principal">
+					<p:messages id="msgs"/>					
+					<h:panelGrid columns="2">
+						<p:outputLabel value="Data Inicial: " for="dtInicial" />
+						<p:calendar value="#{assistenciaTecnicaControl.dataInicial}" pattern="dd/MM/yyyy" id="dtInicial"/>
+						
+						<p:outputLabel value="Data Final: " for="dtFinal" />
+						<p:calendar value="#{assistenciaTecnicaControl.dataFinal}" pattern="dd/MM/yyyy" id="dtFinal"/>
+						
+						<p:commandButton value="Pesquisar" update="@form"/>						
+					</h:panelGrid>
+												
+                 	<p:dataTable var="at" value="#{assistenciaTecnicaControl.listaATGeralAll}" id="at" emptyMessage="Sem assistência técniva cadastrado para o período!" paginator="true"
+							lazy="true" rows="20" rowKey="#{at.id}"
+							paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+	         				rowsPerPageTemplate="20,30,50">
+		                  <p:column headerText="Cód.">
+		                 	<h:outputText value="#{at.id}"/>
+		                 </p:column>		                 
+		                 <p:column headerText="Data">
+		                 	<h:outputText value="#{at.datainicio}">
+		                 		<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"/>
+		                 	</h:outputText>
+		                 </p:column>		                 
+		                 <p:column headerText="Produto(s)">
+		                 	<p:dataList value="#{at.ocprodutos}" var="ocproduto">
+		                 		<h:outputText value="#{ocproduto.produto.fornecedor.nome} - #{ocproduto.produto.descricao} - #{ocproduto.quantidade} unid." />
+		                 		<br />               		
+		                 	</p:dataList>	                 	
+		                 </p:column>
+		                 <p:column headerText="OC" rendered="false">
+		                 	<h:outputText value="#{at.ocprodutos.get(0).oc.id}" />
+		                 </p:column>
+		                 <p:column headerText="Imprimir" width="20" style="padding-left: 5px;">
+		                 	<p:commandButton action="#{assistenciaTecnicaControl.impressaoAT(at)}" ajax="false" icon="ui-icon-print"/>	
+		                 </p:column>	                 
+	            	 </p:dataTable>	            	 
+             	</p:panel>
+			</h:form>
+		</ui:define>
+		<ui:define name="rodape">
+			<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela com informação a respeito das solicitações de assistência técnicas." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="controleat.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
+		</ui:define>
+	</ui:composition>
+</html>

@@ -20,9 +20,9 @@
 						<h:outputText value="#{pedidoControl.pedido.fornecedor.nome}" id="fornecedor" styleClass="negrito" rendered="#{pedidoControl.pedido.id != null}"/>
 						<p:inplace event="click" id="fornecedorins" label="Selecione um fornecedor" rendered="#{pedidoControl.pedido.id == null}">
 							<p:selectOneMenu required="true" value="#{pedidoControl.pedido.fornecedor.id}" id="fornecedorsel" requiredMessage="Selecione um fornecedor!">
-								<f:selectItem itemValue="0" itemLabel="Selecione Fornecedor" noSelectionOption="true"/>							
+								<f:selectItem itemValue="0" itemLabel="Selecione Fornecedor" noSelectionOption="true"/>
 								<f:selectItems value="#{fornecedoresControl.listaFornecedorCombo}"/>
-								<p:ajax event="change" process="@this"/>						
+								<p:ajax event="change" process="@this" update="btnbuscaproduto"/>
 							</p:selectOneMenu>
 						</p:inplace>
 						
@@ -42,8 +42,10 @@
 							<f:convertDateTime locale="pt_BR" pattern="dd/MM/yyyy"/>
 						</h:outputText>
 									
-						<p:commandButton value="Adicionar Produto" id="btnbuscaproduto" oncomplete="modalbuscaproduto.show()" action="#{pedidoControl.limparPedidoProduto}" actionListener="#{pedidoControl.limparProduto}" update="modalbuscaproduto" process="@this"
-									rendered="#{pedidoControl.pedido.datachegada == null or pedidoControl.pedido.id == null}" />
+						<p:commandButton value="Adicionar Produto" id="btnbuscaproduto" oncomplete="modalbuscaproduto.show()" action="#{pedidoControl.limparPedidoProduto}" 
+										 actionListener="#{pedidoControl.limparProduto}" update="modalbuscaproduto" process="@this"
+										 rendered="#{pedidoControl.pedido.datachegada == null or pedidoControl.pedido.id == null}"
+										 disabled="#{pedidoControl.pedido.fornecedor.id == null}" />
 																						
 						<p:commandButton value="Alterar Pedido" actionListener="#{pedidoControl.alterar}" update=":form:msgs,listaproduto"
 									 rendered="#{pedidoControl.pedido.datachegada == null and pedidoControl.pedido.id != null}"/>
@@ -81,6 +83,9 @@
 										<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1"/>
 										<p:ajax event="blur" process="@this" update="@this"/>
 									</p:inputText>
+									
+									<p:outputLabel for="temmontagem" value="Tem Montagem: "/>
+									<p:selectBooleanCheckbox id="temmontagem" value="#{pedidoControl.pedidoproduto.produto.temMontagem}"/>
 									
 									<p:outputLabel for="quantidade" value="Quantidade: " />
 									<p:spinner  value="#{pedidoControl.pedidoproduto.quantidade}" id="quantidade" immediate="true" min="1" max="999">

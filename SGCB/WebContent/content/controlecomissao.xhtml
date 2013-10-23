@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form>				
+				<p:panel header="Controle de Comissões">
+					<h:panelGrid columns="2" id="filtro">
+						<p:outputLabel for="dataInicial" value="Período Inicial: "/>
+						<p:calendar value="#{comissaoControl.dataInicial}" pattern="dd/MM/yyyy" locale="pt" id="dataInicial">
+							<p:ajax event="dateSelect" process="@this"/>
+						</p:calendar>
+						<p:outputLabel for="dataFinal" value="Período Final: "/>
+						<p:calendar value="#{comissaoControl.dataFinal}" pattern="dd/MM/yyyy" locale="pt" id="dataFinal">
+							<p:ajax event="dateSelect" process="@this"/>
+						</p:calendar>												
+						<p:commandButton process="filtro" update="@form" value="Pesquisar"/>
+					</h:panelGrid>
+					<p:dataTable var="usuario" value="#{comissaoControl.listaComissaoUsuarios()}" selection="#{comissaoControl.comissao.usuario}"
+						emptyMessage="Sem comissões para o período selecionado!">
+						<p:column headerText="Funcionário">
+							#{usuario.nome}
+						</p:column>
+						<p:column headerText="Função">
+							#{usuario.perfil.descricao}
+						</p:column>
+						<p:column headerText="Comissão Montador">
+							<h:outputText value="R$ "/>	
+							<h:outputText value="#{usuario.totalComissaoMontador}" >
+								<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Comissão Vendedor">
+							<h:outputText value="R$ "/>
+							<h:outputText value="#{usuario.totalComissaoVendedor}">
+								<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+							</h:outputText>							
+						</p:column>
+						<p:column headerText="Comissão Loja">
+							<h:outputText value="R$ "/>
+							<h:outputText value="#{usuario.totalComissaoLoja}">
+								<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Total de Vales">
+							<h:outputText value="R$ #{usuario.totalValeFuncionario != 0 ? '-' : ''}" styleClass="debito"/>
+							<h:outputText value="#{usuario.totalValeFuncionario}" styleClass="debito">
+								<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Total das Comissões">
+							<h:outputText value="R$ " styleClass="negrito"/>
+							<h:outputText value="#{(usuario.totalComissaoLoja + usuario.totalComissaoMontador + usuario.totalComissaoVendedor) - usuario.totalValeFuncionario}" 
+											styleClass="negrito">
+								<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+							</h:outputText>
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+			</h:form>
+		</ui:define>
+		<ui:define name="rodape">
+			<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela de controle de comissões dos funcionários com perfis de vendedores, montadores e financeiro." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="controlecomissao.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
+		</ui:define>
+	</ui:composition>
+</html>
