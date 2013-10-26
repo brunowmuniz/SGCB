@@ -21,6 +21,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -50,6 +51,11 @@ public class Pagamento implements java.io.Serializable {
 		this.condicoesPagamento = condicoesPagamento;
 		this.oc = oc;
 		this.datalancamento = datalancamento;
+	}
+	
+	public Pagamento(CondicoesPagamento condicoesPagamento, Double valor){
+		this.valor = valor.floatValue();
+		this.condicoesPagamento = condicoesPagamento;
 	}
 
 	public Pagamento(CondicoesPagamento condicoesPagamento, Oc oc, Date datalancamento,
@@ -146,6 +152,13 @@ public class Pagamento implements java.io.Serializable {
 		this.valor = valor;
 	}
 
+	/*@Override
+	public String toString() {
+		return "Pagamento [condicoesPagamento=" + condicoesPagamento.getFormapagamento().getNome()
+				+ ", valor=" + valor + "]";
+	}*/
+	
+	
 	@Override
 	public String toString() {
 		return "Pagamento [id=" + id + ", datalancamento=" + datalancamento
@@ -153,71 +166,7 @@ public class Pagamento implements java.io.Serializable {
 				+ ", valor=" + valor + "]";
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime
-				* result
-				+ ((condicoesPagamento == null) ? 0 : condicoesPagamento
-						.hashCode());
-		result = prime * result
-				+ ((datalancamento == null) ? 0 : datalancamento.hashCode());
-		result = prime * result + ((deleted == null) ? 0 : deleted.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((oc == null) ? 0 : oc.hashCode());
-		result = prime * result
-				+ ((parcelas == null) ? 0 : parcelas.hashCode());
-		result = prime * result + ((valor == null) ? 0 : valor.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Pagamento other = (Pagamento) obj;
-		if (condicoesPagamento == null) {
-			if (other.condicoesPagamento != null)
-				return false;
-		} else if (!condicoesPagamento.equals(other.condicoesPagamento))
-			return false;
-		if (datalancamento == null) {
-			if (other.datalancamento != null)
-				return false;
-		} else if (!datalancamento.equals(other.datalancamento))
-			return false;
-		if (deleted == null) {
-			if (other.deleted != null)
-				return false;
-		} else if (!deleted.equals(other.deleted))
-			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (oc == null) {
-			if (other.oc != null)
-				return false;
-		} else if (!oc.equals(other.oc))
-			return false;
-		if (parcelas == null) {
-			if (other.parcelas != null)
-				return false;
-		} else if (!parcelas.equals(other.parcelas))
-			return false;
-		if (valor == null) {
-			if (other.valor != null)
-				return false;
-		} else if (!valor.equals(other.valor))
-			return false;
-		return true;
-	}
+	
 	
 	
 }

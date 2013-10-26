@@ -1,6 +1,8 @@
 package br.com.casabemestilo.DAO;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.HibernateException;
@@ -92,6 +94,25 @@ public class PagamentoDAO implements InterfaceDAO, Serializable {
 			HibernateException, ConstraintViolationException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public List<Pagamento> calculaSaldoAnterior(Date dataLancamento){
+		session = Conexao.getInstance();
+		listaPagamento = new ArrayList<Pagamento>();
+		listaPagamento = session.createQuery("select "+ 
+													"new Pagamento(pagamento.condicoesPagamento, sum(pagamento.valor)) "+
+												"from "+
+													"Pagamento pagamento "+		
+												" where "+
+													"pagamento.oc.status.id not in (1,2,10) " +
+												" and " +
+													"pagamento.datalancamento < :dataLancamento"+
+												" group by pagamento.condicoesPagamento.formapagamento.id")
+										.setDate("dataLancamento",dataLancamento)
+										.setCacheable(true)
+										.list();
+		session.close();
+		return listaPagamento;
 	}
 
 

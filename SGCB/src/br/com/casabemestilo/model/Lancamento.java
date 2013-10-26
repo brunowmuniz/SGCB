@@ -56,6 +56,12 @@ public class Lancamento implements java.io.Serializable {
 		this.valor = valor;
 	}
 
+	public Lancamento(Contacontabil contacontabil, Formapagamento formapagamento,  Double valor){
+		this.formapagamento = formapagamento;
+		this.contacontabil = contacontabil;
+		this.valor = valor.floatValue();
+	}
+	
 	public Lancamento(int id, Contacontabil contacontabil,
 			String descricao, float valor, Boolean deleted, Lancamento lancamentoPai) {
 		this.id = id;
@@ -199,5 +205,13 @@ public class Lancamento implements java.io.Serializable {
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
 	}
+
+	@Override
+	public String toString() {
+		return "Lancamento [contacontabil=" + contacontabil.getNome() + ", Tipo=" + contacontabil.getTipo() + ", valor="
+				+ valor + ", formapagamento=" + formapagamento.getNome() + "]";
+	}
+	
+	
 	
 }

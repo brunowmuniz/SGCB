@@ -1,7 +1,10 @@
 package br.com.casabemestilo.model;
 
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class Movimentacao {
@@ -10,19 +13,18 @@ public class Movimentacao {
 	
 	private TipoMovimentacao tipoMovimentacao;
 	
-	private List<Formapagamento> pagamentos;
+	private List<Pagamento> pagamentos;
 	
-	private Double valor;
 	
+	private Lancamento lancamento;	
 	
 	
 	public Movimentacao(String descricao, TipoMovimentacao tipoMovimentacao,
-			List<Formapagamento> pagamentos, Double valor) {
+			List<Pagamento> pagamentos) {
 		super();
 		this.descricao = descricao;
 		this.tipoMovimentacao = tipoMovimentacao;
 		this.pagamentos = pagamentos;
-		this.valor = valor;
 	}
 	
 	public Movimentacao() {
@@ -46,13 +48,22 @@ public class Movimentacao {
 		this.tipoMovimentacao = tipoMovimentacao;
 	}
 
-	public List<Formapagamento> getPagamentos() {
+	public List<Pagamento> getPagamentos() {
 		return pagamentos;
 	}
 
-	public void setPagamentos(List<Formapagamento> pagamentos) {
+	public void setPagamentos(List<Pagamento> pagamentos) {
 		this.pagamentos = pagamentos;
 	}
 
+	public Lancamento getLancamento() {
+		return lancamento;
+	}
+
+	public void setLancamento(Lancamento lancamento) {
+		this.lancamento = lancamento;
+	}
 	
+	
+		
 }
