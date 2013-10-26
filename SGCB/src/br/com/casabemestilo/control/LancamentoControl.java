@@ -83,8 +83,13 @@ public class LancamentoControl extends Control implements InterfaceControl,
 	public void gravar() {		
 		try {
 			lancamentoDAO = new LancamentoDAO();
-			lancamento.setDeleted(false);
+			lancamento.setDeleted(false);			
 			lancamento.setContacontabil(new ContaContabilDAO().buscaObjetoId(lancamento.getContacontabil().getId()));
+			
+			if(lancamento.getContacontabil().getTipo().equals("D")){
+				lancamento.setValor(- lancamento.getValor());
+			}
+			
 			if(!lancamento.getEhVale()){
 				lancamento.setUsuario(null);
 			}
@@ -283,11 +288,7 @@ public class LancamentoControl extends Control implements InterfaceControl,
 		return listaLancamento;
 	}
 	
-	public List<LancamentoControl> listaCaixa(){
-		lancamento = new Lancamento();
-		return null;
-	}
-	
+		
 	/*
 	 * GETTERS & SETTERS
 	 * */

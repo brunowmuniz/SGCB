@@ -351,25 +351,6 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		return listaVendasMesAno;
 	}
 	
-	/*
-	 * GETTERS & SETTERS
-	 * */
-	public List<Oc> getListaOc() {
-		return listaOc;
-	}
-
-	public void setListaOc(List<Oc> listaOc) {
-		this.listaOc = listaOc;
-	}
-
-	public Oc getOc() {
-		return oc;
-	}
-
-	public void setOc(Oc oc) {
-		this.oc = oc;
-	}
-
 	public Double buscaVendasBruto(Date dataInicial, Date dataFinal) {
 		session = Conexao.getInstance();
 		Double totalVendasBruto = (Double) session.createQuery("select" +
@@ -438,11 +419,38 @@ public class OcDAO implements InterfaceDAO, Serializable {
 	}
 
 	public List<Oc> buscaOcDia(Date dataLancamento) {
-		// TODO Auto-generated method stub
-		return null;
+		session = Conexao.getInstance();
+		listaOc = new ArrayList<Oc>();
+		listaOc = session.createQuery("from Oc oc" +
+											" where" +
+												" oc.datalancamento = :dataLancamento" +
+											" and" +
+												" oc.status.id not in(1,2,10)")
+									.setDate("dataLancamento", dataLancamento)
+									.setCacheable(true)
+									.list();
+		session.close();
+		return listaOc;	
+	}
+	
+	
+	/*
+	 * GETTERS & SETTERS
+	 * */
+	public List<Oc> getListaOc() {
+		return listaOc;
 	}
 
-	
-	
+	public void setListaOc(List<Oc> listaOc) {
+		this.listaOc = listaOc;
+	}
+
+	public Oc getOc() {
+		return oc;
+	}
+
+	public void setOc(Oc oc) {
+		this.oc = oc;
+	}	
 
 }

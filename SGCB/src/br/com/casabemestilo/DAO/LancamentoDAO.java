@@ -256,6 +256,42 @@ public class LancamentoDAO implements InterfaceDAO, Serializable {
 		return listaLancamento;
 	}
 	
+	public List<Lancamento> lancamentoDia(Date dataLancamento) {
+		session = Conexao.getInstance();
+		listaLancamento = new ArrayList<Lancamento>();
+		listaLancamento = session.createQuery("from Lancamento lancamento" +
+													" where " +
+														" lancamento.dataLancamento = :dataLancamento" +
+													" and" +
+												 		" (lancamento.ehVale = false or" +
+												 			" (lancamento.ehVale = true and lancamento.formapagamento = 3))")
+								 .setDate("dataLancamento", dataLancamento)
+								 .setCacheable(true)
+								 .list();
+		session.close();
+		return listaLancamento;
+	}
+	
+	public List<Lancamento> calculaSaldoAnterior(Date dataLancamento) {
+		session = Conexao.getInstance();
+		listaLancamento = new ArrayList<Lancamento>();
+		listaLancamento = session.createQuery("select"+
+													" new Lancamento(lancamento.contacontabil, lancamento.formapagamento, sum(lancamento.valor))"+
+												" from"+
+											 		" Lancamento lancamento"+
+											 	" where" +
+											 		 " lancamento.dataLancamento < :dataLancamento" +
+											 	" and" +
+											 		" (lancamento.ehVale = false or" +
+											 			" (lancamento.ehVale = true and lancamento.formapagamento = 3))"+
+												" group by lancamento.formapagamento.id")
+								.setDate("dataLancamento", dataLancamento)
+								.setCacheable(true)
+								.list();
+		session.close();
+		return listaLancamento;
+	}
+	
 	/*
 	 * GETTERS & SETTERS
 	 * */
@@ -281,13 +317,6 @@ public class LancamentoDAO implements InterfaceDAO, Serializable {
 	public void setLancamento(Lancamento lancamento) {
 		this.lancamento = lancamento;
 	}
-
-	public List<Lancamento> lancamentoDia(Date dataLancamento) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	
-
 	
 }
