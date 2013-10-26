@@ -66,18 +66,25 @@
                  				<f:convertNumber maxIntegerDigits="7" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2" locale="pt_BR"/>
                  			</h:outputText>
                  		</p:column>
-                 		<p:columns var="formaspagamento" value="#{formaPagamentoControl.listarAtivos()}">
+                 		
+                 		<p:columnGroup type="header">
                  			<f:facet name="header">
-                 				#{formaspagamento.nome}
+                 				Entradas
                  			</f:facet>
-                 			<ui:repeat var="pagamento" value="#{comissao.oc.pagamentos}">                 				
-                 				<h:outputText value="R$ " rendered="#{pagamento.condicoesPagamento.formapagamento.id == formaspagamento.id}"/>
-                 				<h:outputText value="#{pagamento.valor}" rendered="#{pagamento.condicoesPagamento.formapagamento.id == formaspagamento.id}">
-                 					<f:convertNumber maxFractionDigits="2" minFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="7"/>
-                 				</h:outputText>
-                 				<h:outputText value=" - #{pagamento.condicoesPagamento.nome}" rendered="#{pagamento.condicoesPagamento.formapagamento.id == formaspagamento.id}" styleClass="negrito"/>
-                 			</ui:repeat>
-                 		</p:columns>
+                 			<p:columns var="formaspagamento" value="#{formaPagamentoControl.listarAtivos()}">
+	                 			<f:facet name="header">
+	                 				#{formaspagamento.nome}
+	                 			</f:facet>
+	                 			<ui:repeat var="pagamento" value="#{comissao.oc.pagamentos}">                 				
+	                 				<h:outputText value="R$ " rendered="#{pagamento.condicoesPagamento.formapagamento.id == formaspagamento.id}"/>
+	                 				<h:outputText value="#{pagamento.valor}" rendered="#{pagamento.condicoesPagamento.formapagamento.id == formaspagamento.id}">
+	                 					<f:convertNumber maxFractionDigits="2" minFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="7"/>
+	                 				</h:outputText>
+	                 				<h:outputText value=" - #{pagamento.condicoesPagamento.nome}" rendered="#{pagamento.condicoesPagamento.formapagamento.id == formaspagamento.id}" styleClass="negrito"/>
+	                 			</ui:repeat>
+	                 		</p:columns>
+                 		</p:columnGroup>
+                 		
                  		<p:column headerText="Comissão">                 			               			
                  			<h:outputText value="R$ "/>
                 				<h:outputText value="#{comissao.valor}">

@@ -27,13 +27,14 @@
 						<p:outputLabel value="Conta Contábil: " for="conta"/>
 						<p:selectOneMenu id="conta" value="#{lancamentoControl.lancamento.contacontabil.id}" required="true">
 							<f:selectItem noSelectionOption="Escolha uma conta" itemLabel=""/>
-							<f:selectItems value="#{contaContabilControl.listaContasCombo('')}"/>							
+							<f:selectItems value="#{contaContabilControl.listaContasCombo('')}"/>
+							<p:ajax event="change" process="@this" update="valorlancamento"/>						
 						</p:selectOneMenu>
 						
 						<p:outputLabel value="Forma de Pagamento/Recebimento: " for="formapgtorecbmto"/>
 						<p:selectOneMenu id="formapgtorecbmto" value="#{lancamentoControl.lancamento.formapagamento.id}" required="true">
 							<f:selectItem noSelectionOption="Escolha uma Forma" itemLabel=""/>
-							<f:selectItems value="#{formaPagamentoControl.listaFormaPagamentoCombo}"/>							
+							<f:selectItems value="#{formaPagamentoControl.listaFormaPagamentoCombo}"/>													
 						</p:selectOneMenu>
 						
 						<p:outputLabel for="ehvale" value="É Vale?: "/>
