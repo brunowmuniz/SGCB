@@ -8,76 +8,70 @@
 	<ui:composition template="../template/template.xhtml">
 		<ui:define name="conteudo">
 			<h:form id="form">
-				<p:panel header="Listagem de Caixa">				
-				<p:dataTable id="dataTable" var="car" value="#{lancamentoControl.listaCaixa}"
-                 paginator="true" rows="10"
-                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                 rowsPerPageTemplate="5,10,15">
-                 <p:column>
-          			  <f:facet name="header">
-            		    <h:outputText value="Data" />
-           			 </f:facet>
-           			 <h:outputText value="#{caixa.data}" />
-        		</p:column>
-
-		        <p:column>
-        		    <f:facet name="header">
-            	    	<h:outputText value="Descrição" />
-            		</f:facet>
-            		<h:outputText value="#{caixa.descricao}" />
-        		</p:column>
-
-		        <p:column>
-        		    <f:facet name="header">
-                		<h:outputText value="Dinheiro" />
-            		</f:facet>
-           			<h:outputText value="#{caixa.dinheiro}" />
-       			 </p:column>
-		
-				<p:column>
-        		    <f:facet name="header">
-                		<h:outputText value="Cheque" />
-            		</f:facet>
-        		    <h:outputText value="#{caixa.cheque}" />
-        		</p:column>
-		
-        		<p:column>
-       			     <f:facet name="header">
-       			         <h:outputText value="Vale" />
-       			     </f:facet>
-       			     <h:outputText value="#{caixa.saida}" />
-       			 </p:column>
-        		<p:column>
-      			      <f:facet name="header">
-        			      <h:outputText value="Visa" />
-       				  </f:facet>
-       			     <h:outputText value="#{caixa.saida}" />
-       			</p:column>
-        		<p:column>
-            		<f:facet name="header">
-                		<h:outputText value="Master Card" />
-            		</f:facet>
-            		<h:outputText value="#{caixa.saida}" />
-        		</p:column>
-               	<p:column>
-            		<f:facet name="header">
-                		<h:outputText value="Hipercard" />
-            		</f:facet>
-            		<h:outputText value="#{caixa.saida}" />
-        		</p:column>  
-        		<p:column>
-            		<f:facet name="header">
-                		<h:outputText value="Banricompras" />
-            		</f:facet>
-            		<h:outputText value="#{caixa.saida}" />
-        		</p:column>
-        		<p:column>
-        		    <f:facet name="header">
-        		        <h:outputText value="Saldo" />
-            		</f:facet>
-            		<h:outputText value="#{caixa.saida}" />
-        		</p:column>
-                 </p:dataTable>
+				<p:panel header="Controle de Caixa">
+					<p:messages id="msgs"/>
+					
+					<h:panelGrid columns="2">
+						<p:outputLabel for="dataLancamento" value="Caixa do dia: "/>
+						<p:calendar value="#{movimentacaoControl.dataLancamento}" pattern="dd/MM/yyyy" locale="pt" id="dataLancamento">
+							<p:ajax event="dateSelect" process="@this" update="@form"/>
+						</p:calendar>
+					</h:panelGrid>
+									
+					<p:dataTable id="movimentacao" var="movimentacao" value="#{movimentacaoControl.listaCaixa()}"
+								 emptyMessage="Sem registros no caixa!">							 
+		                <p:column>
+		          			 <f:facet name="header">
+		            		    <h:outputText value="Descrição" />
+		           			 </f:facet>
+		           			 
+		           			 <f:facet name="footer">
+		            		    <h:outputText value="Total: " />
+		           			 </f:facet>
+		           			 
+		           			 <h:outputText value="#{movimentacao.descricao}" />
+		        		</p:column>	        				
+						
+	        		    <p:columns var="formaspagamento" value="#{formaPagamentoControl.listarAtivos()}">
+	               			<f:facet name="header">
+	               				#{formaspagamento.nome}
+	               			</f:facet>
+	               			
+	               			<!-- Corrigir o primeiro carregamento -->
+	               			<f:facet name="footer">               				
+	               				<h:outputText value="R$ "/>
+	               				<h:outputText value="#{movimentacaoControl.totalMomentoFormaPagamento(formaspagamento.id)}" styleClass="negrito">
+		               				<f:convertNumber maxFractionDigits="2" minFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="8"/>
+		               			</h:outputText>  
+	               			</f:facet>
+	               			
+	               			<ui:repeat var="pagamento" value="#{movimentacao.pagamentos}">                 				
+	               				<h:outputText value="R$ " rendered="#{pagamento.condicoesPagamento.formapagamento.id == formaspagamento.id}" styleClass="#{movimentacaoControl.defineEstiloLancamento(pagamento.valor)}"/>
+	               				<h:outputText value="#{pagamento.valor}" rendered="#{pagamento.condicoesPagamento.formapagamento.id == formaspagamento.id}" styleClass="#{movimentacaoControl.defineEstiloLancamento(pagamento.valor)}">
+	               					<f:convertNumber maxFractionDigits="2" minFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="7"/>
+	               				</h:outputText>               				
+	               			</ui:repeat>
+	               			
+	               			<h:outputText value="R$ " rendered="#{movimentacao.lancamento.formapagamento.id == formaspagamento.id}" styleClass="#{movimentacaoControl.defineEstiloLancamento(pagamento.valor)}"/>	               			
+	               			<h:outputText value="#{movimentacao.lancamento.valor}" rendered="#{movimentacao.lancamento.formapagamento.id == formaspagamento.id}" styleClass="#{movimentacaoControl.defineEstiloLancamento(pagamento.valor)}">
+	               				<f:convertNumber maxFractionDigits="2" minFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="7"/>
+	               			</h:outputText>             			
+	               		</p:columns>
+	               		      		                   		
+	                 </p:dataTable>
+	                 <h:panelGrid columns="3">
+						<p:outputLabel for="saldoInicialGeral" value="Saldo Inicial: "/>
+						<h:outputText value="R$ "  styleClass="negrito" />
+						<h:outputText value="#{movimentacaoControl.calculaSaldoInicialDia()}" id="saldoInicialGeral" styleClass="negrito">
+               				<f:convertNumber maxFractionDigits="2" minFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="8"/>
+               			</h:outputText>
+						<p:outputLabel for="saldoInicialAtual" value="Saldo Atual: "/>
+						<h:outputText value="R$ "  styleClass="negrito" />
+						<h:outputText value="#{movimentacaoControl.calculaSaldoAtualDia()}" id="saldoInicialAtual"
+									  styleClass="negrito">
+               				<f:convertNumber maxFractionDigits="2" minFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="8"/>
+               			</h:outputText> 					
+					</h:panelGrid>
 				</p:panel>
 			</h:form>
 		</ui:define>
