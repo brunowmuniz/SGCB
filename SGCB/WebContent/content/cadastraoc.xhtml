@@ -17,6 +17,24 @@
 							<h:outputText value="#{ocControl.oc.id == null ? 'Nova OC' : ocControl.oc.id}"  id="numero" style="width: 100px; " styleClass="negrito" update="cadastro"/>
 							<p:spacer width="10px"/>
 							
+							<p:outputLabel for="status" value="Status OC:"/>
+							<h:outputText value="#{ocControl.oc.status.descricao}" id="status" styleClass="negrito status_#{ocControl.oc.status.id}"/>
+							<p:spacer width="10px"/>
+							
+							<p:commandButton value="Gravar OC" action="#{ocControl.gravar}" ajax="false" rendered="#{ocControl.oc.id == null}"/>							
+							<p:commandButton value="Alterar OC" action="#{ocControl.alterar}" ajax="false" rendered="#{ocControl.oc.id != null and (ocControl.oc.status.id == 1 or ocControl.oc.status.id == 2 or ocControl.oc.status.id == 7)}"/>
+							<br />
+							
+							<p:outputLabel for="filialoc" value="Filial: "/>
+							<p:selectOneMenu value="#{ocControl.oc.filial.id}" size="1" id="filialoc" required="#{ocControl.oc.id == null}"
+											 requiredMessage="Favor selecionar a filial" rendered="#{ocControl.oc.id == null}">
+								<f:selectItem itemLabel="Selecione a filial" itemValue="" noSelectionOption="true"/>
+								<f:selectItems value="#{filialControl.listaFilialCombo}"/>
+							</p:selectOneMenu>
+							<h:outputText value="#{ocControl.oc.filial.nome}" rendered="#{ocControl.oc.id != null}" styleClass="negrito"/>
+													
+							<p:spacer width="10px"/>
+							
 							<p:outputLabel for="vendedor" value="Vendedor: "/>
 							<p:inplace event="click" id="vendedor" label="Selecione um vendedor" rendered="#{ocControl.oc.id == null}">
 								<p:selectOneMenu value="#{ocControl.oc.usuario.id}" size="1">
@@ -24,24 +42,20 @@
 									<f:selectItems value="#{usuarioControl.listaVendedorFilial}"/>
 								</p:selectOneMenu>
 							</p:inplace>
-							<h:outputText value="#{ocControl.oc.usuario.nome}" rendered="#{ocControl.oc.id != null}" styleClass="negrito"/>							
+							<h:outputText value="#{ocControl.oc.usuario.nome}" rendered="#{ocControl.oc.id != null}" styleClass="negrito"/>
 							
-							<p:spacer width="10px"/>
+							<p:spacer width="1px"/>
+							<p:spacer width="1px"/>
+							<p:spacer width="1px"/>
 							
-							<p:commandButton value="Gravar OC" action="#{ocControl.gravar}" ajax="false" rendered="#{ocControl.oc.id == null}"/>							
-							<p:commandButton value="Alterar OC" action="#{ocControl.alterar}" ajax="false" rendered="#{ocControl.oc.id != null and (ocControl.oc.status.id == 1 or ocControl.oc.status.id == 2 or ocControl.oc.status.id == 7)}"/>
-							<br />
-							<p:outputLabel for="status" value="Status OC:"/>
-							<h:outputText value="#{ocControl.oc.status.descricao}" id="status" styleClass="negrito status_#{ocControl.oc.status.id}"/>
-							<p:spacer width="10px"/>
-							
+												
 							<p:outputLabel for="#{ocControl.oc.id == null ? 'dataedicao' : 'data'}" value="Data: "/>
 							<h:outputText value="#{ocControl.oc.datalancamento}" id="dataedicao" style="width: 100px;" styleClass="negrito"
 											rendered="#{ocControl.oc.id != null}">									
 								<f:convertDateTime pattern="dd/MM/yyyy"/>									
 							</h:outputText>							
-							<p:calendar value="#{ocControl.oc.datalancamento}" id="data" pattern="dd/MM/yyyy" locale="pt" rendered="#{ocControl.oc.id == null}" />							
-																		
+							<p:calendar value="#{ocControl.oc.datalancamento}" id="data" pattern="dd/MM/yyyy" locale="pt" rendered="#{ocControl.oc.id == null}" />	
+														
 						</h:panelGrid>
 						<p:tabView id="oc">																																							 
 							<p:tab title="Dados do Cliente">								
