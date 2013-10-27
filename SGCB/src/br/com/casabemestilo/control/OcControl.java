@@ -1,9 +1,14 @@
 package br.com.casabemestilo.control;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +20,17 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanArrayDataSource;
 
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
@@ -48,6 +64,7 @@ import br.com.casabemestilo.model.Parcela;
 import br.com.casabemestilo.model.Produto;
 import br.com.casabemestilo.model.Status;
 import br.com.casabemestilo.model.Usuario;
+import br.com.casabemestilo.util.ConnectionFactory;
 
 @ManagedBean
 @ViewScoped
@@ -714,6 +731,45 @@ public class OcControl extends Control implements InterfaceControl,
 		ocDAO = new OcDAO();
 		Double totalFretePago = ocDAO.buscaFretePago(dataInicial, dataFinal);
 		return totalFretePago;
+	}
+	
+	public void impressaoOc(Oc oc){		
+		try {
+			FacesContext context = FacesContext.getCurrentInstance();
+			HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();			
+			InputStream caminho = null;
+			HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+			listaOc = new ArrayList<Oc>();
+			
+			caminho = getClass().getResourceAsStream("../relatorio/oc.jrxml");
+			response.setContentType("application/pdf");			
+			
+			response.setHeader("Content-Disposition","attachment; filename=\"OC:" + oc.getId() +" - " + oc.getCliente().getNome() +".pdf\"");
+			JasperReport pathReport = JasperCompileManager.compileReport(caminho);
+			
+			listaOc.add(oc);
+			JRDataSource jrds = new JRBeanArrayDataSource(listaOc.toArray());
+			
+			JasperPrint preencher = JasperFillManager.fillReport(pathReport,null,jrds);		
+			JasperExportManager.exportReportToPdfStream(preencher, response.getOutputStream());
+			
+			response.getOutputStream().flush();
+			response.getOutputStream().close();
+			context.renderResponse();
+			context.responseComplete();
+		} catch (IOException e) {
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro IO: " + super.mensagem, ""));
+			e.printStackTrace();
+		} catch(JRException e){
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro JasperReport: " + super.mensagem, ""));
+			e.printStackTrace();
+		}catch (Exception e) {
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Genérico: " + super.mensagem, ""));
+			e.printStackTrace();
+		}
 	}
 	
 	/*

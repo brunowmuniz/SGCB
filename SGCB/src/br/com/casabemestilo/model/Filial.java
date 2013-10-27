@@ -2,8 +2,12 @@ package br.com.casabemestilo.model;
 
 // Generated 24/05/2013 18:36:37 by Hibernate Tools 4.0.0
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -26,7 +30,8 @@ public class Filial implements java.io.Serializable {
 	private Integer id;
 	private String nome;
 	private Boolean deleted;	
-	private Set usuarioFiliais = new HashSet(0);
+	private List<Filial> usuarioFiliais = new ArrayList<Filial>();
+	private List<Oc> ocs = new ArrayList<Oc>();
 
 	public Filial() {
 	}
@@ -69,13 +74,22 @@ public class Filial implements java.io.Serializable {
 		this.deleted = deleted;
 	}
 	
-	@OneToMany(targetEntity = UsuarioFilial.class, mappedBy = "filial")
-	public Set getUsuarioFiliais() {
+	@OneToMany(targetEntity = UsuarioFilial.class, mappedBy = "filial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	public List<Filial> getUsuarioFiliais() {
 		return usuarioFiliais;
 	}
 
-	public void setUsuarioFiliais(Set usuarioFiliais) {
+	public void setUsuarioFiliais(List<Filial> usuarioFiliais) {
 		this.usuarioFiliais = usuarioFiliais;
 	}
 
+	@OneToMany(targetEntity = Oc.class, mappedBy = "filial", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	public List<Oc> getOcs() {
+		return ocs;
+	}
+
+	public void setOcs(List<Oc> ocs) {
+		this.ocs = ocs;
+	}
+	
 }

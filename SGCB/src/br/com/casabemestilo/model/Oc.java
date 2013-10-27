@@ -48,6 +48,7 @@ public class Oc implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private Usuario usuario;
+	private Filial filial;
 	private Status status;
 	private Cliente cliente;
 	private float valorfrete;
@@ -142,6 +143,20 @@ public class Oc implements java.io.Serializable {
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
 	}
+	
+	@ManyToOne
+	@JoinColumn(name = "filial", nullable = false)
+	public Filial getFilial() {
+		if(filial == null){
+			filial = new Filial();
+		}
+		return filial;
+	}
+
+	public void setFilial(Filial filial) {
+		this.filial = filial;
+	}
+
 
 	@ManyToOne
 	@JoinColumn(name = "status", nullable = false)

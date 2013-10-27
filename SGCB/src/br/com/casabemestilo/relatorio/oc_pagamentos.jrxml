@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="oc_pagamentos" pageWidth="307" pageHeight="97" orientation="Landscape" columnWidth="307" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="ddb67b30-fac0-4dbd-8c74-a5fe282d89db">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="nome_formapgto" class="java.lang.String">
+		<fieldDescription><![CDATA[condicoesPagamento.formapagamento.nome]]></fieldDescription>
+	</field>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[condicoesPagamento.nome]]></fieldDescription>
+	</field>
+	<field name="valor" class="java.lang.Float">
+		<fieldDescription><![CDATA[valor]]></fieldDescription>
+	</field>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="708919c2-b6a7-458f-bf14-dfba1b24dbf6" x="0" y="-2" width="134" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Forma de Pagamento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="89c1af27-3c26-4995-9f31-f81dace01bfd" x="134" y="0" width="105" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Condição]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b4850256-233e-4b5b-8359-652b648e7ddf" x="239" y="0" width="68" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement uuid="51a287c1-a1ab-4d2c-9301-0f410f6a7c6e" x="0" y="0" width="134" height="20"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{nome_formapgto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="d435d6a6-a1f3-4f9f-9ab6-9e5f0cef211d" x="134" y="0" width="105" height="20"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00">
+				<reportElement uuid="1012912b-f816-4fce-a1fa-2555d57e2743" x="239" y="0" width="68" height="20"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{valor}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
