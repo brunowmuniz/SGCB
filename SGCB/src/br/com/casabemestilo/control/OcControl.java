@@ -99,6 +99,9 @@ public class OcControl extends Control implements InterfaceControl,
 	private Date dataInicial;
 	
 	private Date dataFinal;
+	
+	private String observacoesFreteMontAT;
+	
 		
 	
 	/*
@@ -153,6 +156,9 @@ public class OcControl extends Control implements InterfaceControl,
 		Produto produto = new Produto();
 		ocproduto.getProduto().setDeleted(false);
 		ocproduto.getProduto().setFornecedor(new FornecedoresDAO().buscaObjetoId(ocproduto.getProduto().getFornecedor().getId()));
+		if(ocproduto.getProduto().getEhPlanejado()){
+			ocproduto.getProduto().setTemMontagem(true);
+		}
 		produto = new ProdutoDAO().gravarProdutoAdicionarOc(ocproduto.getProduto());
 		ocproduto.setOc(this.getOc());
 		ocproduto.getStatus().setId(1);
@@ -619,7 +625,7 @@ public class OcControl extends Control implements InterfaceControl,
 		
 	}
 	
-	public void acaoPoduto(Long idAcao, List<Integer> listaMontadores) {	
+	public void acaoProduto(Long idAcao, List<Integer> listaMontadores) {	
 		try {
 			ocDAO = new OcDAO();
 			if(listaOcProdutoAcao.size() > 0){
@@ -627,10 +633,10 @@ public class OcControl extends Control implements InterfaceControl,
 				Frete frete = new Frete();
 				Assistenciatecnica assistenciatecnica = new Assistenciatecnica();				
 				if(idAcao.intValue() == 6){
-					frete = new FreteControl().gravarFreteOcProduto(getListaOcProdutoAcao(), listaMontadores);
+					frete = new FreteControl().gravarFreteOcProduto(getListaOcProdutoAcao(), listaMontadores, getObservacoesFreteMontAT());
 				}
 				if(idAcao.intValue() == 8){
-					assistenciatecnica = new AssistenciaTecnicaControl().gravarAssistTecnicaProduto(getListaOcProdutoAcao(), listaMontadores);
+					assistenciatecnica = new AssistenciaTecnicaControl().gravarAssistTecnicaProduto(getListaOcProdutoAcao(), listaMontadores, getObservacoesFreteMontAT());
 				}
 				for(Ocproduto ocprodutoAcao : listaOcProdutoAcao){					
 					for(Ocproduto ocproduto : getOc().getOcprodutos()){
@@ -739,18 +745,19 @@ public class OcControl extends Control implements InterfaceControl,
 			HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();			
 			InputStream caminho = null;
 			HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+			Map<String, Object> parametros = new HashMap<String, Object>();
 			listaOc = new ArrayList<Oc>();
 			
 			caminho = getClass().getResourceAsStream("../relatorio/oc.jrxml");
 			response.setContentType("application/pdf");			
-			
+			parametros.put("SUBREPORT_DIR", request.getSession().getServletContext().getRealPath( "/WEB-INF/classes/br/com/casabemestilo/relatorio/") + "\\");
 			response.setHeader("Content-Disposition","attachment; filename=\"OC:" + oc.getId() +" - " + oc.getCliente().getNome() +".pdf\"");
 			JasperReport pathReport = JasperCompileManager.compileReport(caminho);
 			
 			listaOc.add(oc);
 			JRDataSource jrds = new JRBeanArrayDataSource(listaOc.toArray());
 			
-			JasperPrint preencher = JasperFillManager.fillReport(pathReport,null,jrds);		
+			JasperPrint preencher = JasperFillManager.fillReport(pathReport,parametros,jrds);		
 			JasperExportManager.exportReportToPdfStream(preencher, response.getOutputStream());
 			
 			response.getOutputStream().flush();
@@ -1007,6 +1014,14 @@ public class OcControl extends Control implements InterfaceControl,
 
 	public void setDataFinal(Date dataFinal) {
 		this.dataFinal = dataFinal;
+	}
+
+	public String getObservacoesFreteMontAT() {
+		return observacoesFreteMontAT;
+	}
+
+	public void setObservacoesFreteMontAT(String observacoesFreteMontAT) {
+		this.observacoesFreteMontAT = observacoesFreteMontAT;
 	}
 		
 }

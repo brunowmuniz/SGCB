@@ -10,6 +10,8 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ValueChangeEvent;
+
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
 import com.sun.faces.context.flash.ELFlash;
@@ -74,6 +76,9 @@ public class ProdutoControl extends Control implements InterfaceControl,
 		try{
     		produtoDAO = new ProdutoDAO();
     		produto.setDeleted(false);
+    		if(produto.getEhPlanejado()){
+    			produto.setTemMontagem(true);
+    		}
     		produtoDAO.insert(produto);
         	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Produto: " + produto.getDescricao() + " foi gravado!"));
         	produto = new Produto();
@@ -118,8 +123,11 @@ public class ProdutoControl extends Control implements InterfaceControl,
 	@Override
 	public void alterar() {
 		try{
-			produtoDAO = new ProdutoDAO();    		
-    		produtoDAO.update(produto);
+			produtoDAO = new ProdutoDAO();
+			if(produto.getEhPlanejado()){
+    			produto.setTemMontagem(true);
+    		}
+    		produtoDAO.update(produto);    		
         	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Produto: " + produto.getDescricao() + " alterado!"));
         	produto = new Produto();
     	}catch(ConstraintViolationException e){
@@ -193,6 +201,11 @@ public class ProdutoControl extends Control implements InterfaceControl,
 		return listaProduto;
 	}
 	
+	public void planejadoMontagem(ValueChangeEvent event){
+		if((Boolean) event.getNewValue()){
+			produto.setTemMontagem((Boolean) event.getNewValue());
+		}
+	}
 	
 	/*
 	 * GETTERS & SETTERS

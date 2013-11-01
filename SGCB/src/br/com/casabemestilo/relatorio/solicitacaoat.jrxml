@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="solicitacaoat" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c703b020-0423-4018-aa89-f3fab2a146a4">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="23"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SGCB-JDBC"/>
 	<subDataset name="dataset1" uuid="28c0cfb9-536b-4223-9d49-eb2fcc749342"/>
 	<parameter name="IDAT" class="java.lang.Integer"/>
@@ -16,6 +16,7 @@
 		<![CDATA[SELECT
      assistenciatecnica.`datainicio` AS assistenciatecnica_datainicio,
      assistenciatecnica.`id` AS assistenciatecnica_id,
+     assistenciatecnica.`observacoes` AS assistenciatecnica_observacoes,
      cliente.`nome` AS cliente_nome,
      cliente.`endereco` AS cliente_endereco,
      cliente.`cidade` AS cliente_cidade,
@@ -38,6 +39,7 @@ GROUP BY
 	</queryString>
 	<field name="assistenciatecnica_datainicio" class="java.sql.Date"/>
 	<field name="assistenciatecnica_id" class="java.lang.Integer"/>
+	<field name="assistenciatecnica_observacoes" class="java.lang.String"/>
 	<field name="cliente_nome" class="java.lang.String"/>
 	<field name="cliente_endereco" class="java.lang.String"/>
 	<field name="cliente_cidade" class="java.lang.String"/>
@@ -50,22 +52,22 @@ GROUP BY
 	<field name="ocproduto_assistenciatecnica" class="java.lang.Integer"/>
 	<field name="ocproduto_oc" class="java.lang.Integer"/>
 	<detail>
-		<band height="462" splitType="Stretch">
+		<band height="487" splitType="Stretch">
 			<rectangle>
-				<reportElement uuid="31fd8469-4260-4283-9887-66684cb00cbf" x="0" y="211" width="786" height="248"/>
+				<reportElement uuid="31fd8469-4260-4283-9887-66684cb00cbf" x="0" y="231" width="786" height="248"/>
 			</rectangle>
 			<rectangle>
-				<reportElement uuid="f2098917-053e-4e93-8730-a89ce573b294" x="0" y="93" width="552" height="117"/>
+				<reportElement uuid="f2098917-053e-4e93-8730-a89ce573b294" x="0" y="93" width="552" height="138"/>
 			</rectangle>
 			<rectangle>
-				<reportElement uuid="fd0b9d11-c00a-4f8f-b4d8-e0ca106a5337" x="552" y="93" width="234" height="117"/>
+				<reportElement uuid="fd0b9d11-c00a-4f8f-b4d8-e0ca106a5337" x="552" y="93" width="234" height="138"/>
 			</rectangle>
 			<staticText>
 				<reportElement uuid="d7be7507-d632-468f-a93f-7e14d0ddd337" x="18" y="180" width="100" height="20"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[Data da Assistência:]]></text>
+				<text><![CDATA[Data da Assist.:]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
 				<reportElement uuid="278f0a8d-b6c8-4740-bfdf-1ecc8501e4a8" x="128" y="180" width="100" height="20"/>
@@ -99,7 +101,7 @@ GROUP BY
 				<text><![CDATA[Endereço:]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="7ea0d644-6d7b-47d8-9730-a37be6d92cc7" x="128" y="126" width="145" height="20"/>
+				<reportElement uuid="7ea0d644-6d7b-47d8-9730-a37be6d92cc7" x="128" y="126" width="245" height="20"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[$F{cliente_endereco}]]></textFieldExpression>
 			</textField>
@@ -133,7 +135,7 @@ GROUP BY
 				<textFieldExpression><![CDATA[$F{oc_id}]]></textFieldExpression>
 			</textField>
 			<subreport>
-				<reportElement uuid="e6923f88-c629-4fb9-a9bc-94ba90bbc9e7" x="18" y="253" width="605" height="196"/>
+				<reportElement uuid="e6923f88-c629-4fb9-a9bc-94ba90bbc9e7" x="18" y="269" width="605" height="196"/>
 				<subreportParameter name="IDATPRODUTOOC">
 					<subreportParameterExpression><![CDATA[$P{IDAT}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -141,14 +143,14 @@ GROUP BY
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "solicitacaoat_subreport2.jasper"]]></subreportExpression>
 			</subreport>
 			<staticText>
-				<reportElement uuid="d57d1020-15d2-4a47-84ea-ed3fe1da3c8e" x="18" y="226" width="605" height="20"/>
+				<reportElement uuid="d57d1020-15d2-4a47-84ea-ed3fe1da3c8e" x="18" y="242" width="605" height="20"/>
 				<textElement>
 					<font size="12" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Produtos para assistência:]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="99bd4a4e-2916-421c-90da-e3304c2314cb" x="280" y="126" width="131" height="19"/>
+				<reportElement uuid="99bd4a4e-2916-421c-90da-e3304c2314cb" x="384" y="126" width="131" height="19"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[$F{cliente_cidade}]]></textFieldExpression>
 			</textField>
@@ -191,6 +193,16 @@ GROUP BY
 				<reportElement uuid="d4cb72f4-eba5-4585-9055-ef10a606da57" x="581" y="132" width="161" height="68"/>
 				<textElement/>
 				<textFieldExpression><![CDATA[$P{MONTADOR}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="76b52cd0-e2b5-47fd-b091-ab07b0c866c5" x="16" y="206" width="102" height="20"/>
+				<textElement/>
+				<text><![CDATA[Observações:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="67a95694-e2cb-4d8d-81c3-7c6d29539829" x="128" y="206" width="409" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{assistenciatecnica_observacoes}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

@@ -23,6 +23,7 @@ import javax.validation.constraints.Min;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.Length;
@@ -47,6 +48,7 @@ public class Produto implements java.io.Serializable {
 	private String codigo;
 	private Boolean deleted;
 	private Boolean temMontagem;
+	private Boolean ehPlanejado;
 	private List<Ocproduto> ocprodutos = new ArrayList<Ocproduto>();
 	private List<Pedidoproduto> pedidoprodutos = new ArrayList<Pedidoproduto>();
 
@@ -183,14 +185,29 @@ public class Produto implements java.io.Serializable {
 	
 	@Column(name="temmontagem", nullable = false)
 	public Boolean getTemMontagem() {
-		if(temMontagem == null){
+		if(temMontagem == null || getEhPlanejado()){
 			temMontagem = true;
+		}
+		if(!temMontagem){
+			ehPlanejado = false;
 		}
 		return temMontagem;
 	}
 
 	public void setTemMontagem(Boolean temMontagem) {
 		this.temMontagem = temMontagem;
+	}
+	
+	@Column(name = "planejado", nullable = false)
+	public Boolean getEhPlanejado() {
+		if(ehPlanejado == null){
+			ehPlanejado = false;
+		}
+		return ehPlanejado;
+	}
+
+	public void setEhPlanejado(Boolean ehPlanejado) {
+		this.ehPlanejado = ehPlanejado;
 	}
 
 	@OneToMany(targetEntity = Ocproduto.class, mappedBy = "produto", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

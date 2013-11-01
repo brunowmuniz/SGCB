@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import java.io.Serializable;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -161,15 +162,15 @@ public class FreteControl extends Control implements Serializable,
 		return null;
 	}	
 	
-	public Frete gravarFreteOcProduto(List<Ocproduto> listaOcprodutos, List<Integer> listaMontadores) {				
+	public Frete gravarFreteOcProduto(List<Ocproduto> listaOcprodutos, List<Integer> listaMontadores, String observacoes) {				
 		try {
 			freteDAO = new FreteDAO();
 			frete = new Frete();
 			frete.setDatainicio(new Date());
 			frete.setDatafim(new Date());
-			frete.setOcprodutos(listaOcprodutos);		
-			frete.setObservacoes("Frete " + listaOcprodutos.get(0).getOc().getTipoFrete());
+			frete.setOcprodutos(listaOcprodutos);
 			frete.setValor(listaOcprodutos.get(0).getOc().getValorfrete());
+			frete.setObservacoes(observacoes);
 			this.listaMontadores = listaMontadores;
 			calculaComissaoMontagem();
 			frete = freteDAO.insertFrete(frete);
@@ -239,9 +240,9 @@ public class FreteControl extends Control implements Serializable,
 		setTotalBrinde(new Float(0));
 		
 		for(Frete frete : getListaFrete()){
-			if(frete.getObservacoes().indexOf("Local") != -1){
+			if(frete.getOcprodutos().get(0).getOc().getTipoFrete().indexOf("Local") != -1){			
 				setTotalLocal(getTotalLocal() + frete.getValor());
-			}else if(frete.getObservacoes().indexOf("Loja") != -1){
+			}else if(frete.getOcprodutos().get(0).getOc().getTipoFrete().indexOf("Loja") != -1){
 				setTotalLoja(getTotalLoja() + frete.getValor());
 			}else{
 				setTotalBrinde(getTotalBrinde() + frete.getValor());
@@ -251,8 +252,10 @@ public class FreteControl extends Control implements Serializable,
 	
 	public void calculaComissaoMontagem() throws ConstraintViolationException, HibernateException, Exception{
 		Oc oc = new Oc();
-		float valorLiquidoProduto = 0;
+		float valorLiquidoProduto = 0;		
 		float valorTotalBrutoProdutoMontagem = 0;
+		float valorLiquidoProdPlanejado = 0;
+		float valorTotalBrutoProdPlanejado = 0;
 		float valorComissao = 0;
 		String[] montadoresComissaoCjta = null;
 		List<ComissaoMontador> listaComissaoMontador = new ArrayList<ComissaoMontador>();
@@ -260,14 +263,18 @@ public class FreteControl extends Control implements Serializable,
 		oc = frete.getOcprodutos().get(0).getOc();
 		
 		for(Ocproduto ocproduto : frete.getOcprodutos()){
-			if(ocproduto.getProduto().getTemMontagem()){
+			if(ocproduto.getProduto().getTemMontagem() && !ocproduto.getProduto().getEhPlanejado()){
 				valorTotalBrutoProdutoMontagem += ocproduto.getValortotal();
-			}			
+			}
+			if(ocproduto.getProduto().getEhPlanejado()){
+				valorTotalBrutoProdPlanejado += ocproduto.getValortotal();
+			}
 		}
 		
 		if(valorTotalBrutoProdutoMontagem != 0){			
 			valorLiquidoProduto = valorTotalBrutoProdutoMontagem * (oc.getValorliquido() / oc.getValorfinal());
-			
+			valorLiquidoProdPlanejado = valorTotalBrutoProdPlanejado * (oc.getValorliquido() / oc.getValorfinal());
+					
 			for(Iterator iterMontador = listaMontadores.iterator(); iterMontador.hasNext();){
 				Integer idUsuarioMontador = Integer.parseInt(iterMontador.next().toString());
 				Comissao comissao = new ComissaoDAO().buscaComissaoUsuarioMontador(idUsuarioMontador);				
@@ -292,17 +299,18 @@ public class FreteControl extends Control implements Serializable,
 			
 			for(Integer idUsuario : listaUsuarioMontadores){
 				Comissao comissao = new ComissaoDAO().buscaComissaoUsuarioMontador(idUsuario);
-				ComissaoMontador comissaoMontador = new ComissaoMontador();
-				
+				ComissaoMontador comissaoMontador = new ComissaoMontador();				
 				
 				comissaoMontador.setMontador(new UsuarioDAO().buscaObjetoId(idUsuario));
 				comissaoMontador.setFreteMontagem(frete);
 				
 				if(comissao.getEhComissaoMontadorIndividual()){
-					valorComissao = (comissao.getPercentualComissaoMontadorIndividual() / 100) * valorLiquidoProduto;
+					valorComissao = ((comissao.getPercentualComissaoMontadorIndividual() / 100) * valorLiquidoProduto + 
+									 (comissao.getPercentualComissaoMontadorPlanejado() / 100) * valorLiquidoProdPlanejado);
 					comissaoMontador.setValor(new Double(valorComissao));
 				}else{
-					valorComissao = (comissao.getPercentualComissaoMontadorConjunta() / 100) * valorLiquidoProduto;
+					valorComissao = ((comissao.getPercentualComissaoMontadorConjunta() / 100) * valorLiquidoProduto +
+									 (comissao.getPercentualComissaoMontadorPlanejado() / 100) * valorLiquidoProdPlanejado);
 					comissaoMontador.setValor(new Double(valorComissao / (comissao.getUsuarioComissaoMontadorConjunta().split(",").length + 1)));
 				}
 				listaComissaoMontador.add(comissaoMontador);
@@ -323,17 +331,16 @@ public class FreteControl extends Control implements Serializable,
 			Usuario usuarioLogado = (Usuario) request.getSession().getAttribute("UsuarioLogado");
 					
 			caminho = getClass().getResourceAsStream("../relatorio/solicitacaofretemontagem.jrxml");
+	
 			response.setContentType("application/pdf");			
 			parametros.put("IDFRETE", frete.getId());
 			parametros.put("DATAHORA_IMPRESSAO", new Date());
 			parametros.put("USUARIO_IMPRESSAO", usuarioLogado.getNome());
+			parametros.put("SUBREPORT_DIR", request.getSession().getServletContext().getRealPath( "/WEB-INF/classes/br/com/casabemestilo/relatorio/") + "\\");
 			response.setHeader("Content-Disposition","attachment; filename=\"Solicitação_Frete-" + frete.getId() +".pdf\"");
 			JasperReport pathReport = JasperCompileManager.compileReport(caminho);
 			
-			//frete = new FreteDAO().buscaObjetoId(16);
-			//listaFrete.add(frete);
 			
-			//JRDataSource jrds = new JRBeanArrayDataSource(listaFrete.toArray());
 			
 			JasperPrint preencher = JasperFillManager.fillReport(pathReport,parametros,conexaoFactory);		
 			JasperExportManager.exportReportToPdfStream(preencher, response.getOutputStream());
