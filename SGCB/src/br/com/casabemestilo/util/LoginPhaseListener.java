@@ -33,7 +33,7 @@ public class LoginPhaseListener implements PhaseListener {
         boolean loginPage = facesContext.getViewRoot().getViewId().lastIndexOf("index") > -1 ? true : false;
         if (!loginPage && (user == null || user.getNome().length() == 0)) {
             NavigationHandler nh = facesContext.getApplication().getNavigationHandler();
-            //nh.handleNavigation(facesContext, null, "index");
+            nh.handleNavigation(facesContext, null, "index");
         }
     }
 }

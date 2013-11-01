@@ -239,7 +239,7 @@ public class AssistenciaTecnicaControl extends Control implements Serializable,I
 		return assistenciaTecnica;
 	}
 
-	public Assistenciatecnica gravarAssistTecnicaProduto(List<Ocproduto> listaOcProdutos, List<Integer> listaMontadores) {
+	public Assistenciatecnica gravarAssistTecnicaProduto(List<Ocproduto> listaOcProdutos, List<Integer> listaMontadores, String observacoes) {
 		
 		try {
 			assistenciaTecnicaDAO = new AssistenciaTecnicaDAO();
@@ -247,7 +247,7 @@ public class AssistenciaTecnicaControl extends Control implements Serializable,I
 			assistenciaTecnica.setDatainicio(new Date());
 			assistenciaTecnica.setDatafim(new Date());
 			assistenciaTecnica.setOcprodutos(listaOcProdutos);
-			assistenciaTecnica.setObservacoes("");			
+			assistenciaTecnica.setObservacoes(observacoes);			
 			for (int i = 0; i < listaMontadores.size(); i++) {				
 				assistenciaTecnica.setMontador(assistenciaTecnica.getMontador().concat((String) (i==0 ? listaMontadores.get(i) : "," + listaMontadores.get(i))));
 			}
@@ -326,6 +326,7 @@ public class AssistenciaTecnicaControl extends Control implements Serializable,I
 			parametros.put("DATAHORA_IMPRESSAO", new Date());
 			parametros.put("USUARIO_IMPRESSAO", usuarioLogado.getNome());
 			parametros.put("MONTADOR", montadores);
+			parametros.put("SUBREPORT_DIR", request.getSession().getServletContext().getRealPath( "/WEB-INF/classes/br/com/casabemestilo/relatorio/") + "\\");
 			response.setHeader("Content-Disposition","attachment; filename=\"Solicitação_Assistencia_Tecnica-" + assistenciatecnica.getId() +".pdf\"");
 			JasperReport pathReport = JasperCompileManager.compileReport(caminho);
 			
@@ -362,6 +363,9 @@ public class AssistenciaTecnicaControl extends Control implements Serializable,I
 	 * GETTERS & SETTERS
 	 * */
 	public Assistenciatecnica getAssistenciaTecnica() {
+		if(assistenciaTecnica == null){
+			assistenciaTecnica = new Assistenciatecnica();
+		}
 		return assistenciaTecnica;
 	}
 
