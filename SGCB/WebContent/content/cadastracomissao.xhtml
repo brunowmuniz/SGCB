@@ -69,6 +69,12 @@
 								<f:validateBean/>
 								<f:convertNumber locale="pt_BR" maxIntegerDigits="2" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
 							</p:inputText>
+							
+							<p:outputLabel for="percentualComissaoMontadorPlanejado" value="Comissão Planejado (%): "/>
+							<p:inputText value="#{comissaoControl.comissao.percentualComissaoMontadorPlanejado}" id="percentualComissaoMontadorPlanejado" size="10">
+								<f:validateBean/>
+								<f:convertNumber locale="pt_BR" maxIntegerDigits="2" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+							</p:inputText>
 						</h:panelGrid>
 									
 						<h:panelGrid columns="3">
