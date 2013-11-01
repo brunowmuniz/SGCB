@@ -48,7 +48,6 @@
 							<p:spacer width="1px"/>
 							<p:spacer width="1px"/>
 							
-												
 							<p:outputLabel for="#{ocControl.oc.id == null ? 'dataedicao' : 'data'}" value="Data: "/>
 							<h:outputText value="#{ocControl.oc.datalancamento}" id="dataedicao" style="width: 100px;" styleClass="negrito"
 											rendered="#{ocControl.oc.id != null}">									
@@ -111,7 +110,7 @@
 								<p:commandButton value="Procurar Produto" id="btnbuscaproduto" oncomplete="modalbuscaproduto.show()" action="#{ocProdutoControl.limparOcProduto}" actionListener="#{ocProdutoControl.limparProduto}" update="modalbuscaproduto" process="@this"
 												rendered="#{ocControl.oc.status.id == 2 or ocControl.oc.status.id == 1 or ocControl.oc.id == null}"/> <br />
 								
-								<p:commandButton value="Encerrar Produto" id="encerrarAcao" actionListener="#{ocControl.acaoPoduto(9,freteControl.listaMontadores)}" update=":form:msgs,listaprodutoocfechada" rendered="#{ocControl.oc.status.id != 2 and ocControl.oc.status.id != 1 and ocControl.oc.id != null}"/>
+								<p:commandButton value="Encerrar Produto" id="encerrarAcao" actionListener="#{ocControl.acaoProduto(9,freteControl.listaMontadores)}" update=":form:msgs,listaprodutoocfechada" rendered="#{ocControl.oc.status.id != 2 and ocControl.oc.status.id != 1 and ocControl.oc.id != null}"/>
 								 
 								<p:commandButton value="Assistência Técnica" id="assistTecAcao" onclick="modalAssistenciaTecnica.show()"  rendered="#{ocControl.oc.status.id != 2 and ocControl.oc.status.id != 1 and ocControl.oc.id != null}"/>
 								
@@ -128,7 +127,9 @@
 												<f:selectItems value="#{usuarioControl.listaUsuarioMontador}" />
 												<p:ajax event="change" process="@this" update="freteExecucaoAcao,listaMontadores"/> 
 											</p:selectManyMenu>
-											<p:commandButton actionListener="#{ocControl.acaoPoduto(6,freteControl.listaMontadores)}" oncomplete="modalFreteMontagem.hide()" id="freteExecucaoAcao" value="Gravar Frete/Execução" disabled="#{freteControl.listaMontadores.size() == 0}" update=":form:msgs,listaprodutoocfechada"/>
+											<p:outputLabel value="Observações: " for="observacoesfretemontagem"/>
+											<p:inputTextarea id="observacoesfretemontagem" value="#{ocControl.observacoesFreteMontAT}" cols="20" rows="5" maxlength="100"/>
+											<p:commandButton actionListener="#{ocControl.acaoProduto(6,freteControl.listaMontadores)}" oncomplete="modalFreteMontagem.hide()" id="freteExecucaoAcao" value="Gravar Frete/Execução" disabled="#{freteControl.listaMontadores.size() == 0}" update=":form:msgs,listaprodutoocfechada"/>
 										</h:panelGrid>		
 									</p:outputPanel>
 								</p:dialog>
@@ -142,7 +143,9 @@
 												<f:selectItems value="#{usuarioControl.listaUsuarioMontador}" />
 												<p:ajax event="change" process="@this" update="AssistenciaTecnicaAcao,listaMontadoresAT"/> 
 											</p:selectManyMenu>
-											<p:commandButton actionListener="#{ocControl.acaoPoduto(8,assistenciaTecnicaControl.listaMontadores)}" oncomplete="modalAssistenciaTecnica.hide()" id="AssistenciaTecnicaAcao" value="Gravar Assist. Técnica" disabled="#{assistenciaTecnicaControl.listaMontadores.size() == 0}" update=":form:msgs,listaprodutoocfechada"/>
+											<p:outputLabel value="Observações: " for="observacoesat"/>
+											<p:inputTextarea id="observacoesat" value="#{ocControl.observacoesFreteMontAT}" cols="20" rows="5" maxlength="100"/>										
+											<p:commandButton actionListener="#{ocControl.acaoProduto(8,assistenciaTecnicaControl.listaMontadores)}" oncomplete="modalAssistenciaTecnica.hide()" id="AssistenciaTecnicaAcao" value="Gravar Assist. Técnica" disabled="#{assistenciaTecnicaControl.listaMontadores.size() == 0}" update=":form:msgs,listaprodutoocfechada"/>
 										</h:panelGrid>		
 									</p:outputPanel>
 								</p:dialog>
@@ -212,6 +215,12 @@
 												<p:outputLabel for="temmontagem" value="Montagem: "/>
 												<p:selectBooleanCheckbox id="temmontagem" value="#{ocProdutoControl.ocproduto.produto.temMontagem}"
 																	  disabled="#{ocProdutoControl.ocproduto.produto.id != null}"/>
+												
+												<p:outputLabel for="ehplanejado" value="Planejado: "/>
+												<p:selectBooleanCheckbox id="ehplanejado" value="#{ocProdutoControl.ocproduto.produto.ehPlanejado}"
+																	  	 disabled="#{ocProdutoControl.ocproduto.produto.id != null}">
+													<p:ajax event="change" process="@this" update="temmontagem"/>
+												</p:selectBooleanCheckbox>
 																								
 												<p:outputLabel for="quantidade" value="Quantidade: " />
 												<p:spinner  value="#{ocProdutoControl.ocproduto.quantidade}" id="quantidade" immediate="true" min="1" max="999">
