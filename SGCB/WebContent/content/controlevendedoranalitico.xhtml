@@ -32,7 +32,7 @@
 					<p:dataTable var="comissao" value="#{comissaoVendedorControl.listarComissaoVendedorGeral}" id="comissao" emptyMessage="Sem vendas para este vendedor!" paginator="true"
 										selection="#{comissaoVendedorControl.comissaoVendedor}" selectionMode="single" lazy="true" rows="5" rowKey="#{comissao.id}"
 										paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                 						rowsPerPageTemplate="5,25,50"  draggableColumns="true" rendered="#{comissaoVendedorControl.comissaoVendedor.vendedor.id != null}">
+                 						rowsPerPageTemplate="5,25,50"  rendered="#{comissaoVendedorControl.comissaoVendedor.vendedor.id != null}">
                  		<p:column headerText="Data">
                  			<h:outputText value="#{comissao.oc.datalancamento}">
                  				<f:convertDateTime pattern="dd/MM/yyyy"/>
@@ -67,23 +67,20 @@
                  			</h:outputText>
                  		</p:column>
                  		
-                 		<p:columnGroup type="header">
+                 		
+               			<p:columns var="formaspagamento" value="#{formaPagamentoControl.listarAtivos()}">
                  			<f:facet name="header">
-                 				Entradas
+                 				#{formaspagamento.nome}
                  			</f:facet>
-                 			<p:columns var="formaspagamento" value="#{formaPagamentoControl.listarAtivos()}">
-	                 			<f:facet name="header">
-	                 				#{formaspagamento.nome}
-	                 			</f:facet>
-	                 			<ui:repeat var="pagamento" value="#{comissao.oc.pagamentos}">                 				
-	                 				<h:outputText value="R$ " rendered="#{pagamento.condicoesPagamento.formapagamento.id == formaspagamento.id}"/>
-	                 				<h:outputText value="#{pagamento.valor}" rendered="#{pagamento.condicoesPagamento.formapagamento.id == formaspagamento.id}">
-	                 					<f:convertNumber maxFractionDigits="2" minFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="7"/>
-	                 				</h:outputText>
-	                 				<h:outputText value=" - #{pagamento.condicoesPagamento.nome}" rendered="#{pagamento.condicoesPagamento.formapagamento.id == formaspagamento.id}" styleClass="negrito"/>
-	                 			</ui:repeat>
-	                 		</p:columns>
-                 		</p:columnGroup>
+                 			<ui:repeat var="pagamento" value="#{comissao.oc.pagamentos}">                 				
+                 				<h:outputText value="R$ " rendered="#{pagamento.condicoesPagamento.formapagamento.id == formaspagamento.id}"/>
+                 				<h:outputText value="#{pagamento.valor}" rendered="#{pagamento.condicoesPagamento.formapagamento.id == formaspagamento.id}">
+                 					<f:convertNumber maxFractionDigits="2" minFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="7"/>
+                 				</h:outputText>
+                 				<h:outputText value=" - #{pagamento.condicoesPagamento.nome}" rendered="#{pagamento.condicoesPagamento.formapagamento.id == formaspagamento.id}" styleClass="negrito"/>
+                 			</ui:repeat>
+                 		</p:columns>
+                 	
                  		
                  		<p:column headerText="Comissão">                 			               			
                  			<h:outputText value="R$ "/>

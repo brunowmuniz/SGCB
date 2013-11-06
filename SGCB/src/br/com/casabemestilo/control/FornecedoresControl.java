@@ -217,9 +217,12 @@ public class FornecedoresControl extends Control implements InterfaceControl,
 		this.fornecedoresDAO = fornecedoresDAO;
 	}
 
-	public List getListaFornecedorCombo() {
+	public List getListaFornecedorCombo(String filter) {
 		listaFornecedorCombo = new ArrayList();
 		listarAtivos();
+		if(filter.equals("filter")){
+			listaFornecedorCombo.add(new SelectItem("","Todos"));
+		}	
 		for (Fornecedor fornecedores : listaFornecedores) {
             SelectItem si = new SelectItem();
             si.setLabel(fornecedores.getNome());

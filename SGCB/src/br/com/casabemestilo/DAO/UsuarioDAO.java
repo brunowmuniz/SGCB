@@ -7,8 +7,10 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
+import br.com.casabemestilo.model.Filial;
 import br.com.casabemestilo.model.Perfil;
 import br.com.casabemestilo.model.Usuario;
+import br.com.casabemestilo.model.UsuarioFilial;
 import br.com.casabemestilo.util.Conexao;
 
 public class UsuarioDAO implements InterfaceDAO, Serializable {
@@ -111,12 +113,20 @@ public class UsuarioDAO implements InterfaceDAO, Serializable {
 		return null;
 	}
 	
-	public List<Usuario> listaVendedorFilial() {
+	public List<UsuarioFilial> listaVendedorFilial(Filial filial) {
 		session = Conexao.getInstance();
-		listaUsuario = new ArrayList<Usuario>();		
-		listaUsuario = session.createQuery("from Usuario u where u.perfil.id = 2").list();
+		List<UsuarioFilial> listaUsuarioFilial = new ArrayList<UsuarioFilial>();
+		listaUsuarioFilial = session.createQuery("from UsuarioFilial uf " +
+											"where " +
+												"uf.usuario.perfil.id = 2" +
+											" and" +
+												" uf.deleted = false" +
+											" and" +
+												" uf.filial.id= :filial")
+								.setInteger("filial", filial.getId())
+								.list();
 		session.close();
-		return listaUsuario;
+		return listaUsuarioFilial;
 	}
 	
 	public Usuario buscaUsuarioLogin(Usuario usuario) {
@@ -154,6 +164,29 @@ public class UsuarioDAO implements InterfaceDAO, Serializable {
 		listaUsuario = session.createQuery("from Usuario u where u.perfil.id= 2").list();
 		session.close();		
 		return listaUsuario;		
+	}
+	
+	public List<Usuario> listaLazy(int first, int pageSize) {
+		session = Conexao.getInstance();
+		listaUsuario = new ArrayList<Usuario>();
+		listaUsuario = session.createQuery("from Usuario u where deleted=0")
+							  .setFirstResult(first)
+							  .setMaxResults(pageSize)
+							  .setCacheable(true)
+							  .list();
+		session.close();
+		return listaUsuario;
+	}
+
+	public int totalUsuario() {
+		session = Conexao.getInstance();
+		Long linhas = new Long("0");
+		linhas = (Long) session.createQuery("select count(usuario.id) from Usuario usuario" +
+										" where deleted = 0")
+							   .setCacheable(true)
+							   .uniqueResult();
+		session.close();
+		return linhas.intValue();
 	}
 	
 	

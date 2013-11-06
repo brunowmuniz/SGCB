@@ -3,6 +3,7 @@ package br.com.casabemestilo.control;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -14,15 +15,19 @@ import javax.faces.model.SelectItem;
 
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
+import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 
 import com.sun.faces.context.flash.ELFlash;
 
 import br.com.casabemestilo.DAO.FornecedoresDAO;
 import br.com.casabemestilo.DAO.CondicoesPagamentoDAO;
+import br.com.casabemestilo.DAO.OcDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Formapagamento;
 import br.com.casabemestilo.model.Fornecedor;
 import br.com.casabemestilo.model.CondicoesPagamento;
+import br.com.casabemestilo.model.Oc;
 
 @ManagedBean
 @ViewScoped
@@ -38,7 +43,9 @@ public class CondicoesPagamentoControl extends Control implements InterfaceContr
 	
 	private CondicoesPagamentoDAO condicoesPagamentoDAO;
 	
-	private List listaCondicoesPagamentoCombo;  
+	private List listaCondicoesPagamentoCombo;
+	
+	private LazyDataModel<CondicoesPagamento> listaLazyCondicoesPagamento;
 
 	
 	/*
@@ -204,6 +211,46 @@ public class CondicoesPagamentoControl extends Control implements InterfaceContr
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	public LazyDataModel<CondicoesPagamento> listaLazyCondicoesPagamentoGeral(){
+		if(listaLazyCondicoesPagamento == null){
+			listaLazyCondicoesPagamento = new LazyDataModel<CondicoesPagamento>() {
+											private List<CondicoesPagamento> listaLazy;
+											
+											@Override
+										    public CondicoesPagamento getRowData(String idCondicoesPagamento) {
+										    	Integer id = Integer.valueOf(idCondicoesPagamento);
+										    	
+										        for(CondicoesPagamento condicoesPagamento : listaLazy) {
+										            if(condicoesPagamento.getId().equals(id))
+										                return condicoesPagamento;
+										        }
+										        
+										        return null;
+										    }
+							
+										    @Override
+										    public Object getRowKey(CondicoesPagamento condicoesPagamento) {
+										        return condicoesPagamento.getId();
+										    }
+							
+										    @Override
+										    public List<CondicoesPagamento> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,String> filters) {
+										    	condicoesPagamentoDAO = new CondicoesPagamentoDAO();  
+										    	
+										    	listaLazy = condicoesPagamentoDAO.listaLazy(first, pageSize, filters);
+										    	
+										    	if (getRowCount() <= 0) {  
+										            setRowCount(condicoesPagamentoDAO.totalOc(filters));  
+										        }  
+										       
+										        setPageSize(pageSize);  
+										        return listaLazy;  
+										    }
+			};
+		}
+		return listaLazyCondicoesPagamento;
+	}
 
 	
 	/*
@@ -243,7 +290,31 @@ public class CondicoesPagamentoControl extends Control implements InterfaceContr
 	public void setListaCondicoesPagamentoCombo(List listaCondicoesPagamentoCombo) {
 		this.listaCondicoesPagamentoCombo = listaCondicoesPagamentoCombo;
 	}
-	
-	
 
+	public List<CondicoesPagamento> getListaCondicoesPagamento() {
+		return listaCondicoesPagamento;
+	}
+
+	public void setListaCondicoesPagamento(
+			List<CondicoesPagamento> listaCondicoesPagamento) {
+		this.listaCondicoesPagamento = listaCondicoesPagamento;
+	}
+
+	public CondicoesPagamentoDAO getCondicoesPagamentoDAO() {
+		return condicoesPagamentoDAO;
+	}
+
+	public void setCondicoesPagamentoDAO(CondicoesPagamentoDAO condicoesPagamentoDAO) {
+		this.condicoesPagamentoDAO = condicoesPagamentoDAO;
+	}
+
+	public LazyDataModel<CondicoesPagamento> getListaLazyCondicoesPagamento() {
+		return listaLazyCondicoesPagamento;
+	}
+
+	public void setListaLazyCondicoesPagamento(
+			LazyDataModel<CondicoesPagamento> listaLazyCondicoesPagamento) {
+		this.listaLazyCondicoesPagamento = listaLazyCondicoesPagamento;
+	}
+	
 }

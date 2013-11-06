@@ -43,7 +43,7 @@ public class LancamentoDAO implements InterfaceDAO, Serializable {
 	}
 
 	public LancamentoDAO() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	

@@ -1,7 +1,9 @@
 package br.com.casabemestilo.DAO;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -162,6 +164,52 @@ public class ProdutoDAO implements InterfaceDAO, Serializable {
 											.list();
 		session.close();
 		return listaProduto;
+	}
+	
+	public List<Produto> listaLazy(int first, int pageSize,
+			Map<String, String> filters) {
+		session = Conexao.getInstance();
+		listaProduto = new ArrayList<Produto>();
+		
+		String hql = "from Produto produto" +
+						" where produto.deleted = false ";
+		
+		if(filters.containsKey("descricao")){
+			hql += " and produto.descricao like '%" + filters.get("descricao") + "%'";
+		}
+		if(filters.containsKey("fornecedor.id")){
+			hql += " and produto.fornecedor.id = " + filters.get("fornecedor.id");
+		}
+		
+		listaProduto = session.createQuery(hql)
+							  .setFirstResult(first)
+							  .setMaxResults(pageSize)
+							  .setCacheable(true)
+							  .list();
+		session.close();					  
+		return listaProduto;
+	}
+
+	public int totalProduto(Map<String, String> filters) {
+		session = Conexao.getInstance();
+		Long linhas = new Long("0");
+		
+		String hql = "select count(produto.id) from Produto produto" +
+						" where produto.deleted = false ";
+		
+		if(filters.containsKey("descricao")){
+			hql += " and produto.descricao like '%" + filters.get("descricao") + "%'";
+		}
+		if(filters.containsKey("fornecedor.id")){
+			hql += " and produto.fornecedor.id = " + filters.get("fornecedor.id");
+		}
+		
+		linhas = (Long) session.createQuery(hql)
+							  .setCacheable(true)
+							  .uniqueResult();
+		
+		session.close();
+		return linhas.intValue();
 	}
 	
 	/*

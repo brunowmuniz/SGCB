@@ -688,9 +688,9 @@ public class OcControl extends Control implements InterfaceControl,
 
 	public List<Oc> getListaVendasMesAno(){
 		ocDAO = new OcDAO();
-		List listaVendasMesAno = new ArrayList();
-		listaVendasMesAno = ocDAO.calcultaTotalVendasMesAno(getDataInicial(),getDataFinal());		
-		return listaVendasMesAno;
+		listaOc = new ArrayList<Oc>();
+		listaOc = ocDAO.calcultaTotalVendasMesAno(getDataInicial(),getDataFinal());		
+		return listaOc;
 	}
 	
 	public void buscarVendasMesAno(){
@@ -702,22 +702,6 @@ public class OcControl extends Control implements InterfaceControl,
 		
 		calendar.setTime(dataFinal);
 		calendar.set(calendar.DATE, calendar.getActualMaximum(calendar.DAY_OF_MONTH));
-		dataFinal = calendar.getTime();
-		
-	}
-	
-	public void definirDataRelatorio(){
-		Calendar calendar = Calendar.getInstance();		
-		dataInicial = new Date();
-		dataFinal = new Date();
-		
-		calendar.setTime(dataInicial);		
-		calendar.set(Calendar.DATE, 1);
-		calendar.set(Calendar.MONTH, 1);
-		dataInicial = calendar.getTime();
-		
-		calendar.setTime(dataFinal);
-		calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(calendar.DAY_OF_MONTH));
 		dataFinal = calendar.getTime();
 		
 	}
@@ -746,11 +730,18 @@ public class OcControl extends Control implements InterfaceControl,
 			InputStream caminho = null;
 			HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 			Map<String, Object> parametros = new HashMap<String, Object>();
+			String caminhoRelatorio = request.getSession().getServletContext().getRealPath("/WEB-INF/classes/br/com/casabemestilo/relatorio/");
+			
 			listaOc = new ArrayList<Oc>();
+			
+			if(caminhoRelatorio.indexOf("home") > -1)
+				caminhoRelatorio += "/";
+			else
+				caminhoRelatorio += "\\";
 			
 			caminho = getClass().getResourceAsStream("../relatorio/oc.jrxml");
 			response.setContentType("application/pdf");			
-			parametros.put("SUBREPORT_DIR", request.getSession().getServletContext().getRealPath( "/WEB-INF/classes/br/com/casabemestilo/relatorio/") + "\\");
+			parametros.put("SUBREPORT_DIR", caminhoRelatorio);
 			response.setHeader("Content-Disposition","attachment; filename=\"OC:" + oc.getId() +" - " + oc.getCliente().getNome() +".pdf\"");
 			JasperReport pathReport = JasperCompileManager.compileReport(caminho);
 			

@@ -311,6 +311,7 @@ public class AssistenciaTecnicaControl extends Control implements Serializable,I
 			HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 			Usuario usuarioLogado = (Usuario) request.getSession().getAttribute("UsuarioLogado");
 			String montadores = "";
+			String caminhoRelatorio = request.getSession().getServletContext().getRealPath("/WEB-INF/classes/br/com/casabemestilo/relatorio/");
 			
 			for(int i = 0; i < assistenciatecnica.getMontador().split(",").length; i++){
 				Usuario usuario = new UsuarioDAO().buscaObjetoId(Integer.parseInt(assistenciatecnica.getMontador().split(",")[i]));
@@ -319,6 +320,11 @@ public class AssistenciaTecnicaControl extends Control implements Serializable,I
 				}
 				montadores += usuario.getNome();
 			}
+			
+			if(caminhoRelatorio.indexOf("home") > -1)
+				caminhoRelatorio += "/";
+			else
+				caminhoRelatorio += "\\";
 					
 			caminho = getClass().getResourceAsStream("../relatorio/solicitacaoat.jrxml");
 			response.setContentType("application/pdf");			
@@ -326,7 +332,7 @@ public class AssistenciaTecnicaControl extends Control implements Serializable,I
 			parametros.put("DATAHORA_IMPRESSAO", new Date());
 			parametros.put("USUARIO_IMPRESSAO", usuarioLogado.getNome());
 			parametros.put("MONTADOR", montadores);
-			parametros.put("SUBREPORT_DIR", request.getSession().getServletContext().getRealPath( "/WEB-INF/classes/br/com/casabemestilo/relatorio/") + "\\");
+			parametros.put("SUBREPORT_DIR", caminhoRelatorio);
 			response.setHeader("Content-Disposition","attachment; filename=\"Solicitação_Assistencia_Tecnica-" + assistenciatecnica.getId() +".pdf\"");
 			JasperReport pathReport = JasperCompileManager.compileReport(caminho);
 			

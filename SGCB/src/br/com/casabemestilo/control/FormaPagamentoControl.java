@@ -154,9 +154,12 @@ public class FormaPagamentoControl extends Control implements Serializable,Inter
 	}
 
 	
-	public List getListaFormaPagamentoCombo() {
+	public List getListaFormaPagamentoCombo(String filter) {
 		listaFormaPagamentoCombo = new ArrayList();
 		listarAtivos();
+		if(filter.equalsIgnoreCase("filter")){
+			listaFormaPagamentoCombo.add(new SelectItem("","Todos"));
+		}
 		for(Formapagamento formapagamentos : listaFormaPagamento){
 			SelectItem si = new SelectItem();
 			si.setValue(formapagamentos.getId());

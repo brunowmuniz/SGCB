@@ -22,19 +22,19 @@
 					</h:panelGrid>
 					<p:dataTable value="#{ocControl.listaVendasMesAno}" var="oc" id="vendasmesano" style="width: 50%;">
 						<p:column headerText="Mês/Ano">
-							<h:outputText value="#{oc[0]}">
+							<h:outputText value="#{oc.datalancamento}">
 								<f:convertDateTime pattern="MM/yyyy" locale="pt_BR"/>
 							</h:outputText>						
 						</p:column>
 						<p:column headerText="Valor Bruto">
 							<h:outputText value="R$ " />
-							<h:outputText value="#{oc[2]}">
+							<h:outputText value="#{oc.valorfinal}">
 								<f:convertNumber maxIntegerDigits="7" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
 							</h:outputText>						
 						</p:column>
 						<p:column headerText="Valor Líquido">
 							<h:outputText value="R$ " />
-							<h:outputText value="#{oc[1]}">
+							<h:outputText value="#{oc.valorliquido}">
 								<f:convertNumber maxIntegerDigits="7" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
 							</h:outputText>						
 						</p:column>

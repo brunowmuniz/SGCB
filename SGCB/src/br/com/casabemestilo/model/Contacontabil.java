@@ -27,6 +27,7 @@ public class Contacontabil implements java.io.Serializable {
 	private Integer id;
 	private String tipo;
 	private String nome;
+	private Boolean deleted;
 	private List<Lancamento> lancamentos = new ArrayList<Lancamento>();
 	
 
@@ -83,6 +84,18 @@ public class Contacontabil implements java.io.Serializable {
 			lancamento.setContacontabil(this);
 		}
 		this.lancamentos = lancamentos;
+	}
+
+	@Column(name="deleted", nullable = false)
+	public Boolean getDeleted() {
+		if(deleted == null){
+			deleted = false;
+		}
+		return deleted;
+	}
+
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
 	}
 	
 	

@@ -15,13 +15,16 @@
 					 	<p:menuitem value="Editar" icon="ui-icon-pencil" action="#{condicoesPagamentoControl.alterarCadastro}" ajax="false"/>
 					 </p:contextMenu>
 					 
-					 <p:dataTable var="condicoesPagamento" value="#{condicoesPagamentoControl.listarAtivos()}" id="retencoes" rowKey="#{condicoesPagamento.id}"  
-                		selection="#{condicoesPagamentoControl.condicoesPagamento}" selectionMode="single" >                		  		
-				        <p:column headerText="Descrição">
+					 <p:dataTable var="condicoesPagamento" value="#{condicoesPagamentoControl.listaLazyCondicoesPagamentoGeral()}" id="retencoes" rowKey="#{condicoesPagamento.id}"  
+                		selectionMode="single" selection="#{condicoesPagamentoControl.condicoesPagamento}" paginator="true" rows="10"  
+                		paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                 		rowsPerPageTemplate="10,25,50" lazy="true">
+                 		                		  		
+				        <p:column headerText="Descrição" filterBy="#{condicoesPagamento.nome}" filterMatchMode="startswith" filterStyle="width: 70%;">
 				            <h:outputText value="#{condicoesPagamento.nome}" />
 				        </p:column>
 				
-				        <p:column headerText="Forma de Pagamento">
+				        <p:column headerText="Forma de Pagamento" filterBy="#{condicoesPagamento.formapagamento.id}" filterOptions="#{formaPagamentoControl.getListaFormaPagamentoCombo('filter')}" filterMatchMode="exact">
 				            <h:outputText value="#{condicoesPagamento.formapagamento.nome}" />
 				        </p:column>
 				        

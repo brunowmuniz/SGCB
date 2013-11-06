@@ -42,7 +42,7 @@
 								<f:convertNumber maxFractionDigits="2" minFractionDigits="2" minIntegerDigits="1"/>
 							</h:outputText>
 							<p:outputLabel for="valortotal" value="Total: " style="font-weight: bolder;"/>
-							<h:outputText value="#{lancamentoControl.valorEntradas - lancamentoControl.valorSaidas}" id="valortotal" styleClass="negrito #{lancamentoControl.valorEntradas >= lancamentoControl.valorSaidas ? 'credito' : 'debito'}">
+							<h:outputText value="#{lancamentoControl.valorEntradas + lancamentoControl.valorSaidas}" id="valortotal" styleClass="negrito #{lancamentoControl.valorEntradas >= lancamentoControl.valorSaidas ? 'credito' : 'debito'}">
 								<f:convertNumber maxFractionDigits="2" minFractionDigits="2" minIntegerDigits="1"/>
 							</h:outputText>
 						</h:panelGrid>

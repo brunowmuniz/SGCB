@@ -21,7 +21,7 @@
 						<p:inplace event="click" id="fornecedorins" label="Selecione um fornecedor" rendered="#{pedidoControl.pedido.id == null}">
 							<p:selectOneMenu required="true" value="#{pedidoControl.pedido.fornecedor.id}" id="fornecedorsel" requiredMessage="Selecione um fornecedor!">
 								<f:selectItem itemValue="0" itemLabel="Selecione Fornecedor" noSelectionOption="true"/>
-								<f:selectItems value="#{fornecedoresControl.listaFornecedorCombo}"/>
+								<f:selectItems value="#{fornecedoresControl.getListaFornecedorCombo('')}"/>
 								<p:ajax event="change" process="@this" update="btnbuscaproduto"/>
 							</p:selectOneMenu>
 						</p:inplace>

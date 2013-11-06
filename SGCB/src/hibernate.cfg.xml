@@ -8,7 +8,7 @@
   <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/blankerc_sgcb?autoReconnect=true</property> 
   <property name="hibernate.connection.username">blankerc_sgcb</property>
   <property name="hibernate.dialect">br.com.casabemestilo.util.MySQLDialect</property>
-  <property name="hibernate.show_sql">true</property>
+  <property name="hibernate.show_sql">false</property>
   <property name="hibernate.format_sql">true</property>
   <property name="hibernate.connection.autocommit">true</property>
   <property name="hibernate.cache.use_query_cache">true</property>
@@ -18,7 +18,6 @@
   <property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</property>
   <property name="hibernate.cache.region_prefix"></property>
   <property name="net.sf.ehcache.configurationResourceName">/ehcache.xml</property>
-
   
   <!-- Configurações de C3P0 -->
   <property name="hibernate.c3p0.idleConnectionTestPeriod">20</property>

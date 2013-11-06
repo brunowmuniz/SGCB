@@ -153,9 +153,11 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		
 		if(filters.containsKey("usuario.id")){
 			hql += " and o.usuario.id=" + filters.get("usuario.id");
-		}/*else{
-			hql += " and o.status.id < 9 ";
-		}*/
+		}
+		
+		if(filters.containsKey("filial.id")){
+			hql += " and o.filial.id=" + filters.get("filial.id");
+		}
 		
 				
 		hql += " order by o.id desc";
@@ -192,9 +194,10 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		
 		if(filters.containsKey("usuario.id")){
 			hql += " and o.usuario.id=" + filters.get("usuario.id");
-		}/*else{
-			hql += " and o.status.id < 9 ";
-		}*/
+		}
+		if(filters.containsKey("filial.id")){
+			hql += " and o.filial.id=" + filters.get("filial.id");
+		}
 				
 		linhas = (Long) session.createQuery(hql)
 							   .setDate("dataInicial",dataInicial)
@@ -334,21 +337,24 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		return totalVendas;
 	}
 	
-	public List calcultaTotalVendasMesAno(Date dataInicial, Date dataFinal) {
-		List listaVendasMesAno = new ArrayList();
+	public List<Oc> calcultaTotalVendasMesAno(Date dataInicial, Date dataFinal) {
 		session = Conexao.getInstance();
-		listaVendasMesAno = session.createSQLQuery("select oc.datalancamento, " +
-											" sum(oc.valorliquido)," +
-											" sum(oc.valorfinal)" +
-										" from oc" +
-										" where datalancamento between :dataInicial and :dataFinal" +
+		listaOc = session.createQuery("select new Oc(oc.id," +
+												   " oc.datalancamento, " +
+												   " sum(oc.valorliquido)," +
+												   " sum(oc.valorfinal))" +
+										" from Oc oc" +
+										" where " +
+											" oc.datalancamento between :dataInicial and :dataFinal" +
+										" and " +
+											" oc.status.id not in (1,2,10)" +
 										" group by date_format(oc.datalancamento,'%Y-%m')")
 						 .setDate("dataInicial", dataInicial)
 						 .setDate("dataFinal", dataFinal)				
 						 .list();
 		
 		session.close();
-		return listaVendasMesAno;
+		return listaOc;
 	}
 	
 	public Double buscaVendasBruto(Date dataInicial, Date dataFinal) {

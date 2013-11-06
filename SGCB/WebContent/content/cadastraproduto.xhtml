@@ -28,7 +28,7 @@
 						<p:outputLabel for="fornecedor" value="Fornecedor: "/>
 						<p:selectOneMenu required="true" value="#{produtoControl.produto.fornecedor.id}" id="fornecedor">
 							<f:selectItem itemValue="0" itemLabel="Selecione Fornecedor" noSelectionOption="true"/>							
-							<f:selectItems value="#{fornecedoresControl.listaFornecedorCombo}"/>						
+							<f:selectItems value="#{fornecedoresControl.getListaFornecedorCombo('')}"/>						
 						</p:selectOneMenu>
 						<p:outputLabel for="qtdeshowroom" value="Qtde Showroom: "/>
 						<p:spinner value="#{produtoControl.produto.showroom}" required="true" id="qtdeshowroom" max="999" min="0">

@@ -3,6 +3,7 @@ package br.com.casabemestilo.control;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -14,14 +15,18 @@ import javax.faces.context.FacesContext;
 import org.hibernate.HibernateException;
 import org.hibernate.TransactionException;
 import org.hibernate.exception.ConstraintViolationException;
+import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 
 import com.sun.faces.context.flash.ELFlash;
 
 import br.com.casabemestilo.DAO.AssistenciaTecnicaDAO;
 import br.com.casabemestilo.DAO.ClienteDAO;
+import br.com.casabemestilo.DAO.UsuarioDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Assistenciatecnica;
 import br.com.casabemestilo.model.Cliente;
+import br.com.casabemestilo.model.Usuario;
 
 @ViewScoped
 @ManagedBean
@@ -35,6 +40,8 @@ public class ClienteControl extends Control implements Serializable,InterfaceCon
 	private ClienteDAO clienteDAO;
 	
 	private List<Cliente> listaCliente;
+	
+	private LazyDataModel<Cliente> listaLazyCliente;
 	
 	
 	/*
@@ -241,6 +248,45 @@ public class ClienteControl extends Control implements Serializable,InterfaceCon
 		return listaCliente;
 	}
 	
+	public LazyDataModel<Cliente> listaLazyClienteGeral(){
+		if(listaLazyCliente == null){
+			listaLazyCliente = new LazyDataModel<Cliente>() {									
+									private List<Cliente> listaLazy;
+									
+									@Override
+								    public Cliente getRowData(String idCliente) {
+								    	Integer id = Integer.valueOf(idCliente);
+								    	
+								        for(Cliente cliente : listaLazy) {
+								            if(cliente.getId().equals(id))
+								                return cliente;
+								        }
+								        
+								        return null;
+								    }
+
+								    @Override
+								    public Object getRowKey(Cliente cliente) {
+								        return cliente.getId();
+								    }
+
+								    @Override
+								    public List<Cliente> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,String> filters) {
+								    	clienteDAO = new ClienteDAO();  
+								    	
+								    	listaLazy = clienteDAO.listaLazy(first, pageSize);
+								    	
+								    	if (getRowCount() <= 0) {  
+								            setRowCount(clienteDAO.totalUsuario());  
+								        } 			       
+								        setPageSize(pageSize);  
+								        return listaLazy;  
+								    }
+			};
+		}
+		return listaLazyCliente;
+	}
+	
 	/*
 	 * GETTERS & SETTERS
 	 * */
@@ -267,6 +313,14 @@ public class ClienteControl extends Control implements Serializable,InterfaceCon
 
 	public void setListaCliente(List<Cliente> listaCliente) {
 		this.listaCliente = listaCliente;
-	}	
-	
+	}
+
+	public LazyDataModel<Cliente> getListaLazyCliente() {
+		return listaLazyCliente;
+	}
+
+	public void setListaLazyCliente(LazyDataModel<Cliente> listaLazyCliente) {
+		this.listaLazyCliente = listaLazyCliente;
+	}
+
 }
