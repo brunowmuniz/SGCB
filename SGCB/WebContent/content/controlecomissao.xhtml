@@ -47,7 +47,7 @@
 							</h:outputText>
 						</p:column>
 						<p:column headerText="Total de Vales">
-							<h:outputText value="R$ #{usuario.totalValeFuncionario != 0 ? '-' : ''}" styleClass="debito"/>
+							<h:outputText value="R$ " styleClass="debito"/>
 							<h:outputText value="#{usuario.totalValeFuncionario}" styleClass="debito">
 								<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
 							</h:outputText>

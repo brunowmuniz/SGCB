@@ -329,14 +329,20 @@ public class FreteControl extends Control implements Serializable,
 			InputStream caminho = null;
 			HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 			Usuario usuarioLogado = (Usuario) request.getSession().getAttribute("UsuarioLogado");
-					
+			String caminhoRelatorio = request.getSession().getServletContext().getRealPath("/WEB-INF/classes/br/com/casabemestilo/relatorio/");
+			
 			caminho = getClass().getResourceAsStream("../relatorio/solicitacaofretemontagem.jrxml");
 	
+			if(caminhoRelatorio.indexOf("home") > -1)
+				caminhoRelatorio += "/";
+			else
+				caminhoRelatorio += "\\";
+			
 			response.setContentType("application/pdf");			
 			parametros.put("IDFRETE", frete.getId());
 			parametros.put("DATAHORA_IMPRESSAO", new Date());
 			parametros.put("USUARIO_IMPRESSAO", usuarioLogado.getNome());
-			parametros.put("SUBREPORT_DIR", request.getSession().getServletContext().getRealPath( "/WEB-INF/classes/br/com/casabemestilo/relatorio/") + "\\");
+			parametros.put("SUBREPORT_DIR", caminhoRelatorio);
 			response.setHeader("Content-Disposition","attachment; filename=\"Solicitação_Frete-" + frete.getId() +".pdf\"");
 			JasperReport pathReport = JasperCompileManager.compileReport(caminho);
 			

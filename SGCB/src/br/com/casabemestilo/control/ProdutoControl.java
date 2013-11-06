@@ -3,6 +3,7 @@ package br.com.casabemestilo.control;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -14,12 +15,17 @@ import javax.faces.event.ValueChangeEvent;
 
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
+import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
+
 import com.sun.faces.context.flash.ELFlash;
 
 import br.com.casabemestilo.DAO.FornecedoresDAO;
+import br.com.casabemestilo.DAO.OcDAO;
 import br.com.casabemestilo.DAO.ProdutoDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Fornecedor;
+import br.com.casabemestilo.model.Oc;
 import br.com.casabemestilo.model.Produto;
 
 @ManagedBean
@@ -35,6 +41,8 @@ public class ProdutoControl extends Control implements InterfaceControl,
 	private List<Produto> listaProduto;
 	
 	private ProdutoDAO produtoDAO;
+	
+	private LazyDataModel<Produto> listaLazyProduto;
 	
 	
 	/*
@@ -207,6 +215,45 @@ public class ProdutoControl extends Control implements InterfaceControl,
 		}
 	}
 	
+	public LazyDataModel<Produto> listaLazyProdutoGeral(){
+		if(listaLazyProduto == null){
+			listaLazyProduto = new LazyDataModel<Produto>() {
+								private List<Produto> listaLazy;
+								
+								public Produto getRowData(String idProduto) {
+							    	Integer id = Integer.valueOf(idProduto);
+							    	
+							        for(Produto produto : listaLazy) {
+							            if(produto.getId().equals(id))
+							                return produto;
+							        }
+							        
+							        return null;
+							    }
+
+							    @Override
+							    public Object getRowKey(Produto produto) {
+							        return produto.getId();
+							    }
+
+							    @Override
+							    public List<Produto> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,String> filters) {
+							    	produtoDAO = new ProdutoDAO();  
+							    	
+							    	listaLazy = produtoDAO.listaLazy(first, pageSize, filters);
+							    	
+							    	if (getRowCount() <= 0) {  
+							            setRowCount(produtoDAO.totalProduto(filters));  
+							        }  
+							       
+							        setPageSize(pageSize);  
+							        return listaLazy;  
+							    }
+			};
+		}
+		return listaLazyProduto;
+	}
+	
 	/*
 	 * GETTERS & SETTERS
 	 * */
@@ -234,4 +281,12 @@ public class ProdutoControl extends Control implements InterfaceControl,
 		this.produtoDAO = produtoDAO;
 	}
 
+	public LazyDataModel<Produto> getListaLazyProduto() {
+		return listaLazyProduto;
+	}
+
+	public void setListaLazyProduto(LazyDataModel<Produto> listaLazyProduto) {
+		this.listaLazyProduto = listaLazyProduto;
+	}
+	
 }

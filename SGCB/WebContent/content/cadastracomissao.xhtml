@@ -7,15 +7,15 @@
 
 	<ui:composition template="../template/template.xhtml">
 		<ui:define name="conteudo">
-			<h:form>
-				<p:panel header="Cadastro de Comissão">
-			     	<p:messages id="msgs"/>
+			<h:form id="form">
+				<p:panel header="Cadastro de Comissão">					
 			     	<h:panelGrid id="cadastro">			     	
 						<h:panelGrid columns="2" style="clear: both;">
 							<p:outputLabel for="nome" value="Nome: "/>
-							<p:inputText value="#{comissaoControl.comissao.usuario.nome}" id="nome" size="60" required="true" disabled="true"/>				
+							<p:inputText value="#{comissaoControl.comissao.usuario.nome}" id="nome" size="60" required="true" disabled="true"/>
+							<p:growl id="msgs"/>				
 						</h:panelGrid>
-						
+							
 						<h:panelGrid columns="4" style="clear: both;" rendered="#{comissaoControl.comissao.usuario.perfil.id == 2}" id="comissaoVendedor">																
 							<p:outputLabel for="ehcomissaoindividual" value="Comissão Vendedor Individual (%): "/>
 							<p:selectBooleanCheckbox value="#{comissaoControl.comissao.ehComissaoIndividual}" id="ehcomissaoindividual" valueChangeListener="#{comissaoControl.defineComissaoVendedorIndividual}">
@@ -62,7 +62,7 @@
 							</p:selectBooleanCheckbox>
 							<p:selectManyMenu id="listavendedorconjunta" value="#{comissaoControl.listaUsuarioComissaoConjunta}"
 										 disabled="#{!comissaoControl.comissao.ehComissaoMontadorConjunta}">
-								<f:selectItems value="#{comissaoControl.listaUsuarioCombo}" />							
+								<f:selectItems value="#{comissaoControl.listaUsuarioCombo}"/>							
 							</p:selectManyMenu>				
 							<p:inputText value="#{comissaoControl.comissao.percentualComissaoMontadorConjunta}" id="percentualComissaoMontadorConjunta" size="10" 
 										 disabled="#{!comissaoControl.comissao.ehComissaoMontadorConjunta}">

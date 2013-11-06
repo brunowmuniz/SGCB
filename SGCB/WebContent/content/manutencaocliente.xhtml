@@ -15,9 +15,9 @@
 					 	<p:menuitem value="Editar" icon="ui-icon-pencil" action="#{clienteControl.alterarCadastro}" ajax="false"/>
 					 </p:contextMenu>
 					 
-					 <p:dataTable var="cliente" value="#{clienteControl.listarAtivos()}" id="clientes" rowKey="#{cliente.id}"  
+					 <p:dataTable var="cliente" value="#{clienteControl.listaLazyClienteGeral()}" id="clientes" rowKey="#{cliente.id}"  
                 		selection="#{clienteControl.cliente}" selectionMode="single"  paginator="true" rows="10"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                 rowsPerPageTemplate="10,25,50">        
+                 rowsPerPageTemplate="10,25,50" lazy="true">        
                        		  		
 				        <p:column headerText="Nome">
 				            <h:outputText value="#{cliente.nome}" />

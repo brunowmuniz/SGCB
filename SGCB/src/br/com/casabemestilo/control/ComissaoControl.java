@@ -18,6 +18,7 @@ import javax.faces.model.SelectItem;
 
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
+import org.primefaces.component.selectmanymenu.SelectManyMenu;
 
 import com.sun.faces.context.flash.ELFlash;
 
@@ -46,13 +47,14 @@ public class ComissaoControl extends Control implements Serializable,InterfaceCo
 	
 	private List<Comissao> listaComissao;
 	
-	private List<String> listaUsuarioComissaoConjunta;
+	private List<String> listaUsuarioComissaoConjunta = new ArrayList<String>();
 	
 	private List listaUsuarioCombo;
 	
 	private Date dataInicial;
 	
 	private Date dataFinal;
+	
 	
 	/*
 	 * CONSTRUTORES
@@ -80,40 +82,89 @@ public class ComissaoControl extends Control implements Serializable,InterfaceCo
 	 @PostConstruct
 	 public void init(){
 		 comissaoDAO = new ComissaoDAO();
+		 
 		 if(ELFlash.getFlash().get("usuarioComissao") != null){
 			Usuario usuario = new Usuario();
-			comissao = new Comissao();			
-			usuario = (Usuario) ELFlash.getFlash().get("usuarioComissao");
+			comissao = new Comissao();
+			String[] idUsuarioComissao = null;
+			Integer i = 0;
+			
+			usuario = (Usuario) ELFlash.getFlash().get("usuarioComissao");				
 			comissao.setUsuario(usuario);
 			try {
 				comissao = comissaoDAO.buscaObjetoId(usuario.getId());
 				if(comissao == null){
-					comissao = new Comissao();
-					comissao.setUsuario(usuario);					
+					if(usuario.getPerfil().getId() == 2 || usuario.getPerfil().getId() == 5){
+						if(usuario.getPerfil().getId() == 5){
+							listaComissao = comissaoDAO.listaComissaoMontadorConjunta();
+						}else{
+							listaComissao = comissaoDAO.listaComissaoVendedorConjunta();
+						}
+						for(Comissao comissaoConjunta : listaComissao){
+							if(usuario.getPerfil().getId() == 5){
+								idUsuarioComissao = comissaoConjunta.getUsuarioComissaoMontadorConjunta().split(",");
+							}else{
+								idUsuarioComissao = comissaoConjunta.getUsuarioComissaoConjunta().split(",");
+							}
+							i = 0;
+							while(i <= idUsuarioComissao.length - 1){
+								if(usuario.getId() == Integer.parseInt(idUsuarioComissao[i])){
+									FacesContext.getCurrentInstance().addMessage("form", new FacesMessage(FacesMessage.SEVERITY_WARN, "Usuário tem comissão conjunta com: " + comissaoConjunta.getUsuario().getNome(), ""));
+									comissao = comissaoConjunta;
+								}
+								i++;
+							}
+							
+						}
+					}
+					if(comissao == null){
+						comissao = new Comissao();
+						comissao.setUsuario(usuario);
+					}else{
+						if(comissao.getEhComissaoConjunta()){
+							idUsuarioComissao = comissao.getUsuarioComissaoConjunta().split(",");
+							i = 0;
+							while(i <= idUsuarioComissao.length - 1){
+								listaUsuarioComissaoConjunta.add(idUsuarioComissao[i]);
+								i++;
+							}							
+						}
+						if(comissao.getEhComissaoMontadorConjunta()){
+							idUsuarioComissao = comissao.getUsuarioComissaoMontadorConjunta().split(",");
+							i = 0;
+							while(i <= idUsuarioComissao.length - 1){
+								listaUsuarioComissaoConjunta.add(idUsuarioComissao[i]);
+								i++;
+							}
+						}
+					}										
 				}else{
 					if(comissao.getEhComissaoConjunta()){
-						String[] idUsuarioComissao = comissao.getUsuarioComissaoConjunta().split(",");
-						Integer i = 0;
+						idUsuarioComissao = comissao.getUsuarioComissaoConjunta().split(",");
+						i = 0;
 						while(i <= idUsuarioComissao.length - 1){
-							listaUsuarioComissaoConjunta.add(idUsuarioComissao[i]); 
+							listaUsuarioComissaoConjunta.add(idUsuarioComissao[i]);
+							i++;
 						}
 					}
 					if(comissao.getEhComissaoMontadorConjunta()){
-						String[] idUsuarioComissao = comissao.getUsuarioComissaoMontadorConjunta().split(",");
-						Integer i = 1;
+						idUsuarioComissao = comissao.getUsuarioComissaoMontadorConjunta().split(",");
+						i = 0;
 						while(i <= idUsuarioComissao.length - 1){
-							listaUsuarioComissaoConjunta.add(idUsuarioComissao[i]); 
+							listaUsuarioComissaoConjunta.add(idUsuarioComissao[i]);
+							i++;
 						}
 					}
 				}
+				
 			} catch (ConstraintViolationException e) {
 				super.mensagem = e.getMessage();
 				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));
-				logger.error("Erro Constraint: " + super.mensagem + "-" + comissao.getUsuario().getNome());
+				logger.error("Erro Constraint: " + super.mensagem + "-" + usuario.getNome());
 			} catch (HibernateException e) {
 				super.mensagem = e.getMessage();
 				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Hibernate: " + super.mensagem, ""));
-				logger.error("Erro Constraint: " + super.mensagem + "-" + comissao.getUsuario().getNome());
+				logger.error("Erro Hibernate: " + super.mensagem + "-" + usuario.getNome());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -424,7 +475,7 @@ public class ComissaoControl extends Control implements Serializable,InterfaceCo
 				if(usuarios.getPerfil().getId() == comissao.getUsuario().getPerfil().getId()
 						&& usuarios.getId() != comissao.getUsuario().getId()){
 					 SelectItem si = new SelectItem();
-		             si.setValue(usuarios.getId());
+		             si.setValue(usuarios.getId().toString());
 		             si.setLabel(usuarios.getNome());
 		             listaUsuarioCombo.add(si);
 				}            
@@ -470,4 +521,6 @@ public class ComissaoControl extends Control implements Serializable,InterfaceCo
 	public void setDataFinal(Date dataFinal) {
 		this.dataFinal = dataFinal;
 	}
+	
+	
 }

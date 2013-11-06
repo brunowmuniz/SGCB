@@ -1,6 +1,7 @@
 package br.com.casabemestilo.DAO;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.HibernateException;
@@ -124,7 +125,32 @@ public class ClienteDAO implements Serializable,InterfaceDAO{
 		return listaClientes;
 	}
 	
-	
+	public List<Cliente> listaLazy(int first, int pageSize) {
+		session = Conexao.getInstance();
+		listaClientes = new ArrayList<Cliente>();
+		listaClientes = session.createQuery("from Cliente cliente" +
+												" where" +
+													" cliente.deleted = false" +
+												" order by cliente.nome")
+								.setFirstResult(first)
+								.setMaxResults(pageSize)
+								.setCacheable(true)
+								.list();
+		
+		session.close();
+		return listaClientes;
+	}
+
+	public int totalUsuario() {
+		session = Conexao.getInstance();
+		Long linhas = new Long("0");
+		linhas = (Long) session.createQuery("select count(cliente.id) from Cliente cliente" +
+												" where cliente.deleted = false")
+							   .setCacheable(true)
+							   .uniqueResult();
+		session.close();
+		return linhas.intValue();
+	}
 	
 	/*
 	 * GETTERS & SETTERS
@@ -146,7 +172,4 @@ public class ClienteDAO implements Serializable,InterfaceDAO{
 	}
 
 	
-	
-	
-
 }

@@ -34,7 +34,7 @@
 						<p:outputLabel value="Forma de Pagamento/Recebimento: " for="formapgtorecbmto"/>
 						<p:selectOneMenu id="formapgtorecbmto" value="#{lancamentoControl.lancamento.formapagamento.id}" required="true">
 							<f:selectItem noSelectionOption="Escolha uma Forma" itemLabel=""/>
-							<f:selectItems value="#{formaPagamentoControl.listaFormaPagamentoCombo}"/>													
+							<f:selectItems value="#{formaPagamentoControl.getListaFormaPagamentoCombo('')}"/>													
 						</p:selectOneMenu>
 						
 						<p:outputLabel for="ehvale" value="É Vale?: "/>

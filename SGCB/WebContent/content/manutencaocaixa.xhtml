@@ -9,12 +9,13 @@
 		<ui:define name="conteudo">
 			<h:form id="form">
 				<p:panel header="Controle de Caixa">
-					<p:messages id="msgs"/>
+					
 					
 					<h:panelGrid columns="2">
 						<p:outputLabel for="dataLancamento" value="Caixa do dia: "/>
-						<p:calendar value="#{movimentacaoControl.dataLancamento}" pattern="dd/MM/yyyy" locale="pt" id="dataLancamento">
-							<p:ajax event="dateSelect" process="@this" update="@form"/>
+						<p:calendar value="#{movimentacaoControl.dataLancamento}" pattern="dd/MM/yyyy" locale="pt" id="dataLancamento"
+									valueChangeListener="#{movimentacaoControl.defineDataLancamento}">
+							<p:ajax event="dateSelect" update="@form"/>
 						</p:calendar>
 					</h:panelGrid>
 									
@@ -37,7 +38,7 @@
 	               				#{formaspagamento.nome}
 	               			</f:facet>
 	               			
-	               			<!-- Corrigir o primeiro carregamento -->
+	               			
 	               			<f:facet name="footer">               				
 	               				<h:outputText value="R$ "/>
 	               				<h:outputText value="#{movimentacaoControl.totalMomentoFormaPagamento(formaspagamento.id)}" styleClass="negrito">
@@ -72,6 +73,7 @@
                				<f:convertNumber maxFractionDigits="2" minFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="8"/>
                			</h:outputText> 					
 					</h:panelGrid>
+					<p:growl id="msgs"/>
 				</p:panel>
 			</h:form>
 		</ui:define>

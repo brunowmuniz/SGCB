@@ -19,7 +19,7 @@
 						<p:selectOneMenu id="formapagamento" value="#{condicoesPagamentoControl.condicoesPagamento.formapagamento.id}"
 										 required="true" requiredMessage="Selecionar uma forma de pagamento">						
 							<f:selectItem itemLabel="Selecione Forma Pagamento" itemValue=""/>
-							<f:selectItems value="#{formaPagamentoControl.listaFormaPagamentoCombo}"/>
+							<f:selectItems value="#{formaPagamentoControl.getListaFormaPagamentoCombo('')}"/>
 						</p:selectOneMenu>
 						<p:outputLabel for="percentual" value="Retenção (%): "/>						
 						<p:inputText value="#{condicoesPagamentoControl.condicoesPagamento.percentual}" id="percentual" size="10" required="true">

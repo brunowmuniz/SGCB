@@ -196,6 +196,36 @@ public class ComissaoDAO implements Serializable, InterfaceDAO {
 		return listaComissao;
 	}
 	
+	public List<Comissao> listaComissaoMontadorConjunta() {
+		session = Conexao.getInstance();
+		listaComissao = new ArrayList<Comissao>();
+		listaComissao = session.createQuery("from Comissao comissao" +
+												" where" +
+													" comissao.usuario.perfil.id = 5" +
+												" and" +
+													" comissao.ehComissaoMontadorConjunta = true" +
+												" and"+
+													" comissao.percentualComissaoMontadorConjunta is not null")
+							   .list();
+		session.close();
+		return listaComissao;
+	}
+	
+	public List<Comissao> listaComissaoVendedorConjunta() {
+		session = Conexao.getInstance();
+		listaComissao = new ArrayList<Comissao>();
+		listaComissao = session.createQuery("from Comissao comissao" +
+												" where" +
+													" comissao.usuario.perfil.id = 2" +
+												" and" +
+													" comissao.ehComissaoConjunta = true" +
+												" and"+
+													" comissao.percentualComissaoConjunta is not null")
+							   .list();
+		session.close();
+		return listaComissao;
+	}
+	
 	/*
 	 * GETTERS & SETTERS
 	 * */
@@ -217,6 +247,5 @@ public class ComissaoDAO implements Serializable, InterfaceDAO {
 	public void setComissao(Comissao comissao) {
 		this.comissao = comissao;
 	}
-	
-	
+
 }

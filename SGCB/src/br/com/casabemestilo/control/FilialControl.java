@@ -189,6 +189,19 @@ public class FilialControl extends Control implements InterfaceControl, Serializ
 		return null;
 	}
 
+	public List getListaFilialComboFilter() {
+		listaFilialCombo = new ArrayList();
+		listarAtivos();
+		listaFilialCombo.add(new SelectItem("","Todos"));
+		for (Filial filiais : listaFilial) {
+             SelectItem si = new SelectItem();
+             si.setValue(filiais.getId());
+             si.setLabel(filiais.getNome());
+             listaFilialCombo.add(si);
+         }
+		 return listaFilialCombo;
+	}
+	
 	
 	/*
 	 * GETTERS & SETTERS

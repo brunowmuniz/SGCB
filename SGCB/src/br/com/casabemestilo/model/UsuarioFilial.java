@@ -85,4 +85,11 @@ public class UsuarioFilial implements java.io.Serializable {
 		this.deleted = deleted;
 	}
 
+	@Override
+	public String toString() {
+		return "UsuarioFilial [usuario=" + usuario.getNome() + "]";
+	}
+	
+	
+
 }

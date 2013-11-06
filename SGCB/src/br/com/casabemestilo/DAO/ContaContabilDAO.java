@@ -3,6 +3,7 @@ package br.com.casabemestilo.DAO;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -104,6 +105,49 @@ public class ContaContabilDAO implements InterfaceDAO, Serializable {
 		return null;
 	}
 
+	public List<Contacontabil> listaLazy(int first, int pageSize,
+			Map<String, String> filters) {
+		session = Conexao.getInstance();
+		listaContacontabil = new ArrayList<Contacontabil>();
+		String hql = "from Contacontabil conta" +
+						" where conta.deleted = false";
+		
+		if(filters.containsKey("nome")){
+			hql += " and conta.nome like '%" + filters.get("nome") + "%'";
+		}
+		if(filters.containsKey("tipo")){
+			hql += " and conta.tipo= '" + filters.get("tipo") + "'";
+		}
+		
+		listaContacontabil = session.createQuery(hql)
+									.setFirstResult(first)
+									.setMaxResults(pageSize)
+									.setCacheable(true)
+									.list();
+		session.close();		
+		return listaContacontabil;
+	}
+
+	public int totalContacontabil(Map<String, String> filters) {
+		session = Conexao.getInstance();
+		Long linhas = new Long("0");
+		String hql = "select count(conta.id) from Contacontabil conta" +
+						" where conta.deleted = false";
+		
+		if(filters.containsKey("nome")){
+			hql += " and conta.nome like '%" + filters.get("nome") + "%'";
+		}
+		if(filters.containsKey("tipo")){
+			hql += " and conta.tipo= '" + filters.get("tipo") + "'";
+		}
+		
+		linhas = (Long) session.createQuery(hql)
+							   .setCacheable(true)
+							   .uniqueResult();
+		
+		session.close();
+		return linhas.intValue();
+	}
 	
 	/*
 	 * GETTERS & SETTERS

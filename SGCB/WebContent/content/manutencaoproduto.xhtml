@@ -15,10 +15,10 @@
 					 	<p:menuitem value="Editar" action="#{produtoControl.alterarCadastro}" icon="ui-icon-pencil" ajax="false"/>
 					 </p:contextMenu>
 					 
-					 <p:dataTable var="produto" value="#{produtoControl.listarAtivos()}" id="produtos" rowKey="#{produto.id}"  
-                		selection="#{produtoControl.produto}" selectionMode="single" paginator="true" rows="10"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                 rowsPerPageTemplate="10,25,50" >                		  		
-				        <p:column headerText="Descrição">
+					 <p:dataTable var="produto" value="#{produtoControl.listaLazyProdutoGeral()}" id="produtos" rowKey="#{produto.id}"  
+                				  selection="#{produtoControl.produto}" selectionMode="single" paginator="true" rows="10"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                 				  rowsPerPageTemplate="10,25,50" lazy="true">                		  		
+				        <p:column headerText="Descrição" filterBy="#{produto.descricao}" filterMatchMode="startsWith" filterStyle="width: 70%;">
 				            <h:outputText value="#{produto.descricao}" />
 				        </p:column>
 				
@@ -33,7 +33,7 @@
 				        	</h:outputText>				        					            
 				        </p:column>
 				        
-				        <p:column headerText="Fornecedor">
+				        <p:column headerText="Fornecedor" filterBy="#{produto.fornecedor.id}" filterOptions="#{fornecedoresControl.getListaFornecedorCombo('filter')}" filterMatchMode="exact">
 				            <h:outputText value="#{produto.fornecedor.nome}"/> 
 				        </p:column>
 						
@@ -50,7 +50,8 @@
 				        </p:column>	
 				        
 				        <p:column headerText="Tem Montagem?">
-				        	<h:outputText value="#{produto.temMontagem == true ? 'Sim' : 'Não'}" />
+				        	<h:outputText value="#{produto.temMontagem == true ? 'Sim' : 'Não'}" 
+				        				  styleClass="#{produto.temMontagem == true ? 'credito' : 'debito'}"/>
 				        </p:column>     				        
 				    </p:dataTable>
 			     </p:panel>

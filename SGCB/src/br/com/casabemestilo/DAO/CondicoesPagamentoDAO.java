@@ -1,7 +1,10 @@
 package br.com.casabemestilo.DAO;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
@@ -112,6 +115,50 @@ public class CondicoesPagamentoDAO implements InterfaceDAO, Serializable {
 		return null;
 	}
 
+	public List<CondicoesPagamento> listaLazy(int first, int pageSize,
+			Map<String, String> filters) {
+		session = Conexao.getInstance();
+		listaRetencao = new ArrayList<CondicoesPagamento>();
+		String hql = "from CondicoesPagamento condicoesPagamento" +
+						" where condicoesPagamento.deleted = false";
+		
+		if(filters.containsKey("nome")){
+			hql += " and condicoesPagamento.nome like '%" + filters.get("nome") + "%'";
+		}
+		if(filters.containsKey("formapagamento.id")){
+			hql += " and condicoesPagamento.formapagamento.id =" + filters.get("formapagamento.id");
+		}
+		
+		listaRetencao = session.createQuery(hql)
+							   .setFirstResult(first)
+							   .setMaxResults(pageSize)
+							   .setCacheable(true) 
+							   .list();
+		
+		session.close();
+		return listaRetencao;
+	}
+
+	public int totalOc(Map<String, String> filters) {
+		session = Conexao.getInstance();
+		Long linhas = new Long("0");
+		String hql = "select count(condicoesPagamento.id) from CondicoesPagamento condicoesPagamento" +
+						" where condicoesPagamento.deleted = false";
+		
+		if(filters.containsKey("nome")){
+			hql += " and condicoesPagamento.nome like '%" + filters.get("nome") + "%'";
+		}
+		if(filters.containsKey("formapagamento.id")){
+			hql += " and condicoesPagamento.formapagamento.id =" + filters.get("formapagamento.id");
+		}
+		
+		linhas = (Long) session.createQuery(hql)
+							   .setCacheable(true) 
+							   .uniqueResult();
+		
+		session.close();		
+		return linhas.intValue();
+	}
 	
 	/*
 	 * GETTERS & SETTERS
@@ -131,5 +178,7 @@ public class CondicoesPagamentoDAO implements InterfaceDAO, Serializable {
 	public void setListaRetencao(List<CondicoesPagamento> listaRetencao) {
 		this.listaRetencao = listaRetencao;
 	}
+
+	
 	
 }

@@ -14,7 +14,7 @@
 						<p:outputLabel for="fornecedor" value="Fornecedor: "/>
 						<p:selectOneMenu required="true" value="#{ocProdutoControl.fornecedor.id}" id="fornecedor">
 							<f:selectItem itemValue="0" itemLabel="Todos"/>							
-							<f:selectItems value="#{fornecedoresControl.listaFornecedorCombo}"/>
+							<f:selectItems value="#{fornecedoresControl.getListaFornecedorCombo('')}"/>
 							<p:ajax event="change" process="pnlacao" update="produtoencomenda,pnlacao"/>
 						</p:selectOneMenu>
 												

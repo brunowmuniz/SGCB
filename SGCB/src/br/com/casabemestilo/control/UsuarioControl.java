@@ -6,6 +6,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.faces.application.FacesMessage;
@@ -20,15 +22,19 @@ import javax.servlet.http.HttpSession;
 
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
+import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 import org.w3c.dom.ls.LSInput;
 
 import com.sun.faces.context.flash.ELFlash;
 
 import br.com.casabemestilo.DAO.ComissaoDAO;
+import br.com.casabemestilo.DAO.OcDAO;
 import br.com.casabemestilo.DAO.UsuarioDAO;
 import br.com.casabemestilo.DAO.UsuarioFilialDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Filial;
+import br.com.casabemestilo.model.Oc;
 import br.com.casabemestilo.model.Usuario;
 import br.com.casabemestilo.model.UsuarioFilial;
 import br.com.casabemestilo.util.Encrypt;
@@ -50,6 +56,8 @@ public class UsuarioControl extends Control implements InterfaceControl,
 	private List<String> listaUsuarioFilial;
 	
 	private List listaVendedorFilial;
+	
+	private LazyDataModel<Usuario> listaLazyUsuario;
 	
 	private String novaSenha =  "";
 	
@@ -362,6 +370,45 @@ public class UsuarioControl extends Control implements InterfaceControl,
 		return listaUsuariosAtivos;
 	}
 	
+	public LazyDataModel<Usuario> listaLazyUsuarioGeral(){
+		if(listaLazyUsuario == null){
+			listaLazyUsuario = new LazyDataModel<Usuario>() {
+				private List<Usuario> listaLazy;
+		
+				@Override
+			    public Usuario getRowData(String idUsuario) {
+			    	Integer id = Integer.valueOf(idUsuario);
+			    	
+			        for(Usuario usuario : listaLazy) {
+			            if(usuario.getId().equals(id))
+			                return usuario;
+			        }
+			        
+			        return null;
+			    }
+
+			    @Override
+			    public Object getRowKey(Usuario usuario) {
+			        return usuario.getId();
+			    }
+
+			    @Override
+			    public List<Usuario> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,String> filters) {
+			    	usuarioDAO = new UsuarioDAO();  
+			    	
+			    	listaLazy = usuarioDAO.listaLazy(first, pageSize);
+			    	
+			    	if (getRowCount() <= 0) {  
+			            setRowCount(usuarioDAO.totalUsuario());  
+			        } 			       
+			        setPageSize(pageSize);  
+			        return listaLazy;  
+			    }
+			};
+		}
+		return listaLazyUsuario;
+	}
+	
 
 	/*
 	 * GETTERS & SETTERS
@@ -398,14 +445,18 @@ public class UsuarioControl extends Control implements InterfaceControl,
 		this.listaUsuarioFilial = listaUsuarioFilial;
 	}
 
-	public List getListaVendedorFilial() {
-		List<Usuario> listaVendedor = new ArrayList<Usuario>();		
-		listaVendedorFilial = new ArrayList();			
-		listaVendedor = new UsuarioDAO().listaVendedorFilial();
-		for(Usuario usuarioVendedor : listaVendedor){					
+	public List getListaVendedorFilial(Filial filial) {
+		List<UsuarioFilial> listaVendedor = new ArrayList<UsuarioFilial>();		
+		listaVendedorFilial = new ArrayList();
+		if(filial.getId() == null){
+			filial = new Filial();
+			filial.setId(1);
+		}
+		listaVendedor = new UsuarioDAO().listaVendedorFilial(filial);
+		for(UsuarioFilial usuarioFilial : listaVendedor){					
 			SelectItem si = new SelectItem();
-			si.setValue(usuarioVendedor.getId());
-			si.setLabel(usuarioVendedor.getNome());
+			si.setValue(usuarioFilial.getUsuario().getId());
+			si.setLabel(usuarioFilial.getUsuario().getNome());
 			listaVendedorFilial.add(si);
 		}
 		return listaVendedorFilial;
@@ -414,6 +465,13 @@ public class UsuarioControl extends Control implements InterfaceControl,
 	public void setListaVendedorFilial(List listaVendedorFilial) {
 		this.listaVendedorFilial = listaVendedorFilial;
 	}
-	
 
+	public LazyDataModel<Usuario> getListaLazyUsuario() {
+		return listaLazyUsuario;
+	}
+
+	public void setListaLazyUsuario(LazyDataModel<Usuario> listaLazyUsuario) {
+		this.listaLazyUsuario = listaLazyUsuario;
+	}
+	
 }

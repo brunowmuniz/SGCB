@@ -30,18 +30,18 @@
 											 requiredMessage="Favor selecionar a filial" rendered="#{ocControl.oc.id == null}">
 								<f:selectItem itemLabel="Selecione a filial" itemValue="" noSelectionOption="true"/>
 								<f:selectItems value="#{filialControl.listaFilialCombo}"/>
+								<p:ajax event="change" update="vendedor"/>
 							</p:selectOneMenu>
 							<h:outputText value="#{ocControl.oc.filial.nome}" rendered="#{ocControl.oc.id != null}" styleClass="negrito"/>
 													
 							<p:spacer width="10px"/>
 							
 							<p:outputLabel for="vendedor" value="Vendedor: "/>
-							<p:inplace event="click" id="vendedor" label="Selecione um vendedor" rendered="#{ocControl.oc.id == null}">
-								<p:selectOneMenu value="#{ocControl.oc.usuario.id}" size="1">
-									<f:selectItem itemLabel="Selecione Vendedor" itemValue="" noSelectionOption="true"/>
-									<f:selectItems value="#{usuarioControl.listaVendedorFilial}"/>
-								</p:selectOneMenu>
-							</p:inplace>
+							<p:selectOneMenu id="vendedor" value="#{ocControl.oc.usuario.id}" size="1" rendered="#{ocControl.oc.id == null}" disabled="#{ocControl.oc.filial.id == null}">
+								<f:selectItem itemLabel="Selecione Vendedor" itemValue="" noSelectionOption="true"/>
+								<f:selectItems value="#{usuarioControl.getListaVendedorFilial(ocControl.oc.filial)}"/>
+							</p:selectOneMenu>
+							
 							<h:outputText value="#{ocControl.oc.usuario.nome}" rendered="#{ocControl.oc.id != null}" styleClass="negrito"/>
 							
 							<p:spacer width="1px"/>
@@ -174,7 +174,7 @@
 												<p:inputText disabled="#{ocProdutoControl.ocproduto.produto.id != null}" value="#{ocProdutoControl.ocproduto.produto.fornecedor.nome}" id="nomefornecedor" rendered="#{ocProdutoControl.ocproduto.produto.id != null}"/>
 												<p:selectOneMenu value="#{ocProdutoControl.ocproduto.produto.fornecedor.id}" id="fornecedor" rendered="#{ocProdutoControl.ocproduto.produto.id == null}">
 													<f:selectItem itemValue="0" itemLabel="Selecione Fornecedor" noSelectionOption="true"/>							
-													<f:selectItems value="#{fornecedoresControl.listaFornecedorCombo}"/>																									
+													<f:selectItems value="#{fornecedoresControl.getListaFornecedorCombo('')}"/>																									
 												</p:selectOneMenu>
 												
 												<p:outputLabel for="valorsugerido" value="Valor sugerido: " />
@@ -515,7 +515,7 @@
 														<p:outputLabel for="formapagamento" value="Forma de Pagamento: "/>
 														<p:selectOneMenu id="formapagamento" value="#{ocControl.pagamento.condicoesPagamento.formapagamento.id}">						
 															<f:selectItem itemLabel="Selecione Forma de Pagamento" itemValue=""/>
-															<f:selectItems value="#{formaPagamentoControl.listaFormaPagamentoCombo}"/>
+															<f:selectItems value="#{formaPagamentoControl.getListaFormaPagamentoCombo('')}"/>
 															<p:ajax event="change" update="formapagamento,condicoespagamento,gravarformapagamento" process="formapagamento" listener="#{ocControl.defineFormaPagamento}"/>
 														</p:selectOneMenu>
 																									

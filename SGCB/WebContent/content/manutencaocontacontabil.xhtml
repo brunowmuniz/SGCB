@@ -12,17 +12,17 @@
 					<p:contextMenu for="contascontabeis">					 	
 					 	<p:menuitem value="Editar" icon="ui-icon-pencil" action="#{contaContabilControl.alterarCadastro()}" ajax="false"/>
 					 </p:contextMenu>
-					<p:dataTable value="#{contaContabilControl.listarTodos()}" var="conta" id="contascontabeis" rowKey="#{conta.id}"  
+					<p:dataTable value="#{contaContabilControl.listaLazyContaContabilGeral()}" var="conta" id="contascontabeis" rowKey="#{conta.id}"  
                 		selection="#{contaContabilControl.contacontabil}" selectionMode="single"  paginator="true" rows="10"  
                 		paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                 		rowsPerPageTemplate="10,25,50">
+                 		rowsPerPageTemplate="10,25,50" lazy="true">
 						<p:column headerText="Cód.">
 							<h:outputText value="#{conta.id}" />
 						</p:column>
-						<p:column headerText="Nome">
+						<p:column headerText="Nome" filterBy="#{conta.nome}" filterMatchMode="startswith" filterStyle="width: 50%;">
 							<h:outputText value="#{conta.nome}" />
 						</p:column>
-						<p:column headerText="Tipo">
+						<p:column headerText="Tipo" filterBy="#{conta.tipo}" filterOptions="#{contaContabilControl.listaTiposConta}" filterMatchMode="exact">
 							<h:outputText value="#{conta.tipo == 'D' ? 'Débito' : 'Crédito'}" styleClass="negrito"
 								style="color: #{conta.tipo == 'D' ? 'red' : 'green'}"/>
 						</p:column>

@@ -10,6 +10,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ValueChangeEvent;
 
 import net.sf.ehcache.config.TerracottaConfiguration.Consistency;
 
@@ -156,6 +157,9 @@ public class MovimentacaoControl extends Control implements Serializable {
 	public Float totalMomentoFormaPagamento(Integer idFormaPgto){
 		Float totalFormaPgto = new Float("0");
 		try {
+			if(movimentacoes == null){
+				listaCaixa();
+			}
 			for(Movimentacao movimentacao : movimentacoes){
 				if(movimentacao.getPagamentos() != null){
 					for(Pagamento pagamento : movimentacao.getPagamentos()){
@@ -172,6 +176,7 @@ public class MovimentacaoControl extends Control implements Serializable {
 			}
 		} catch (NullPointerException e) {
 			super.mensagem = e.getMessage();
+			logger.error("[totalMomentoFormaPagamento] Erro NullPointer: " + super.mensagem + "-" + "calculo total momento não realizado!");
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Null: " + super.mensagem, ""));
 		}
 		
@@ -203,6 +208,11 @@ public class MovimentacaoControl extends Control implements Serializable {
 		}
 			
 		return totalAtualDia;
+	}
+	
+	public void defineDataLancamento(ValueChangeEvent value){
+		this.setDataLancamento((Date) value.getNewValue());
+		listaCaixa();
 	}
 	
 	/*
