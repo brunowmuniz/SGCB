@@ -44,6 +44,7 @@ public class Cliente implements java.io.Serializable {
 	private Date datadenascimento;
 	private Boolean deleted;
 	private List<Oc> ocs = new ArrayList<Oc>();
+	private List<Pagamento> pagamentos = new ArrayList<Pagamento>();
 
 	public Cliente() {
 	}
@@ -179,6 +180,15 @@ public class Cliente implements java.io.Serializable {
 
 	public void setDeleted(Boolean deleted) {
 		this.deleted = deleted;
+	}
+	
+	@OneToMany(targetEntity = Pagamento.class, mappedBy = "cliente", fetch = FetchType.LAZY)
+	public List<Pagamento> getPagamentos() {
+		return pagamentos;
+	}
+
+	public void setPagamentos(List<Pagamento> pagamentos) {
+		this.pagamentos = pagamentos;
 	}
 
 	@Override

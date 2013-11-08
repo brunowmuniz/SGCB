@@ -49,7 +49,6 @@ public class Ocproduto implements java.io.Serializable {
 	private Float valorunitario;
 	private Float valortotal;
 	private List<Pedidoproduto> pedidoprodutos;
-	private Set montagems = new HashSet(0);
 	private Frete frete; 
 	private Assistenciatecnica assistenciatecnica;
 
@@ -68,7 +67,6 @@ public class Ocproduto implements java.io.Serializable {
 		this.produto = produto;
 		this.oc = oc;
 		this.tiposaida = tiposaida;
-		this.montagems = montagems;
 		this.frete = frete;
 		this.assistenciatecnica = assistenciatecnica;
 		this.quantidade = quantidade;
@@ -131,15 +129,6 @@ public class Ocproduto implements java.io.Serializable {
 
 	public void setTiposaida(String tiposaida) {
 		this.tiposaida = tiposaida;
-	}
-
-	@OneToMany(targetEntity = Montagem.class, mappedBy = "ocproduto")
-	public Set getMontagems() {
-		return this.montagems;
-	}
-
-	public void setMontagems(Set montagems) {
-		this.montagems = montagems;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)

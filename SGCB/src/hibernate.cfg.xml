@@ -2,10 +2,10 @@
 <!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
                                          "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
- <session-factory>
+ <session-factory name="">
   <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
   <property name="hibernate.connection.password">973532</property>
-  <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/blankerc_sgcb?autoReconnect=true</property> 
+  <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/blankerc_sgcb?autoReconnect=true</property>
   <property name="hibernate.connection.username">blankerc_sgcb</property>
   <property name="hibernate.dialect">br.com.casabemestilo.util.MySQLDialect</property>
   <property name="hibernate.show_sql">false</property>
@@ -16,9 +16,9 @@
   <property name="hibernate.cache.use_second_level_cache">true</property>
   <!--<property name="hibernate.cache.provider_class">net.sf.ehcache.hibernate.EhCacheProvider</property>-->
   <property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</property>
-  <property name="hibernate.cache.region_prefix"></property>
+  <property name="hibernate.cache.region_prefix"/>
   <property name="net.sf.ehcache.configurationResourceName">/ehcache.xml</property>
-  
+  <property name="hibernate.hbm2ddl.auto">update</property>
   <!-- Configurações de C3P0 -->
   <property name="hibernate.c3p0.idleConnectionTestPeriod">20</property>
   <property name="hibernate.c3p0.min_size">2</property>
@@ -51,5 +51,6 @@
   <mapping class="br.com.casabemestilo.model.UsuarioFilial"/>
   <mapping class="br.com.casabemestilo.model.ComissaoMontador"/>
   <mapping class="br.com.casabemestilo.model.ComissaoVendedor"/>
+  <mapping class="br.com.casabemestilo.model.Banco"/>
  </session-factory>
 </hibernate-configuration>
