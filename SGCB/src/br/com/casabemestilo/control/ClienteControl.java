@@ -11,6 +11,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 
 import org.hibernate.HibernateException;
 import org.hibernate.TransactionException;
@@ -285,6 +286,19 @@ public class ClienteControl extends Control implements Serializable,InterfaceCon
 			};
 		}
 		return listaLazyCliente;
+	}
+	
+	public List listaClienteCombo(){
+		listarAtivos();
+		List listaClienteCombo = new ArrayList();
+		
+		for(Cliente cliente : listaCliente){
+			SelectItem si = new SelectItem();
+			si.setValue(cliente.getId());
+			si.setLabel(cliente.getNome());
+			listaClienteCombo.add(si);
+		}
+		return listaClienteCombo;
 	}
 	
 	/*

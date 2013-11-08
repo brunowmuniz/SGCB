@@ -54,7 +54,7 @@
 						</p:column>
 						<p:column headerText="Total das Comissões">
 							<h:outputText value="R$ " styleClass="negrito"/>
-							<h:outputText value="#{(usuario.totalComissaoLoja + usuario.totalComissaoMontador + usuario.totalComissaoVendedor) - usuario.totalValeFuncionario}" 
+							<h:outputText value="#{(usuario.totalComissaoLoja + usuario.totalComissaoMontador + usuario.totalComissaoVendedor) + usuario.totalValeFuncionario}" 
 											styleClass="negrito">
 								<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
 							</h:outputText>

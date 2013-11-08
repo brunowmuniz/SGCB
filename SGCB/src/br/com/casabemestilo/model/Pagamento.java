@@ -43,6 +43,8 @@ public class Pagamento implements java.io.Serializable {
 	private List<Parcela> parcelas = new ArrayList<Parcela>();
 	private Boolean deleted;
 	private Float valor;
+	private Cliente cliente;
+	private Banco banco;
 
 	public Pagamento() {
 	}
@@ -151,14 +153,28 @@ public class Pagamento implements java.io.Serializable {
 	public void setValor(Float valor) {
 		this.valor = valor;
 	}
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="cliente")
+	public Cliente getCliente() {
+		return cliente;
+	}
 
-	/*@Override
-	public String toString() {
-		return "Pagamento [condicoesPagamento=" + condicoesPagamento.getFormapagamento().getNome()
-				+ ", valor=" + valor + "]";
-	}*/
-	
-	
+	public void setCliente(Cliente cliente) {
+		this.cliente = cliente;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="banco")
+	public Banco getBanco() {
+		return banco;
+	}
+
+	public void setBanco(Banco banco) {
+		this.banco = banco;
+	}
+
+
 	@Override
 	public String toString() {
 		return "Pagamento [id=" + id + ", datalancamento=" + datalancamento

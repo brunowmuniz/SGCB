@@ -154,6 +154,7 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 		session = Conexao.getInstance();
 		session.beginTransaction();
 		String hql = "from Parcela p " +
+							"join fetch p.pagamento.banco " +
 						"where " +
 							"p.dataentrada between :dataInicial and :dataFinal " +
 						"and " +
@@ -161,6 +162,10 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 		
 		if(filter.containsKey("situacaoCheque")){
 			hql += " and p.situacaoCheque = '" + filter.get("situacaoCheque") + "'"; 
+		}
+		
+		if(filter.containsKey("pagamento.banco.id")){
+			hql += " and p.pagamento.banco.id = '" + filter.get("pagamento.banco.id") + "'"; 
 		}
 		
 		listaParcela = session.createQuery(hql)

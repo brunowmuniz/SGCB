@@ -34,6 +34,7 @@ public class Parcela implements java.io.Serializable {
 	private float valor;
 	private Integer numeroParcela;
 	private String situacaoCheque;
+	private String numeroCheque;
 
 	public Parcela() {
 	}
@@ -101,5 +102,26 @@ public class Parcela implements java.io.Serializable {
 	public void setSituacaoCheque(String situacaoCheque) {
 		this.situacaoCheque = situacaoCheque;
 	}
+
+	@Column(name = "numerocheque", nullable = true)
+	public String getNumeroCheque() {
+		return numeroCheque;
+	}
+
+	public void setNumeroCheque(String numeroCheque) {
+		this.numeroCheque = numeroCheque;
+	}
+
+	@Override
+	public String toString() {
+		return "Parcela [banco=" + pagamento.getBanco().getDescricao() + ", cliente="
+				+ pagamento.getCliente().getNome() + "]";
+	}
+
+	
+
+	
+	
+	
 
 }

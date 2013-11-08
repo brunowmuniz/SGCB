@@ -523,8 +523,27 @@
 														<p:selectOneMenu id="condicoespagamento" value="#{ocControl.pagamento.condicoesPagamento.id}">
 															<f:selectItem itemLabel="Selecione Condição" itemValue=""/>
 															<f:selectItems value="#{condicoesPagamentoControl.carregaCondicoesPagamentoPorFormaPagamento(ocControl.pagamento.condicoesPagamento.formapagamento.id)}"/>
-															<p:ajax event="change" process="@this" listener="#{ocControl.defineCondicoesPagamento}" update="condicoespagamento,gravarformapagamento"/>
-														</p:selectOneMenu>											
+															<p:ajax event="change" process="@this" listener="#{ocControl.defineCondicoesPagamento}" update="banco,mesmocliente"/>
+														</p:selectOneMenu>
+														
+														<p:outputLabel value="Banco: " for="banco" rendered="#{ocControl.pagamento.condicoesPagamento.formapagamento.id == 4}" />
+														<p:selectOneMenu id="banco" value="#{ocControl.pagamento.banco.id}" required="true" rendered="#{ocControl.pagamento.condicoesPagamento.formapagamento.id == 4}">
+															<f:selectItem itemLabel="Selecione Banco" itemValue=""/>
+															<f:selectItems value="#{bancoControl.listaBancoCombo('')}"/>
+															<p:ajax event="change" process="@this" update="condicoespagamento,gravarformapagamento"/>
+														</p:selectOneMenu>
+														
+														<p:outputLabel value="Mesmo Cliente?: " for="mesmocliente" rendered="#{ocControl.pagamento.condicoesPagamento.formapagamento.id == 4}" />
+														<p:selectBooleanCheckbox id="mesmocliente" value="#{ocControl.ehClienteChequeOc}" rendered="#{ocControl.pagamento.condicoesPagamento.formapagamento.id == 4}">
+															<p:ajax process="@this" update="clientepagador" />
+														</p:selectBooleanCheckbox>
+														
+														<p:outputLabel value="Cliente Pagador: " for="clientepagador" rendered="#{ocControl.pagamento.condicoesPagamento.formapagamento.id == 4 and !ocControl.ehClienteChequeOc}" />
+														<p:selectOneMenu id="clientepagador" value="#{ocControl.pagamento.cliente.id}" required="true" rendered="#{ocControl.pagamento.condicoesPagamento.formapagamento.id == 4 and !ocControl.ehClienteChequeOc}">
+															<f:selectItem itemLabel="Selecione Banco" itemValue=""/>
+															<f:selectItems value="#{clienteControl.listaClienteCombo()}"/>
+															<p:ajax event="change" process="@this" />
+														</p:selectOneMenu>
 														
 														<p:outputLabel for="valorcondicoespagamento" value="Valor: "/>																											
 														<p:inputText value="#{ocControl.pagamento.valor}" id="valorcondicoespagamento">															

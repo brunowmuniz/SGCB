@@ -50,6 +50,22 @@
 								</f:facet>
 							</p:cellEditor>							
 						</p:column>
+						<p:column headerText="Cliente Pagador">							
+							<h:outputText value="#{entrada.pagamento.cliente.nome}" />
+						</p:column>
+						<p:column headerText="Banco" filterBy="#{entrada.pagamento.banco.id}" filterMatchMode="exact" filterOptions="#{bancoControl.listaBancoCombo('filter')}" filterStyle="width: 80px;">
+							<h:outputText value="#{entrada.pagamento.banco.descricao}" />
+						</p:column>
+						<p:column headerText="Nº Cheque">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{entrada.numeroCheque}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{entrada.numeroCheque}"/>
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
 						<p:column headerText="Status" filterBy="#{entrada.situacaoCheque}" filterMatchMode="exact" filterOptions="#{parcelaControl.listaStatusCheque}" filterStyle="width: 80px;">
 							<p:cellEditor>
 								<f:facet name="output">

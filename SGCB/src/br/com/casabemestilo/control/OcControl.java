@@ -52,6 +52,7 @@ import br.com.casabemestilo.DAO.StatusDAO;
 import br.com.casabemestilo.DAO.UsuarioDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Assistenciatecnica;
+import br.com.casabemestilo.model.Banco;
 import br.com.casabemestilo.model.Cliente;
 import br.com.casabemestilo.model.Comissao;
 import br.com.casabemestilo.model.ComissaoVendedor;
@@ -101,6 +102,8 @@ public class OcControl extends Control implements InterfaceControl,
 	private Date dataFinal;
 	
 	private String observacoesFreteMontAT;
+	
+	private Boolean ehClienteChequeOc;
 	
 		
 	
@@ -221,7 +224,12 @@ public class OcControl extends Control implements InterfaceControl,
 
 	
 	public void defineFormaPagamento() throws ConstraintViolationException, HibernateException, Exception{		
-		getPagamento().getCondicoesPagamento().setFormapagamento(new FormaPagamentoDAO().buscaObjetoId(getPagamento().getCondicoesPagamento().getFormapagamento().getId()));		
+		getPagamento().getCondicoesPagamento().setFormapagamento(new FormaPagamentoDAO().buscaObjetoId(getPagamento().getCondicoesPagamento().getFormapagamento().getId()));
+		if(getPagamento().getCondicoesPagamento().getFormapagamento().getId() == 4){
+			getPagamento().setBanco(new Banco());
+			getPagamento().setCliente(new Cliente());
+			getPagamento().getCliente().setId(oc.getCliente().getId());
+		}
 	}
 	
 	public void defineCondicoesPagamento() throws ConstraintViolationException, HibernateException, Exception{
@@ -794,7 +802,7 @@ public class OcControl extends Control implements InterfaceControl,
 
 	public Pagamento getPagamento() {
 		if(pagamento == null){
-			pagamento = new Pagamento(); 
+			pagamento = new Pagamento();
 		}
 		return pagamento;
 	}
@@ -1014,5 +1022,17 @@ public class OcControl extends Control implements InterfaceControl,
 	public void setObservacoesFreteMontAT(String observacoesFreteMontAT) {
 		this.observacoesFreteMontAT = observacoesFreteMontAT;
 	}
+
+	public Boolean getEhClienteChequeOc() {
+		if(ehClienteChequeOc == null){
+			ehClienteChequeOc = true;
+		}
+		return ehClienteChequeOc;
+	}
+
+	public void setEhClienteChequeOc(Boolean ehClienteChequeOc) {
+		this.ehClienteChequeOc = ehClienteChequeOc;
+	}
+
 		
 }
