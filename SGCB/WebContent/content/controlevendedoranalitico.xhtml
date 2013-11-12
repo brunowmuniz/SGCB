@@ -30,7 +30,7 @@
 					</h:panelGrid>
 					 
 					<p:dataTable var="comissao" value="#{comissaoVendedorControl.listarComissaoVendedorGeral}" id="comissao" emptyMessage="Sem vendas para este vendedor!" paginator="true"
-										selection="#{comissaoVendedorControl.comissaoVendedor}" selectionMode="single" lazy="true" rows="5" rowKey="#{comissao.id}"
+										selection="#{comissaoVendedorControl.comissaoVendedor}" selectionMode="single" lazy="true" rows="25" rowKey="#{comissao.id}"
 										paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
                  						rowsPerPageTemplate="5,25,50"  rendered="#{comissaoVendedorControl.comissaoVendedor.vendedor.id != null}">
                  		<p:column headerText="Data">
@@ -84,15 +84,15 @@
                  		
                  		<p:column headerText="Comissão">                 			               			
                  			<h:outputText value="R$ "/>
-                				<h:outputText value="#{comissao.valor}">
-                					<f:convertNumber maxFractionDigits="2" minFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="7"/>
-                				</h:outputText>
-                				<f:facet name="footer">
-                					<h:outputText value="Total: R$ " style="float: left;"/> 
-                					<h:outputText value="#{comissaoVendedorControl.totalComissaoVendedor}" style="float: left;">
-                						<f:convertNumber maxFractionDigits="2" minFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="7"/>
-                					</h:outputText>
-                				</f:facet>
+               				<h:outputText value="#{comissao.valor}">
+               					<f:convertNumber maxFractionDigits="2" minFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="7"/>
+               				</h:outputText>
+               				<f:facet name="footer">
+               					<h:outputText value="Total: R$ " style="float: left;"/> 
+               					<h:outputText value="#{comissaoVendedorControl.totalComissaoVendedor}" style="float: left;">
+               						<f:convertNumber maxFractionDigits="2" minFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="7"/>
+               					</h:outputText>
+               				</f:facet>
                  		</p:column>
                  	</p:dataTable>
 					
@@ -101,7 +101,7 @@
 		</ui:define>
 		<ui:define name="rodape">
 			<p:panel header="Descritivo Tela" styleClass="rodape">
-	    		<p:outputLabel value="Tela de controle analítico dos vendedores." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="Tela de controle analítico dos vendedores. Onde pode ser visto o detalhamento a respeito da comissão dos vendedores." styleClass="rodape_esquerda"/>
 	    		<p:outputLabel value="cadastraoc.jsf" styleClass="rodape_direita"/>
 	    	</p:panel>
 		</ui:define>

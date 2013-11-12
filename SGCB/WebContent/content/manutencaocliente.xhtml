@@ -13,6 +13,7 @@
 					 <p:contextMenu for="clientes">
 					 	<p:menuitem value="Deletar" update="clientes,msgs" icon="ui-icon-trash" actionListener="#{clienteControl.deletar}"/>
 					 	<p:menuitem value="Editar" icon="ui-icon-pencil" action="#{clienteControl.alterarCadastro}" ajax="false"/>
+					 	<p:menuitem value="Ver outras compras" icon="ui-icon-circle-zoomin" oncomplete="modalCompras.show()" actionListener="#{clienteControl.buscarComprasCliente}"/>
 					 </p:contextMenu>
 					 
 					 <p:dataTable var="cliente" value="#{clienteControl.listaLazyClienteGeral()}" id="clientes" rowKey="#{cliente.id}"  
@@ -33,8 +34,38 @@
 				             
 				        <p:column headerText="Cidade">				        	
 				        	<h:outputText value="#{cliente.cidade}" />				            
-				        </p:column>				        
+				        </p:column>
 				    </p:dataTable>
+				    
+				    <p:dialog widgetVar="modalCompras" id="modalCompras" resizable="false" header="Compras do Cliente">
+				    	<p:contextMenu for="tabelaComprasCliente">
+				    		<p:menuitem value="Detalhar"  action="#{clienteControl.detalharOcCliente()}" ajax="false" icon="ui-icon-circle-plus"/>
+				    	</p:contextMenu>
+				    	<p:outputPanel autoUpdate="true">
+				    		<p:dataTable id="tabelaComprasCliente" value="#{clienteControl.cliente.ocs}" var="oc" 
+				    					 selectionMode="single" selection="#{clienteControl.oc}"
+										 rowKey="#{oc.id}" emptyMessage="Sem compras anteriores para este cliente!" rows="10">														
+								
+								<p:column headerText="Nº">
+								<h:outputText value="#{oc.id}" />
+								</p:column>
+								<p:column headerText="Status" styleClass="status_#{oc.status.id}">
+									<h:outputText value="#{oc.status.descricao}"/>
+								</p:column>
+								<p:column headerText="Data">
+									<h:outputText value="#{oc.datalancamento}">
+										<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
+									</h:outputText>
+								</p:column>
+								<p:column headerText="Valor">
+									<h:outputText value="R$ " />
+									<h:outputText value="#{oc.valorfinal}">
+										<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
+									</h:outputText>
+								</p:column>														
+							</p:dataTable>
+				    	</p:outputPanel>				    	
+				    </p:dialog>
 			     </p:panel>
 	
 			</h:form>

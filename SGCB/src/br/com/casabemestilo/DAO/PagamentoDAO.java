@@ -10,6 +10,7 @@ import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
 
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
+import br.com.casabemestilo.model.Oc;
 import br.com.casabemestilo.model.Pagamento;
 import br.com.casabemestilo.util.Conexao;
 
@@ -114,7 +115,6 @@ public class PagamentoDAO implements InterfaceDAO, Serializable {
 		session.close();
 		return listaPagamento;
 	}
-
 
 	/*
 	 * GETTERS & SETTERS

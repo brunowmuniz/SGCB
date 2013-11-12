@@ -141,6 +141,40 @@ public class PedidoProdutoDAO implements InterfaceDAO, Serializable {
 		return listaPedidoProduto;
 	}
 	
+	public List<Pedidoproduto> listaPedidoFornecedores(Date dataFinal,
+			Date dataInicial, int first, int pageSize) {
+		session = Conexao.getInstance();
+		listaPedidoProduto = session.createQuery("From Pedidoproduto pp " +
+													"where " +														
+														"pp.pedido.datasolicitacao between :dataInicial and :dataFinal" +
+													" order by pp.pedido.datasolicitacao desc")
+									.setDate("dataInicial", dataInicial)
+									.setDate("dataFinal", dataFinal)
+									.setFirstResult(first)
+									.setMaxResults(pageSize)
+									.setCacheable(true)
+									.list();
+		
+		session.close();
+		return listaPedidoProduto;
+	}
+
+	public int totalPedidoFornecedores(Date dataInicial, Date dataFinal) {
+		Long linhas = new Long(0);
+		session = Conexao.getInstance();
+		linhas = (Long) session.createQuery("select count(*) " +
+												"from Pedidoproduto pp " +
+													"where " +														
+														"pp.pedido.datasolicitacao between :dataInicial and :dataFinal")
+									.setDate("dataInicial", dataInicial)
+									.setDate("dataFinal", dataFinal)
+									.setCacheable(true)
+									.uniqueResult();
+		
+		session.close();
+		return linhas.intValue();
+	}
+	
 	/*
 	 * GETTERS & SETTERS
 	 * */
@@ -159,5 +193,7 @@ public class PedidoProdutoDAO implements InterfaceDAO, Serializable {
 	public void setListaPedidoProduto(List<Pedidoproduto> listaPedidoProduto) {
 		this.listaPedidoProduto = listaPedidoProduto;
 	}
+
+	
 	
 }

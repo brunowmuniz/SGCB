@@ -152,8 +152,6 @@ public class ComissaoVendedorControl extends Control implements  Serializable, I
 		if(listarComissaoVendedorGeral == null){
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Vendedor sem comissão para o período!",""));	
 		}
-		
-		
 	}
 
 	

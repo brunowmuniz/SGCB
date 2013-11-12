@@ -140,6 +140,7 @@ public class MovimentacaoControl extends Control implements Serializable {
 			super.mensagem = e.getMessage();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Null: " + super.mensagem, ""));
 		}catch (Exception e) {
+			e.printStackTrace();
 			super.mensagem = e.getMessage();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Geral: " + super.mensagem, ""));
 		}

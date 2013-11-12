@@ -79,6 +79,9 @@ public class ComissaoMontador extends Control implements Serializable{
 	@ManyToOne
 	@JoinColumn(name="montador", nullable = false)
 	public Usuario getMontador() {
+		if(montador == null){
+			montador = new Usuario();
+		}
 		return montador;
 	}
 

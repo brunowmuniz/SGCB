@@ -140,8 +140,51 @@ public class PedidoProdutoControl extends Control implements InterfaceControl,
 		return listaPedidoProdutoRede;
 	}
 	
+	public LazyDataModel<Pedidoproduto> getListaPedidoFornecedores(){
+		if(listaPedidoProdutoRede == null){
+			listaPedidoProdutoRede = new LazyDataModel<Pedidoproduto>() {
+						 private List<Pedidoproduto> listaLazyPedidoProdutoRede;
+						 
+						 public Pedidoproduto getRowData(String idPedidoproduto) {
+						    	Integer id = Integer.valueOf(idPedidoproduto);
+						    	
+						        for(Pedidoproduto pedidoproduto : listaLazyPedidoProdutoRede) {
+						            if(pedidoproduto.getId().equals(id))
+						                return pedidoproduto;
+						        }
+						        
+						        return null;
+						    }
+		
+						    @Override
+						    public Object getRowKey(Pedidoproduto pedidoproduto) {
+						        return pedidoproduto.getId();
+						    }
+		
+						    @Override
+						    public List<Pedidoproduto> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,String> filters) {
+						    	pedidoProdutoDAO = new PedidoProdutoDAO();
+						    	listaLazyPedidoProdutoRede = pedidoProdutoDAO.listaPedidoFornecedores(getDataFinal(),getDataInicial(),first,pageSize);
+						    		
+					    		if (getRowCount() <= 0) {  
+						            setRowCount(pedidoProdutoDAO.totalPedidoFornecedores(getDataInicial(),getDataFinal()));  
+						        }
+						    	  
+						        // set the page dize  
+						        setPageSize(pageSize);  
+						        return listaLazyPedidoProdutoRede;  
+						    }
+					};
+		}
+		return listaPedidoProdutoRede;
+	}
+	
 	public void pesquisaParceirosRede(){
 		getListaPedidoProdutoRedeAll();
+	}
+	
+	public void pesquisaPedidosFornecedores(){
+		getListaPedidoFornecedores();
 	}
 	
 	/*
