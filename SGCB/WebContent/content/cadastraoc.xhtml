@@ -66,7 +66,7 @@
 															forceSelection="true" converter="converter.clienteConverter"
 															var="cliente" itemValue="#{cliente}" itemLabel="#{cliente.nome}"
 															disabled="#{ocControl.oc.cliente.id != null}">
-												<p:ajax event="itemSelect" update="dadoscliente" process="@this"/>
+												<p:ajax event="itemSelect" update="dadoscliente,occliente" process="@this"/>
 										</p:autoComplete>
 										<p:commandButton value="Limpar" actionListener="#{ocControl.limparCliente}" update="dadoscliente" id="limparcliente" rendered="#{ocControl.oc.cliente.id != null}" process="@this" />
 									</h:panelGrid>
@@ -105,6 +105,34 @@
 										</p:inputMask>								
 									</h:panelGrid>
 								</h:panelGrid>
+								
+								<p:outputPanel autoUpdate="true" id="occliente">
+									<p:dataTable value="#{ocControl.oc.cliente.ocs}" var="oc" rendered="#{ocControl.oc.id == null and ocControl.oc.cliente.id != null}"
+									 	 rowKey="#{oc.id}" emptyMessage="Sem compras anteriores para este cliente!" rows="10" style="width:40%;">														
+										
+										<f:facet name="header">
+											Compras anteriores do cliente
+										</f:facet>
+										
+										<p:column headerText="Nº">
+										<h:outputText value="#{oc.id}" />
+										</p:column>
+										<p:column headerText="Status" styleClass="status_#{oc.status.id}">
+											<h:outputText value="#{oc.status.descricao}"/>
+										</p:column>
+										<p:column headerText="Data">
+											<h:outputText value="#{oc.datalancamento}">
+												<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
+											</h:outputText>
+										</p:column>
+										<p:column headerText="Valor">
+											<h:outputText value="R$ " />
+											<h:outputText value="#{oc.valorfinal}">
+												<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
+											</h:outputText>
+										</p:column>														
+									</p:dataTable>
+								</p:outputPanel>
 							</p:tab>
 							<p:tab title="Produtos" id="tabProdutos">
 								<p:commandButton value="Procurar Produto" id="btnbuscaproduto" oncomplete="modalbuscaproduto.show()" action="#{ocProdutoControl.limparOcProduto}" actionListener="#{ocProdutoControl.limparProduto}" update="modalbuscaproduto" process="@this"
@@ -473,12 +501,12 @@
 												</p:inputText>
 												
 												<p:outputLabel value="Prazo de Entrega: " for="prazoentrega"/>
-												<p:inputText value="#{ocControl.oc.prazoentrega}" rendered="false">
+												<p:inputText value="#{ocControl.oc.prazoentrega}" rendered="false" required="true">
 													<f:validateBean />
 													<f:convertNumber minIntegerDigits="1" maxIntegerDigits="3"/>
 													<p:ajax event="blur" process="@this"/>
 												</p:inputText>			
-												<p:calendar value="#{ocControl.oc.prazoentrega}" id="prazoentrega" pattern="dd/MM/yyyy" locale="pt" />							
+												<p:calendar value="#{ocControl.oc.prazoentrega}" id="prazoentrega" pattern="dd/MM/yyyy" locale="pt" required="true"/>							
 											</h:panelGrid>
 											<h:panelGrid columns="2" >
 												<p:outputLabel for="obsoc" value="Observações: "/>
@@ -582,7 +610,27 @@
 													<p:commandButton value="Liberar Pagamento" rendered="#{ocControl.habilitaCondicoesPagamento()}" id="gravarpgto"
 																		action="#{ocControl.liberarPagamento}" ajax="false"/>													
 												</p:outputPanel>																																		
-											</p:panel>											
+											</p:panel>										
+										</p:panel>
+										<p:panel rendered="#{ocControl.oc.status.id != 1 and ocControl.oc.status.id != 2 and ocControl.oc.status.id != 10}">
+											<p:dataTable id="tabelapagamento_vis" value="#{ocControl.oc.pagamentos}" var="pagamento"
+														 selectionMode="single" selection="#{ocControl.pagamento}" rowKey="#{pagamento.condicoesPagamento.id}"
+														 emptyMessage="Sem formas de pagamento lançada!">														
+												<f:facet name="header">
+													Pagamento
+												</f:facet>
+												<p:column headerText="Forma de Pagamento">
+												<h:outputText value="#{pagamento.condicoesPagamento.formapagamento.nome}" />
+												</p:column>
+												<p:column headerText="Condição">
+													<h:outputText value="#{pagamento.condicoesPagamento.nome}"/>
+												</p:column>
+												<p:column headerText="Valor">
+													<h:outputText value="#{pagamento.valor}">
+														<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
+													</h:outputText>
+												</p:column>														
+											</p:dataTable>
 										</p:panel>
 									</h:panelGrid>
 								</p:outputPanel>

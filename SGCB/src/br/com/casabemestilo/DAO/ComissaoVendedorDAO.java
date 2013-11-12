@@ -74,7 +74,6 @@ public class ComissaoVendedorDAO implements InterfaceDAO, Serializable {
 	
 	public List<ComissaoVendedor> listaLazyVendedorAnalitico(int first, int pageSize,Integer idUsuario, Date dataInicial, Date dataFinal) {
 		session = Conexao.getInstance();
-		session.beginTransaction();
 		listaComissaoVendedor = new ArrayList<ComissaoVendedor>();
 		listaComissaoVendedor = session.createQuery("from ComissaoVendedor comissaoVendedor" +
 														" where" +											
@@ -100,7 +99,6 @@ public class ComissaoVendedorDAO implements InterfaceDAO, Serializable {
 	public int totalVendedorAnalitico(Integer idUsuario, Date dataInicial, Date dataFinal) {
 		Long linhas = new Long(0);
 		session = Conexao.getInstance();
-		session.beginTransaction();
 		
 		linhas = (Long) session.createQuery("select count(comissaoVendedor.id) from ComissaoVendedor comissaoVendedor" +
 												" where" +													
@@ -126,7 +124,7 @@ public class ComissaoVendedorDAO implements InterfaceDAO, Serializable {
 		
 		totalComissao = (Double) session.createQuery("select sum(comissaoVendedor.valor) from ComissaoVendedor comissaoVendedor" +
 														" where" +
-															" comissaoVendedor.oc.status.id > 2" +
+															" comissaoVendedor.oc.status.id not in (1,2,10)" +
 														" and" +
 															" comissaoVendedor.oc.datalancamento between :dataInicial and :dataFinal" +
 														" and" +

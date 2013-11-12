@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form>
+				<p:panel header="Controle Montagem - Analítico">
+					<p:messages id="msgs"/>
+					
+					<h:panelGrid columns="2" id="filtro">
+						<p:outputLabel for="dataInicial" value="Período Inicial: "/>
+						<p:calendar value="#{comissaoMontadorControl.dataInicial}" pattern="dd/MM/yyyy" locale="pt" id="dataInicial">
+							<p:ajax event="dateSelect" process="@this"/>
+						</p:calendar>
+						<p:outputLabel for="dataFinal" value="Período Final: "/>
+						<p:calendar value="#{comissaoMontadorControl.dataFinal}" pattern="dd/MM/yyyy" locale="pt" id="dataFinal">
+							<p:ajax event="dateSelect" process="@this"/>
+						</p:calendar>
+						<p:outputLabel for="vendedorbusca" value="Vendedor: "/>
+						<p:selectOneMenu id="vendedorbusca" value="#{comissaoMontadorControl.comissaoMontador.montador.id}" size="1">
+							<f:selectItem noSelectionOption="true" itemLabel="Selecione Montador"/>
+							<f:selectItems value="#{usuarioControl.listaUsuarioMontador}"/>							
+						</p:selectOneMenu>
+						<p:commandButton process="filtro" update="@form" value="Pesquisar" actionListener="#{comissaoMontadorControl.buscaComissaoMontadorAnalitico}"/>
+					</h:panelGrid>
+					<p:dataTable var="comissao" value="#{comissaoMontadorControl.listaComissaoMontadorGeral}" id="comissao" emptyMessage="Sem comissão para este montador!" paginator="true"
+										selection="#{comissaoVendedorControl.comissaoVendedor}" selectionMode="single" lazy="true" rows="25" rowKey="#{comissao.id}"
+										paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                 						rowsPerPageTemplate="5,25,50"  rendered="#{comissaoMontadorControl.comissaoMontador.montador.id != null}">
+                 						
+                 		<p:column headerText="Nº Frete/Montagem">
+                 			#{comissao.freteMontagem.id}
+                 		</p:column>
+                 		<p:column headerText="OC">
+                 			#{comissao.freteMontagem.ocprodutos.get(0).oc.id}
+                 		</p:column>
+                 		<p:column headerText="Cliente">
+                 			#{comissao.freteMontagem.ocprodutos.get(0).oc.cliente.nome}
+                 		</p:column>
+                 		<p:column headerText="Data">
+                 			<h:outputText value="#{comissao.freteMontagem.datainicio}">
+                 				<f:convertDateTime pattern="dd/MM/yyyy"/>
+                 			</h:outputText> 
+                 		</p:column>
+                 		<p:column headerText="Produto(s)">				        	
+			        		<p:dataList value="#{comissao.freteMontagem.ocprodutos}" var="ocproduto">
+                 				<h:outputText value="#{ocproduto.produto.fornecedor.nome} - #{ocproduto.produto.descricao} - #{ocproduto.quantidade} unid."/>
+                 				<h:outputText value="- #{ocproduto.produto.temMontagem ? 'Tem Montagem' : 'Sem Montagem'}"/>
+                 				<h:outputText value="#{ocproduto.produto.ehPlanejado ? ' - Planejado' : ''}"/>
+	                 		</p:dataList>				        			                 		                 	
+		                 </p:column>
+		                 <p:column headerText="Valor Comissão">
+		                 	<h:outputText value="R$ " />
+		                 	<h:outputText value="#{comissao.valor}">
+		                 		<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
+		                 	</h:outputText>
+		                 	<f:facet name="footer">
+               					<h:outputText value="Total: R$ " style="float: left;"/> 
+               					<h:outputText value="#{comissaoMontadorControl.totalComissaoMontador}" style="float: left;">
+               						<f:convertNumber maxFractionDigits="2" minFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="7"/>
+               					</h:outputText>
+               				</f:facet>
+		                 </p:column>
+                 	</p:dataTable>
+				</p:panel>
+			</h:form>
+		</ui:define>
+		<ui:define name="rodape">
+			<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela de controle analítico das montagens. Onde pode ser visto o detalhamento a respeito da comissão dos montadores." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="controlemontagem.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
+		</ui:define>
+	</ui:composition>
+</html>

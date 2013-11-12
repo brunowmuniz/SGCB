@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form id="form">
+				<p:panel header="Produtos Encomendados">
+					<p:messages id="msgs"/>
+					<h:panelGrid columns="2">
+						<p:outputLabel value="Data Inicial" for="dtInicial" />
+						<p:calendar value="#{pedidoProdutoControl.dataInicial}" pattern="dd/MM/yyyy" id="dtInicial"/>
+						
+						<p:outputLabel value="Data Final" for="dtFinal" />
+						<p:calendar value="#{pedidoProdutoControl.dataFinal}" pattern="dd/MM/yyyy" id="dtFinal"/>
+						
+						<p:commandButton actionListener="#{pedidoProdutoControl.pesquisaPedidosFornecedores}" value="Pesquisar" update="fornecedores"/>
+					</h:panelGrid>
+					<p:dataTable id="fornecedores" value="#{pedidoProdutoControl.listaPedidoFornecedores}" lazy="true"
+								emptyMessage="Sem produto para encomendar!" paginator="true" var="pedidoproduto"
+								selection="#{pedidoProdutoControl.pedidoProduto}" selectionMode="single" rows="20" rowKey="#{ocproduto.id}"
+								paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+	                 			rowsPerPageTemplate="20,30,50">
+	                 	<p:column headerText="Nome Produto">
+	                 		<h:outputText value="#{pedidoproduto.produto.descricao}" />
+	                 	</p:column>
+	                 	<p:column headerText="Fornecedor">
+	                 		<h:outputText value="#{pedidoproduto.pedido.fornecedor.nome}" />
+	                 	</p:column>
+	                 	<p:column headerText="Quantidade">
+	                 		<h:outputText value="#{pedidoproduto.quantidade}" />
+	                 	</p:column>
+	                 	<p:column headerText="Pedido">
+	                 		<h:outputText value="#{pedidoproduto.pedido.id}" />
+	                 	</p:column>
+	                 	<p:column headerText="OC">
+	                 		<h:outputText value="#{pedidoproduto.ocproduto.oc.id}" />
+	                 	</p:column>
+	                 	<p:column headerText="Data do Pedido">
+	                 		<h:outputText value="#{pedidoproduto.pedido.datasolicitacao}">
+	                 			<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"/>
+	                 		</h:outputText>
+	                 	</p:column>
+	                 	<p:column headerText="Data Chegada">
+	                 		<h:outputText value="#{pedidoproduto.pedido.datachegada}">
+	                 			<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"/>
+	                 		</h:outputText>
+	                 	</p:column>
+					</p:dataTable>
+				</p:panel>				
+			</h:form>	
+		</ui:define>
+		
+		<ui:define name="rodape">
+			<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela que lista todos os produtos comprados de fornecedores, parceiros ou não." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="controlecompras.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
+		</ui:define>		
+	</ui:composition>
+</html>

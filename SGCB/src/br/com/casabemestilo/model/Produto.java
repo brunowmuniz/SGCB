@@ -42,6 +42,7 @@ public class Produto implements java.io.Serializable {
 	private Fornecedor fornecedor;
 	private String descricao;
 	private float valorsugerido;
+	private float valorcusto;
 	private Integer showroom;
 	private Integer estoque;
 	private Integer encomenda;
@@ -118,6 +119,15 @@ public class Produto implements java.io.Serializable {
 
 	public void setValorsugerido(float valorsugerido) {
 		this.valorsugerido = valorsugerido;
+	}
+	
+	@Column(name="valorcusto", nullable = true)
+	public float getValorcusto() {
+		return valorcusto;
+	}
+
+	public void setValorcusto(float valorcusto) {
+		this.valorcusto = valorcusto;
 	}
 
 	@Column(name = "showroom", nullable = false)

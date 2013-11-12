@@ -2,6 +2,8 @@ package br.com.casabemestilo.control;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +29,7 @@ import br.com.casabemestilo.DAO.UsuarioDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Assistenciatecnica;
 import br.com.casabemestilo.model.Cliente;
+import br.com.casabemestilo.model.Oc;
 import br.com.casabemestilo.model.Usuario;
 
 @ViewScoped
@@ -43,6 +46,8 @@ public class ClienteControl extends Control implements Serializable,InterfaceCon
 	private List<Cliente> listaCliente;
 	
 	private LazyDataModel<Cliente> listaLazyCliente;
+	
+	private Oc oc;
 	
 	
 	/*
@@ -301,6 +306,16 @@ public class ClienteControl extends Control implements Serializable,InterfaceCon
 		return listaClienteCombo;
 	}
 	
+	public void buscarComprasCliente(){
+		Collection<Oc> listaOcsCliente = cliente.getOcs();
+		Collections.reverse(cliente.getOcs());
+	}
+	
+	public String detalharOcCliente(){
+		ELFlash.getFlash().put("oc", getOc());
+		return "cadastraoc?faces-redirect=true";
+	}
+	
 	/*
 	 * GETTERS & SETTERS
 	 * */
@@ -336,5 +351,15 @@ public class ClienteControl extends Control implements Serializable,InterfaceCon
 	public void setListaLazyCliente(LazyDataModel<Cliente> listaLazyCliente) {
 		this.listaLazyCliente = listaLazyCliente;
 	}
+
+	public Oc getOc() {
+		return oc;
+	}
+
+	public void setOc(Oc oc) {
+		this.oc = oc;
+	}
+	
+	
 
 }

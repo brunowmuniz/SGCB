@@ -33,11 +33,11 @@
 				            <h:outputText value="#{oc.status.descricao}"/> 
 				        </p:column>
 						
-						<p:column headerText="Vendedor" filterBy="#{oc.usuario.id}" filterOptions="#{usuarioControl.listaUsuarioVendedor('filter')}" filterMatchMode="exact">
+						<p:column headerText="Vendedor" filterBy="#{oc.usuario.id}" filterOptions="#{usuarioControl.listaUsuarioVendedor('filter')}" filterMatchMode="exact" >
 							<h:outputText value="#{oc.usuario.nome}" />
 				        </p:column>
 				        	        
-				        <p:column headerText="Produto(s)" filterBy="#{oc.status.id}" filterOptions="#{statusControl.listaStatusCombo}" filterMatchMode="exact">				        	
+				        <p:column headerText="Produto(s)" filterBy="#{oc.status.id}" filterOptions="#{statusControl.listaStatusCombo}" filterMatchMode="exact" filterStyleClass="filterStatus" width="120">				        	
 			        		<p:dataList value="#{oc.ocprodutos}" var="ocproduto">
                  				<h:outputText value="#{ocproduto.produto.fornecedor.nome} - #{ocproduto.produto.descricao} - #{ocproduto.status.descricao} - #{ocproduto.quantidade} unid."
                  				 			  styleClass="#{ocproduto.status.id == ocControl.ocproduto.status.id ? 'negrito' : ''} status_#{ocproduto.status.id}"/>

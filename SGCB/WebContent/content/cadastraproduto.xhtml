@@ -25,6 +25,12 @@
 							<f:convertNumber locale="pt_BR" maxIntegerDigits="6" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
 							<p:ajax event="blur" process="@this" update="valor"/>
 						</p:inputText>
+						<p:outputLabel for="valorcusto" value="Valor Custo: "/>
+						<p:inputText value="#{produtoControl.produto.valorcusto}" id="valorcusto" size="20" required="true">
+							<f:validateBean/>
+							<f:convertNumber locale="pt_BR" maxIntegerDigits="6" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+							<p:ajax event="blur" process="@this" update="valor"/>
+						</p:inputText>
 						<p:outputLabel for="fornecedor" value="Fornecedor: "/>
 						<p:selectOneMenu required="true" value="#{produtoControl.produto.fornecedor.id}" id="fornecedor">
 							<f:selectItem itemValue="0" itemLabel="Selecione Fornecedor" noSelectionOption="true"/>							
