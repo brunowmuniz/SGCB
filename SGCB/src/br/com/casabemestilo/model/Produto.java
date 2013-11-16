@@ -252,5 +252,6 @@ public class Produto implements java.io.Serializable {
 				+ ", estoque=" + estoque + ", encomenda=" + encomenda
 				+ ", codigo=" + codigo + ", deleted=" + deleted + "]";
 	}
+	
 
 }

@@ -28,6 +28,7 @@ public class ComissaoVendedor extends Control implements Serializable {
 	
 	private Oc oc;
 
+	private Boolean deleted;
 	
 	
 	public ComissaoVendedor(String messagem, Integer id, Usuario vendedor,
@@ -89,6 +90,17 @@ public class ComissaoVendedor extends Control implements Serializable {
 	public void setOc(Oc oc) {
 		this.oc = oc;
 	}
-	
+
+	@Column(name="deleted", nullable = false)
+	public Boolean getDeleted() {
+		if(deleted == null){
+			deleted = false;
+		}
+		return deleted;
+	}
+
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
+	}
 	
 }

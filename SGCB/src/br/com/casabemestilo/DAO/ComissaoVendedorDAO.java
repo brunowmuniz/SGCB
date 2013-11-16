@@ -83,7 +83,9 @@ public class ComissaoVendedorDAO implements InterfaceDAO, Serializable {
 														" and" +
 															" comissaoVendedor.oc.deleted = 0" +
 														" and" +
-															" comissaoVendedor.oc.status.id not in(1,2,10)")
+															" comissaoVendedor.oc.status.id not in(1,2,10)" +
+														" and" +
+															" comissaoVendedor.deleted = false")
 								 .setDate("dataInicial", dataInicial)
 								 .setDate("dataFinal", dataFinal)
 								 .setInteger("usuario", idUsuario)
@@ -108,7 +110,9 @@ public class ComissaoVendedorDAO implements InterfaceDAO, Serializable {
 												" and" +
 													" comissaoVendedor.oc.deleted = 0" +
 												" and" +
-													" comissaoVendedor.oc.status.id not in(1,2,10)")
+													" comissaoVendedor.oc.status.id not in(1,2,10)" +
+												" and" +
+													" comissaoVendedor.deleted = false")
 								.setDate("dataInicial", dataInicial)
 								.setDate("dataFinal", dataFinal)
 								.setInteger("usuario", idUsuario)
@@ -130,7 +134,9 @@ public class ComissaoVendedorDAO implements InterfaceDAO, Serializable {
 														" and" +
 															" comissaoVendedor.vendedor.id = :usuario"+
 														" and" +
-															" comissaoVendedor.oc.deleted = 0")
+															" comissaoVendedor.oc.deleted = 0" +
+														" and" +
+															" comissaoVendedor.deleted = false")
 										.setDate("dataInicial", dataInicial)
 										.setDate("dataFinal", dataFinal)
 										.setInteger("usuario", idUsuario)
@@ -138,6 +144,19 @@ public class ComissaoVendedorDAO implements InterfaceDAO, Serializable {
 		session.close();
 		totalComissao = totalComissao == null ? new Double("0") : totalComissao;
 		return totalComissao.floatValue();
+	}
+
+	public List<ComissaoVendedor> listaComissaoOc(Oc oc) {
+		session = Conexao.getInstance();
+		listaComissaoVendedor = session.createQuery("from ComissaoVendedor comissao" +
+														" where " +
+															" comissao.oc.id = :oc" +
+														" and" +
+															" comissao.deleted = false")
+										.setInteger("oc", oc.getId())
+										.list();
+		session.close();
+		return listaComissaoVendedor;
 	}
 
 }

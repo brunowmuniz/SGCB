@@ -173,11 +173,23 @@ public class OcProdutoDAO implements InterfaceDAO, Serializable {
 	public List<Ocproduto> buscaOcProdutoOc(Ocproduto ocproduto) {
 		listaOcproduto = new ArrayList<Ocproduto>();
 		session = Conexao.getInstance();
-		session.beginTransaction();
 		listaOcproduto = session.createQuery("from Ocproduto op where op.oc.id= :oc" +
 											 " and op.id <> :ocprod")
 								.setInteger("oc", ocproduto.getOc().getId())
 								.setInteger("ocprod", ocproduto.getId())
+								.setCacheable(true)
+								.list();
+		session.close();
+		return listaOcproduto;
+	}
+	
+	public List<Ocproduto> buscaOcProdutoPorOc(Oc oc){
+		listaOcproduto = new ArrayList<Ocproduto>();
+		session = Conexao.getInstance();
+		listaOcproduto = session.createQuery("from Ocproduto op " +
+												"where " +
+													" op.oc.id= :oc")
+								.setInteger("oc", oc.getId())								
 								.setCacheable(true)
 								.list();
 		session.close();

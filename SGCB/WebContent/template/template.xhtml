@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
@@ -7,18 +8,18 @@
       xml:lang="pt">
 
 <h:head>	
-	<title>SGCB - Sistema de GestÃ£o Casabem Estilo</title>
+	<title>SGCB - Sistema de Gestão Casabem Estilo</title>
 	<link rel="stylesheet" href="../css/sgcb.css" type="text/css" />
 	<h:outputScript name="locale-primefaces.js" library="js" /> 
 </h:head>
 <h:body>
 	 <ui:insert name="cabecalho">
 	 
-      <p:panel header="SGCB - Sistema de GestÃ£o Casabem Estilo">
+      <p:panel header="SGCB - Sistema de Gestão Casabem Estilo">
       	<h:panelGrid columns="2" width="100%">      		      			
       		<h:form id="formcabecalho">
       			<h:panelGrid width="50%" style="float: left; margin-left: 50px;" columns="2">
-      				<h:outputText value="OlÃ¡ #{sessionScope.UsuarioLogado.nome}!" styleClass="negrito nome"/>
+      				<h:outputText value="Olá #{sessionScope.UsuarioLogado.nome}!" styleClass="negrito nome"/>
       				<p:commandLink value="Sair" action="#{usuarioControl.sairAplicacao}" ajax="false" styleClass="sair nome"/>
       				<h:outputText value="Perfil: #{sessionScope.UsuarioLogado.perfil.descricao}" styleClass="negrito nome"/>      				
       			</h:panelGrid>
@@ -32,7 +33,7 @@
       <p:menubar>
       	<p:submenu label="Vendas">
       		<p:menuitem value="Nova OC" url="cadastraoc.jsf" />
-      		<p:menuitem value="ManutenÃ§Ã£o da OC" url="manutencaooc.jsf" />
+      		<p:menuitem value="Manutenção da OC" url="manutencaooc.jsf" />
       	</p:submenu>
       	<p:submenu label="Financeiro">
       		<p:menuitem value="Controle de Caixa" url="manutencaocaixa.jsf" />      		
@@ -44,56 +45,61 @@
       		<p:menuitem value="Compra de Produtos" url="controlecompras.jsf"/>
       	</p:submenu>
       	<p:submenu label="Controle">
-      		<p:menuitem value="Controle de Frete/ExecuÃ§Ã£o" url="controlefrete.jsf"/>
-      		<p:menuitem value="Controle de Assit. TÃ©cnica" url="controleat.jsf"/>
+      		<p:menuitem value="Controle de Frete/Execução" url="controlefrete.jsf"/>
+      		<p:menuitem value="Controle de Assit. Técnica" url="controleat.jsf"/>
       		<p:menuitem value="Produtos Para Montagem/Frete" url="manuntencaofretemontagem.jsf"/>
       		<p:menuitem value="OC por status de produto" url="controleocstatusproduto.jsf"/>
-      		<p:menuitem value="Controle Vendas - Vendedor - SintÃ©tico" url="controlevendasvendedor.jsf"/>
-      		<p:menuitem value="Controle Vendas - Vendedor - AnalÃ­tico" url="controlevendedoranalitico.jsf"/>
-      		<p:menuitem value="Controle Montagem - AnalÃ­tico" url="controlemontagem.jsf"/>
-      		<p:menuitem value="Controle Vendas - MÃªs" url="controlevendasmes.jsf"/>
+      		<p:menuitem value="Controle Vendas - Vendedor - Sintético" url="controlevendasvendedor.jsf"/>
+      		<p:menuitem value="Controle Vendas - Vendedor - Analítico" url="controlevendedoranalitico.jsf"/>
+      		<p:menuitem value="Controle Montagem - Analítico" url="controlemontagem.jsf"/>
+      		<p:menuitem value="Controle Vendas - Mês" url="controlevendasmes.jsf"/>
       		<p:menuitem value="Controle Geral" url="controlegeral.jsf"/>
-      		<p:menuitem value="Controle de ComissÃµes" url="controlecomissao.jsf"/>
+      		<p:menuitem value="Controle de Comissões" url="controlecomissao.jsf"/>
       	</p:submenu>
       	<p:submenu label="Contas a Receber">
 			<p:menuitem value="Parcelas a Vencer" url="manutencaoentradas.jsf" />
-			<p:menuitem value="ManutenÃ§ao de Cheques" url="manutencaoentcheque.jsf" />
+			<p:menuitem value="Manutençao de Cheques" url="manutencaoentcheque.jsf" />
       	</p:submenu>
       	<p:submenu label="Contas a Pagar">
-			<p:menuitem value="Cadastro de LanÃ§amentos" url="cadastralancamentos.jsf" />
-			<p:menuitem value="Lista de LanÃ§amentos - Diversos" url="listalancamentos.jsf" />
-			<p:menuitem value="Lista de LanÃ§amentos - Vales" url="listalancamentovales.jsf" />
+			<p:menuitem value="Cadastro de Lançamentos" url="cadastralancamentos.jsf" />
+			<p:menuitem value="Lista de Lançamentos - Diversos" url="listalancamentos.jsf" />
+			<p:menuitem value="Lista de Lançamentos - Vales" url="listalancamentovales.jsf" />
       	</p:submenu>
-      	<p:submenu label="Cadastros BÃ¡sicos">
-      		<p:submenu label="UsuÃ¡rio">
-      			<p:menuitem value="Cadastro de UsuÃ¡rios" url="cadastrausuario.jsf" />
-      			<p:menuitem value="ManutenÃ§Ã£o de UsuÃ¡rios" url="manutencaousuario.jsf" />
+      	<p:submenu label="Cadastros Básicos">
+      		<p:submenu label="Usuário">
+      			<p:menuitem value="Cadastro de Usuários" url="cadastrausuario.jsf" />
+      			<p:menuitem value="Manutenção de Usuários" url="manutencaousuario.jsf" />
       		</p:submenu>
       		<p:submenu label="Filial">
       			<p:menuitem value="Cadastra Filial" url="cadastrafilial.jsf"/>
-      			<p:menuitem value="ManutenÃ§Ã£o de Filial" url="manutencaofilial.jsf"/>      			
+      			<p:menuitem value="Manutenção de Filial" url="manutencaofilial.jsf"/>      			
       		</p:submenu>      		
       		<p:submenu label="Cliente">
       			<p:menuitem value="Cadastra Cliente" url="cadastracliente.jsf"/>
-      			<p:menuitem value="ManutenÃ§Ã£o de Clientes" url="manutencaocliente.jsf"/>      			
+      			<p:menuitem value="Manutenção de Clientes" url="manutencaocliente.jsf"/>      			
       		</p:submenu>
       		<p:submenu label="Fornecedor">
       			<p:menuitem value="Cadastra Fornecedor" url="cadastrafornecedor.jsf"/>
-      			<p:menuitem value="ManutenÃ§Ã£o de Fornecedores" url="manutencaofornecedor.jsf"/>      			
+      			<p:menuitem value="Manutenção de Fornecedores" url="manutencaofornecedor.jsf"/>      			
       		</p:submenu>
       		<p:submenu label="Produto">
       			<p:menuitem value="Cadastra Produto" url="cadastraproduto.jsf"/>
-      			<p:menuitem value="ManutenÃ§Ã£o de Produto" url="manutencaoproduto.jsf"/>      			
+      			<p:menuitem value="Manutenção de Produto" url="manutencaoproduto.jsf"/>      			
       		</p:submenu>
-      		<p:submenu label="CondiÃ§Ãµes de Pagamento">
-      			<p:menuitem value="Cadastra CondiÃ§Ãµes de Pagamento" url="cadastracondicoespagamento.jsf"/>
-      			<p:menuitem value="ManutenÃ§Ã£o de CondiÃ§Ã£o de Pagamento" url="manutencaocondicoespagamento.jsf"/>      			
+      		<p:submenu label="Condições de Pagamento">
+      			<p:menuitem value="Cadastra Condições de Pagamento" url="cadastracondicoespagamento.jsf"/>
+      			<p:menuitem value="Manutenção de Condição de Pagamento" url="manutencaocondicoespagamento.jsf"/>      			
       		</p:submenu>
-      		<p:submenu label="Conta ContÃ¡bil">
-      			<p:menuitem value="Cadastra Conta ContÃ¡bil" url="cadastracontacontabil.jsf"/>
-      			<p:menuitem value="ManutenÃ§Ã£o de Conta ContÃ¡bil" url="manutencaocontacontabil.jsf"/>      			
+      		<p:submenu label="Conta Contábil">
+      			<p:menuitem value="Cadastra Conta Contábil" url="cadastracontacontabil.jsf"/>
+      			<p:menuitem value="Manutenção de Conta Contábil" url="manutencaocontacontabil.jsf"/>      			
       		</p:submenu>     		      		
-      	</p:submenu>      	      	
+      	</p:submenu> 
+      	<p:submenu label="Administrador" rendered="#{sessionScope.UsuarioLogado.perfil.id == 1}">
+			<p:menuitem value="Cadastro de Páginas" url="cadastrapagina.jsf" />
+			<p:menuitem value="Manutenção das Páginas" url="manutencaopagina.jsf" />
+			<p:menuitem value="Cadastro de Permissão" url="#" />
+      	</p:submenu>     	      	
       </p:menubar>
     </ui:insert>        
     <ui:insert name="conteudo">
@@ -109,5 +115,15 @@
 			<p:graphicImage value="/imagens/loading.gif" style="margin-left:6px;" />
 		</p:dialog>
     </ui:insert>
+    <script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+	
+	  ga('create', 'UA-45740424-1', 'blanker.com.br');
+	  ga('send', 'pageview');
+	
+	</script>
 </h:body>	
 </html>

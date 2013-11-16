@@ -56,6 +56,7 @@ public class Usuario implements java.io.Serializable {
 	private BigDecimal totalComissaoMontador;
 	private BigDecimal totalValeFuncionario;
 	private List<Lancamento> lancamentos = new ArrayList<Lancamento>();
+	private List<Permissao> permissoes = new ArrayList<Permissao>();
 
 	public Usuario() {
 	}
@@ -266,18 +267,19 @@ public class Usuario implements java.io.Serializable {
 		this.lancamentos = lancamentos;
 	}
 
+	@OneToMany(targetEntity = Lancamento.class, mappedBy = "usuario")
+	public List<Permissao> getPermissoes() {
+		return permissoes;
+	}
+
+	public void setPermissoes(List<Permissao> permissoes) {
+		this.permissoes = permissoes;
+	}
+
 	@Override
 	public String toString() {
 		return "Usuario [nome=" + nome + "]";
 	}
 
-	/*@Override
-	public String toString() {
-		return "Usuario [perfil=" + perfil.getDescricao() + ", nome="
-				+ nome + ", deleted=" + deleted + "]";
-	}*/
-
 	
-	
-
 }

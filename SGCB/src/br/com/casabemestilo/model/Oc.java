@@ -35,6 +35,8 @@ import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import sun.java2d.opengl.OGLContext;
+
 
 @Entity
 @Table(name = "oc", catalog = "blankerc_sgcb")
@@ -175,8 +177,9 @@ public class Oc implements java.io.Serializable {
 		this.status = status;
 	}
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.MERGE)
 	@JoinColumn(name = "cliente", nullable = false)
+	@Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	public Cliente getCliente() {
 		if(cliente == null){
 			cliente = new Cliente();
@@ -335,5 +338,13 @@ public class Oc implements java.io.Serializable {
 	public void setComissaoVendedores(List<ComissaoVendedor> comissaoVendedores) {
 		this.comissaoVendedores = comissaoVendedores;
 	}
+
+
+	@Override
+	public String toString() {
+		return "Oc [id=" + id + ", usuario=" + usuario.getNome() + "]";
+	}
+	
+	
 	
 }

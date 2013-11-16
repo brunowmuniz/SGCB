@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form>
+				<p:panel header="Cadastro de Permissão" id="principal">
+					<p:messages id="msgs"/>
+					<h:panelGrid columns="2" id="cadastro">
+						<p:outputLabel value="Nome: "/>
+						<p:inputText value="#{usuarioControl.usuario.nome}"/>
+						
+						<p:pickList id="permissao" value="#{paginaControl.listarTodos()}" var="pagina" 
+							itemValue="#{pagina.id}" itemLabel="#{pagina.nomePagina}">
+							<f:selectItems value="#{usuarioControl.listaPermissoesUsuario}"/>
+						</p:pickList>
+					</h:panelGrid>
+					<p:commandButton actionListener="#{usuarioControl.gravarPermissao}" value="Gravar" update="msgs,cadastro" id="gravar"/>
+				</p:panel>
+			</h:form>
+		</ui:define>
+		<ui:define name="rodape">
+			<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Cadastro de permissão para as páginas do sistema." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="cadastrapagina.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
+		</ui:define>
+	</ui:composition>
+</html>

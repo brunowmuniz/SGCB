@@ -30,11 +30,13 @@ import com.sun.faces.context.flash.ELFlash;
 
 import br.com.casabemestilo.DAO.ComissaoDAO;
 import br.com.casabemestilo.DAO.OcDAO;
+import br.com.casabemestilo.DAO.PermissaoDAO;
 import br.com.casabemestilo.DAO.UsuarioDAO;
 import br.com.casabemestilo.DAO.UsuarioFilialDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Filial;
 import br.com.casabemestilo.model.Oc;
+import br.com.casabemestilo.model.Permissao;
 import br.com.casabemestilo.model.Usuario;
 import br.com.casabemestilo.model.UsuarioFilial;
 import br.com.casabemestilo.util.Encrypt;
@@ -61,6 +63,7 @@ public class UsuarioControl extends Control implements InterfaceControl,
 	
 	private String novaSenha =  "";
 	
+	private List listaPermissoesUsuario;
 	
 	
 	
@@ -94,6 +97,9 @@ public class UsuarioControl extends Control implements InterfaceControl,
     	if(ELFlash.getFlash().get("usuarioEdicao") != null){
     		usuario = (Usuario) ELFlash.getFlash().get("usuarioEdicao");
     		listaUsuarioFilial = (List<String>) ELFlash.getFlash().get("listaUsuarioFilial");
+    	}
+    	if(ELFlash.getFlash().get("usuarioPermissao") != null){
+    		usuario = (Usuario) ELFlash.getFlash().get("usuarioPermissao");
     	}
     }
 	
@@ -409,7 +415,15 @@ public class UsuarioControl extends Control implements InterfaceControl,
 		return listaLazyUsuario;
 	}
 	
-
+	public String alterarPermissao(){
+		ELFlash.getFlash().put("usuarioPermissao", usuario);
+		return "cadastropermissao?faces-redirect=true";
+	}
+	
+	public void gravarPermissao(){
+		
+	}
+	
 	/*
 	 * GETTERS & SETTERS
 	 * */
@@ -473,5 +487,23 @@ public class UsuarioControl extends Control implements InterfaceControl,
 	public void setListaLazyUsuario(LazyDataModel<Usuario> listaLazyUsuario) {
 		this.listaLazyUsuario = listaLazyUsuario;
 	}
+
+	public List getListaPermissoesUsuario() {		
+		usuarioDAO = new UsuarioDAO();
+		usuario.setPermissoes(new PermissaoDAO().buscaPermissaoUsuario(usuario));
+		listaPermissoesUsuario = new ArrayList();
+		for(Permissao permissao : usuario.getPermissoes()){
+			SelectItem si = new SelectItem();
+			si.setValue(permissao.getPagina().getId());
+			si.setLabel(permissao.getPagina().getNomePagina());
+			listaPermissoesUsuario.add(si);
+		}
+		return listaPermissoesUsuario;
+	}
+
+	public void setListaPermissoesUsuario(List listaPermissoesUsuario) {
+		this.listaPermissoesUsuario = listaPermissoesUsuario;
+	}
+	
 	
 }

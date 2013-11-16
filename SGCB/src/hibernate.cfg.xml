@@ -14,7 +14,6 @@
   <property name="hibernate.cache.use_query_cache">true</property>
   <property name="hibernate.cache.use_minimal_puts">true</property>
   <property name="hibernate.cache.use_second_level_cache">true</property>
-  <!--<property name="hibernate.cache.provider_class">net.sf.ehcache.hibernate.EhCacheProvider</property>-->
   <property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</property>
   <property name="hibernate.cache.region_prefix"/>
   <property name="net.sf.ehcache.configurationResourceName">/ehcache.xml</property>
@@ -52,5 +51,7 @@
   <mapping class="br.com.casabemestilo.model.ComissaoMontador"/>
   <mapping class="br.com.casabemestilo.model.ComissaoVendedor"/>
   <mapping class="br.com.casabemestilo.model.Banco"/>
+  <mapping class="br.com.casabemestilo.model.Permissao"/>
+  <mapping class="br.com.casabemestilo.model.Pagina"/>
  </session-factory>
 </hibernate-configuration>

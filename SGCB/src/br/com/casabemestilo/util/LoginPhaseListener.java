@@ -23,17 +23,17 @@ public class LoginPhaseListener implements PhaseListener {
 
     public void afterPhase(PhaseEvent event) {
         FacesContext facesContext = event.getFacesContext();
-
         HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
-
         Usuario user = (Usuario) session.getAttribute("UsuarioLogado");
-        
+        String pagina = facesContext.getViewRoot().getViewId();
         
          // Verifica se a requisicao eh para a pagina de login
-        boolean loginPage = facesContext.getViewRoot().getViewId().lastIndexOf("index") > -1 ? true : false;
+        boolean loginPage = pagina.lastIndexOf("index") > -1 ? true : false;
         if (!loginPage && (user == null || user.getNome().length() == 0)) {
             NavigationHandler nh = facesContext.getApplication().getNavigationHandler();
             nh.handleNavigation(facesContext, null, "index");
         }
+        
+       
     }
 }

@@ -3,6 +3,7 @@ package br.com.casabemestilo.control;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -66,6 +67,7 @@ public class MovimentacaoControl extends Control implements Serializable {
 	public List<Movimentacao> listaCaixa(){
 		OcDAO ocDAO = new OcDAO();
 		LancamentoDAO lancamentoDAO = new LancamentoDAO();
+		List<Object> ocsPagamento = new ArrayList<Object>();
 		List<Oc> ocs = new ArrayList<Oc>();
 		List<Lancamento> lancamentos = new ArrayList<Lancamento>();
 		List<Formapagamento> formapagamentos = new ArrayList<Formapagamento>();
@@ -73,7 +75,7 @@ public class MovimentacaoControl extends Control implements Serializable {
 		
 		try {
 			formapagamentos = new FormaPagamentoDAO().listaAtivos();
-			ocs = ocDAO.buscaOcDia(dataLancamento);
+			ocsPagamento = ocDAO.buscaOcDia(dataLancamento);
 			lancamentos = lancamentoDAO.lancamentoDia(dataLancamento);
 			List<Pagamento> listaSaldoAnteriorPagamentos = new PagamentoDAO().calculaSaldoAnterior(dataLancamento);
 			List<Lancamento> listaSaldoAnteriorLancamentos = lancamentoDAO.calculaSaldoAnterior(dataLancamento);
@@ -111,10 +113,38 @@ public class MovimentacaoControl extends Control implements Serializable {
 			movimentacao.setTipoMovimentacao(TipoMovimentacao.ENTRADA);
 			movimentacoes.add(movimentacao);
 			
+			Iterator<Object> iterOcPagamentos = ocsPagamento.iterator();			
+			
+			while(iterOcPagamentos.hasNext()){
+				Object[] ocPagamentos = (Object[]) iterOcPagamentos.next();
+				Oc oc = (Oc) ocPagamentos[0];
+				Pagamento pagamento = (Pagamento) ocPagamentos[1];
+				Boolean adicionarOc = true;
+				
+				if(ocs.size() == 0){
+					oc.setPagamentos(new ArrayList<Pagamento>());
+					oc.getPagamentos().add(pagamento);
+					ocs.add(oc);
+				}else{
+					for(Oc ocpag : ocs){
+						if(ocpag.getId() == pagamento.getOc().getId()){
+							oc.getPagamentos().add(pagamento);
+							adicionarOc = false;
+						}
+					}
+					
+					if(adicionarOc){
+						oc.setPagamentos(new ArrayList<Pagamento>());
+						oc.getPagamentos().add(pagamento);
+						ocs.add(oc);
+					}
+				}				
+			}
+			
 			for(Oc oc : ocs){
 				movimentacao = new Movimentacao();
 				formapagamentos = new ArrayList<Formapagamento>();
-				movimentacao.setDescricao("OC: " + oc.getId() + " - Cliente: " + oc.getCliente().getNome());
+				movimentacao.setDescricao("OC: " + oc.getId() + " - Cliente: " + oc.getCliente().getNome());				
 				movimentacao.setPagamentos(oc.getPagamentos());				
 				movimentacao.setLancamento(null);
 				movimentacao.setTipoMovimentacao(TipoMovimentacao.ENTRADA);

@@ -1,4 +1,4 @@
-package br.com.casabemestilo.control;
+package br.com.casabemestilo.DAO;
 
 import java.util.List;
 
