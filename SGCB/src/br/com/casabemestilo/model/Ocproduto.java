@@ -98,6 +98,7 @@ public class Ocproduto implements java.io.Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "produto", nullable = false)
+	@Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	public Produto getProduto() {
 		if(this.produto == null){
 			produto = new Produto();

@@ -107,7 +107,9 @@ public class PagamentoDAO implements InterfaceDAO, Serializable {
 												" where "+
 													"pagamento.oc.status.id not in (1,2,10) " +
 												" and " +
-													"pagamento.datalancamento < :dataLancamento"+
+													"pagamento.datalancamento < :dataLancamento" +
+												" and" +
+													" pagamento.deleted = false"+
 												" group by pagamento.condicoesPagamento.formapagamento.id")
 										.setDate("dataLancamento",dataLancamento)
 										.setCacheable(true)

@@ -23,6 +23,7 @@ import org.primefaces.model.SortOrder;
 import com.sun.faces.context.flash.ELFlash;
 
 import br.com.casabemestilo.DAO.FornecedoresDAO;
+import br.com.casabemestilo.DAO.OcDAO;
 import br.com.casabemestilo.DAO.OcProdutoDAO;
 import br.com.casabemestilo.DAO.ParcelaDAO;
 import br.com.casabemestilo.DAO.PedidoDAO;
@@ -208,7 +209,7 @@ public class PedidoControl extends Control implements InterfaceControl,
 				    	if (getRowCount() <= 0) {  
 				            setRowCount(pedidoDAO.totalPedidos());  
 				        }  
-				        // set the page dize  
+				        // set the page size  
 				        setPageSize(pageSize);  
 				        return listaLazyPedido;  
 				    }
@@ -269,12 +270,15 @@ public class PedidoControl extends Control implements InterfaceControl,
 		pedidoDAO = new PedidoDAO();
 		OcProdutoDAO ocProdutoDAO = new OcProdutoDAO();
 		ProdutoDAO produtoDAO = new ProdutoDAO();
+		OcDAO ocDAO = new OcDAO();
 		try {
 			pedido = pedidoDAO.buscaObjetoId(pedido.getId());
 			for(Pedidoproduto pedidoproduto : pedido.getPedidoprodutos()){
 				if(pedidoproduto.getOcproduto() != null){
 					pedidoproduto.getOcproduto().getStatus().setId(5);
 					ocProdutoDAO.update(pedidoproduto.getOcproduto());
+					pedidoproduto.getOcproduto().getOc().setStatus(new OcProdutoControl().retornaMenorStatusOcProduto(pedidoproduto.getOcproduto().getOc(), true));
+					ocDAO.update(pedidoproduto.getOcproduto().getOc());
 					FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Oc " + pedidoproduto.getOcproduto().getOc().getId() + " teve o produto " + pedidoproduto.getProduto().getDescricao() + " separado com sucesso!"));
 				}else{
 					Produto produto = new Produto();

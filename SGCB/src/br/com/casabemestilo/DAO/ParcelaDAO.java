@@ -99,8 +99,13 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 		Long linhas = new Long(0);
 		session = Conexao.getInstance();
 		session.beginTransaction();
-		linhas = (Long) session.createQuery("select count(*) from Parcela p where p.dataentrada between :dataInicial and :dataFinal" +
-											" and p.pagamento.condicoesPagamento.formapagamento.id <> 4")
+		linhas = (Long) session.createQuery("select count(*) from Parcela p " +
+												"where" +
+													" p.dataentrada between :dataInicial and :dataFinal" +
+												" and " +
+													" p.pagamento.condicoesPagamento.formapagamento.id <> 4" +
+												" and" +
+													" p.deleted = false")
 							   .setDate("dataInicial", dataInicial)
 							   .setDate("dataFinal", dataFinal)
 							   .setCacheable(true)
@@ -114,7 +119,13 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 		session = Conexao.getInstance();
 		session.beginTransaction();
 		
-		listaParcela = session.createQuery("from Parcela p where p.dataentrada between :dataInicial and :dataFinal and p.pagamento.condicoesPagamento.formapagamento.id <> 4")
+		listaParcela = session.createQuery("from Parcela p" +
+											" where" +
+												" p.dataentrada between :dataInicial and :dataFinal " +
+											" and " +
+												" p.pagamento.condicoesPagamento.formapagamento.id <> 4" +
+											" and" +
+												" p.deleted = false")
 							  .setDate("dataInicial", dataInicial)
 							  .setDate("dataFinal", dataFinal)
 							  .setFirstResult(first)
@@ -134,7 +145,9 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 							"where " +
 								"p.dataentrada between :dataInicial and :dataFinal" +
 							" and " +
-								"p.pagamento.condicoesPagamento.formapagamento.id = 4";
+								"p.pagamento.condicoesPagamento.formapagamento.id = 4" +
+							" and" +
+								" p.deleted = false";
 		
 		if(filter.containsKey("situacaoCheque")){
 			hql += " and p.situacaoCheque = '" + filter.get("situacaoCheque") + "'"; 
@@ -158,7 +171,9 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 						"where " +
 							"p.dataentrada between :dataInicial and :dataFinal " +
 						"and " +
-							"p.pagamento.condicoesPagamento.formapagamento.id = 4";
+							"p.pagamento.condicoesPagamento.formapagamento.id = 4" +
+						" and" +
+							" p.deleted = false";
 		
 		if(filter.containsKey("situacaoCheque")){
 			hql += " and p.situacaoCheque = '" + filter.get("situacaoCheque") + "'"; 

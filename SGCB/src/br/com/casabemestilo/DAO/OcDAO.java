@@ -424,19 +424,20 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		return totalVendaGrupoComissao;									
 	}
 
-	public List<Oc> buscaOcDia(Date dataLancamento) {
+	public List<Object> buscaOcDia(Date dataLancamento) {
 		session = Conexao.getInstance();
-		listaOc = new ArrayList<Oc>();
-		listaOc = session.createQuery("from Oc oc" +
+		List<Object> listaOcPagamento = new ArrayList<Object>();
+		listaOcPagamento = session.createQuery("from Oc oc" +
+											" inner join oc.pagamentos pagamento with pagamento.datalancamento = :dataLancamento" +
 											" where" +
-												" oc.datalancamento = :dataLancamento" +
-											" and" +
+												/*" oc.datalancamento = :dataLancamento" +
+											" and" +*/
 												" oc.status.id not in(1,2,10)")
 									.setDate("dataLancamento", dataLancamento)
 									.setCacheable(true)
 									.list();
 		session.close();
-		return listaOc;	
+		return listaOcPagamento;	
 	}
 	
 	

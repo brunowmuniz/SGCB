@@ -17,7 +17,8 @@
 						<p:outputLabel value="Data Final: " for="dtFinal" />
 						<p:calendar value="#{parcelaControl.dataFinal}" pattern="dd/MM/yyyy" id="dtFinal"/>
 						
-						<p:commandButton value="Pesquisar" action="#{parcelaControl.buscaParcelasAVencerCheque}" update="@form" />						
+						<p:commandButton value="Pesquisar" action="#{parcelaControl.buscaParcelasAVencerCheque}" update="@form" />
+						
 					</h:panelGrid>			
 					<p:dataTable id="entradaparcela" value="#{parcelaControl.listaParcelaAVencerCheque}" var="entrada" lazy="true" emptyMessage="Sem parcelas a vencer" paginator="true"
 								selection="#{parcelaControl.parcela}" selectionMode="single" rows="25"
@@ -30,7 +31,7 @@
 							<h:outputText value="#{entrada.pagamento.oc.id}" />
 						</p:column>
 									
-						<p:column headerText="Data da Compra">
+						<p:column headerText="Data da Compra" style="width: 40px;">
 							<h:outputText value="#{entrada.pagamento.datalancamento}">
 								<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
 							</h:outputText>
@@ -53,7 +54,7 @@
 						<p:column headerText="Cliente Pagador">							
 							<h:outputText value="#{entrada.pagamento.cliente.nome}" />
 						</p:column>
-						<p:column headerText="Banco" filterBy="#{entrada.pagamento.banco.id}" filterMatchMode="exact" filterOptions="#{bancoControl.listaBancoCombo('filter')}" filterStyle="width: 80px;">
+						<p:column style="width: 50px;" headerText="Banco" filterBy="#{entrada.pagamento.banco.id}" filterMatchMode="exact" filterOptions="#{bancoControl.listaBancoCombo('filter')}" filterStyle="width: 80px;">
 							<h:outputText value="#{entrada.pagamento.banco.descricao}" />
 						</p:column>
 						<p:column headerText="Nº Cheque">
@@ -86,10 +87,10 @@
 						<p:column headerText="Parcela">
 							<p:outputLabel value="#{entrada.numeroParcela} / #{entrada.pagamento.condicoesPagamento.parcelas}"/>
 						</p:column>
-						<p:column headerText="Forma de Pagamento">
+						<p:column headerText="Forma de Pagamento" rendered="false">
 							<p:outputLabel value="#{entrada.pagamento.condicoesPagamento.formapagamento.nome}"/>
 						</p:column>
-						<p:column headerText="Condição de Pagamento">
+						<p:column headerText="Condição">
 							<p:outputLabel value="#{entrada.pagamento.condicoesPagamento.nome}"/>
 						</p:column>
 						

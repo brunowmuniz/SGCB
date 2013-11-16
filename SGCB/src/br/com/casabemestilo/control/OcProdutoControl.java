@@ -189,6 +189,7 @@ public class OcProdutoControl extends Control implements InterfaceControl,
 	
 	public void gravarPedido(){
 		PedidoDAO pedidoDAO = new PedidoDAO();
+		OcDAO ocDAO = new OcDAO();
 		List<Pedidoproduto> pedidoprodutos = new ArrayList<Pedidoproduto>();
 		Pedido pedido = new Pedido();		
 		ocProdutoDAO = new OcProdutoDAO();
@@ -205,12 +206,14 @@ public class OcProdutoControl extends Control implements InterfaceControl,
 				pedidoprodutos.add(pedidoproduto);
 				
 			}			
-			pedido.setPedidoprodutos(pedidoprodutos);			
+			pedido.setPedidoprodutos(pedidoprodutos);
 			pedidoDAO.insert(pedido);
 			fornecedor = new FornecedoresDAO().buscaObjetoId(fornecedor.getId());
 			for(Ocproduto ocproduto : listaOcproduto){
 				ocproduto.getStatus().setId(4);
 				ocProdutoDAO.update(ocproduto);
+				ocproduto.getOc().setStatus(retornaMenorStatusOcProduto(ocproduto.getOc(), true));
+				ocDAO.update(ocproduto.getOc());
 			}
 			for(Ocproduto ocproduto : listaOcproduto){
 				Produto produto = ocproduto.getProduto();
@@ -251,7 +254,23 @@ public class OcProdutoControl extends Control implements InterfaceControl,
 		listaOutrosProdOc = ocProdutoDAO.buscaOcProdutoOc(ocproduto);
 	}
 	
-	
+	public Status retornaMenorStatusOcProduto(Oc oc, Boolean buscaBanco){
+		Status status = new Status();
+		listaOcproduto = new ArrayList<Ocproduto>();
+		if(buscaBanco){
+			ocProdutoDAO = new OcProdutoDAO();
+			listaOcproduto = ocProdutoDAO.buscaOcProdutoPorOc(oc);
+		}else{
+			listaOcproduto = oc.getOcprodutos();
+		}
+		status = listaOcproduto.get(0).getStatus();
+		for(Ocproduto ocproduto : listaOcproduto){
+			if(status.getId() > ocproduto.getStatus().getId()){
+				status = ocproduto.getStatus();
+			}
+		}
+		return status;
+	}
 	
 	/*
 	 * GETTERS & SETTERS

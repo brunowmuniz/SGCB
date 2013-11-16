@@ -47,6 +47,7 @@ import br.com.casabemestilo.DAO.FornecedoresDAO;
 import br.com.casabemestilo.DAO.OcDAO;
 import br.com.casabemestilo.DAO.OcProdutoDAO;
 import br.com.casabemestilo.DAO.PagamentoDAO;
+import br.com.casabemestilo.DAO.PedidoProdutoDAO;
 import br.com.casabemestilo.DAO.ProdutoDAO;
 import br.com.casabemestilo.DAO.StatusDAO;
 import br.com.casabemestilo.DAO.UsuarioDAO;
@@ -62,6 +63,7 @@ import br.com.casabemestilo.model.Oc;
 import br.com.casabemestilo.model.Ocproduto;
 import br.com.casabemestilo.model.Pagamento;
 import br.com.casabemestilo.model.Parcela;
+import br.com.casabemestilo.model.Pedidoproduto;
 import br.com.casabemestilo.model.Produto;
 import br.com.casabemestilo.model.Status;
 import br.com.casabemestilo.model.Usuario;
@@ -303,6 +305,7 @@ public class OcControl extends Control implements InterfaceControl,
 			ocDAO = new OcDAO();
 			oc.setStatus((Status) new StatusDAO().buscaObjetoId(1));
 			//calculaValorComissao();
+			recalculaValorTotalOcproduto();
 			ocDAO.insert(oc);
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("OC foi gravada!"));
 			logger.info("Salvo Oc: " + oc.getId());
@@ -359,7 +362,9 @@ public class OcControl extends Control implements InterfaceControl,
 			}
 			if(oc.getStatus().getId() == 7 && oc.getValorliquido() == 0){			
 				calculaValorComissao();
+				oc.setStatus(new OcProdutoControl().retornaMenorStatusOcProduto(oc, false));
 			}
+			recalculaValorTotalOcproduto();
 			ocDAO.update(oc);
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("OC " + oc.getId() + " foi alterada!"));
 			logger.info("Alterado Oc: " + oc.getId());
@@ -531,7 +536,7 @@ public class OcControl extends Control implements InterfaceControl,
 				}
 				produtoDAO.update(produto);
 			}			
-			oc.setStatus((Status) new StatusDAO().buscaObjetoId(7));			
+			oc.setStatus(new StatusDAO().buscaObjetoId(7));
 			lancaParcelas();
 			alterar();			
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Produtos da OC separados!"));
@@ -548,6 +553,7 @@ public class OcControl extends Control implements InterfaceControl,
 			super.mensagem = e.getMessage();			
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro na separação de produtos [Erro Genérico] [" + e.getMessage() + "]", ""));
 			logger.error("Erro genérico - separar produtos: [OC:" + oc.getId() + "] - " + super.mensagem);
+			e.printStackTrace();
 		}
 	}
 	
@@ -658,6 +664,7 @@ public class OcControl extends Control implements InterfaceControl,
 						}
 					}
 				}
+				oc.setStatus(new OcProdutoControl().retornaMenorStatusOcProduto(oc, false));
 				ocDAO.update(oc);
 				logger.info("Ação: " + status.getDescricao() + " da OC " + getOc().getId() + " foi gravado");
 				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Produtos alterados com sucesso para o status " + status.getDescricao()));
@@ -775,6 +782,109 @@ public class OcControl extends Control implements InterfaceControl,
 			super.mensagem = e.getMessage();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Genérico: " + super.mensagem, ""));
 			e.printStackTrace();
+		}
+	}
+	
+	public void estornar(){
+		Status status = new Status();
+		Pedidoproduto pedidoproduto = new Pedidoproduto();
+		
+		try {			
+			status = new StatusDAO().buscaObjetoId(10);
+			ocDAO = new OcDAO();
+			
+			//Define status da OC para cancelado
+			oc.setStatus(status);
+			oc.setDeleted(true);
+			
+			//Define status dos PRODUTOS para cancelado
+			for(Ocproduto ocproduto : oc.getOcprodutos()){
+				ocproduto.setStatus(status);
+			}
+			
+			/*Retorna todos os produtos para ESTOQUE ou SHOWROOM
+			 * caso esteja encomendado e não chegou ainda a encomenda, é
+			 * retirada o vinculo da ocproduto da encomenda para que quando chegar
+			 * o mesmo vá para ESTOQUE, se já chegou realoca no ESTOQUE. 
+			 */
+			for(Ocproduto ocproduto : oc.getOcprodutos()){
+				if(ocproduto.getTiposaida().equals("estoque")){
+					ocproduto.getProduto().setEstoque(ocproduto.getProduto().getEstoque() + ocproduto.getQuantidade());
+					FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Produto: " + ocproduto.getProduto().getDescricao() + "-" +
+																		ocproduto.getProduto().getFornecedor().getNome() + 
+																		" foi realocado para ESTOQUE"));
+				}else if(ocproduto.getTiposaida().equals("showroom")){
+					ocproduto.getProduto().setShowroom(ocproduto.getProduto().getShowroom() + ocproduto.getQuantidade());
+					FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Produto: " + ocproduto.getProduto().getDescricao() + "-" +
+																		ocproduto.getProduto().getFornecedor().getNome() + 
+																		" foi realocado para SHOWROOM"));
+				}else{
+					pedidoproduto = new PedidoProdutoDAO().buscaPedidoOcProduto(ocproduto);
+					if(pedidoproduto != null){
+						if(pedidoproduto.getPedido().getDatachegada() != null){
+							ocproduto.getProduto().setEstoque(ocproduto.getProduto().getEstoque() + ocproduto.getQuantidade());
+							FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Produto: " + 
+																				ocproduto.getProduto().getDescricao() + "-" + 
+																				ocproduto.getProduto().getFornecedor().getNome() + 
+																				" foi realocado no estoque", ""));
+						}else{
+							pedidoproduto.setOcproduto(null);
+							new PedidoProdutoDAO().desvicunlarOcProdutoPedido(pedidoproduto);
+							FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Produto: " + 
+																				ocproduto.getProduto().getDescricao() + "-" + 
+																				ocproduto.getProduto().getFornecedor().getNome() + 
+																				" já foi encomendado mas não chegou, o produto no pedido teve seu vinculo retirado, " +
+																				" quando o pedido chegar o mesmo será realocado no estoque!", ""));
+						}						
+					}
+					ocproduto.getProduto().setEncomenda(ocproduto.getProduto().getEncomenda() - ocproduto.getQuantidade());
+				}
+			}
+			
+			//Define todas os PAGAMENTOS e PARCELAS para deletado. 
+			for(Pagamento pagamento : oc.getPagamentos()){
+				pagamento.setDeleted(true);
+				for(Parcela parcela : pagamento.getParcelas()){
+					parcela.setDeleted(true);
+				}
+			}
+			
+			//Busca as comissões dos vendedores
+			oc.setComissaoVendedores(new ComissaoVendedorDAO().listaComissaoOc(oc));
+	
+			//Define a comissão como deletado
+			for(ComissaoVendedor comissaoVendedor : oc.getComissaoVendedores()){
+				comissaoVendedor.setDeleted(true);
+			}
+			
+			//Persiste todas as alterações.
+			ocDAO.update(oc);
+			
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Produtos alterados com sucesso para o status de CANCELADO"));
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Pagamentos DELETADOS"));
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Comissão do vendedor DELETADOS!"));
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Processo de ESTORNO realizado com sucesso!"));			
+		} catch (ConstraintViolationException e) {
+			super.mensagem = e.getMessage();			
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Produto(s) retornado(s) para o status anterior!", ""));
+			e.printStackTrace();
+		} catch (HibernateException e) {
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Hibernate: " + super.mensagem, ""));
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Produto(s) retornado(s) para o status anterior!", ""));
+			e.printStackTrace();
+		} catch (Exception e) {
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Genérico: " + super.mensagem, ""));
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Produto(s) retornado(s) para o status anterior!", ""));
+			e.printStackTrace();
+		}		
+	}
+	
+	public void recalculaValorTotalOcproduto(){
+		for(Ocproduto ocproduto : oc.getOcprodutos()){
+			ocproduto.setValortotal(ocproduto.getValorunitario() * ocproduto.getQuantidade());
 		}
 	}
 	

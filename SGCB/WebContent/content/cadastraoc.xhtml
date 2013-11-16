@@ -10,20 +10,11 @@
 			<h:form id="form">
 				<p:panel header="Cadastro de OC">
 					<p:messages id="msgs"/>					
-					<h:panelGrid id="cadastro" columns="1" width="100%">
+					<h:panelGrid id="cadastro" columns="3" width="900px;">
 						
-						<h:panelGrid  columns="#{(ocControl.oc.id != null and (ocControl.oc.status.id == 1 or ocControl.oc.status.id == 2 or ocControl.oc.status.id == 7)) or ocControl.oc.id == null ? 8 : 7}">
-							<p:outputLabel for="numero" value="Número OC:"/>							
+						<h:panelGrid columns="2" styleClass="vAlTop" style="width: 350px">
+							<p:outputLabel for="numero" value="Número OC:"/>
 							<h:outputText value="#{ocControl.oc.id == null ? 'Nova OC' : ocControl.oc.id}"  id="numero" style="width: 100px; " styleClass="negrito" update="cadastro"/>
-							<p:spacer width="10px"/>
-							
-							<p:outputLabel for="status" value="Status OC:"/>
-							<h:outputText value="#{ocControl.oc.status.descricao}" id="status" styleClass="negrito status_#{ocControl.oc.status.id}"/>
-							<p:spacer width="10px"/>
-							
-							<p:commandButton value="Gravar OC" action="#{ocControl.gravar}" ajax="false" rendered="#{ocControl.oc.id == null}"/>							
-							<p:commandButton value="Alterar OC" action="#{ocControl.alterar}" ajax="false" rendered="#{ocControl.oc.id != null and (ocControl.oc.status.id == 1 or ocControl.oc.status.id == 2 or ocControl.oc.status.id == 7)}"/>
-							<br />
 							
 							<p:outputLabel for="filialoc" value="Filial: "/>
 							<p:selectOneMenu value="#{ocControl.oc.filial.id}" size="1" id="filialoc" required="#{ocControl.oc.id == null}"
@@ -33,27 +24,37 @@
 								<p:ajax event="change" update="vendedor"/>
 							</p:selectOneMenu>
 							<h:outputText value="#{ocControl.oc.filial.nome}" rendered="#{ocControl.oc.id != null}" styleClass="negrito"/>
-													
-							<p:spacer width="10px"/>
-							
-							<p:outputLabel for="vendedor" value="Vendedor: "/>
-							<p:selectOneMenu id="vendedor" value="#{ocControl.oc.usuario.id}" size="1" rendered="#{ocControl.oc.id == null}" disabled="#{ocControl.oc.filial.id == null}">
-								<f:selectItem itemLabel="Selecione Vendedor" itemValue="" noSelectionOption="true"/>
-								<f:selectItems value="#{usuarioControl.getListaVendedorFilial(ocControl.oc.filial)}"/>
-							</p:selectOneMenu>
-							
-							<h:outputText value="#{ocControl.oc.usuario.nome}" rendered="#{ocControl.oc.id != null}" styleClass="negrito"/>
-							
-							<p:spacer width="1px"/>
-							<p:spacer width="1px"/>
-							<p:spacer width="1px"/>
 							
 							<p:outputLabel for="#{ocControl.oc.id == null ? 'dataedicao' : 'data'}" value="Data: "/>
 							<h:outputText value="#{ocControl.oc.datalancamento}" id="dataedicao" style="width: 100px;" styleClass="negrito"
 											rendered="#{ocControl.oc.id != null}">									
 								<f:convertDateTime pattern="dd/MM/yyyy"/>									
 							</h:outputText>							
-							<p:calendar value="#{ocControl.oc.datalancamento}" id="data" pattern="dd/MM/yyyy" locale="pt" rendered="#{ocControl.oc.id == null}" />	
+							<p:calendar value="#{ocControl.oc.datalancamento}" id="data" pattern="dd/MM/yyyy" locale="pt" rendered="#{ocControl.oc.id == null}" />									
+						</h:panelGrid>
+						
+						<h:panelGrid columns="2" styleClass="vAlTop" style="width: 350px">
+							<p:outputLabel for="status" value="Status OC:"/>
+							<h:outputText value="#{ocControl.oc.status.descricao}" id="status" styleClass="negrito status_#{ocControl.oc.status.id}"/>
+							
+							<p:outputLabel for="vendedor" value="Vendedor: "/>
+							<p:selectOneMenu id="vendedor" value="#{ocControl.oc.usuario.id}" size="1" rendered="#{ocControl.oc.id == null}" disabled="#{ocControl.oc.filial.id == null}">
+								<f:selectItem itemLabel="Selecione Vendedor" itemValue="" noSelectionOption="true"/>
+								<f:selectItems value="#{usuarioControl.getListaVendedorFilial(ocControl.oc.filial)}"/>
+							</p:selectOneMenu>							
+							<h:outputText value="#{ocControl.oc.usuario.nome}" rendered="#{ocControl.oc.id != null}" styleClass="negrito"/>		
+						</h:panelGrid>
+						
+						<h:panelGrid columns="1" styleClass="vAlTop" style="width: 200px">
+							<p:commandButton value="Gravar OC" action="#{ocControl.gravar}" ajax="false" rendered="#{ocControl.oc.id == null}"/>
+														
+							<p:commandButton value="Alterar OC" action="#{ocControl.alterar}" ajax="false" rendered="#{ocControl.oc.id != null and (ocControl.oc.status.id == 1 or ocControl.oc.status.id == 2 or ocControl.oc.status.id == 7)}"/>
+							
+							<p:commandButton value="Estornar OC" action="#{ocControl.estornar}" ajax="false" 
+											rendered="#{ocControl.oc.id != null and (ocControl.oc.status.id != 1 and ocControl.oc.status.id != 2 
+															and ocControl.oc.status.id != 9 and ocControl.oc.status.id != 10)}"/>		
+						</h:panelGrid>
+							
 														
 						</h:panelGrid>
 						<p:tabView id="oc">																																							 
@@ -504,7 +505,7 @@
 												<p:inputText value="#{ocControl.oc.prazoentrega}" rendered="false" required="true">
 													<f:validateBean />
 													<f:convertNumber minIntegerDigits="1" maxIntegerDigits="3"/>
-													<p:ajax event="blur" process="@this"/>
+													<p:ajax event="blur" process="@this" update="@this"/>
 												</p:inputText>			
 												<p:calendar value="#{ocControl.oc.prazoentrega}" id="prazoentrega" pattern="dd/MM/yyyy" locale="pt" required="true"/>							
 											</h:panelGrid>
@@ -635,8 +636,7 @@
 									</h:panelGrid>
 								</p:outputPanel>
 							</p:tab>
-						</p:tabView>												
-					</h:panelGrid>
+						</p:tabView>
 				</p:panel>				
 			</h:form>			
 		</ui:define>

@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
+
+import br.com.casabemestilo.DAO.BancoDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Banco;
 

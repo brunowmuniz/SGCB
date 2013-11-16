@@ -90,7 +90,7 @@ public class ProdutoControl extends Control implements InterfaceControl,
     		produtoDAO.insert(produto);
         	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Produto: " + produto.getDescricao() + " foi gravado!"));
         	produto = new Produto();
-        	logger.info("Salvo produto: " + produto.toString());
+        	logger.info("Salvo produto: " + produto.toString() + " - usuário: " + super.getUsuarioLogado().getNome());
     	}catch(ConstraintViolationException e){    		
     		super.mensagem = e.getMessage();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));
@@ -114,6 +114,7 @@ public class ProdutoControl extends Control implements InterfaceControl,
     		produto.setDeleted(true);
     		produtoDAO.delete(produto);
         	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Produto: " + produto.getDescricao() + " deletado!"));
+        	logger.info("Deletado Produto: " + produto.toString() + " - usuário: " + super.getUsuarioLogado().getNome());
         	produto = new Produto();
     	}catch(ConstraintViolationException e){
     		super.mensagem = e.getMessage();
@@ -137,6 +138,7 @@ public class ProdutoControl extends Control implements InterfaceControl,
     		}
     		produtoDAO.update(produto);    		
         	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Produto: " + produto.getDescricao() + " alterado!"));
+        	logger.info("Alterado Produto: " + produto.toString() + " - usuário: " + super.getUsuarioLogado().getNome());
         	produto = new Produto();
     	}catch(ConstraintViolationException e){
     		super.mensagem = e.getMessage();
@@ -153,6 +155,7 @@ public class ProdutoControl extends Control implements InterfaceControl,
 	
 	public String alterarCadastro(){
 		ELFlash.getFlash().put("produto", produto);
+		logger.info("Aberto Produto: " + produto.toString() + " - usuário: " + super.getUsuarioLogado().getNome());
 		return "cadastraproduto?faces-redirect=true";
 	}
 

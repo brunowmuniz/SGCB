@@ -35,6 +35,7 @@ public class Parcela implements java.io.Serializable {
 	private Integer numeroParcela;
 	private String situacaoCheque;
 	private String numeroCheque;
+	private Boolean deleted;
 
 	public Parcela() {
 	}
@@ -112,16 +113,16 @@ public class Parcela implements java.io.Serializable {
 		this.numeroCheque = numeroCheque;
 	}
 
-	@Override
-	public String toString() {
-		return "Parcela [banco=" + pagamento.getBanco().getDescricao() + ", cliente="
-				+ pagamento.getCliente().getNome() + "]";
+	@Column(name="deleted", nullable = false)
+	public Boolean getDeleted() {
+		if(deleted == null){
+			deleted = false;
+		}
+		return deleted;
 	}
 
-	
-
-	
-	
-	
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
+	}
 
 }

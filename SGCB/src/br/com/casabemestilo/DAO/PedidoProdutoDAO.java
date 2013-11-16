@@ -9,6 +9,8 @@ import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
 
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
+import br.com.casabemestilo.model.Ocproduto;
+import br.com.casabemestilo.model.Pedido;
 import br.com.casabemestilo.model.Pedidoproduto;
 import br.com.casabemestilo.util.Conexao;
 
@@ -173,6 +175,24 @@ public class PedidoProdutoDAO implements InterfaceDAO, Serializable {
 		
 		session.close();
 		return linhas.intValue();
+	}
+	
+	public Pedidoproduto buscaPedidoOcProduto(Ocproduto ocproduto){
+		session = Conexao.getInstance();
+		pedidoProduto = (Pedidoproduto) session.createQuery("from Pedidoproduto pedidoProduto" +
+												" where pedidoProduto.ocproduto.id = :ocproduto")
+											   .setInteger("ocproduto",ocproduto.getId())
+											   .uniqueResult();
+		session.close();
+		return pedidoProduto;
+	}
+	
+	public void desvicunlarOcProdutoPedido(Pedidoproduto pedidoproduto) {
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		session.update(pedidoproduto);
+		session.getTransaction().commit();
+		
 	}
 	
 	/*

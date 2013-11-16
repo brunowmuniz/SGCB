@@ -1,5 +1,6 @@
 package br.com.casabemestilo.control;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -15,6 +16,8 @@ import javax.faces.model.SelectItem;
 
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.component.export.Exporter;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
@@ -23,6 +26,7 @@ import br.com.casabemestilo.DAO.ParcelaDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Pagamento;
 import br.com.casabemestilo.model.Parcela;
+import br.com.casabemestilo.util.ExtendedPDFExporter;
 
 
 @ManagedBean
@@ -209,6 +213,13 @@ public class ParcelaControl extends Control implements InterfaceControl,
 	public void buscaParcelasAVencerCheque(){
 		listaParcelaGeral = null;
 		getListaParcelaAVencerCheque();
+	}
+	
+	public void exportPDF(DataTable table, String filename) throws IOException {
+	    FacesContext context = FacesContext.getCurrentInstance();
+	    Exporter exporter = new ExtendedPDFExporter();
+	    exporter.export(context, table, filename, false, false, "UTF-8", null, null);
+	    context.responseComplete();
 	}
 	
 	/*

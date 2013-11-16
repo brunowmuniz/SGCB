@@ -15,7 +15,6 @@
 						<p:inputText value="#{filialControl.filial.nome}" id="nome" size="60" required="true">
 							<f:validateBean/>
 						</p:inputText>
-						
 										
 						<p:commandButton rendered="#{filialControl.filial.id != null}" actionListener="#{filialControl.alterar}" value="Alterar" update="msgs,cadastro" id="gravar"/>
 						<p:commandButton rendered="#{filialControl.filial.id == null}" actionListener="#{filialControl.gravar}" value="Gravar" update="msgs,cadastro" id="alterar"/>
