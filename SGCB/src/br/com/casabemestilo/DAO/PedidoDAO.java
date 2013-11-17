@@ -52,7 +52,6 @@ public class PedidoDAO implements InterfaceDAO, Serializable {
 		session.beginTransaction();
 		session.merge(pedido);
 		session.getTransaction().commit();
-
 	}
 	
 	@Override

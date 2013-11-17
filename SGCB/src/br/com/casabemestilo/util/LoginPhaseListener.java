@@ -33,7 +33,5 @@ public class LoginPhaseListener implements PhaseListener {
             NavigationHandler nh = facesContext.getApplication().getNavigationHandler();
             nh.handleNavigation(facesContext, null, "index");
         }
-        
-       
     }
 }

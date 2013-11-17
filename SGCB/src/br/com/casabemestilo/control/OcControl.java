@@ -467,9 +467,9 @@ public class OcControl extends Control implements InterfaceControl,
 			percentualRetencao = null;
 			valorLiquido = null;
 			percentualRetencao = pagamentoOc.getCondicoesPagamento().getPercentual() / 100;
-			if(pagamentoOc.getCondicoesPagamento().getFormapagamento().getEhantecipacao()){
+			/*if(pagamentoOc.getCondicoesPagamento().getFormapagamento().getEhantecipacao()){
 				percentualRetencao +=  pagamentoOc.getCondicoesPagamento().getFormapagamento().getPercentualAntecipacao() /100;
-			}
+			}*/
 			valorLiquido = pagamentoOc.getValor() - (pagamentoOc.getValor() * percentualRetencao);
 			
 			oc.setValorliquido(oc.getValorliquido() + valorLiquido);
@@ -569,9 +569,9 @@ public class OcControl extends Control implements InterfaceControl,
 					percentualRetencao = pagamento.getCondicoesPagamento().getPercentual() / 100;
 					valorLiquido = pagamento.getValor() - (pagamento.getValor() * percentualRetencao);				
 					valorParcelas = valorLiquido / pagamento.getCondicoesPagamento().getParcelas();
-					if(pagamento.getCondicoesPagamento().getFormapagamento().getEhantecipacao()){
+					/*if(pagamento.getCondicoesPagamento().getFormapagamento().getEhantecipacao()){
 						percentualRetencao +=  pagamento.getCondicoesPagamento().getFormapagamento().getPercentualAntecipacao() /100;
-					}
+					}*/
 					valorLiquido = pagamento.getValor() - (pagamento.getValor() * percentualRetencao);
 					parcela.setPagamento(pagamento);
 					parcela.setNumeroParcela(1);

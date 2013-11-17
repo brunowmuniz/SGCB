@@ -56,8 +56,7 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 		session = Conexao.getInstance();
 		session.beginTransaction();
 		session.update(parcela);
-		session.getTransaction().commit();		
-
+		session.getTransaction().commit();
 	}
 
 	@Override
@@ -153,6 +152,22 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 			hql += " and p.situacaoCheque = '" + filter.get("situacaoCheque") + "'"; 
 		}
 		
+		if(filter.containsKey("pagamento.banco.id")){
+			hql += " and p.pagamento.banco.id = " + filter.get("pagamento.banco.id"); 
+		}
+		
+		if(filter.containsKey("pagamento.oc.id")){
+			hql += " and p.pagamento.oc.id = " + filter.get("pagamento.oc.id");
+		}
+		
+		if(filter.containsKey("numeroCheque")){
+			hql += " and p.numeroCheque like '%" + filter.get("numeroCheque") + "%'"; 
+		}
+		
+		if(filter.containsKey("pagamento.cliente.nome")){
+			hql += " and p.pagamento.cliente.nome like '%" + filter.get("pagamento.cliente.nome") + "%'"; 
+		}
+		
 		linhas = (Long) session.createQuery(hql)
 								.setDate("dataInicial", dataInicial)
 								.setDate("dataFinal", dataFinal)								
@@ -180,7 +195,19 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 		}
 		
 		if(filter.containsKey("pagamento.banco.id")){
-			hql += " and p.pagamento.banco.id = '" + filter.get("pagamento.banco.id") + "'"; 
+			hql += " and p.pagamento.banco.id = " + filter.get("pagamento.banco.id"); 
+		}
+		
+		if(filter.containsKey("pagamento.oc.id")){
+			hql += " and p.pagamento.oc.id = " + filter.get("pagamento.oc.id");
+		}
+		
+		if(filter.containsKey("numeroCheque")){
+			hql += " and p.numeroCheque like '%" + filter.get("numeroCheque") + "%'"; 
+		}
+		
+		if(filter.containsKey("pagamento.cliente.nome")){
+			hql += " and p.pagamento.cliente.nome like '%" + filter.get("pagamento.cliente.nome") + "%'"; 
 		}
 		
 		listaParcela = session.createQuery(hql)

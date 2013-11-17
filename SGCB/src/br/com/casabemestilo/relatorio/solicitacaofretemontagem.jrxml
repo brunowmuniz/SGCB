@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="solicitacaofretemontagem" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c703b020-0423-4018-aa89-f3fab2a146a4">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="77"/>
+	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SGCB-JDBC"/>
 	<parameter name="IDFRETE" class="java.lang.Integer"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
@@ -10,6 +10,7 @@
 	</parameter>
 	<parameter name="DATAHORA_IMPRESSAO" class="java.util.Date"/>
 	<parameter name="USUARIO_IMPRESSAO" class="java.lang.String"/>
+	<parameter name="TOTALCOMISSAOMONTAGEM" class="java.lang.Float"/>
 	<queryString>
 		<![CDATA[SELECT
      frete.`valor` AS frete_valor,
@@ -228,6 +229,16 @@ GROUP BY
 				<textElement/>
 				<textFieldExpression><![CDATA[$F{frete_observacoes}]]></textFieldExpression>
 			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="7f05933e-1d6f-4146-a4a8-b47236572d03" x="686" y="237" width="90" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{TOTALCOMISSAOMONTAGEM}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="ef0c4708-aff6-4d76-a43e-b8f13cf457cb" x="568" y="237" width="107" height="20"/>
+				<textElement/>
+				<text><![CDATA[Comissão Montagem:]]></text>
+			</staticText>
 		</band>
 	</detail>
 	<pageFooter>

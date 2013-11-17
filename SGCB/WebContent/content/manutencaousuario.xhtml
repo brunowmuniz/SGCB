@@ -10,6 +10,7 @@
 			<h:form>
 				<p:panel header="Manutenção de Usuário">
 			     	<p:messages id="msgs"/>
+			     	
 					 <p:contextMenu for="usuarios">
 					 	<p:menuitem value="Deletar" update="usuarios,msgs" icon="ui-icon-trash" actionListener="#{usuarioControl.deletar}"/>
 					 	<p:menuitem value="Editar" icon="ui-icon-pencil" action="#{usuarioControl.alterarCadastro}" ajax="false"/>
@@ -18,7 +19,8 @@
 					 </p:contextMenu>
 					 
 					 <p:dataTable var="usuario" value="#{usuarioControl.listaLazyUsuarioGeral()}" id="usuarios" rowKey="#{usuario.id}"  
-                				  selection="#{usuarioControl.usuario}" selectionMode="single" paginator="true" rows="10"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                				  selection="#{usuarioControl.usuario}" selectionMode="single" paginator="true" rows="10"  
+                				  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
                 				  rowsPerPageTemplate="10,25,50" lazy="true">                		  		
 				        <p:column headerText="Nome">
 				            <h:outputText value="#{usuario.nome}" />

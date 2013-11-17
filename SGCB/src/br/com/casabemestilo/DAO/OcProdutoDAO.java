@@ -52,7 +52,6 @@ public class OcProdutoDAO implements InterfaceDAO, Serializable {
 		session.beginTransaction();
 		session.save(ocproduto);		
 		session.getTransaction().commit();
-
 	}
 
 	@Override

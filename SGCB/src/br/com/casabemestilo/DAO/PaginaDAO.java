@@ -127,6 +127,7 @@ public class PaginaDAO implements InterfaceDAO {
 							   .setCacheable(true)
 							   .uniqueResult();
 		
+		session.close();
 		return linhas.intValue();
 	}
 	
