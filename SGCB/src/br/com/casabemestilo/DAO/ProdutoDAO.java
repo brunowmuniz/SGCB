@@ -75,7 +75,6 @@ public class ProdutoDAO implements InterfaceDAO, Serializable {
 		session.beginTransaction();
 		session.update(produto);
 		session.getTransaction().commit();
-
 	}
 
 	@Override
@@ -89,7 +88,6 @@ public class ProdutoDAO implements InterfaceDAO, Serializable {
 			   .setInteger("id", produto.getId())
 			   .executeUpdate();
 		session.getTransaction().commit();
-
 	}
 
 	@Override

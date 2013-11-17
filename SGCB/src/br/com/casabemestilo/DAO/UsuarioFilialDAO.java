@@ -62,7 +62,6 @@ public class UsuarioFilialDAO implements InterfaceDAO, Serializable {
 		session.beginTransaction();
 		session.update(usuarioFilial);
 		session.getTransaction().commit();
-
 	}
 
 	@Override

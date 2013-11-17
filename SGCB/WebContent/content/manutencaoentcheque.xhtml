@@ -27,7 +27,7 @@
 		             			
 		             	<p:ajax event="rowEdit" listener="#{parcelaControl.alterar}" process="entradaparcela" update=":form:msgs"/>
 						
-						<p:column headerText="OC">
+						<p:column headerText="OC" filterBy="#{entrada.pagamento.oc.id}" filterMatchMode="startsWith" filterStyle="width: 50%;">
 							<h:outputText value="#{entrada.pagamento.oc.id}" />
 						</p:column>
 									
@@ -51,13 +51,13 @@
 								</f:facet>
 							</p:cellEditor>							
 						</p:column>
-						<p:column headerText="Cliente Pagador">							
+						<p:column headerText="Cliente Pagador" filterBy="#{entrada.pagamento.cliente.nome}" filterMatchMode="startsWith" filterStyle="width: 100%;">							
 							<h:outputText value="#{entrada.pagamento.cliente.nome}" />
 						</p:column>
 						<p:column style="width: 50px;" headerText="Banco" filterBy="#{entrada.pagamento.banco.id}" filterMatchMode="exact" filterOptions="#{bancoControl.listaBancoCombo('filter')}" filterStyle="width: 80px;">
 							<h:outputText value="#{entrada.pagamento.banco.descricao}" />
 						</p:column>
-						<p:column headerText="Nº Cheque">
+						<p:column headerText="Nº Cheque" filterBy="#{entrada.numeroCheque}" filterMatchMode="startsWith" filterStyle="width: 70%;">
 							<p:cellEditor>
 								<f:facet name="output">
 									<h:outputText value="#{entrada.numeroCheque}" />

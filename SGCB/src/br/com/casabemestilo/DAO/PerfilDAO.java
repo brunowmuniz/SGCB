@@ -49,8 +49,7 @@ public class PerfilDAO implements Serializable,InterfaceDAO {
 		session = Conexao.getInstance();		
 		session.beginTransaction();
 		session.save(perfil);
-		session.getTransaction().commit();
-		
+		session.getTransaction().commit();		
 	}
 
 	@Override
@@ -59,8 +58,7 @@ public class PerfilDAO implements Serializable,InterfaceDAO {
 		session = Conexao.getInstance();
 		session.beginTransaction();
 		session.update(perfil);
-		session.getTransaction().commit();
-		
+		session.getTransaction().commit();		
 	}
 
 	@Override

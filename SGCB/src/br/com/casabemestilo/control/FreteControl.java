@@ -329,9 +329,13 @@ public class FreteControl extends Control implements Serializable,
 			InputStream caminho = null;
 			HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 			Usuario usuarioLogado = (Usuario) request.getSession().getAttribute("UsuarioLogado");
-			String caminhoRelatorio = request.getSession().getServletContext().getRealPath("/WEB-INF/classes/br/com/casabemestilo/relatorio/");
-			
+			String caminhoRelatorio = request.getSession().getServletContext().getRealPath("/WEB-INF/classes/br/com/casabemestilo/relatorio/");			
 			caminho = getClass().getResourceAsStream("../relatorio/solicitacaofretemontagem.jrxml");
+			Float totalMontagem = new Float("0");
+			
+			for(ComissaoMontador comissaoMontador : frete.getComissaoMontadores()){
+				totalMontagem += comissaoMontador.getValor().floatValue();
+			}
 	
 			if(caminhoRelatorio.indexOf("home") > -1)
 				caminhoRelatorio += "/";
@@ -343,10 +347,9 @@ public class FreteControl extends Control implements Serializable,
 			parametros.put("DATAHORA_IMPRESSAO", new Date());
 			parametros.put("USUARIO_IMPRESSAO", usuarioLogado.getNome());
 			parametros.put("SUBREPORT_DIR", caminhoRelatorio);
+			parametros.put("TOTALCOMISSAOMONTAGEM", totalMontagem);
 			response.setHeader("Content-Disposition","attachment; filename=\"Solicitação_Frete-" + frete.getId() +".pdf\"");
-			JasperReport pathReport = JasperCompileManager.compileReport(caminho);
-			
-			
+			JasperReport pathReport = JasperCompileManager.compileReport(caminho);			
 			
 			JasperPrint preencher = JasperFillManager.fillReport(pathReport,parametros,conexaoFactory);		
 			JasperExportManager.exportReportToPdfStream(preencher, response.getOutputStream());

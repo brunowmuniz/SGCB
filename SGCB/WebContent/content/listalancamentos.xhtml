@@ -41,11 +41,23 @@
 							<h:outputText value="#{lancamento.contacontabil.nome}" />
 						</p:column>
 									
-						<p:column headerText="Descrição">
+						<p:column headerText="Descrição" filterBy="#{lancamento.descricao}" filterMatchMode="startsWith" filterStyle="width: 100%;">
 							<h:outputText value="#{lancamento.descricao}" />
 						</p:column>
 						
-						<p:column headerText="Descrição">
+						<p:column headerText="Nº Boleto" filterBy="#{lancamento.numBoleto}" filterMatchMode="startsWith" filterStyle="width: 100%;">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{lancamento.numBoleto}" rendered="#{lancamento.numBoleto != null}"/>
+								</f:facet>
+								<f:facet name="input">
+									<p:inputText value="#{lancamento.numBoleto}" />
+								</f:facet>
+							</p:cellEditor>
+							
+						</p:column>
+						
+						<p:column headerText="Forma Pgto.">
 							<h:outputText value="#{lancamento.formapagamento.nome}" />
 						</p:column>
 						

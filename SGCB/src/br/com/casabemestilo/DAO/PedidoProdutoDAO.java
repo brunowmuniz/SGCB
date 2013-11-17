@@ -191,8 +191,7 @@ public class PedidoProdutoDAO implements InterfaceDAO, Serializable {
 		session = Conexao.getInstance();
 		session.beginTransaction();
 		session.update(pedidoproduto);
-		session.getTransaction().commit();
-		
+		session.getTransaction().commit();		
 	}
 	
 	/*

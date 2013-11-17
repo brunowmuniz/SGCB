@@ -123,7 +123,6 @@ public class OcDAO implements InterfaceDAO, Serializable {
 									 " order by o.id desc")						
 						.setFetchSize(20)
 						.setCacheable(true).list();
-		System.out.println("buscar");
 		session.close();
 		return listaOc;
 	}

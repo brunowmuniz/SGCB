@@ -53,6 +53,8 @@ public class LancamentoControl extends Control implements InterfaceControl,
 	
 	private Float valorSaidas;
 	
+	private String numBoletos;
+	
 	
 	
 	/*
@@ -98,6 +100,7 @@ public class LancamentoControl extends Control implements InterfaceControl,
 				for(int i = 1; i <= getLancamento().getQtdeParcela(); i++){
 					lancamento.setParcela(i);
 					if(i==1){
+						lancamento.setNumBoleto(getNumBoletos().split(";")[0]);
 						idLancamentoPai = lancamentoDAO.insertLista(lancamento).getId();
 						lancamento.setLancamentoPai(new Lancamento());
 						lancamento.getLancamentoPai().setId(idLancamentoPai);
@@ -106,10 +109,12 @@ public class LancamentoControl extends Control implements InterfaceControl,
 						c.setTime(lancamento.getDataLancamento());
 						c.add(Calendar.DAY_OF_MONTH, 30);
 						lancamento.setDataLancamento(c.getTime());
+						lancamento.setNumBoleto(getNumBoletos().split(";")[i-1]);
 						lancamentoDAO.insert(lancamento);
 					}
 				}				
-			}else{				
+			}else{	
+				lancamento.setNumBoleto(getNumBoletos().split(";")[0]);
 				lancamento.setQtdeParcela(1);
 				lancamento.setParcela(1);
 				lancamentoDAO.insert(lancamento);
@@ -117,6 +122,7 @@ public class LancamentoControl extends Control implements InterfaceControl,
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Lançamentos criados!"));
 			lancamento = new Lancamento();
 			ehParcelado = false;
+			
 		} catch (ConstraintViolationException e) {
 			super.mensagem = e.getMessage();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));
@@ -126,6 +132,7 @@ public class LancamentoControl extends Control implements InterfaceControl,
 		} catch (Exception e) {
 			super.mensagem = e.getMessage();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Genérico: " + super.mensagem, ""));
+			e.printStackTrace();
 		}
 	}
 
@@ -212,10 +219,10 @@ public class LancamentoControl extends Control implements InterfaceControl,
 	}
 	
 	public LazyDataModel<Lancamento> listaLancamentoGeralAll(String tipoLancamento){
-		/*if(tipoLancamento.equalsIgnoreCase("vale")){
+		if(tipoLancamento.equalsIgnoreCase("vale")){
+			lancamento = new Lancamento();
 			lancamento.setEhVale(true);
-		}*/
-		
+		}		
 		if(listaLancamentoGeral == null){
 			listaLancamentoGeral = new LazyDataModel<Lancamento>() {
 				private List<Lancamento> listaLazyLancamentos;
@@ -241,10 +248,10 @@ public class LancamentoControl extends Control implements InterfaceControl,
 			    public List<Lancamento> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,String> filters) {
 			    	LancamentoDAO lancamentoDAO = new LancamentoDAO();
 			    	
-			    	listaLazyLancamentos = lancamentoDAO.listaLazyLancamento(first, pageSize, filters, getDataInicial(), getDataFinal(), true);
+			    	listaLazyLancamentos = lancamentoDAO.listaLazyLancamento(first, pageSize, filters, getDataInicial(), getDataFinal(), getLancamento().getEhVale());
 			    	
 			    	if (getRowCount() <= 0) { 
-			            setRowCount(lancamentoDAO.totalLancamento(filters, getDataInicial(), getDataFinal(), true));  
+			            setRowCount(lancamentoDAO.totalLancamento(filters, getDataInicial(), getDataFinal(), getLancamento().getEhVale()));  
 			        }  
 			    	
 			        setPageSize(pageSize);  
@@ -288,7 +295,19 @@ public class LancamentoControl extends Control implements InterfaceControl,
 		return listaLancamento;
 	}
 	
-		
+	public Boolean validaParcelasFornecedor(){
+		Boolean isParcelaNumBoleto = true;
+		if(lancamento.getContacontabil().getId() != null){
+			if(lancamento.getContacontabil().getId() == 19){
+				if(getNumBoletos().split(";").length != lancamento.getQtdeParcela()){
+					FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+																		"Quantidade de nº de boletos diferente da quantidade de parcelas!", ""));
+					isParcelaNumBoleto = false;
+				}
+			}
+		}
+		return isParcelaNumBoleto;
+	}
 	/*
 	 * GETTERS & SETTERS
 	 * */
@@ -399,7 +418,17 @@ public class LancamentoControl extends Control implements InterfaceControl,
 
 	public void setValorSaidas(Float valorSaidas) {
 		this.valorSaidas = valorSaidas;
+	}
+
+	public String getNumBoletos() {
+		if(numBoletos == null){
+			numBoletos = "";
+		}
+		return numBoletos;
+	}
+
+	public void setNumBoletos(String numBoletos) {
+		this.numBoletos = numBoletos;
 	}	
-	
 	
 }

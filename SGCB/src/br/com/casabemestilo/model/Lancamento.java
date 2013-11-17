@@ -38,6 +38,7 @@ public class Lancamento implements java.io.Serializable {
 	private Formapagamento formapagamento;	
 	private Boolean ehVale;
 	private Usuario usuario;
+	private String numBoleto;
 
 	public Lancamento() {
 	}
@@ -150,6 +151,9 @@ public class Lancamento implements java.io.Serializable {
 
 	@Column(name="qtdeparcela", nullable = true)
 	public Integer getQtdeParcela() {
+		if(qtdeParcela == null){
+			qtdeParcela = 1;
+		}
 		return qtdeParcela;
 	}
 
@@ -204,6 +208,15 @@ public class Lancamento implements java.io.Serializable {
 
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
+	}
+	
+	@Column(name = "numboleto", nullable = true)
+	public String getNumBoleto() {
+		return numBoleto;
+	}
+
+	public void setNumBoleto(String numBoleto) {
+		this.numBoleto = numBoleto;
 	}
 
 	@Override

@@ -187,6 +187,7 @@ public class ContaContabilControl extends Control implements InterfaceControl, S
 		if(filter.equals("filter")){
 			SelectItem si = new SelectItem();
 			si.setLabel("Todos");
+			si.setValue("");
 			si.setNoSelectionOption(true);
 			listaContaContabilCombo.add(si);
 		}

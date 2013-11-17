@@ -10,10 +10,11 @@
 			<h:form id="form">
 				<p:panel id="principal" header="Lançamentos">
 					<p:messages id="msgs"/>
-					<h:panelGrid columns="2">
+					<h:panelGrid columns="2" id="cadastro">
 						<p:outputLabel value="Descrição: " for="desclancamento"/>
 						<p:inputText id="desclancamento" value="#{lancamentoControl.lancamento.descricao}" size="40" required="true"
 									requiredMessage="Favor informar descritivo do lançamento">
+							<p:ajax event="blur" process="@this" />
 							<f:validateBean />
 						</p:inputText>
 						
@@ -28,8 +29,13 @@
 						<p:selectOneMenu id="conta" value="#{lancamentoControl.lancamento.contacontabil.id}" required="true">
 							<f:selectItem noSelectionOption="Escolha uma conta" itemLabel=""/>
 							<f:selectItems value="#{contaContabilControl.listaContasCombo('')}"/>
-							<p:ajax event="change" process="@this" update="valorlancamento"/>						
+							<p:ajax event="change" process="@this" update="cadastro"/>						
 						</p:selectOneMenu>
+						
+						<p:outputLabel value="Nº de boletos: " for="numboletos" rendered="#{lancamentoControl.lancamento.contacontabil.id == 19}"/>
+						<p:inputText value="#{lancamentoControl.numBoletos}" id="numboletos" rendered="#{lancamentoControl.lancamento.contacontabil.id == 19}">
+							<p:ajax event="blur" process="@this" update="gravar,msgs" listener="#{lancamentoControl.validaParcelasFornecedor()}"/>
+						</p:inputText>
 						
 						<p:outputLabel value="Forma de Pagamento/Recebimento: " for="formapgtorecbmto"/>
 						<p:selectOneMenu id="formapgtorecbmto" value="#{lancamentoControl.lancamento.formapagamento.id}" required="true">
@@ -57,7 +63,7 @@
 						<p:spinner id="qtdeparcelas" value="#{lancamentoControl.lancamento.qtdeParcela}" min="2" max="99" disabled="#{not lancamentoControl.ehParcelado}"
 									required="#{lancamentoControl.ehParcelado}">
 							<p:ajax event="blur" process="@this" update="totalparcelas"/>
-							<p:ajax event="change" process="@this" update="totalparcelas"/>
+							<p:ajax event="change" process="@this" update="totalparcelas,gravar,msgs" listener="#{lancamentoControl.validaParcelasFornecedor()}"/>
 						</p:spinner>		
 						
 						<p:outputLabel for="datalancamento" value="Data Lançamento: " id="lbldatalancamento"/>
@@ -72,7 +78,7 @@
 							</h:outputText>
 						</p:outputPanel>	
 						
-						<p:commandButton actionListener="#{lancamentoControl.gravar}" update="msgs,principal" value="Gravar"/>
+						<p:commandButton id="gravar" actionListener="#{lancamentoControl.gravar}" update="msgs,principal" value="Gravar" disabled="#{!lancamentoControl.validaParcelasFornecedor()}"/>
 					</h:panelGrid>					
 				</p:panel>
 			</h:form>

@@ -115,15 +115,19 @@ public class LancamentoDAO implements InterfaceDAO, Serializable {
 		session = Conexao.getInstance();
 		listaLancamento = new ArrayList<Lancamento>();
 		String hql = "from Lancamento l" +
-						" left join fetch l.lancamentoPai" +
-						" inner join fetch l.usuario"+
-						" where " +
-							"l.dataLancamento between :dataInicial" +
-												" and :dataFinal" +
-							" and" +
-								" l.deleted = 0" +
-							" and" +
-								" l.ehVale = :ehVale";
+						" left join fetch l.lancamentoPai";
+		
+		if(ehVale){
+			hql += " inner join fetch l.usuario";
+		}
+						
+		hql +=	" where " +
+					"l.dataLancamento between :dataInicial" +
+										" and :dataFinal" +
+					" and" +
+						" l.deleted = 0" +
+					" and" +
+						" l.ehVale = :ehVale";
 		
 		if(filters.containsKey("contacontabil.id")){
 			hql += " and l.contacontabil.id = " + filters.get("contacontabil.id");
@@ -131,6 +135,14 @@ public class LancamentoDAO implements InterfaceDAO, Serializable {
 		
 		if(filters.containsKey("usuario.id")){
 			hql += " and l.usuario.id = " + filters.get("usuario.id");
+		}
+		
+		if(filters.containsKey("descricao")){
+			hql += " and l.descricao like '%" + filters.get("descricao") + "%'";
+		}
+		
+		if(filters.containsKey("numBoleto")){
+			hql += " and l.numBoleto like '%" + filters.get("numBoleto") + "%'";
 		}
 		
 		listaLancamento = session.createQuery(hql)
@@ -165,6 +177,14 @@ public class LancamentoDAO implements InterfaceDAO, Serializable {
 		
 		if(filters.containsKey("usuario.id")){
 			hql += " and l.usuario.id = " + filters.get("usuario.id");
+		}
+		
+		if(filters.containsKey("descricao")){
+			hql += " and l.descricao like '%" + filters.get("descricao") + "%'";
+		}
+		
+		if(filters.containsKey("numBoleto")){
+			hql += " and l.numBoleto like '%" + filters.get("numBoleto") + "%'";
 		}
 		
 		linhas = (Long) session.createQuery(hql)
