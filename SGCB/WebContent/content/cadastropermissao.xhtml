@@ -10,16 +10,23 @@
 			<h:form>
 				<p:panel header="Cadastro de Permissão" id="principal">
 					<p:messages id="msgs"/>
-					<h:panelGrid columns="2" id="cadastro">
+					<h:panelGrid columns="3" id="cadastro">
 						<p:outputLabel value="Nome: "/>
-						<p:inputText value="#{usuarioControl.usuario.nome}"/>
-						
-						<p:pickList id="permissao" value="#{paginaControl.listarTodos()}" var="pagina" 
-							itemValue="#{pagina.id}" itemLabel="#{pagina.nomePagina}">
-							<f:selectItems value="#{usuarioControl.listaPermissoesUsuario}"/>
-						</p:pickList>
+						<p:autoComplete id="buscarcliente" value="#{permissaoControl.permissao.usuario}" minQueryLength="3"
+											completeMethod="#{usuarioControl.listaComplete}"											 
+											forceSelection="true" converter="converter.UsuarioConverter"
+											var="usuario" itemValue="#{usuario}" itemLabel="#{usuario.nome}"
+											disabled="#{permissaoControl.permissao.usuario.id != null}" size="56">
+								<p:ajax event="itemSelect" process="@this" update="permissao,cadastro"/>
+						</p:autoComplete>
+						<p:commandButton value="Limpar" actionListener="#{permissaoControl.limparUsuario}" update="principal" id="limparusuario" rendered="#{permissaoControl.permissao.usuario.id != null}" process="@this" />
 					</h:panelGrid>
-					<p:commandButton actionListener="#{usuarioControl.gravarPermissao}" value="Gravar" update="msgs,cadastro" id="gravar"/>
+					<p:pickList id="permissao" value="#{permissaoControl.listaPaginasPermissao}" var="pagina" converter="converter.PaginaConverter"
+							itemValue="#{pagina}" itemLabel="#{pagina.nomePagina}" showSourceFilter="true" showTargetFilter="true">							
+						<f:facet name="sourceCaption">Disponíveis</f:facet>
+						<f:facet name="targetCaption">Permissões</f:facet>						
+					</p:pickList>
+					<p:commandButton action="#{permissaoControl.gravar}" value="Gravar" id="gravar" ajax="false"/>
 				</p:panel>
 			</h:form>
 		</ui:define>

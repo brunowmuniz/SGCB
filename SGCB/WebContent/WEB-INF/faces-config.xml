@@ -24,7 +24,15 @@
 		<converter-id>converter.CondicoesPagamentoConverter</converter-id>
 		<converter-class>br.com.casabemestilo.converter.CondicoesPagamentoConverter</converter-class>
 	</converter>
-
+	<converter>
+		<converter-id>converter.UsuarioConverter</converter-id>
+		<converter-class>br.com.casabemestilo.converter.UsuarioConverter</converter-class>
+	</converter>
+	<converter>
+		<converter-id>converter.PaginaConverter</converter-id>
+		<converter-class>br.com.casabemestilo.converter.PaginaConverter</converter-class>
+	</converter>
+	
 	<navigation-rule>
 		<from-view-id>*</from-view-id>
 		<navigation-case>

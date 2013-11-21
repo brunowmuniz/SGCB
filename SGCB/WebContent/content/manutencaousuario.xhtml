@@ -15,7 +15,6 @@
 					 	<p:menuitem value="Deletar" update="usuarios,msgs" icon="ui-icon-trash" actionListener="#{usuarioControl.deletar}"/>
 					 	<p:menuitem value="Editar" icon="ui-icon-pencil" action="#{usuarioControl.alterarCadastro}" ajax="false"/>
 					 	<p:menuitem value="Editar Comissão" icon="ui-icon-bookmark" action="#{usuarioControl.alterarComissao}" ajax="false"/>
-					 	<p:menuitem value="Editar Permissão" icon="ui-icon-key" action="#{usuarioControl.alterarPermissao}" ajax="false"/>
 					 </p:contextMenu>
 					 
 					 <p:dataTable var="usuario" value="#{usuarioControl.listaLazyUsuarioGeral()}" id="usuarios" rowKey="#{usuario.id}"  
