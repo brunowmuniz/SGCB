@@ -394,7 +394,6 @@ public class OcControl extends Control implements InterfaceControl,
 
 	@Override
 	public List<Oc> listarAtivos() {
-		//List listaOcAtivo = new ArrayList();
 		try{
 			ocDAO = new OcDAO();
 			listaOc = ocDAO.listaAtivos();

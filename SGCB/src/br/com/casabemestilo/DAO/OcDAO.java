@@ -429,9 +429,7 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		listaOcPagamento = session.createQuery("from Oc oc" +
 											" inner join oc.pagamentos pagamento with pagamento.datalancamento = :dataLancamento" +
 											" where" +
-												/*" oc.datalancamento = :dataLancamento" +
-											" and" +*/
-												" oc.status.id not in(1,2,10)")
+												" oc.status.id not in(1,10)")
 									.setDate("dataLancamento", dataLancamento)
 									.setCacheable(true)
 									.list();

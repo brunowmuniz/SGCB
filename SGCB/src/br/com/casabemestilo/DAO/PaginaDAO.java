@@ -10,6 +10,7 @@ import org.hibernate.exception.ConstraintViolationException;
 
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
 import br.com.casabemestilo.model.Cliente;
+import br.com.casabemestilo.model.Oc;
 import br.com.casabemestilo.model.Pagina;
 import br.com.casabemestilo.model.Pedido;
 import br.com.casabemestilo.util.Conexao;
@@ -65,10 +66,13 @@ public class PaginaDAO implements InterfaceDAO {
 	}
 
 	@Override
-	public Object buscaObjetoId(Integer id) throws Exception,
+	public Pagina buscaObjetoId(Integer id) throws Exception,
 			HibernateException, ConstraintViolationException {
-		// TODO Auto-generated method stub
-		return null;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		pagina = (Pagina) session.get(Pagina.class, id);
+		session.close();
+		return pagina;
 	}
 
 	@Override
@@ -89,10 +93,16 @@ public class PaginaDAO implements InterfaceDAO {
 	}
 
 	@Override
-	public <T> List<T> listaSelecao(Object obj) throws Exception,
+	public List<Pagina> listaSelecao(Object obj) throws Exception,
 			HibernateException, ConstraintViolationException {
-		// TODO Auto-generated method stub
-		return null;
+		session = Conexao.getInstance();
+		List<Pagina> paginasComPermissao = (List<Pagina>) obj;
+		paginas = session.createQuery("from Pagina pagina where" +
+											" pagina not in(:paginas)")
+						 .setParameter("paginas", paginasComPermissao)
+						 .list();
+		session.close();
+		return paginas;
 	}
 
 	public List<Pagina> listaPaginas(int first, int pageSize,  Map<String, String> filters) {

@@ -36,5 +36,7 @@
 		<mapping class="br.com.casabemestilo.model.ComissaoMontador" />
 		<mapping class="br.com.casabemestilo.model.ComissaoVendedor" />
 		<mapping class="br.com.casabemestilo.model.Banco"/>
+		<mapping class="br.com.casabemestilo.model.Permissao"/>
+  		<mapping class="br.com.casabemestilo.model.Pagina"/>
 	</session-factory>
 </hibernate-configuration>

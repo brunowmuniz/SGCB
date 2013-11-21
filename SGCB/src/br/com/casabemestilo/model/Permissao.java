@@ -34,6 +34,14 @@ public class Permissao  implements Serializable{
 		this.pagina = pagina;
 		this.deleted = deleted;
 	}
+	
+	
+
+	public Permissao() {
+		
+	}
+
+
 
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
@@ -49,6 +57,9 @@ public class Permissao  implements Serializable{
 	@ManyToOne
 	@JoinColumn(name = "usuario", nullable = false)
 	public Usuario getUsuario() {
+		if(usuario == null){
+			usuario = new Usuario();
+		}
 		return usuario;
 	}
 
@@ -59,6 +70,9 @@ public class Permissao  implements Serializable{
 	@ManyToOne
 	@JoinColumn(name = "pagina", nullable = false)
 	public Pagina getPagina() {
+		if(pagina == null){
+			pagina = new Pagina();
+		}
 		return pagina;
 	}
 

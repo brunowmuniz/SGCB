@@ -1,5 +1,6 @@
 package br.com.casabemestilo.control;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import javax.faces.context.FacesContext;
 
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
+import org.primefaces.model.DualListModel;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
@@ -258,6 +260,7 @@ public class PaginaControl extends Control implements InterfaceControl {
 	public void setListaPaginaGeral(LazyDataModel<Pagina> listaPaginaGeral) {
 		this.listaPaginaGeral = listaPaginaGeral;
 	}
+
 	
 	
 }

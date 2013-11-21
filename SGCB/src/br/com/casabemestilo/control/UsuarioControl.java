@@ -28,14 +28,17 @@ import org.w3c.dom.ls.LSInput;
 
 import com.sun.faces.context.flash.ELFlash;
 
+import br.com.casabemestilo.DAO.ClienteDAO;
 import br.com.casabemestilo.DAO.ComissaoDAO;
 import br.com.casabemestilo.DAO.OcDAO;
 import br.com.casabemestilo.DAO.PermissaoDAO;
 import br.com.casabemestilo.DAO.UsuarioDAO;
 import br.com.casabemestilo.DAO.UsuarioFilialDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
+import br.com.casabemestilo.model.Cliente;
 import br.com.casabemestilo.model.Filial;
 import br.com.casabemestilo.model.Oc;
+import br.com.casabemestilo.model.Pagina;
 import br.com.casabemestilo.model.Permissao;
 import br.com.casabemestilo.model.Usuario;
 import br.com.casabemestilo.model.UsuarioFilial;
@@ -108,7 +111,9 @@ public class UsuarioControl extends Control implements InterfaceControl,
     public void destroy() {}
     
     public String consultarUsuarioLogin(){
-    	usuarioDAO = new UsuarioDAO();    	 
+    	usuarioDAO = new UsuarioDAO();
+    	PermissaoDAO permissaoDAO= new PermissaoDAO();
+    	List<Pagina> listaPaginasPermissao = new ArrayList<Pagina>();
     	try {
 			usuario.setSenha(new Encrypt().md5(usuario.getSenha()));
 		} catch (NoSuchAlgorithmException e) {
@@ -118,16 +123,32 @@ public class UsuarioControl extends Control implements InterfaceControl,
 		}
     	usuario = usuarioDAO.buscaUsuarioLogin(usuario);
     	if(usuario != null){
-    		FacesContext facesContext = FacesContext.getCurrentInstance(); 
-			HttpServletRequest request = (HttpServletRequest) facesContext.getCurrentInstance().getExternalContext().getRequest();
-    		HttpSession session = request.getSession(); 
-			session.setAttribute("UsuarioLogado", usuario);
-			return "/content/home.xhtml?faces-redirect=true";
+    		try {
+				listaPaginasPermissao = permissaoDAO.listaSelecao(usuario);
+				FacesContext facesContext = FacesContext.getCurrentInstance(); 
+				HttpServletRequest request = (HttpServletRequest) facesContext.getCurrentInstance().getExternalContext().getRequest();
+	    		HttpSession session = request.getSession(); 
+				session.setAttribute("UsuarioLogado", usuario);
+				session.setAttribute("listaPaginasPermissao", listaPaginasPermissao);				
+			} catch (ConstraintViolationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (HibernateException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally{
+				return "/content/home.xhtml?faces-redirect=true";
+			}    		
     	}else{
     		FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Usuário e/ou Senha inválidos, favor verificar!", ""));
     		return "erro";
     	}
     }
+    
+    
     
     public String sairAplicacao(){
     	 FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -419,9 +440,30 @@ public class UsuarioControl extends Control implements InterfaceControl,
 		ELFlash.getFlash().put("usuarioPermissao", usuario);
 		return "cadastropermissao?faces-redirect=true";
 	}
+
 	
-	public void gravarPermissao(){
-		
+	public List<Usuario> listaComplete(String nomeUsuario){
+		usuarioDAO = new UsuarioDAO();
+		listaUsuario = new ArrayList<Usuario>();		
+		usuario.setNome(nomeUsuario);
+		usuario.setDeleted(false);
+		try {
+			listaUsuario = usuarioDAO.listaSelecao(usuario);
+			if(listaUsuario.isEmpty()){
+				usuario.setNome(nomeUsuario);
+				listaUsuario.add(usuario);
+			}
+		} catch (ConstraintViolationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (HibernateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+		return listaUsuario;
 	}
 	
 	/*

@@ -105,7 +105,7 @@ public class PagamentoDAO implements InterfaceDAO, Serializable {
 												"from "+
 													"Pagamento pagamento "+		
 												" where "+
-													"pagamento.oc.status.id not in (1,2,10) " +
+													"pagamento.oc.status.id not in (1,10) " +
 												" and " +
 													"pagamento.datalancamento < :dataLancamento" +
 												" and" +
