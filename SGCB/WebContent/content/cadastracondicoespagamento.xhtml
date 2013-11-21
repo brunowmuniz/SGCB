@@ -35,7 +35,7 @@
 												
 						<p:commandButton rendered="#{condicoesPagamentoControl.condicoesPagamento.id != null}" actionListener="#{condicoesPagamentoControl.alterar}" value="Alterar" update="msgs,cadastro" id="gravar"/>
 						<p:commandButton rendered="#{condicoesPagamentoControl.condicoesPagamento.id == null}" actionListener="#{condicoesPagamentoControl.gravar}" value="Gravar" update="msgs,cadastro" id="alterar"/>
-						<p:commandButton rendered="#{condicoesPagamentoControl.condicoesPagamento.id != null}" action="#{retencasoControl.sairAlteracao}" value="Sair" id="sair" ajax="false"/>
+						<p:commandButton rendered="#{condicoesPagamentoControl.condicoesPagamento.id != null}" action="#{condicoesPagamentoControl.sairAlteracao}" value="Sair" id="sair" ajax="false"/>
 					</h:panelGrid>
 				</p:panel>
 			</h:form>

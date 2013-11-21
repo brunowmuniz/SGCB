@@ -501,13 +501,10 @@
 													<p:ajax event="blur" process="@this" update="@this,valorfinaloc" listener="#{ocControl.calculaValorTotal}"/>
 												</p:inputText>
 												
-												<p:outputLabel value="Prazo de Entrega: " for="prazoentrega"/>
-												<p:inputText value="#{ocControl.oc.prazoentrega}" rendered="false" required="true">
-													<f:validateBean />
-													<f:convertNumber minIntegerDigits="1" maxIntegerDigits="3"/>
-													<p:ajax event="blur" process="@this" update="@this"/>
-												</p:inputText>			
-												<p:calendar value="#{ocControl.oc.prazoentrega}" id="prazoentrega" pattern="dd/MM/yyyy" locale="pt" required="true"/>							
+												<p:outputLabel value="Prazo de Entrega: " for="prazoentrega"/>															
+												<p:calendar value="#{ocControl.oc.prazoentrega}" id="prazoentrega" pattern="dd/MM/yyyy" locale="pt" required="true">
+													<p:ajax event="dateSelect" process="@this"/>
+												</p:calendar>							
 											</h:panelGrid>
 											<h:panelGrid columns="2" >
 												<p:outputLabel for="obsoc" value="Observações: "/>
