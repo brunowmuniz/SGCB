@@ -38,6 +38,10 @@ public class Pagina implements Serializable{
 		this.deleted = deleted;
 	}	
 	
+	public Pagina(String nomePagina){
+		this.nomePagina = nomePagina;
+	}
+	
 	public Pagina() {
 		super();
 	}
@@ -92,6 +96,13 @@ public class Pagina implements Serializable{
 	public void setDeleted(Boolean deleted) {
 		this.deleted = deleted;
 	}
+
+	@Override
+	 public boolean equals (Object obj) {
+        if (obj == null) return false;
+        if (obj.getClass() != this.getClass()) return false;
+        return this.nomePagina.equalsIgnoreCase(nomePagina);
+    }
 	
 	
 	

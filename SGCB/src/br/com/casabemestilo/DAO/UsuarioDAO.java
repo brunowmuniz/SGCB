@@ -7,6 +7,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
+import br.com.casabemestilo.model.Cliente;
 import br.com.casabemestilo.model.Filial;
 import br.com.casabemestilo.model.Perfil;
 import br.com.casabemestilo.model.Usuario;
@@ -109,8 +110,18 @@ public class UsuarioDAO implements InterfaceDAO, Serializable {
 	@Override
 	public List<Usuario> listaSelecao(Object obj) throws Exception,
 			HibernateException, ConstraintViolationException {
-		// TODO Auto-generated method stub
-		return null;
+		usuario = (Usuario) obj;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		listaUsuario = session.createQuery("from Usuario u where " +
+															" u.deleted=:deletado " +
+														" and" +
+															" u.nome like :desc")
+							 .setBoolean("deletado", usuario.getDeleted())
+							 .setString("desc", "%" + usuario.getNome() + "%")
+							 .list();
+		session.close();
+		return listaUsuario;
 	}
 	
 	public List<UsuarioFilial> listaVendedorFilial(Filial filial) {
@@ -132,7 +143,7 @@ public class UsuarioDAO implements InterfaceDAO, Serializable {
 	public Usuario buscaUsuarioLogin(Usuario usuario) {
 		this.usuario = null;
 		session = Conexao.getInstance();
-		this.usuario = (Usuario) session.createQuery("From Usuario u where u.login = :login and u.senha = :senha")
+		this.usuario = (Usuario) session.createQuery("From Usuario u where u.login = :login and u.senha = :senha and u.deleted = false")
 						 				.setString("login", usuario.getLogin())
 						 				.setString("senha", usuario.getSenha())
 						 				.uniqueResult();

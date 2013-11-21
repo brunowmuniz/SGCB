@@ -8,6 +8,7 @@ import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
 
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
+import br.com.casabemestilo.model.Pagina;
 import br.com.casabemestilo.model.Permissao;
 import br.com.casabemestilo.model.Usuario;
 import br.com.casabemestilo.util.Conexao;
@@ -39,8 +40,13 @@ public class PermissaoDAO implements InterfaceDAO{
 	@Override
 	public void insert(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
-		
+		permissoes = (ArrayList<Permissao>) obj;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		for(Permissao permissao : permissoes){
+			session.merge(permissao);
+		}
+		session.getTransaction().commit();
 	}
 
 	@Override
@@ -53,8 +59,13 @@ public class PermissaoDAO implements InterfaceDAO{
 	@Override
 	public void delete(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
-		
+		Usuario usuario = (Usuario) obj;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		session.createQuery("delete from Permissao permissao where permissao.usuario.id = :usuario")
+			   .setInteger("usuario",usuario.getId())
+			   .executeUpdate();
+		session.getTransaction().commit();
 	}
 
 	@Override
@@ -79,10 +90,22 @@ public class PermissaoDAO implements InterfaceDAO{
 	}
 
 	@Override
-	public <T> List<T> listaSelecao(Object obj) throws Exception,
+	public List<Pagina> listaSelecao(Object obj) throws Exception,
 			HibernateException, ConstraintViolationException {
-		// TODO Auto-generated method stub
-		return null;
+		Usuario usuario = (Usuario) obj;
+		session = Conexao.getInstance();
+		List<Pagina> paginaPermissao= new ArrayList<Pagina>();
+		paginaPermissao = session.createQuery("select permissao.pagina " +
+											" from Permissao permissao" +
+				 							" where " +
+				 								"permissao.usuario.id = :usuario" +
+				 							" and" +
+				 								" permissao.deleted = false")
+				 			.setInteger("usuario", usuario.getId())
+							.setCacheable(true)
+							.list();
+		session.close();
+		return paginaPermissao;
 	}
 
 	public List<Permissao> buscaPermissaoUsuario(Usuario usuario) {
@@ -90,12 +113,15 @@ public class PermissaoDAO implements InterfaceDAO{
 		permissoes = new ArrayList<Permissao>();
 		permissoes = session.createQuery("from Permissao permissao " +
 											"where " +
-												" permissao.usuario.id = :usuario")
+												" permissao.usuario.id = :usuario" +
+											" and" +
+												" permissao.deleted = false")
 							.setCacheable(true)
 							.list();
 		session.close();
 		return permissoes;
 	}
+	
 	
 	public Session getSession() {
 		return session;
