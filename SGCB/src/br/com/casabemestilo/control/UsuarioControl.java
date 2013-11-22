@@ -114,6 +114,7 @@ public class UsuarioControl extends Control implements InterfaceControl,
     	usuarioDAO = new UsuarioDAO();
     	PermissaoDAO permissaoDAO= new PermissaoDAO();
     	List<Pagina> listaPaginasPermissao = new ArrayList<Pagina>();
+    	List<String> nomePaginasPermissao = new ArrayList<String>(); 
     	try {
 			usuario.setSenha(new Encrypt().md5(usuario.getSenha()));
 		} catch (NoSuchAlgorithmException e) {
@@ -125,11 +126,14 @@ public class UsuarioControl extends Control implements InterfaceControl,
     	if(usuario != null){
     		try {
 				listaPaginasPermissao = permissaoDAO.listaSelecao(usuario);
+				for(Pagina pagina : listaPaginasPermissao){
+					nomePaginasPermissao.add(pagina.getNomePagina());
+				}
 				FacesContext facesContext = FacesContext.getCurrentInstance(); 
 				HttpServletRequest request = (HttpServletRequest) facesContext.getCurrentInstance().getExternalContext().getRequest();
 	    		HttpSession session = request.getSession(); 
 				session.setAttribute("UsuarioLogado", usuario);
-				session.setAttribute("listaPaginasPermissao", listaPaginasPermissao);				
+				session.setAttribute("nomePaginasPermissao", nomePaginasPermissao);				
 			} catch (ConstraintViolationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

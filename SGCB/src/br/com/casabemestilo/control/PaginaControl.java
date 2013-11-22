@@ -79,6 +79,9 @@ public class PaginaControl extends Control implements InterfaceControl {
 	public void gravar() {
 		paginaDAO = new PaginaDAO();
 		try {
+			if(pagina.getNomePagina().indexOf(".xhtml") == -1){
+				pagina.setNomePagina(pagina.getNomePagina() + ".xhtml");
+			}
 			paginaDAO.insert(pagina);
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Página:" + pagina.getNomePagina() + " foi gravada!"));
 			pagina = new Pagina();
@@ -123,6 +126,9 @@ public class PaginaControl extends Control implements InterfaceControl {
 	public void alterar() {
 		paginaDAO = new PaginaDAO();
 		try {
+			if(pagina.getNomePagina().indexOf(".xhtml") == -1){
+				pagina.setNomePagina(pagina.getNomePagina() + ".xhtml");
+			}
 			paginaDAO.update(pagina);
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Página:" + pagina.getNomePagina() + " foi alterada!"));
 			pagina = new Pagina();

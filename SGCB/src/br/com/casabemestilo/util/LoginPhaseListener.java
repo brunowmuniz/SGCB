@@ -1,7 +1,10 @@
 package br.com.casabemestilo.util;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.faces.application.NavigationHandler;
 import javax.faces.context.ExternalContext;
@@ -31,20 +34,43 @@ public class LoginPhaseListener implements PhaseListener {
         FacesContext facesContext = event.getFacesContext();
         HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
         Usuario user = (Usuario) session.getAttribute("UsuarioLogado");
-        List<Pagina> listaPaginasPermissao = (List<Pagina>) session.getAttribute("listaPaginasPermissao");
-        String pagina = facesContext.getViewRoot().getViewId();
+        List<String> nomePaginasPermissao = (ArrayList<String>) session.getAttribute("nomePaginasPermissao");
+        String pagina = facesContext.getViewRoot().getViewId().replace("/content/", "");
+        NavigationHandler nh = facesContext.getApplication().getNavigationHandler();
+        String[] paginasSemLogin;
+        Properties properties = new Properties();
+        InputStream in = this.getClass().getResourceAsStream("sgcb.properties");
+        boolean ehPaginasSemLogin = false;
+        int i = 1;
+        
+        try {
+            properties.load(in);
+            in.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        //Faz um split com as páginas sem login
+        paginasSemLogin = properties.getProperty("pagina").split(",");
+
+        // Loop para identificar se a página é uma das sem login
+        while (paginasSemLogin.length >= i && !ehPaginasSemLogin) {
+            try {
+                ehPaginasSemLogin = facesContext.getViewRoot().getViewId().lastIndexOf(paginasSemLogin[i - 1].toString()) > -1 ? true : false;
+            } catch (Exception e) {
+            	e.printStackTrace();
+                break;
+            } finally {
+                i++;
+            }
+        }
         
         
-         // Verifica se a requisicao eh para a pagina de login
-        boolean loginPage = pagina.lastIndexOf("index") > -1 ? true : false;
-        if (!loginPage && (user == null || user.getNome().length() == 0)) {
-            NavigationHandler nh = facesContext.getApplication().getNavigationHandler();
-            nh.handleNavigation(facesContext, null, "index");
-        	
+        if (!ehPaginasSemLogin && (user == null || user.getNome().length() == 0)) {            
+            nh.handleNavigation(facesContext, null, "index");        	
     	}else{
-    		if(!loginPage && !listaPaginasPermissao.contains(pagina.replace("/content", ""))){
-        		NavigationHandler nh = facesContext.getApplication().getNavigationHandler();
-        		nh.handleNavigation(facesContext, null, "sempermissao");
+    		if(!ehPaginasSemLogin && !nomePaginasPermissao.contains(pagina)){
+           		nh.handleNavigation(facesContext, null, "sempermissao");
     		}
     		
     	}

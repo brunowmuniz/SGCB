@@ -97,11 +97,14 @@ public class Pagina implements Serializable{
 		this.deleted = deleted;
 	}
 
+	
+
 	@Override
-	 public boolean equals (Object obj) {
+	public boolean equals (Object obj) {
         if (obj == null) return false;
         if (obj.getClass() != this.getClass()) return false;
-        return this.nomePagina.equalsIgnoreCase(nomePagina);
+        return this.nomePagina.equalsIgnoreCase(((Pagina) obj).getNomePagina());
+        //return this.id == ((Pagina) obj).getId();
     }
 	
 	
