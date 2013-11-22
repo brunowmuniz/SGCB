@@ -58,82 +58,89 @@
 														
 						</h:panelGrid>
 						<p:tabView id="oc">																																							 
-							<p:tab title="Dados do Cliente">								
-								<h:panelGrid id="dadoscliente">
-									<h:panelGrid columns="3">
-										<p:outputLabel for="buscarcliente" value="Busca Cliente: "/>
-										<p:autoComplete id="buscarcliente" value="#{ocControl.oc.cliente}" minQueryLength="3"
-															completeMethod="#{clienteControl.listaComplete}"											 
-															forceSelection="true" converter="converter.clienteConverter"
-															var="cliente" itemValue="#{cliente}" itemLabel="#{cliente.nome}"
-															disabled="#{ocControl.oc.cliente.id != null}">
-												<p:ajax event="itemSelect" update="dadoscliente,occliente" process="@this"/>
-										</p:autoComplete>
-										<p:commandButton value="Limpar" actionListener="#{ocControl.limparCliente}" update="dadoscliente" id="limparcliente" rendered="#{ocControl.oc.cliente.id != null}" process="@this" />
+							<p:tab title="Dados do Cliente">
+								<h:panelGrid columns="3">
+									<h:panelGrid id="dadoscliente">
+										<h:panelGrid columns="3">
+											<p:outputLabel for="buscarcliente" value="Busca Cliente: "/>
+											<p:autoComplete id="buscarcliente" value="#{ocControl.oc.cliente}" minQueryLength="3"
+																completeMethod="#{clienteControl.listaComplete}"											 
+																forceSelection="true" converter="converter.clienteConverter"
+																var="cliente" itemValue="#{cliente}" itemLabel="#{cliente.nome}"
+																disabled="#{ocControl.oc.cliente.id != null}">
+													<p:ajax event="itemSelect" update="dadoscliente,occliente" process="@this"/>
+											</p:autoComplete>
+											<p:commandButton value="Limpar" actionListener="#{ocControl.limparCliente}" update="dadoscliente" id="limparcliente" rendered="#{ocControl.oc.cliente.id != null}" process="@this" />
+										</h:panelGrid>
+										<h:panelGrid columns="2">
+											<p:outputLabel value="Nome: " for="nomeclienteoc"/>
+											<p:inputText size="78" value="#{ocControl.oc.cliente.nome}" required="true" id="nomeclienteoc">
+												<f:validateBean />
+											</p:inputText>
+											
+											<p:outputLabel value="Endereço: " for="enderecoclienteoc"/>
+											<p:inputText size="78" value="#{ocControl.oc.cliente.endereco}" required="true" id="enderecoclienteoc">
+												<f:validateBean/>
+											</p:inputText>
+										</h:panelGrid>
+										<h:panelGrid columns="4">	
+											<p:outputLabel value="Cidade: " for="cidadeclienteoc"/>
+											<p:inputText size="30" value="#{ocControl.oc.cliente.cidade}" required="true" id="cidadeclienteoc">
+												<f:validateBean/>
+											</p:inputText>
+											
+											<p:outputLabel value="Telefone: " for="telefoneclienteoc"/>
+											<p:inputMask size="30" value="#{ocControl.oc.cliente.telefone}" required="true" id="telefoneclienteoc" mask="(99) 9999-9999">
+												<f:validateBean/>
+											</p:inputMask>
+											
+											<p:outputLabel value="CPF: " for="cpfclienteoc"/>
+											<p:inputMask size="30" value="#{ocControl.oc.cliente.cpf}" required="true" id="cpfclienteoc" mask="999.999.999-99" />
+											
+											<p:outputLabel value="RG: " for="rgclienteoc"/>
+											<p:inputText size="30" value="#{ocControl.oc.cliente.rg}" required="true" id="rgclienteoc"/>
+											
+											<p:outputLabel value="Data Nascimento: " for="datanascimentoclienteoc"/>
+											<p:inputMask size="30" value="#{ocControl.oc.cliente.datadenascimento}" required="true" id="datanascimentoclienteoc"
+												mask="99/99/9999">
+												<f:convertDateTime pattern="dd/MM/yyyy"/>
+											</p:inputMask>								
+										</h:panelGrid>										
 									</h:panelGrid>
-									<h:panelGrid columns="2">
-										<p:outputLabel value="Nome: " for="nomeclienteoc"/>
-										<p:inputText size="78" value="#{ocControl.oc.cliente.nome}" required="true" id="nomeclienteoc">
-											<f:validateBean />
-										</p:inputText>
-										
-										<p:outputLabel value="Endereço: " for="enderecoclienteoc"/>
-										<p:inputText size="78" value="#{ocControl.oc.cliente.endereco}" required="true" id="enderecoclienteoc">
-											<f:validateBean/>
-										</p:inputText>
+									<p:spacer width="35px"/>
+									<h:panelGrid styleClass="vAlTop">
+										<p:outputPanel autoUpdate="true" id="occliente">
+											<p:dataTable value="#{ocControl.oc.cliente.ocs}" var="oc" rendered="#{ocControl.oc.id == null and ocControl.oc.cliente.id != null}"
+											 	 rowKey="#{oc.id}" emptyMessage="Sem compras anteriores para este cliente!" rows="10" style="width:100%;">														
+												
+												<f:facet name="header">
+													Compras anteriores do cliente
+												</f:facet>
+												
+												<p:column headerText="Nº">
+												<h:outputText value="#{oc.id}" />
+												</p:column>
+												<p:column headerText="Status" styleClass="status_#{oc.status.id}">
+													<h:outputText value="#{oc.status.descricao}"/>
+												</p:column>
+												<p:column headerText="Data">
+													<h:outputText value="#{oc.datalancamento}">
+														<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
+													</h:outputText>
+												</p:column>
+												<p:column headerText="Valor">
+													<h:outputText value="R$ " />
+													<h:outputText value="#{oc.valorfinal}">
+														<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
+													</h:outputText>
+												</p:column>														
+											</p:dataTable>
+										</p:outputPanel>
 									</h:panelGrid>
-									<h:panelGrid columns="4">	
-										<p:outputLabel value="Cidade: " for="cidadeclienteoc"/>
-										<p:inputText size="30" value="#{ocControl.oc.cliente.cidade}" required="true" id="cidadeclienteoc">
-											<f:validateBean/>
-										</p:inputText>
-										
-										<p:outputLabel value="Telefone: " for="telefoneclienteoc"/>
-										<p:inputMask size="30" value="#{ocControl.oc.cliente.telefone}" required="true" id="telefoneclienteoc" mask="(99) 9999-9999">
-											<f:validateBean/>
-										</p:inputMask>
-										
-										<p:outputLabel value="CPF: " for="cpfclienteoc"/>
-										<p:inputMask size="30" value="#{ocControl.oc.cliente.cpf}" required="true" id="cpfclienteoc" mask="999.999.999-99" />
-										
-										<p:outputLabel value="RG: " for="rgclienteoc"/>
-										<p:inputText size="30" value="#{ocControl.oc.cliente.rg}" required="true" id="rgclienteoc"/>
-										
-										<p:outputLabel value="Data Nascimento: " for="datanascimentoclienteoc"/>
-										<p:inputMask size="30" value="#{ocControl.oc.cliente.datadenascimento}" required="true" id="datanascimentoclienteoc"
-											mask="99/99/9999">
-											<f:convertDateTime pattern="dd/MM/yyyy"/>
-										</p:inputMask>								
-									</h:panelGrid>
-								</h:panelGrid>
+								</h:panelGrid>								
 								
-								<p:outputPanel autoUpdate="true" id="occliente">
-									<p:dataTable value="#{ocControl.oc.cliente.ocs}" var="oc" rendered="#{ocControl.oc.id == null and ocControl.oc.cliente.id != null}"
-									 	 rowKey="#{oc.id}" emptyMessage="Sem compras anteriores para este cliente!" rows="10" style="width:40%;">														
-										
-										<f:facet name="header">
-											Compras anteriores do cliente
-										</f:facet>
-										
-										<p:column headerText="Nº">
-										<h:outputText value="#{oc.id}" />
-										</p:column>
-										<p:column headerText="Status" styleClass="status_#{oc.status.id}">
-											<h:outputText value="#{oc.status.descricao}"/>
-										</p:column>
-										<p:column headerText="Data">
-											<h:outputText value="#{oc.datalancamento}">
-												<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
-											</h:outputText>
-										</p:column>
-										<p:column headerText="Valor">
-											<h:outputText value="R$ " />
-											<h:outputText value="#{oc.valorfinal}">
-												<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
-											</h:outputText>
-										</p:column>														
-									</p:dataTable>
-								</p:outputPanel>
+								
+								
 							</p:tab>
 							<p:tab title="Produtos" id="tabProdutos">
 								<p:commandButton value="Procurar Produto" id="btnbuscaproduto" oncomplete="modalbuscaproduto.show()" action="#{ocProdutoControl.limparOcProduto}" actionListener="#{ocProdutoControl.limparProduto}" update="modalbuscaproduto" process="@this"

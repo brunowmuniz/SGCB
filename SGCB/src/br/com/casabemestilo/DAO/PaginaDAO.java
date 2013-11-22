@@ -111,7 +111,7 @@ public class PaginaDAO implements InterfaceDAO {
 		String hql = "from Pagina pagina";
 		
 		if(filters.containsKey("nomePagina")){
-			hql += " pagina.nomePagina like '%" + filters.get("nomePagina") + "%'";
+			hql += " where pagina.nomePagina like '%" + filters.get("nomePagina") + "%'";
 		}
 		
 		paginas = session.createQuery(hql)
