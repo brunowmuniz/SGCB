@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
@@ -13,7 +14,7 @@
 					<h:panelGrid id="cadastro" columns="3" width="900px;">
 						
 						<h:panelGrid columns="2" styleClass="vAlTop" style="width: 350px">
-							<p:outputLabel for="numero" value="NÃºmero OC:"/>
+							<p:outputLabel for="numero" value="Número OC:"/>
 							<h:outputText value="#{ocControl.oc.id == null ? 'Nova OC' : ocControl.oc.id}"  id="numero" style="width: 100px; " styleClass="negrito" update="cadastro"/>
 							
 							<p:outputLabel for="filialoc" value="Filial: "/>
@@ -78,7 +79,7 @@
 												<f:validateBean />
 											</p:inputText>
 											
-											<p:outputLabel value="EndereÃ§o: " for="enderecoclienteoc"/>
+											<p:outputLabel value="Endereço: " for="enderecoclienteoc"/>
 											<p:inputText size="78" value="#{ocControl.oc.cliente.endereco}" required="true" id="enderecoclienteoc">
 												<f:validateBean/>
 											</p:inputText>
@@ -117,7 +118,7 @@
 													Compras anteriores do cliente
 												</f:facet>
 												
-												<p:column headerText="NÂº">
+												<p:column headerText="Nº">
 												<h:outputText value="#{oc.id}" />
 												</p:column>
 												<p:column headerText="Status" styleClass="status_#{oc.status.id}">
@@ -148,9 +149,9 @@
 								
 								<p:commandButton value="Encerrar Produto" id="encerrarAcao" actionListener="#{ocControl.acaoProduto(9,freteControl.listaMontadores)}" update=":form:msgs,listaprodutoocfechada" rendered="#{ocControl.oc.status.id != 2 and ocControl.oc.status.id != 1 and ocControl.oc.id != null}"/>
 								 
-								<p:commandButton value="AssistÃªncia TÃ©cnica" id="assistTecAcao" onclick="modalAssistenciaTecnica.show()"  rendered="#{ocControl.oc.status.id != 2 and ocControl.oc.status.id != 1 and ocControl.oc.id != null}"/>
+								<p:commandButton value="Assistência Técnica" id="assistTecAcao" onclick="modalAssistenciaTecnica.show()"  rendered="#{ocControl.oc.status.id != 2 and ocControl.oc.status.id != 1 and ocControl.oc.id != null}"/>
 								
-								<p:commandButton value="Frete/ExecuÃ§Ã£o" id="freteExecAcao" onclick="modalFreteMontagem.show()" rendered="#{ocControl.oc.status.id != 2 and ocControl.oc.status.id != 1 and ocControl.oc.id != null}"/>
+								<p:commandButton value="Frete/Execução" id="freteExecAcao" onclick="modalFreteMontagem.show()" rendered="#{ocControl.oc.status.id != 2 and ocControl.oc.status.id != 1 and ocControl.oc.id != null}"/>
 								
 								<p:spacer width="10px"/>
 														
@@ -163,9 +164,9 @@
 												<f:selectItems value="#{usuarioControl.listaUsuarioMontador}" />
 												<p:ajax event="change" process="@this" update="freteExecucaoAcao,listaMontadores"/> 
 											</p:selectManyMenu>
-											<p:outputLabel value="ObservaÃ§Ãµes: " for="observacoesfretemontagem"/>
+											<p:outputLabel value="Observações: " for="observacoesfretemontagem"/>
 											<p:inputTextarea id="observacoesfretemontagem" value="#{ocControl.observacoesFreteMontAT}" cols="20" rows="5" maxlength="100"/>
-											<p:commandButton actionListener="#{ocControl.acaoProduto(6,freteControl.listaMontadores)}" oncomplete="modalFreteMontagem.hide()" id="freteExecucaoAcao" value="Gravar Frete/ExecuÃ§Ã£o" disabled="#{freteControl.listaMontadores.size() == 0}" update=":form:msgs,listaprodutoocfechada"/>
+											<p:commandButton actionListener="#{ocControl.acaoProduto(6,freteControl.listaMontadores)}" oncomplete="modalFreteMontagem.hide()" id="freteExecucaoAcao" value="Gravar Frete/Execução" disabled="#{freteControl.listaMontadores.size() == 0}" update=":form:msgs,listaprodutoocfechada"/>
 										</h:panelGrid>		
 									</p:outputPanel>
 								</p:dialog>
@@ -179,9 +180,9 @@
 												<f:selectItems value="#{usuarioControl.listaUsuarioMontador}" />
 												<p:ajax event="change" process="@this" update="AssistenciaTecnicaAcao,listaMontadoresAT"/> 
 											</p:selectManyMenu>
-											<p:outputLabel value="ObservaÃ§Ãµes: " for="observacoesat"/>
+											<p:outputLabel value="Observações: " for="observacoesat"/>
 											<p:inputTextarea id="observacoesat" value="#{ocControl.observacoesFreteMontAT}" cols="20" rows="5" maxlength="100"/>										
-											<p:commandButton actionListener="#{ocControl.acaoProduto(8,assistenciaTecnicaControl.listaMontadores)}" oncomplete="modalAssistenciaTecnica.hide()" id="AssistenciaTecnicaAcao" value="Gravar Assist. TÃ©cnica" disabled="#{assistenciaTecnicaControl.listaMontadores.size() == 0}" update=":form:msgs,listaprodutoocfechada"/>
+											<p:commandButton actionListener="#{ocControl.acaoProduto(8,assistenciaTecnicaControl.listaMontadores)}" oncomplete="modalAssistenciaTecnica.hide()" id="AssistenciaTecnicaAcao" value="Gravar Assist. Técnica" disabled="#{assistenciaTecnicaControl.listaMontadores.size() == 0}" update=":form:msgs,listaprodutoocfechada"/>
 										</h:panelGrid>		
 									</p:outputPanel>
 								</p:dialog>
@@ -190,7 +191,7 @@
 									<p:outputPanel id="updProduto">									
 										<h:panelGrid id="dadosproduto">
 											<h:panelGrid columns="3">
-												<p:outputLabel for="buscaproduto" value="CÃ³digo/Nome: "/>
+												<p:outputLabel for="buscaproduto" value="Código/Nome: "/>
 												<p:autoComplete id="buscaproduto" value="#{ocProdutoControl.ocproduto.produto}" minQueryLength="3"
 																		completeMethod="#{produtoControl.buscaProdutoCodigoNome}"											 
 																		forceSelection="true"  converter="converter.ProdutoConverter"
@@ -200,7 +201,7 @@
 												<p:commandButton value="Limpar" actionListener="#{ocProdutoControl.limparOcProduto}" update="dadosproduto" id="limparproduto" disabled="#{ocProdutoControl.ocproduto.produto.id == null}" process="@this,dadosproduto" />											
 											</h:panelGrid>									
 											<h:panelGrid columns="2" id="descproduto">																					
-												<p:outputLabel for="codigoproduto" value="CÃ³digo: " />
+												<p:outputLabel for="codigoproduto" value="Código: " />
 												<p:inputText disabled="#{ocProdutoControl.ocproduto.produto.id != null}" value="#{ocProdutoControl.ocproduto.produto.codigo}" id="codigoproduto"/>
 												
 												<p:outputLabel for="nomeproduto" value="Nome: " />
@@ -239,10 +240,10 @@
 													<f:validateBean/>
 													<f:convertNumber maxIntegerDigits="3"/>
 												</p:spinner>
-												<p:outputLabel for="tiposaida" value="Tipo de SaÃ­da: "/>
+												<p:outputLabel for="tiposaida" value="Tipo de Saída: "/>
 												<p:selectOneMenu value="#{ocProdutoControl.ocproduto.tiposaida}" id="tiposaida" size="1">
 													<p:ajax event="change" process="@this"/>
-													<f:selectItem noSelectionOption="true" itemLabel="Escolha uma SaÃ­da"/>
+													<f:selectItem noSelectionOption="true" itemLabel="Escolha uma Saída"/>
 													<f:selectItem itemValue="estoque" itemLabel="Estoque" itemDisabled="#{ocProdutoControl.ocproduto.produto.estoque == 0}"/>
 													<f:selectItem itemValue="showroom" itemLabel="Showroom" itemDisabled="#{ocProdutoControl.ocproduto.produto.showroom == 0}" />
 													<f:selectItem itemValue="encomenda" itemLabel="Encomenda" />
@@ -265,7 +266,7 @@
 													<p:ajax event="blur"  process="@this,valortotal,tiposaida" update="valortotal,tiposaida" />
 												</p:spinner>
 												
-												<p:outputLabel for="valorunitario" value="Valor UnitÃ¡rio: " />
+												<p:outputLabel for="valorunitario" value="Valor Unitário: " />
 												<p:inputText value="#{ocProdutoControl.ocproduto.valorunitario}" id="valorunitario" immediate="true" >
 													<p:ajax event="blur"  process="@this,valortotal" update="valorunitario,valortotal" />
 													<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1"/>												
@@ -306,15 +307,15 @@
 								            <h:outputText value="#{linha + 1}" />
 								        </p:column>
 								
-								        <p:column headerText="CÃ³digo">
+								        <p:column headerText="Código">
 								            <h:outputText value="#{ocproduto.produto.codigo}" />
 								        </p:column>
 								        
-								        <p:column headerText="DiscriminaÃ§Ã£o">
+								        <p:column headerText="Discriminação">
 								            <h:outputText value="#{ocproduto.produto.fornecedor.nome} - #{ocproduto.produto.descricao}" />
 								        </p:column>
 								        
-								        <p:column headerText="Tipo de SaÃ­da">
+								        <p:column headerText="Tipo de Saída">
 								        	<p:cellEditor id="tiposaida">
 								        		<f:facet name="output" >
 								        			<h:outputText value="Estoque" rendered="#{ocproduto.tiposaida == 'estoque'}" />
@@ -324,7 +325,7 @@
 								        		<f:facet name="input">
 								        			<p:selectOneMenu value="#{ocproduto.tiposaida}" id="tiposaidalista" size="1" style="width: 120px;">
 														<p:ajax event="change" listener="#{ocControl.calculaValorTotalProdutos}" update="tiposaida,tiposaidalista" process="@this"/>
-														<f:selectItem noSelectionOption="true" itemLabel="Escolha uma SaÃ­da"/>
+														<f:selectItem noSelectionOption="true" itemLabel="Escolha uma Saída"/>
 														<f:selectItem itemValue="estoque" itemLabel="Estoque" itemDisabled="#{ocproduto.produto.estoque == 0}"/>
 														<f:selectItem itemValue="showroom" itemLabel="Showroom" itemDisabled="#{ocproduto.produto.showroom == 0}" />
 														<f:selectItem itemValue="encomenda" itemLabel="Encomenda" />
@@ -337,7 +338,7 @@
 							        		<h:outputText value="#{ocproduto.status.descricao}" />
 								        </p:column>
 								             
-								        <p:column headerText="Valor UnitÃ¡rio">
+								        <p:column headerText="Valor Unitário">
 								        	<p:cellEditor>
 								        		<f:facet name="output">
 								        			<h:outputText value="#{ocproduto.valorunitario}">
@@ -401,15 +402,15 @@
 								            <h:outputText value="#{linha + 1}" />
 								        </p:column>
 								
-								        <p:column headerText="CÃ³digo">
+								        <p:column headerText="Código">
 								            <h:outputText value="#{ocproduto.produto.codigo}" />
 								        </p:column>
 								        
-								        <p:column headerText="DiscriminaÃ§Ã£o">
+								        <p:column headerText="Discriminação">
 								            <h:outputText value="#{ocproduto.produto.fornecedor.nome} - #{ocproduto.produto.descricao}" />
 								        </p:column>
 								        
-								        <p:column headerText="Tipo de SaÃ­da">
+								        <p:column headerText="Tipo de Saída">
 								        	<p:cellEditor id="tiposaida">
 								        		<f:facet name="output" >
 								        			<h:outputText value="Estoque" rendered="#{ocproduto.tiposaida == 'estoque'}" />
@@ -419,7 +420,7 @@
 								        		<f:facet name="input">
 								        			<p:selectOneMenu value="#{ocproduto.tiposaida}" id="tiposaidalista" size="1" style="width: 120px;">
 														<p:ajax event="change" listener="#{ocControl.calculaValorTotalProdutos}" update="tiposaida,tiposaidalista" process="@this"/>
-														<f:selectItem noSelectionOption="true" itemLabel="Escolha uma SaÃ­da"/>
+														<f:selectItem noSelectionOption="true" itemLabel="Escolha uma Saída"/>
 														<f:selectItem itemValue="estoque" itemLabel="Estoque" itemDisabled="#{ocproduto.produto.estoque == 0}"/>
 														<f:selectItem itemValue="showroom" itemLabel="Showroom" itemDisabled="#{ocproduto.produto.showroom == 0}" />
 														<f:selectItem itemValue="encomenda" itemLabel="Encomenda" />
@@ -432,7 +433,7 @@
 							        		<h:outputText value="#{ocproduto.status.descricao}" />
 								        </p:column>
 								             
-								        <p:column headerText="Valor UnitÃ¡rio">
+								        <p:column headerText="Valor Unitário">
 								        	<p:cellEditor>
 								        		<f:facet name="output">
 								        			<h:outputText value="#{ocproduto.valorunitario}">
@@ -514,7 +515,7 @@
 												</p:calendar>							
 											</h:panelGrid>
 											<h:panelGrid columns="2" >
-												<p:outputLabel for="obsoc" value="ObservaÃ§Ãµes: "/>
+												<p:outputLabel for="obsoc" value="Observações: "/>
 												<p:inputTextarea value="#{ocControl.oc.observacoes}" id="obsoc" rows="10" cols="50"/>
 											</h:panelGrid>
 											<h:panelGrid columns="2">
@@ -552,9 +553,9 @@
 															<p:ajax event="change" update="formapagamento,condicoespagamento,gravarformapagamento" process="formapagamento" listener="#{ocControl.defineFormaPagamento}"/>
 														</p:selectOneMenu>
 																									
-														<p:outputLabel for="condicoespagamento" value="CondiÃ§Ã£o de Pagamento: "/>
+														<p:outputLabel for="condicoespagamento" value="Condição de Pagamento: "/>
 														<p:selectOneMenu id="condicoespagamento" value="#{ocControl.pagamento.condicoesPagamento.id}">
-															<f:selectItem itemLabel="Selecione CondiÃ§Ã£o" itemValue=""/>
+															<f:selectItem itemLabel="Selecione Condição" itemValue=""/>
 															<f:selectItems value="#{condicoesPagamentoControl.carregaCondicoesPagamentoPorFormaPagamento(ocControl.pagamento.condicoesPagamento.formapagamento.id)}"/>
 															<p:ajax event="change" process="@this" listener="#{ocControl.defineCondicoesPagamento}" update="banco,mesmocliente"/>
 														</p:selectOneMenu>
@@ -598,11 +599,11 @@
 												<p:outputPanel id="updFormaPagamento">
 													<p:dataTable id="tabelapagamento" value="#{ocControl.oc.pagamentos}" var="pagamento"
 																 selectionMode="single" selection="#{ocControl.pagamento}" rowKey="#{pagamento.condicoesPagamento.id}"
-																 emptyMessage="Sem formas de pagamento lanÃ§ada!">														
+																 emptyMessage="Sem formas de pagamento lançada!">														
 														<p:column headerText="Forma de Pagamento">
 														<h:outputText value="#{pagamento.condicoesPagamento.formapagamento.nome}" />
 														</p:column>
-														<p:column headerText="CondiÃ§Ã£o">
+														<p:column headerText="Condição">
 															<h:outputText value="#{pagamento.condicoesPagamento.nome}"/>
 														</p:column>
 														<p:column headerText="Valor">
@@ -620,14 +621,14 @@
 										<p:panel rendered="#{ocControl.oc.status.id != 1 and ocControl.oc.status.id != 2 and ocControl.oc.status.id != 10}">
 											<p:dataTable id="tabelapagamento_vis" value="#{ocControl.oc.pagamentos}" var="pagamento"
 														 selectionMode="single" selection="#{ocControl.pagamento}" rowKey="#{pagamento.condicoesPagamento.id}"
-														 emptyMessage="Sem formas de pagamento lanÃ§ada!">														
+														 emptyMessage="Sem formas de pagamento lançada!">														
 												<f:facet name="header">
 													Pagamento
 												</f:facet>
 												<p:column headerText="Forma de Pagamento">
 												<h:outputText value="#{pagamento.condicoesPagamento.formapagamento.nome}" />
 												</p:column>
-												<p:column headerText="CondiÃ§Ã£o">
+												<p:column headerText="Condição">
 													<h:outputText value="#{pagamento.condicoesPagamento.nome}"/>
 												</p:column>
 												<p:column headerText="Valor">
@@ -646,7 +647,7 @@
 		</ui:define>
 		<ui:define name="rodape">
 			<p:panel header="Descritivo Tela" styleClass="rodape">
-	    		<p:outputLabel value="Tela para cadastro e ediÃ§Ã£o de OC." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="Tela para cadastro e edição de OC." styleClass="rodape_esquerda"/>
 	    		<p:outputLabel value="cadastraoc.jsf" styleClass="rodape_direita"/>
 	    	</p:panel>
 		</ui:define>
