@@ -60,8 +60,8 @@
 						</h:panelGrid>
 						<p:tabView id="oc">																																							 
 							<p:tab title="Dados do Cliente">
-								<h:panelGrid columns="3">
-									<h:panelGrid id="dadoscliente">
+								<h:panelGrid columns="3" styleClass="vTop">
+									<h:panelGrid id="dadoscliente" >
 										<h:panelGrid columns="3">
 											<p:outputLabel for="buscarcliente" value="Busca Cliente: "/>
 											<p:autoComplete id="buscarcliente" value="#{ocControl.oc.cliente}" minQueryLength="3"
@@ -109,10 +109,10 @@
 										</h:panelGrid>										
 									</h:panelGrid>
 									<p:spacer width="35px"/>
-									<h:panelGrid styleClass="vAlTop">
+									<h:panelGrid styleClass="vTop">
 										<p:outputPanel autoUpdate="true" id="occliente">
-											<p:dataTable value="#{ocControl.oc.cliente.ocs}" var="oc" rendered="#{ocControl.oc.id == null and ocControl.oc.cliente.id != null}"
-											 	 rowKey="#{oc.id}" emptyMessage="Sem compras anteriores para este cliente!" rows="10" style="width:100%;">														
+											<p:dataTable value="#{ocControl.ocsAnterioresCliente(10)}" var="oc" rendered="#{ocControl.oc.id == null and ocControl.oc.cliente.id != null}"
+											 	 rowKey="#{oc.id}" emptyMessage="Sem compras anteriores para este cliente!" style="width:100%;">														
 												
 												<f:facet name="header">
 													Compras anteriores do cliente
@@ -138,10 +138,7 @@
 											</p:dataTable>
 										</p:outputPanel>
 									</h:panelGrid>
-								</h:panelGrid>								
-								
-								
-								
+								</h:panelGrid>		
 							</p:tab>
 							<p:tab title="Produtos" id="tabProdutos">
 								<p:commandButton value="Procurar Produto" id="btnbuscaproduto" oncomplete="modalbuscaproduto.show()" action="#{ocProdutoControl.limparOcProduto}" actionListener="#{ocProdutoControl.limparProduto}" update="modalbuscaproduto" process="@this"

@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -106,6 +107,8 @@ public class OcControl extends Control implements InterfaceControl,
 	private String observacoesFreteMontAT;
 	
 	private Boolean ehClienteChequeOc;
+	
+	private String retorno;
 	
 		
 	
@@ -220,7 +223,8 @@ public class OcControl extends Control implements InterfaceControl,
 		for(Iterator<Ocproduto> iterOcProd = oc.getOcprodutos().iterator(); iterOcProd.hasNext();){
 			Ocproduto ocproduto =  iterOcProd.next();			
 			oc.setValor(oc.getValor() + ocproduto.getValortotal());
-		}		
+		}
+		oc.setValorfinal(oc.getValor() + oc.getValorfrete() + oc.getValormontagem());
 		ocproduto = new Ocproduto();
 	}
 
@@ -303,17 +307,20 @@ public class OcControl extends Control implements InterfaceControl,
 	public void gravar() {
 		try {
 			ocDAO = new OcDAO();
-			oc.setStatus((Status) new StatusDAO().buscaObjetoId(1));
-			//calculaValorComissao();
+			oc.setStatus((Status) new StatusDAO().buscaObjetoId(1));			
 			recalculaValorTotalOcproduto();
-			ocDAO.insert(oc);
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("OC foi gravada!"));
-			logger.info("Salvo Oc: " + oc.getId());
-			oc = new Oc();
+			retorno = ocDAO.insertOc(oc);
+			if(retorno.equalsIgnoreCase("ok")){
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("OC foi gravada!"));
+				logger.info("Salvo Oc: " + oc.getCliente().getNome());
+				oc = new Oc();
+			}else{
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, retorno, ""));
+				logger.error("[gravar] " + retorno + "-" + oc.getCliente().getNome());
+			}			
 		} catch (ConstraintViolationException e) {
 			super.mensagem = e.getMessage();
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));
-			logger.error("[gravar] Erro Constraint: " + super.mensagem + "-" + oc.getId());
+			
 		} catch (HibernateException e) {
 			e.printStackTrace();
 			super.mensagem = e.getMessage();
@@ -334,10 +341,15 @@ public class OcControl extends Control implements InterfaceControl,
 			ocDAO = new OcDAO();
 			oc.setDeleted(true);
 			oc.getStatus().setId(10);
-			ocDAO.delete(oc);
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("OC " + oc.getId() + " foi deletada e o seu status é CANCELADO!"));
-			logger.info("Deletado Oc: " + oc.getId());
-			oc = new Oc();
+			retorno = ocDAO.deleteOc(oc);
+			if(retorno.equalsIgnoreCase("ok")){
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("OC foi deletada!"));
+				logger.info("Deletado Oc: " + oc.getId());
+				oc = new Oc();
+			}else{
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, retorno, ""));
+				logger.error("[deletar] " + retorno + "-" + oc.getCliente().getNome());
+			}
 		} catch (ConstraintViolationException e) {
 			super.mensagem = e.getMessage();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));
@@ -365,10 +377,15 @@ public class OcControl extends Control implements InterfaceControl,
 				oc.setStatus(new OcProdutoControl().retornaMenorStatusOcProduto(oc, false));
 			}
 			recalculaValorTotalOcproduto();
-			ocDAO.update(oc);
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("OC " + oc.getId() + " foi alterada!"));
-			logger.info("Alterado Oc: " + oc.getId());
-			oc = new Oc();
+			retorno = ocDAO.updateOc(oc);
+			if(retorno.equalsIgnoreCase("ok")){
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("OC foi deletada!"));
+				logger.info("Alterado Oc: " + oc.getId());
+				oc = new Oc();
+			}else{
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, retorno, ""));
+				logger.error("[alterar] " + retorno + "-" + oc.getId());
+			}
 		} catch (ConstraintViolationException e) {			
 			super.mensagem = e.getMessage();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));
@@ -885,6 +902,14 @@ public class OcControl extends Control implements InterfaceControl,
 		for(Ocproduto ocproduto : oc.getOcprodutos()){
 			ocproduto.setValortotal(ocproduto.getValorunitario() * ocproduto.getQuantidade());
 		}
+	}
+	
+	public List<Oc> ocsAnterioresCliente(Long qtdeUltsOcs){
+		ocDAO = new OcDAO();
+		listaOc = new ArrayList<Oc>();
+		listaOc = ocDAO.buscaUltimasOcsCliente(oc.getCliente(), qtdeUltsOcs);
+		
+		return listaOc;
 	}
 	
 	/*
