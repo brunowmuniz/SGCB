@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pageflow:Pageflow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pageflow="http://www.sybase.com/suade/pageflow" id="pf13716822956340" configfile="/SGCB/WebContent/WEB-INF/faces-config.xml">
+  <nodes xsi:type="pageflow:PFPage" name="*" id="pf13761636885130" referenceLink="//@navigationRule.0/@fromViewId|" outlinks="pf13761636885141 pf13761636885142" path="*"/>
+  <nodes xsi:type="pageflow:PFPage" name="index.jsf" id="pf13761636885143" referenceLink="//@navigationRule.0/@navigationCase.1/@toViewId|" inlinks="pf13761636885141 pf13761636885142" path="/index.jsf"/>
+  <nodes xsi:type="pageflow:PFPage" name="index.xhtml" id="pf13761636885144" referenceLink="//@navigationRule.1/@navigationCase.1/@toViewId|" outlinks="pf13761636885146 pf13761640562308" inlinks="pf13761636885146" path="/index.xhtml"/>
+  <nodes xsi:type="pageflow:PFPage" name="content/home.xhtml" id="pf13761640562309" referenceLink="//@navigationRule.1/@navigationCase.0/@toViewId|" inlinks="pf13761640562308" path="/content/home.xhtml"/>
+  <links id="pf13761636885141" target="pf13761636885143" source="pf13761636885130" outcome="index" redirect="true"/>
+  <links id="pf13761636885142" target="pf13761636885143" source="pf13761636885130" outcome="fazerLogoff" redirect="true"/>
+  <links id="pf13761636885146" target="pf13761636885144" source="pf13761636885144" outcome="erro"/>
+  <links id="pf13761640562308" target="pf13761640562309" source="pf13761636885144" outcome="ok"/>
+</pageflow:Pageflow>

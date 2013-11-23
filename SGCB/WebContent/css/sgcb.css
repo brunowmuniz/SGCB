@@ -100,3 +100,7 @@
 .filterUsuario{
 	width: 185px !important;
 }
+
+table.vTop tr td{
+	vertical-align: top;
+}

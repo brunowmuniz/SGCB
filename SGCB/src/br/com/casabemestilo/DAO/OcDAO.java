@@ -17,6 +17,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
+import br.com.casabemestilo.model.Cliente;
 import br.com.casabemestilo.model.Oc;
 import br.com.casabemestilo.model.Ocproduto;
 import br.com.casabemestilo.util.Conexao;
@@ -32,6 +33,8 @@ public class OcDAO implements InterfaceDAO, Serializable {
 	private List<Oc> listaOc;
 	
 	private Oc oc;
+	
+	private String retorno = "";
 	
 	
 	/*
@@ -59,17 +62,28 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		session = Conexao.getInstance();
 		session.beginTransaction();
 		session.merge(oc);
-		session.getTransaction().commit();
+		session.getTransaction().commit();		
 	}
 	
-	public Oc insertOc(Object obj) throws Exception, HibernateException,
-		ConstraintViolationException{
-		oc = (Oc) obj;
-		session = Conexao.getInstance();
-		session.beginTransaction();
-		oc.setId((Integer) session.merge(oc));
-		session.getTransaction().commit();
-		return oc;
+	public String insertOc(Object obj) {
+		try{			
+			oc = (Oc) obj;
+			session = Conexao.getInstance();
+			session.beginTransaction();
+			session.merge(oc);
+			session.getTransaction().commit();
+			retorno = "ok";
+		}catch(ConstraintViolationException e){
+			session.getTransaction().rollback();
+			retorno = "Erro Constraint: " + e.getMessage();
+		}catch(HibernateException e){
+			session.getTransaction().rollback();
+			retorno = "Erro Hibernate: " + e.getMessage();
+		}catch(Exception e){
+			session.getTransaction().rollback();
+			retorno = "Erro Genérico: " + e.getMessage();
+		}
+		return retorno;
 	}
 	
 
@@ -82,6 +96,27 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		session.update(oc);
 		session.getTransaction().commit();
 	}
+	
+	public String updateOc(Object obj){
+		try{			
+			oc = (Oc) obj;
+			session = Conexao.getInstance();
+			session.beginTransaction();
+			session.update(oc);
+			session.getTransaction().commit();
+			retorno = "ok";
+		}catch(ConstraintViolationException e){
+			session.getTransaction().rollback();
+			retorno = "Erro Constraint: " + e.getMessage();
+		}catch(HibernateException e){
+			session.getTransaction().rollback();
+			retorno = "Erro Hibernate: " + e.getMessage();
+		}catch(Exception e){
+			session.getTransaction().rollback();
+			retorno = "Erro Genérico: " + e.getMessage();
+		}
+		return retorno;
+	}
 
 	@Override
 	public void delete(Object obj) throws Exception, HibernateException,
@@ -93,6 +128,27 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		session.getTransaction().commit();
 	}
 
+	public String deleteOc(Object obj){
+		try{			
+			oc = (Oc) obj;
+			session = Conexao.getInstance();
+			session.beginTransaction();
+			session.update(oc);
+			session.getTransaction().commit();
+			retorno = "ok";
+		}catch(ConstraintViolationException e){
+			session.getTransaction().rollback();
+			retorno = "Erro Constraint: " + e.getMessage();
+		}catch(HibernateException e){
+			session.getTransaction().rollback();
+			retorno = "Erro Hibernate: " + e.getMessage();
+		}catch(Exception e){
+			session.getTransaction().rollback();
+			retorno = "Erro Genérico: " + e.getMessage();
+		}
+		return retorno;
+	}
+	
 	@Override
 	public Oc buscaObjetoId(Integer id) throws Exception,
 			HibernateException, ConstraintViolationException {
@@ -437,6 +493,20 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		return listaOcPagamento;	
 	}
 	
+	public List<Oc> buscaUltimasOcsCliente(Cliente cliente, Long qtdeUltsOcs) {
+		session = Conexao.getInstance();
+		listaOc = new ArrayList<Oc>();
+		listaOc = session.createQuery("from Oc oc" +
+										" where oc.cliente.id = :cliente" +
+									  " order by oc.id desc")
+						 .setInteger("cliente", cliente.getId())
+						 .setFirstResult(0)
+						 .setMaxResults(qtdeUltsOcs.intValue())
+						 .setCacheable(true)
+						 .list();
+		session.close();
+		return listaOc;
+	}
 	
 	/*
 	 * GETTERS & SETTERS
@@ -455,6 +525,6 @@ public class OcDAO implements InterfaceDAO, Serializable {
 
 	public void setOc(Oc oc) {
 		this.oc = oc;
-	}	
+	}
 
 }
