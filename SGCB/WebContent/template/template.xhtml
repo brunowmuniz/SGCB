@@ -36,7 +36,20 @@
       		<p:menuitem value="Manutenção da OC" url="manutencaooc.jsf" />
       	</p:submenu>
       	<p:submenu label="Financeiro">
-      		<p:menuitem value="Controle de Caixa" url="manutencaocaixa.jsf" />      		
+      		<p:menuitem value="Caixa" url="manutencaocaixa.jsf" />
+      		<p:submenu label="Contas a Receber">
+				<p:menuitem value="À Vencer" url="manutencaoentradas.jsf" />
+				<p:menuitem value="Cheques" url="manutencaoentcheque.jsf" />
+	      	</p:submenu>
+	      	<p:submenu label="Contas a Pagar">
+				<p:menuitem value="Lançar Contas" url="cadastralancamentos.jsf" />
+				<p:menuitem value="Lançamentos Diversos" url="listalancamentos.jsf" />
+				<p:menuitem value="Lançamentos Vales" url="listalancamentovales.jsf" />
+	      	</p:submenu>
+	      	<p:submenu label="Conta Contábil">
+      			<p:menuitem value="Cadastrar" url="cadastracontacontabil.jsf"/>
+      			<p:menuitem value="Editar" url="manutencaocontacontabil.jsf"/>      			
+      		</p:submenu>
       	</p:submenu>
       	<p:submenu label="Estoque">
       		<p:menuitem value="Produto a Encomendar" url="manutencaoprodutosencomenda.jsf"/>
@@ -45,25 +58,16 @@
       		<p:menuitem value="Compra de Produtos" url="controlecompras.jsf"/>
       	</p:submenu>
       	<p:submenu label="Controle">
-      		<p:menuitem value="Controle de Frete/Execução" url="controlefrete.jsf"/>
-      		<p:menuitem value="Controle de Assit. Técnica" url="controleat.jsf"/>
-      		<p:menuitem value="Produtos Para Montagem/Frete" url="manutencaofretemontagem.jsf"/>
+      		<p:menuitem value="Frete/Execução" url="controlefrete.jsf"/>
+      		<p:menuitem value="Assitência Técnica" url="controleat.jsf"/>
+      		<p:menuitem value="Montagem/Frete" url="manutencaofretemontagem.jsf"/>
       		<p:menuitem value="OC por status de produto" url="controleocstatusproduto.jsf"/>
-      		<p:menuitem value="Controle Vendas - Vendedor - Sintético" url="controlevendasvendedor.jsf"/>
-      		<p:menuitem value="Controle Vendas - Vendedor - Analítico" url="controlevendedoranalitico.jsf"/>
-      		<p:menuitem value="Controle Montagem - Analítico" url="controlemontagem.jsf"/>
-      		<p:menuitem value="Controle Vendas - Mês" url="controlevendasmes.jsf"/>
+      		<p:menuitem value="Controle Vendas Sintético" url="controlevendasvendedor.jsf"/>
+      		<p:menuitem value="Controle Vendas Analítico" url="controlevendedoranalitico.jsf"/>
+      		<p:menuitem value="Controle Montagem Analítico" url="controlemontagem.jsf"/>
+      		<p:menuitem value="Controle Vendas Mês" url="controlevendasmes.jsf"/>
       		<p:menuitem value="Controle Geral" url="controlegeral.jsf"/>
       		<p:menuitem value="Controle de Comissões" url="controlecomissao.jsf"/>
-      	</p:submenu>
-      	<p:submenu label="Contas a Receber">
-			<p:menuitem value="Parcelas a Vencer" url="manutencaoentradas.jsf" />
-			<p:menuitem value="Manutençao de Cheques" url="manutencaoentcheque.jsf" />
-      	</p:submenu>
-      	<p:submenu label="Contas a Pagar">
-			<p:menuitem value="Cadastro de Lançamentos" url="cadastralancamentos.jsf" />
-			<p:menuitem value="Lista de Lançamentos - Diversos" url="listalancamentos.jsf" />
-			<p:menuitem value="Lista de Lançamentos - Vales" url="listalancamentovales.jsf" />
       	</p:submenu>
       	<p:submenu label="Cadastros Básicos">
       		<p:submenu label="Usuário">
@@ -89,13 +93,11 @@
       		<p:submenu label="Condições de Pagamento">
       			<p:menuitem value="Cadastra Condições de Pagamento" url="cadastracondicoespagamento.jsf"/>
       			<p:menuitem value="Manutenção de Condição de Pagamento" url="manutencaocondicoespagamento.jsf"/>      			
-      		</p:submenu>
-      		<p:submenu label="Conta Contábil">
-      			<p:menuitem value="Cadastra Conta Contábil" url="cadastracontacontabil.jsf"/>
-      			<p:menuitem value="Manutenção de Conta Contábil" url="manutencaocontacontabil.jsf"/>      			
-      		</p:submenu>     		      		
+      		</p:submenu>      		     		      		
       	</p:submenu> 
-      	<p:submenu label="Administrador" rendered="#{sessionScope.UsuarioLogado.perfil.id == 1}">
+      	<p:submenu label="Administrador" rendered="#{sessionScope.UsuarioLogado.perfil.id == 1 or 
+      												sessionScope.UsuarioLogado.perfil.id == 3 or 
+      												sessionScope.UsuarioLogado.perfil.id == 4}">
 			<p:menuitem value="Cadastro de Páginas" url="cadastrapagina.jsf" />
 			<p:menuitem value="Manutenção das Páginas" url="manutencaopagina.jsf" />
 			<p:menuitem value="Cadastro de Permissão" url="cadastropermissao.jsf" />
