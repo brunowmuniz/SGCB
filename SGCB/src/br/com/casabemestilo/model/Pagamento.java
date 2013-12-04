@@ -39,12 +39,15 @@ public class Pagamento implements java.io.Serializable {
 	private Integer id;
 	private CondicoesPagamento condicoesPagamento;
 	private Oc oc;
+	private PagamentoAvulso pagamentoAvulso;
 	private Date datalancamento;
 	private List<Parcela> parcelas = new ArrayList<Parcela>();
 	private Boolean deleted;
 	private Float valor;
 	private Cliente cliente;
 	private Banco banco;
+	private String cvCartao;
+	
 
 	public Pagamento() {
 	}
@@ -94,8 +97,8 @@ public class Pagamento implements java.io.Serializable {
 		this.condicoesPagamento = condicoesPagamento;
 	}
 
-	@ManyToOne
-	@JoinColumn(name = "oc", nullable = false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "oc")
 	public Oc getOc() {
 		return this.oc;
 	}
@@ -174,6 +177,24 @@ public class Pagamento implements java.io.Serializable {
 		this.banco = banco;
 	}
 
+	@Column(name="cvcartao", nullable = true)
+	public String getCvCartao() {
+		return cvCartao;
+	}
+
+	public void setCvCartao(String cvCartao) {
+		this.cvCartao = cvCartao;
+	}
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="pagamaentoavulso")
+	public PagamentoAvulso getPagamentoAvulso() {
+		return pagamentoAvulso;
+	}
+
+	public void setPagamentoAvulso(PagamentoAvulso pagamentoAvulso) {
+		this.pagamentoAvulso = pagamentoAvulso;
+	}
 
 	@Override
 	public String toString() {

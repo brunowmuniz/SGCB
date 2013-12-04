@@ -19,14 +19,26 @@
 						<p:calendar value="#{parcelaControl.dataFinal}" pattern="dd/MM/yyyy" locale="pt" id="dataFinal">
 							<p:ajax event="dateSelect" process="@this"/>
 						</p:calendar>
-						<p:commandButton value="Pesquisar" action="#{parcelaControl.buscaParcelasAvencer}" update="entradaparcela"/>
+						<p:outputLabel for="acao" value="Ação: "/>
+						<p:selectOneMenu id="acao" value="#{parcelaControl.acao}" size="1">
+							<f:selectItem itemValue="antecipar" itemLabel="Antecipação"/>						
+							<f:selectItem itemValue="editar" itemLabel="Edição"/>
+						</p:selectOneMenu>			
+					</h:panelGrid>					
+					<h:panelGrid columns="5">
+						<p:commandButton value="Pesquisar" action="#{parcelaControl.buscaParcelasAvencer}" update="form" />
+						<p:spacer width="10px" />
+						<p:commandButton value="Antecipar Todos" action="#{parcelaControl.anteciparTodos}" update="form" rendered="#{parcelaControl.acao == 'antecipar'}"/>
+						<p:spacer width="10px"/>
+						<p:commandButton value="Antecipar Selecionados" action="#{parcelaControl.anteciparSelecao}" update="form" rendered="#{parcelaControl.acao == 'antecipar'}"/>
 					</h:panelGrid>
-					<p:dataTable id="entradaparcela" value="#{parcelaControl.listaParcelaAVencer}" var="entrada" lazy="true" emptyMessage="Sem parcelas a vencer" paginator="true"
-								selection="#{parcelaControl.parcela}" selectionMode="single" rows="10"
-								paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-		             			rowsPerPageTemplate="10,25,50,100" rowKey="#{entrada.id}" editable="true">
-		             			
-		             	<p:ajax event="rowEdit" listener="#{parcelaControl.alterar}" process="entradaparcela" update=":form:msgs"/>
+					
+					<p:dataTable id="entradaparcelaedit" value="#{parcelaControl.listaParcelaAVencer}" var="entrada" lazy="true" emptyMessage="Sem parcelas a vencer" paginator="true"
+							selection="#{parcelaControl.parcela}"  selectionMode="single" rendered="#{parcelaControl.acao == 'editar'}"
+							paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+	             			rowsPerPageTemplate="10,25,50,100" rowKey="#{entrada.id}" editable="true" rows="50" >
+	             			
+		             	<p:ajax event="rowEdit" listener="#{parcelaControl.alterar}" process="entradaparcelaedit" update=":form:msgs"/>
 						
 						<p:column headerText="OC">
 							<h:outputText value="#{entrada.pagamento.oc.id}" />
@@ -57,11 +69,9 @@
 						<p:column headerText="Parcela">
 							<p:outputLabel value="#{entrada.numeroParcela} / #{entrada.pagamento.condicoesPagamento.parcelas}"/>
 						</p:column>
-						<p:column headerText="Forma de Pagamento">
-							<p:outputLabel value="#{entrada.pagamento.condicoesPagamento.formapagamento.nome}"/>
-						</p:column>
-						<p:column headerText="Condição de Pagamento">
-							<p:outputLabel value="#{entrada.pagamento.condicoesPagamento.nome}"/>
+						<p:column headerText="Forma/Condição Pagto." filterBy="#{entrada.pagamento.condicoesPagamento.formapagamento.id}" 
+								  filterOptions="#{formaPagamentoControl.getListaFormaPagamentoCombo('filter')}" >
+							<p:outputLabel value="#{entrada.pagamento.condicoesPagamento.formapagamento.nome} - #{entrada.pagamento.condicoesPagamento.nome}"/>
 						</p:column>
 						
 						<p:column headerText="Valor da Parcela">
@@ -80,10 +90,75 @@
 								</f:facet>
 							</p:cellEditor>
 						</p:column>
+						<p:column headerText="CV" filterBy="#{entrada.pagamento.cvCartao}" 
+								  filterMatchMode="startsWith" filterStyle="width: 70%;">
+							<h:outputText value="#{entrada.pagamento.cvCartao}" />
+						</p:column>
+						<p:column headerText="Status Parcela" filterBy="#{statusCartao}" 
+								  filterOptions="#{parcelaControl.getListaStatusCartao('filter')}" 
+								  filterMatchMode="exact" >
+							<p:cellEditor id="statuscartao">
+								<f:facet name="output">
+									<h:outputText value="#{entrada.statusCartao}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:selectOneMenu size="1" value="#{entrada.statusCartao}"  style="width: 100px;">
+										<f:selectItems value="#{parcelaControl.getListaStatusCartao('')}"/>
+										<p:ajax event="change" process="@this" />
+									</p:selectOneMenu>
+								</f:facet>
+							</p:cellEditor>							
+						</p:column>
 						<p:column headerText="Editar" icon="ui-icon-pencil" style="width: 6px;">
 				        	<p:rowEditor />
 				        </p:column>
 					</p:dataTable>
+					
+					<p:dataTable id="entradaparcelaquit" value="#{parcelaControl.listaParcelaAVencer}" var="entrada" lazy="true" emptyMessage="Sem parcelas a vencer" paginator="true"
+								selection="#{parcelaControl.listaParcela}" selectionMode="multiple" 
+								rendered="#{parcelaControl.acao == 'antecipar'}" rows="50"
+								paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+		             			rowsPerPageTemplate="10,25,50,100" rowKey="#{entrada.id}" binding="#{parcelaControl.dataTableParcela}">
+						<p:column headerText="OC">
+							<h:outputText value="#{entrada.pagamento.oc.id}" />
+						</p:column>
+									
+						<p:column headerText="Data da Compra">
+							<h:outputText value="#{entrada.pagamento.datalancamento}">
+								<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
+							</h:outputText>
+						</p:column>
+						
+						<p:column headerText="Data da Parcela">								
+							<h:outputText value="#{entrada.dataentrada}">
+								<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
+							</h:outputText>
+						</p:column>
+						
+						<p:column headerText="Parcela">
+							<p:outputLabel value="#{entrada.numeroParcela} / #{entrada.pagamento.condicoesPagamento.parcelas}"/>
+						</p:column>
+						<p:column headerText="Forma/Condição Pagto." filterBy="#{entrada.pagamento.condicoesPagamento.formapagamento.id}" 
+								  filterOptions="#{formaPagamentoControl.getListaFormaPagamentoCombo('filter')}" >
+							<p:outputLabel value="#{entrada.pagamento.condicoesPagamento.formapagamento.nome} - #{entrada.pagamento.condicoesPagamento.nome}"/>
+						</p:column>
+						
+						<p:column headerText="Valor da Parcela">								
+							<h:outputText value="R$ "/>
+				        	<h:outputText value="#{entrada.valor}">
+				        		<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+				        	</h:outputText>									
+						</p:column>
+						<p:column headerText="CV" filterBy="#{entrada.pagamento.cvCartao}" 
+								  filterMatchMode="startsWith" filterStyle="width: 70%;">
+							<h:outputText value="#{entrada.pagamento.cvCartao}" />
+						</p:column>
+						<p:column headerText="Status Parcela" filterBy="#{statusCartao}" 
+								  filterOptions="#{parcelaControl.getListaStatusCartao('filter')}" 
+								  filterMatchMode="exact" >								
+							<h:outputText value="#{entrada.statusCartao}" />															
+						</p:column>						
+					</p:dataTable>					
 				</p:panel>
 			</h:form>
 		</ui:define>

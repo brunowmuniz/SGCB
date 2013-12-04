@@ -8,7 +8,7 @@
 	<ui:composition template="../template/template.xhtml">
 		<ui:define name="conteudo">
 			<h:form id="form">
-				<p:panel header="Manutenção de Parcelas à Vencer">				
+				<p:panel header="Manutenção de Cheques à Vencer">				
 					<p:messages id="msgs"/>
 					<h:panelGrid columns="2">
 						<p:outputLabel value="Data Inicial: " for="dtInicial" />
@@ -17,17 +17,65 @@
 						<p:outputLabel value="Data Final: " for="dtFinal" />
 						<p:calendar value="#{parcelaControl.dataFinal}" pattern="dd/MM/yyyy" id="dtFinal"/>
 						
-						<p:commandButton value="Pesquisar" action="#{parcelaControl.buscaParcelasAVencerCheque}" update="@form" />
+						<p:outputLabel for="acao" value="Ação: "/>
+						<p:selectOneMenu id="acao" value="#{parcelaControl.acao}" size="1">
+							<f:selectItem itemValue="antecipar" itemLabel="Antecipação"/>						
+							<f:selectItem itemValue="editar" itemLabel="Edição"/>
+						</p:selectOneMenu>
+					</h:panelGrid>
+					<h:panelGrid columns="5">
+						<p:commandButton value="Pesquisar" action="#{parcelaControl.buscaParcelasAVencerCheque}" update="form" />
+						<p:spacer width="10px" />
+						<p:commandButton value="Antecipar Todos" oncomplete="modalBancoDestinoTodos.show()" rendered="#{parcelaControl.acao == 'antecipar'}"/>
+						<p:spacer width="10px"/>
+						<p:commandButton value="Antecipar Selecionados"  oncomplete="modalBancoDestinoSelecao.show()" rendered="#{parcelaControl.acao == 'antecipar'}"/>
+					</h:panelGrid>
+					
+					<p:dialog widgetVar="modalBancoDestinoSelecao" id="modalBancoDestinoSelecao" resizable="false" header="Banco de Destino dos cheques">
+						<p:outputPanel id="updBancoSelecao">
+							<h:panelGrid columns="2" id="pnlBancoDestinoSelecao">
+								<p:outputLabel for="listabancoSelecao" value="Banco:"/>
+								<p:selectOneMenu value="#{parcelaControl.bancoDepCheque.id}" id="listabancoSelecao" immediate="true">														
+									<f:selectItems value="#{bancoControl.listaBancoCombo('filter')}" />
+									<p:ajax event="change" process="@this" update="anteciparselecao"/>
+								</p:selectOneMenu>
+								
+								<p:commandButton actionListener="#{parcelaControl.anteciparSelecao}" oncomplete="modalBancoDestinoSelecao.hide()" value="Antecipar"
+												id="anteciparselecao" disabled="#{parcelaControl.bancoDepCheque.id == 0}" update="msgs,entradaparcelaant"
+												process="pnlBancoDestinoSelecao"/>			
+							</h:panelGrid>
+						</p:outputPanel>						
 						
-					</h:panelGrid>			
-					<p:dataTable id="entradaparcela" value="#{parcelaControl.listaParcelaAVencerCheque}" var="entrada" lazy="true" emptyMessage="Sem parcelas a vencer" paginator="true"
-								selection="#{parcelaControl.parcela}" selectionMode="single" rows="25"
+					</p:dialog>
+					
+					<p:dialog widgetVar="modalBancoDestinoTodos" id="modalBancoDestinoTodos" resizable="false" header="Banco de Destino dos cheques">
+						<p:outputPanel id="updBancoTodos">
+						</p:outputPanel>						
+						<h:panelGrid columns="2" id="pnlBancoDestinoTodos">
+							<p:outputLabel for="listabancoTodos" value="Banco:"/>
+							<p:selectOneMenu value="#{parcelaControl.bancoDepCheque.id}" id="listabancoTodos">
+								<f:selectItem itemLabel="Selecione um banco" itemValue=""/>							
+								<f:selectItems value="#{bancoControl.listaBancoCombo('')}" />
+								<p:ajax event="change" process="@this" update="antecipartodos"/> 
+							</p:selectOneMenu>
+							
+							<p:commandButton actionListener="#{parcelaControl.anteciparTodos}" oncomplete="modalBancoDestinoTodos.hide()" value="Antecipar"
+											id="antecipartodos" update="msgs,entradaparcelaant" disabled="#{parcelaControl.bancoDepCheque.id == 0}"
+											process="pnlBancoDestinoTodos"/>
+						</h:panelGrid>
+					</p:dialog>
+					
+					<p:contextMenu for="entradaparcelaedit">
+						<p:menuitem value="Deletar"  action="#{parcelaControl.deletar()}" ajax="false"  update="entradaparcelaedit,:form:msgs" icon="ui-icon-trash" />
+					</p:contextMenu>
+					<p:dataTable id="entradaparcelaedit" value="#{parcelaControl.listaParcelaAVencerCheque}" var="entrada" lazy="true" emptyMessage="Sem parcelas a vencer" paginator="true"
+								selection="#{parcelaControl.parcela}" selectionMode="single" rows="50" rendered="#{parcelaControl.acao == 'editar'}"
 								paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
 		             			rowsPerPageTemplate="25,50,100" rowKey="#{entrada.id}" editable="true">
 		             			
-		             	<p:ajax event="rowEdit" listener="#{parcelaControl.alterar}" process="entradaparcela" update=":form:msgs"/>
+		             	<p:ajax event="rowEdit" listener="#{parcelaControl.alterar}" process="entradaparcelaedit" update=":form:msgs"/>
 						
-						<p:column headerText="OC" filterBy="#{entrada.pagamento.oc.id}" filterMatchMode="startsWith" filterStyle="width: 50%;">
+						<p:column headerText="OC" filterBy="#{entrada.pagamento.oc.id}" filterMatchMode="startsWith" filterStyle="width: 30px;">
 							<h:outputText value="#{entrada.pagamento.oc.id}" />
 						</p:column>
 									
@@ -45,7 +93,7 @@
 									</h:outputText>
 								</f:facet>
 								<f:facet name="input">
-									<p:calendar value="#{entrada.dataentrada}" pattern="dd/MM/yyyy" locale="pt">
+									<p:calendar value="#{entrada.dataentrada}" pattern="dd/MM/yyyy" locale="pt" style="width: 90px;">
 										<p:ajax event="dateSelect" process="@this"/>
 									</p:calendar>
 								</f:facet>
@@ -63,19 +111,24 @@
 									<h:outputText value="#{entrada.numeroCheque}" />
 								</f:facet>
 								<f:facet name="input">
-									<p:inputText value="#{entrada.numeroCheque}"/>
+									<p:inputText value="#{entrada.numeroCheque}" style="width: 90px;"/>
 								</f:facet>
 							</p:cellEditor>
 						</p:column>
 						<p:column headerText="Status" filterBy="#{entrada.situacaoCheque}" filterMatchMode="exact" filterOptions="#{parcelaControl.listaStatusCheque}" filterStyle="width: 80px;">
 							<p:cellEditor>
 								<f:facet name="output">
-									<h:outputText value="#{entrada.situacaoCheque}">
-										<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
-									</h:outputText>
+									<h:panelGrid columns="1" style="border-style: hidden; border-color: #fff">
+										<h:outputText value="#{entrada.situacaoCheque}" />
+										<h:outputText value="#{entrada.bancoDepositoCheque.descricao}" rendered="#{entrada.bancoDepositoCheque.id != null}"/>
+										<h:outputText value="#{entrada.dataAntecipacao}" rendered="#{entrada.bancoDepositoCheque.id != null}">
+											<f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="pt_BR" />
+										</h:outputText>
+									</h:panelGrid>
+									
 								</f:facet>
 								<f:facet name="input">
-									<p:selectOneMenu size="1" value="#{entrada.situacaoCheque}" style="width: 80px;">										
+									<p:selectOneMenu size="1" value="#{entrada.situacaoCheque}" style="width: 90px;">										
 										<f:selectItems value="#{parcelaControl.listaStatusCheque}"/>
 										<p:ajax event="change" process="@this" />
 									</p:selectOneMenu>
@@ -94,7 +147,7 @@
 							<p:outputLabel value="#{entrada.pagamento.condicoesPagamento.nome}"/>
 						</p:column>
 						
-						<p:column headerText="Valor da Parcela">
+						<p:column headerText="Valor">
 							<p:cellEditor id="valorparcela">
 								<f:facet name="output">
 									<h:outputText value="R$ "/>
@@ -113,6 +166,63 @@
 						<p:column headerText="Editar" icon="ui-icon-pencil" style="width: 6px;">
 				        	<p:rowEditor />
 				        </p:column>
+					</p:dataTable>
+					<p:dataTable id="entradaparcelaant" value="#{parcelaControl.listaParcelaAVencerCheque}" var="entrada" lazy="true" emptyMessage="Sem parcelas a vencer" paginator="true"
+								selection="#{parcelaControl.listaParcela}" selectionMode="multiple" rows="25" rendered="#{parcelaControl.acao == 'antecipar'}"
+								paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+		             			rowsPerPageTemplate="25,50,100" rowKey="#{entrada.id}" binding="#{parcelaControl.dataTableParcela}">
+						
+						<p:column headerText="OC" filterBy="#{entrada.pagamento.oc.id}" filterMatchMode="startsWith" filterStyle="width: 50%;">
+							<h:outputText value="#{entrada.pagamento.oc.id}" />
+						</p:column>
+									
+						<p:column headerText="Data da Compra" style="width: 40px;">
+							<h:outputText value="#{entrada.pagamento.datalancamento}">
+								<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
+							</h:outputText>
+						</p:column>
+						
+						<p:column headerText="Data da Parcela">							
+							<h:outputText value="#{entrada.dataentrada}">
+								<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
+							</h:outputText>			
+						</p:column>
+						<p:column headerText="Cliente Pagador" filterBy="#{entrada.pagamento.cliente.nome}" filterMatchMode="startsWith" filterStyle="width: 100%;">							
+							<h:outputText value="#{entrada.pagamento.cliente.nome}" />
+						</p:column>
+						<p:column style="width: 50px;" headerText="Banco" filterBy="#{entrada.pagamento.banco.id}" filterMatchMode="exact" filterOptions="#{bancoControl.listaBancoCombo('filter')}" filterStyle="width: 80px;">
+							<h:outputText value="#{entrada.pagamento.banco.descricao}" />
+						</p:column>
+						<p:column headerText="Nº Cheque" filterBy="#{entrada.numeroCheque}" filterMatchMode="startsWith" filterStyle="width: 70%;">
+							<h:outputText value="#{entrada.numeroCheque}" />
+						</p:column>
+						<p:column headerText="Status" filterBy="#{entrada.situacaoCheque}" filterMatchMode="exact" filterOptions="#{parcelaControl.listaStatusCheque}" filterStyle="width: 80px;">							
+							<h:panelGrid columns="1" style="border-style: hidden; border-color: #fff">
+								<h:outputText value="#{entrada.situacaoCheque}" />
+								<h:outputText value="#{entrada.bancoDepositoCheque.descricao}" rendered="#{entrada.bancoDepositoCheque.id != null}"/>
+								<h:outputText value="#{entrada.dataAntecipacao}" rendered="#{entrada.bancoDepositoCheque.id != null}">
+									<f:convertDateTime pattern="dd/MM/yyyy HH:mm" locale="pt_BR" />
+								</h:outputText>
+							</h:panelGrid>
+						</p:column>
+						
+						
+						<p:column headerText="Parcela">
+							<p:outputLabel value="#{entrada.numeroParcela} / #{entrada.pagamento.condicoesPagamento.parcelas}"/>
+						</p:column>
+						<p:column headerText="Forma de Pagamento" rendered="false">
+							<p:outputLabel value="#{entrada.pagamento.condicoesPagamento.formapagamento.nome}"/>
+						</p:column>
+						<p:column headerText="Condição">
+							<p:outputLabel value="#{entrada.pagamento.condicoesPagamento.nome}"/>
+						</p:column>
+						
+						<p:column headerText="Valor">							
+							<h:outputText value="R$ "/>
+				        	<h:outputText value="#{entrada.valor}">
+				        		<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+				        	</h:outputText>								
+						</p:column>						
 					</p:dataTable>
 				</p:panel>
 			</h:form>

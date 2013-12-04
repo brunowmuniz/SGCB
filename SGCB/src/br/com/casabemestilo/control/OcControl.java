@@ -379,7 +379,7 @@ public class OcControl extends Control implements InterfaceControl,
 			recalculaValorTotalOcproduto();
 			retorno = ocDAO.updateOc(oc);
 			if(retorno.equalsIgnoreCase("ok")){
-				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("OC foi deletada!"));
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("OC foi gravada!"));
 				logger.info("Alterado Oc: " + oc.getId());
 				oc = new Oc();
 			}else{
@@ -550,7 +550,7 @@ public class OcControl extends Control implements InterfaceControl,
 					produto.setEncomenda(produto.getEncomenda() + ocprodutos.getQuantidade());
 					ocprodutos.setStatus((Status) new StatusDAO().buscaObjetoId(3));
 				}
-				produtoDAO.update(produto);
+				//produtoDAO.update(produto);
 			}			
 			oc.setStatus(new StatusDAO().buscaObjetoId(7));
 			lancaParcelas();
@@ -582,18 +582,19 @@ public class OcControl extends Control implements InterfaceControl,
 				if(pagamento.getCondicoesPagamento().getFormapagamento().getEhantecipacao()){
 					Parcela parcela = new Parcela();
 					c.add(Calendar.DAY_OF_MONTH, 1);
-					percentualRetencao = pagamento.getCondicoesPagamento().getPercentual() / 100;
+					/*percentualRetencao = pagamento.getCondicoesPagamento().getPercentual() / 100;
 					valorLiquido = pagamento.getValor() - (pagamento.getValor() * percentualRetencao);				
 					valorParcelas = valorLiquido / pagamento.getCondicoesPagamento().getParcelas();
-					/*if(pagamento.getCondicoesPagamento().getFormapagamento().getEhantecipacao()){
+					if(pagamento.getCondicoesPagamento().getFormapagamento().getEhantecipacao()){
 						percentualRetencao +=  pagamento.getCondicoesPagamento().getFormapagamento().getPercentualAntecipacao() /100;
-					}*/
-					valorLiquido = pagamento.getValor() - (pagamento.getValor() * percentualRetencao);
+					}
+					valorLiquido = pagamento.getValor() - (pagamento.getValor() * percentualRetencao);*/
 					parcela.setPagamento(pagamento);
 					parcela.setNumeroParcela(1);
-					parcela.setValor(valorLiquido);
+					parcela.setValor(pagamento.getValor() / pagamento.getCondicoesPagamento().getParcelas());
 					parcela.setDataentrada(c.getTime());
 					parcela.setSituacaoCheque(parcela.getPagamento().getCondicoesPagamento().getFormapagamento().getId() == 4 ? "Emitido" : null);
+					parcela.setStatusCartao(parcela.getPagamento().getCondicoesPagamento().getFormapagamento().getEhcartao() ? "Pendente" : null);
 					pagamento.getParcelas().add(parcela);
 				}else if(pagamento.getCondicoesPagamento().getAvista()){					
 					Parcela parcela = new Parcela();
@@ -602,19 +603,21 @@ public class OcControl extends Control implements InterfaceControl,
 					parcela.setValor(pagamento.getValor());
 					parcela.setDataentrada(c.getTime());
 					parcela.setSituacaoCheque(parcela.getPagamento().getCondicoesPagamento().getFormapagamento().getId() == 4 ? "Emitido" : null);
+					parcela.setStatusCartao(parcela.getPagamento().getCondicoesPagamento().getFormapagamento().getEhcartao() ? "Pendente" : null);
 					pagamento.getParcelas().add(parcela);
 				}else{		
-					percentualRetencao = pagamento.getCondicoesPagamento().getPercentual() / 100;				
+					/*percentualRetencao = pagamento.getCondicoesPagamento().getPercentual() / 100;				
 					valorLiquido = pagamento.getValor() - (pagamento.getValor() * percentualRetencao);				
-					valorParcelas = valorLiquido / pagamento.getCondicoesPagamento().getParcelas();
+					valorParcelas = valorLiquido / pagamento.getCondicoesPagamento().getParcelas();*/
 					for(int i = 1; i <= pagamento.getCondicoesPagamento().getParcelas(); i++){
 						Parcela parcela = new Parcela();
 						c.add(Calendar.DAY_OF_MONTH,30);
 						parcela.setPagamento(pagamento);
 						parcela.setNumeroParcela(i);
-						parcela.setValor(valorParcelas);
+						parcela.setValor(pagamento.getValor() / pagamento.getCondicoesPagamento().getParcelas());
 						parcela.setDataentrada(c.getTime());
 						parcela.setSituacaoCheque(parcela.getPagamento().getCondicoesPagamento().getFormapagamento().getId() == 4 ? "Emitido" : null);
+						parcela.setStatusCartao(parcela.getPagamento().getCondicoesPagamento().getFormapagamento().getEhcartao() ? "Pendente" : null);
 						pagamento.getParcelas().add(parcela);
 					}
 				}
@@ -752,6 +755,12 @@ public class OcControl extends Control implements InterfaceControl,
 		ocDAO = new OcDAO();
 		Double totalFretePago = ocDAO.buscaFretePago(dataInicial, dataFinal);
 		return totalFretePago;
+	}
+	
+	public Double calculaMontagemPago(Date dataInicial, Date dataFinal) {
+		ocDAO = new OcDAO();
+		Double totalMontagemPago = ocDAO.buscaMontagemPago(dataInicial, dataFinal);
+		return totalMontagemPago;
 	}
 	
 	public void impressaoOc(Oc oc){		
@@ -1167,6 +1176,8 @@ public class OcControl extends Control implements InterfaceControl,
 	public void setEhClienteChequeOc(Boolean ehClienteChequeOc) {
 		this.ehClienteChequeOc = ehClienteChequeOc;
 	}
+
+	
 
 		
 }

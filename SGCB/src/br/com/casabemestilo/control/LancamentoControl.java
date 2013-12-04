@@ -267,6 +267,7 @@ public class LancamentoControl extends Control implements InterfaceControl,
 		OcControl ocControl = new OcControl();
 		Double valorVendasBrutas = ocControl.calculaVendaBruto(getDataInicial(), getDataFinal());
 		Double valorFretePago = ocControl.calculaFretePago(getDataInicial(), getDataFinal());
+		Double valorMontagemPago = ocControl.calculaMontagemPago(getDataInicial(), getDataFinal());
 		setValorEntradas(new Float(0));
 		setValorSaidas(new Float(0));
 		
@@ -274,6 +275,8 @@ public class LancamentoControl extends Control implements InterfaceControl,
 			listaLancamento = lancamentoDAO.listaControleGeral(getDataInicial(), getDataFinal());
 			listaLancamento.add(new Lancamento(null,new ContaContabilDAO().buscaObjetoId(4), valorVendasBrutas == null ? new Double(new Float(0).doubleValue()) : valorVendasBrutas));
 			listaLancamento.add(new Lancamento(null,new ContaContabilDAO().buscaObjetoId(11), valorFretePago == null ? new Double(new Float(0).doubleValue()) : valorFretePago));
+			listaLancamento.add(new Lancamento(null,new ContaContabilDAO().buscaObjetoId(28), valorMontagemPago == null ? new Double(new Float(0).doubleValue()) : valorMontagemPago));
+			
 			for(Lancamento lancamento : listaLancamento){
 				if(lancamento.getContacontabil().getTipo().equalsIgnoreCase("D")){
 					setValorSaidas(getValorSaidas() + lancamento.getValor()); 

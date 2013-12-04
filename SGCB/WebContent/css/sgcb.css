@@ -101,6 +101,6 @@
 	width: 185px !important;
 }
 
-table.vTop tr td{
+table.vTop tr td, table.vTop{
 	vertical-align: top;
 }

@@ -24,6 +24,7 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 	
 	private List<Parcela> listaParcela;
 	
+	private String retorno;
 	
 	/*
 	 * CONSTRUTORES
@@ -62,7 +63,11 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 	@Override
 	public void delete(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
+		parcela = (Parcela) obj;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		session.update(parcela);
+		session.getTransaction().commit();
 
 	}
 
@@ -94,17 +99,30 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 		return null;
 	}
 	
-	public int totalParcelasAVencer(Date dataInicial, Date dataFinal) {
+	public int totalParcelasAVencer(Date dataInicial, Date dataFinal, Map<String, String> filters) {
 		Long linhas = new Long(0);
 		session = Conexao.getInstance();
-		session.beginTransaction();
-		linhas = (Long) session.createQuery("select count(*) from Parcela p " +
-												"where" +
-													" p.dataentrada between :dataInicial and :dataFinal" +
-												" and " +
-													" p.pagamento.condicoesPagamento.formapagamento.id <> 4" +
-												" and" +
-													" p.deleted = false")
+		String hql = "select count(*) from Parcela p " +
+							"where" +
+								" p.dataentrada between :dataInicial and :dataFinal" +
+							" and " +
+								" p.pagamento.condicoesPagamento.formapagamento.id <> 4" +
+							" and" +
+								" p.deleted = false";
+
+		if(filters.containsKey("pagamento.condicoesPagamento.formapagamento.id")){
+			hql += " and p.pagamento.condicoesPagamento.formapagamento.id = " + filters.get("pagamento.condicoesPagamento.formapagamento.id"); 
+		}
+		
+		if(filters.containsKey("pagamento.cvCartao")){
+			hql += " and p.pagamento.cvCartao like '%" + filters.get("pagamento.cvCartao") + "%'"; 
+		}
+		
+		if(filters.containsKey("statusCartao")){
+			hql += " and p.statusCartao = '" + filters.get("statusCartao") + "'";
+		}
+		
+		linhas = (Long) session.createQuery(hql)
 							   .setDate("dataInicial", dataInicial)
 							   .setDate("dataFinal", dataFinal)
 							   .setCacheable(true)
@@ -114,17 +132,31 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 		return linhas.intValue();
 	}
 
-	public List<Parcela> listaParcelasAVencer(int first, int pageSize, Date dataInicial, Date dataFinal) {
+	public List<Parcela> listaParcelasAVencer(int first, int pageSize, Date dataInicial, Date dataFinal, Map<String, String> filters) {
 		session = Conexao.getInstance();
-		session.beginTransaction();
+		String hql = "from Parcela p" +
+							" where" +
+							" p.dataentrada between :dataInicial and :dataFinal " +
+						" and " +
+							" p.pagamento.condicoesPagamento.formapagamento.id <> 4" +
+						" and" +
+							" p.deleted = false";
 		
-		listaParcela = session.createQuery("from Parcela p" +
-											" where" +
-												" p.dataentrada between :dataInicial and :dataFinal " +
-											" and " +
-												" p.pagamento.condicoesPagamento.formapagamento.id <> 4" +
-											" and" +
-												" p.deleted = false")
+		if(filters.containsKey("pagamento.condicoesPagamento.formapagamento.id")){
+			hql += " and p.pagamento.condicoesPagamento.formapagamento.id = " + filters.get("pagamento.condicoesPagamento.formapagamento.id"); 
+		}
+		
+		if(filters.containsKey("pagamento.cvCartao")){
+			hql += " and p.pagamento.cvCartao like '%" + filters.get("pagamento.cvCartao") + "%'"; 
+		}
+		
+		if(filters.containsKey("statusCartao")){
+			hql += " and p.statusCartao = '" + filters.get("statusCartao") + "'";
+		}
+		
+		hql += " order by dataentrada";
+				
+		listaParcela = session.createQuery(hql)
 							  .setDate("dataInicial", dataInicial)
 							  .setDate("dataFinal", dataFinal)
 							  .setFirstResult(first)
@@ -183,6 +215,8 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 		session.beginTransaction();
 		String hql = "from Parcela p " +
 							"join fetch p.pagamento.banco " +
+							"left join fetch p.bancoDepositoCheque " +
+							"join fetch p.pagamento.cliente " +
 						"where " +
 							"p.dataentrada between :dataInicial and :dataFinal " +
 						"and " +
@@ -210,6 +244,8 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 			hql += " and p.pagamento.cliente.nome like '%" + filter.get("pagamento.cliente.nome") + "%'"; 
 		}
 		
+		hql += " order by dataentrada";
+				
 		listaParcela = session.createQuery(hql)
 							  .setDate("dataInicial", dataInicial)
 							  .setDate("dataFinal", dataFinal)							  
@@ -220,7 +256,26 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 		session.close();
 		return listaParcela;
 	}
-
+	
+	public String antecipar(List<Parcela> listaParcela) {
+		try{
+			session = Conexao.getInstance();
+			session.beginTransaction();
+			for(Parcela parcela : listaParcela){
+				session.update(parcela);
+			}
+			session.getTransaction().commit();
+			retorno = "ok";
+		}catch(ConstraintViolationException e){
+			retorno = "Erro Constraint: " + e.getMessage();
+		}catch (HibernateException e) {
+			retorno = "Erro Hibernate: " + e.getMessage();
+		}catch (Exception e) {
+			retorno = "Erro Genérico: " + e.getMessage();
+		}
+		
+		return retorno;
+	}
 	
 	/*
 	 * GETTERS & SETTERS
@@ -240,5 +295,6 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 	public void setListaParcela(List<Parcela> listaParcela) {
 		this.listaParcela = listaParcela;
 	}
+	
 	
 }

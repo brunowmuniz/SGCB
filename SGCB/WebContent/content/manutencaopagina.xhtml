@@ -7,7 +7,7 @@
 
 	<ui:composition template="../template/template.xhtml">
 		<ui:define name="conteudo">
-			<h:form>
+			<h:form id="form">
 				<p:panel header="Lista de Páginas do Sistema" id="principal">
 					<p:messages id="msgs"/>
 					<p:contextMenu for="pagina">
@@ -17,17 +17,47 @@
 					<p:dataTable var="pagina" value="#{paginaControl.listaPaginaGeralAll}" id="pagina" emptyMessage="Sem páginas cadastradas!" paginator="true"
 										selection="#{paginaControl.pagina}" selectionMode="single" lazy="true" rows="25" rowKey="#{pagina.id}"
 										paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                 						rowsPerPageTemplate="10,25,50">
+                 						rowsPerPageTemplate="10,25,50" editable="true">
+                 			
+                 			<p:ajax event="rowEdit" listener="#{paginaControl.alterar}" process="pagina" update=":form:msgs"/>
+                 						
+                 			<p:column headerText="Nome" filterBy="#{pagina.nome}" filterMatchMode="startsWith" filterStyle="width: 70%;">
+                 				<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{pagina.nome}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText value="#{pagina.nome}"/>
+									</f:facet>
+								</p:cellEditor>
+                 			</p:column>
                  			<p:column headerText="Nome" filterBy="#{pagina.nomePagina}" filterMatchMode="startsWith" filterStyle="width: 70%;">
-                 				<h:outputText value="#{pagina.nomePagina}"/>
+                 				<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{pagina.nomePagina}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText value="#{pagina.nomePagina}"/>
+									</f:facet>
+								</p:cellEditor>
                  			</p:column>
                  			<p:column headerText="Descriçao">
-                 				<h:outputText value="#{pagina.descricao}"/>                 				
+                 				<p:cellEditor>
+									<f:facet name="output">
+										<h:outputText value="#{pagina.descricao}" />
+									</f:facet>
+									<f:facet name="input">
+										<p:inputText value="#{pagina.descricao}" size="100"/>
+									</f:facet>
+								</p:cellEditor>                 				
                  			</p:column>
                  			<p:column headerText="Deletada">
                  				<h:outputText value="Sim" rendered="#{pagina.deleted}" styleClass="debito"/>
                  				<h:outputText value="Não" rendered="#{!pagina.deleted}" styleClass="credito"/>
                  			</p:column>
+                 			<p:column headerText="Editar" icon="ui-icon-pencil" style="width: 6px;">
+					        	<p:rowEditor />
+					        </p:column>
                  	</p:dataTable>
 				</p:panel>
 			</h:form>

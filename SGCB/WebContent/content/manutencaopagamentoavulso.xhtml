@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form id="form" >
+				<p:messages id="msgs"/>
+				<p:panel id="principal" header="Lista de Pagamentos Avulsos">
+					<h:panelGrid columns="2">
+						<p:outputLabel for="dataInicial" value="Período Inicial: "/>
+						<p:calendar value="#{pagamentoAvulsoControl.dataInicial}" pattern="dd/MM/yyyy" locale="pt" id="dataInicial">
+							<p:ajax event="dateSelect" process="@this"/>
+						</p:calendar>
+						<p:outputLabel for="dataFinal" value="Período Final: "/>
+						<p:calendar value="#{pagamentoAvulsoControl.dataFinal}" pattern="dd/MM/yyyy" locale="pt" id="dataFinal">
+							<p:ajax event="dateSelect" process="@this"/>
+						</p:calendar>
+						<p:commandButton value="Pesquisar" action="#{pagamentoAvulsoControl.buscaLacamentoAvulsoPorDataLancamento}" update="pagamentosavulsos"/>
+					</h:panelGrid>
+					
+					<p:contextMenu for="pagamentosavulsos">
+						<p:menuitem value="Deletar" update="pagamentosavulsos,:form:msgs" icon="ui-icon-trash" actionListener="#{pagamentoAvulsoControl.deletar}"/>
+					</p:contextMenu>
+					<p:dataTable var="pagamentoAvulso" value="#{pagamentoAvulsoControl.listarPagamentoAvulsoGeralAll}" id="pagamentosavulsos" emptyMessage="Sem Pagamento Avulso lançado para o período!" paginator="true"
+										selection="#{pagamentoAvulsoControl.pagamentoAvulso}" selectionMode="single" lazy="true" rows="25" rowKey="#{pagamentoAvulso.id}"
+										paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                 						rowsPerPageTemplate="10,25,50">
+                 		<p:column headerText="Descrição">
+                 			#{pagamentoAvulso.descricao}
+                 		</p:column>
+                 		
+                 		<p:column headerText="Data" width="100px">
+                 			<h:outputText value="#{pagamentoAvulso.dataLancamento}">
+                 				<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"/>
+                 			</h:outputText>                 			
+                 		</p:column>
+                 		<p:column headerText="Pagamento" >
+                 			<ui:repeat var="pagamento" value="#{pagamentoAvulso.pagamentos}" varStatus="status">
+                 				<h:panelGrid columns="1" style="border-color: transparent;">
+                 					<h:outputText value="Cliente Pagador: #{clienteControl.buscaObjetoId(pagamento.cliente.id).nome}" rendered="#{pagamento.cliente.id != null}" />               					              					
+	              					<h:outputText value="#{pagamento.condicoesPagamento.formapagamento.nome} - #{pagamento.condicoesPagamento.nome}"/>	             					
+	             					<h:outputText value="#{pagamento.valor}">
+	              						<f:convertNumber locale="pt_BR" maxIntegerDigits="6" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2" type="currency" currencyCode="BRL"/>
+	              					</h:outputText>
+                 				</h:panelGrid>                				
+               					<p:separator style="height: 1px" rendered="#{pagamentoAvulso.pagamentos.size() > 1 and !status.last}" />         				                 				
+                 			</ui:repeat>
+                 		</p:column>
+                 		<p:column headerText="Renegociação">
+                 			<h:outputText value="#{pagamentoAvulso.ehRenegociacao ? 'Sim' : 'Não'}" styleClass="#{pagamentoAvulso.ehRenegociacao ? 'credito' : 'debito'}" />                 			
+                 		</p:column>
+                 		<p:column headerText="Valor">
+                 			<h:outputText value="#{pagamentoAvulsoControl.calculaTotalPagamentoAvulso(pagamentoAvulso.pagamentos)}" rendered="#{pagamentoAvulso.pagamentos.size() > 1}">
+           						<f:convertNumber locale="pt_BR" maxIntegerDigits="6" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2" type="currency" currencyCode="BRL"/>
+           					</h:outputText>
+           					<h:outputText value="#{pagamentoAvulso.pagamentos.get(0).valor}" rendered="#{pagamentoAvulso.pagamentos.size() == 1}">
+           						<f:convertNumber locale="pt_BR" maxIntegerDigits="6" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2" type="currency" currencyCode="BRL"/>
+           					</h:outputText>
+                 		</p:column>
+                 	</p:dataTable>
+				</p:panel>
+			</h:form>
+		</ui:define>
+		
+		<ui:define name="rodape">
+			<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela que lista todos os lançamentos de pagamentos avulsos." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="pagamentoavulso.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
+		</ui:define>
+	</ui:composition>
+</html>

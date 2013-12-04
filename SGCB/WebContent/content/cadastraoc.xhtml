@@ -544,18 +544,24 @@
 												<p:outputPanel id="updSelecaoCondicao">
 													<h:panelGrid columns="2" id="formapagamentodet">
 														<p:outputLabel for="formapagamento" value="Forma de Pagamento: "/>
-														<p:selectOneMenu id="formapagamento" value="#{ocControl.pagamento.condicoesPagamento.formapagamento.id}">						
+														<p:selectOneMenu id="formapagamento" value="#{ocControl.pagamento.condicoesPagamento.formapagamento.id}" size="20">						
 															<f:selectItem itemLabel="Selecione Forma de Pagamento" itemValue=""/>
 															<f:selectItems value="#{formaPagamentoControl.getListaFormaPagamentoCombo('')}"/>
-															<p:ajax event="change" update="formapagamento,condicoespagamento,gravarformapagamento" process="formapagamento" listener="#{ocControl.defineFormaPagamento}"/>
+															<p:ajax event="change" update="formapagamento,condicoespagamento,gravarformapagamento,cvcartao" process="formapagamento" listener="#{ocControl.defineFormaPagamento}"/>
 														</p:selectOneMenu>
 																									
 														<p:outputLabel for="condicoespagamento" value="Condição de Pagamento: "/>
-														<p:selectOneMenu id="condicoespagamento" value="#{ocControl.pagamento.condicoesPagamento.id}">
+														<p:selectOneMenu id="condicoespagamento" value="#{ocControl.pagamento.condicoesPagamento.id}" size="20">
 															<f:selectItem itemLabel="Selecione Condição" itemValue=""/>
 															<f:selectItems value="#{condicoesPagamentoControl.carregaCondicoesPagamentoPorFormaPagamento(ocControl.pagamento.condicoesPagamento.formapagamento.id)}"/>
 															<p:ajax event="change" process="@this" listener="#{ocControl.defineCondicoesPagamento}" update="banco,mesmocliente"/>
 														</p:selectOneMenu>
+														
+														<p:outputLabel value="CV Cartão: " for="cvcartao" rendered="#{ocControl.pagamento.condicoesPagamento.formapagamento.ehcartao}" />
+														<p:inputText id="cvcartao" value="#{ocControl.pagamento.cvCartao}" size="20" required="#{ocControl.pagamento.condicoesPagamento.formapagamento.ehcartao}"
+																	 rendered="#{ocControl.pagamento.condicoesPagamento.formapagamento.ehcartao}">
+															<p:ajax event="blur" process="@this" />		 
+														</p:inputText>
 														
 														<p:outputLabel value="Banco: " for="banco" rendered="#{ocControl.pagamento.condicoesPagamento.formapagamento.id == 4}" />
 														<p:selectOneMenu id="banco" value="#{ocControl.pagamento.banco.id}" required="true" rendered="#{ocControl.pagamento.condicoesPagamento.formapagamento.id == 4}">
@@ -583,8 +589,8 @@
 															<p:ajax event="blur" process="@this" update="valorcondicoespagamento,gravarformapagamento"/>
 														</p:inputText>
 														<p:commandButton id="gravarformapagamento" value="Adicionar Forma Pagamento" update="updFormaPagamento,updSelecaoCondicao,:form:msgs,gravarpgto" process="@this"
-																		actionListener="#{ocControl.gravaFormaPagamentoOc()}" disabled="#{ocControl.pagamento.condicoesPagamento.id == null or ocControl.pagamento.valor == 0}">														
-														</p:commandButton>
+																		actionListener="#{ocControl.gravaFormaPagamentoOc()}" disabled="#{ocControl.pagamento.condicoesPagamento.id == null or ocControl.pagamento.valor == 0}" />														
+														
 													</h:panelGrid>		
 												</p:outputPanel>
 											</p:panel>

@@ -12,7 +12,10 @@
 					<p:messages id="msgs"/>
 					<h:panelGrid columns="2">
 						<p:outputLabel for="nome" value="Nome: "/>
-						<p:inputText id="nome" value="#{paginaControl.pagina.nomePagina}" size="23" required="true"/>
+						<p:inputText id="nome" value="#{paginaControl.pagina.nome}" size="23" required="true"/>
+						
+						<p:outputLabel for="nomepagina" value="Nome da Página: "/>
+						<p:inputText id="nomepagina" value="#{paginaControl.pagina.nomePagina}" size="23" required="true"/>
 						
 						<p:outputLabel for="deletado" value="Deletada: " rendered="#{paginaControl.pagina.id != null}"/>
 						<p:selectBooleanCheckbox id="deletado" value="#{paginaControl.pagina.deleted}" rendered="#{paginaControl.pagina.id != null}"/>

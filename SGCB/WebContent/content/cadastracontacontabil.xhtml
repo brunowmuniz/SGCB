@@ -19,6 +19,8 @@
 							<f:selectItem itemValue="D" itemLabel="Debito"/>
 							<f:selectItem itemValue="C" itemLabel="Crédito"/>
 						</p:selectOneMenu>
+						<p:outputLabel for="contasbaixa" value="Contas de Baixa: "/>
+						<p:selectBooleanCheckbox id="contasbaixa" value="#{contaContabilControl.contacontabil.contaBaixa}"/>
 						<p:commandButton value="Salvar" actionListener="#{contaContabilControl.gravar}" rendered="#{contaContabilControl.contacontabil.id == null}" update="msgs,princpal"/>
 						<p:commandButton value="Alterar" actionListener="#{contaContabilControl.alterar}" rendered="#{contaContabilControl.contacontabil.id != null}" update="msgs,princpal"/>
 					</h:panelGrid>

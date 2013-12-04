@@ -40,6 +40,8 @@
       		<p:submenu label="Contas a Receber">
 				<p:menuitem value="À Vencer" url="manutencaoentradas.jsf" />
 				<p:menuitem value="Cheques" url="manutencaoentcheque.jsf" />
+				<p:menuitem value="Pagamento Avulso" url="pagamentoavulso.jsf" />
+				<p:menuitem value="Lançamentos Avulsos" url="manutencaopagamentoavulso.jsf" />
 	      	</p:submenu>
 	      	<p:submenu label="Contas a Pagar">
 				<p:menuitem value="Lançar Contas" url="cadastralancamentos.jsf" />
@@ -74,7 +76,7 @@
       			<p:menuitem value="Cadastro de Usuários" url="cadastrausuario.jsf" />
       			<p:menuitem value="Manutenção de Usuários" url="manutencaousuario.jsf" />
       		</p:submenu>
-      		<p:submenu label="Filial">
+      		<p:submenu label="Filial" rendered="false">
       			<p:menuitem value="Cadastra Filial" url="cadastrafilial.jsf"/>
       			<p:menuitem value="Manutenção de Filial" url="manutencaofilial.jsf"/>      			
       		</p:submenu>      		

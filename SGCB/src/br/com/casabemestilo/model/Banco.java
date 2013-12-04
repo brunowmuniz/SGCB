@@ -34,7 +34,10 @@ public class Banco implements Serializable{
 	private Boolean deleted;
 	
 	private List<Pagamento> pagamentos = new ArrayList<Pagamento>();
+	
+	private List<Parcela> parcelas = new ArrayList<Parcela>();
 
+	private Boolean ehBancoEmpresa;
 
 	
 	/*
@@ -112,8 +115,29 @@ public class Banco implements Serializable{
 	public void setPagamentos(List<Pagamento> pagamentos) {
 		this.pagamentos = pagamentos;
 	}
-	
-	
 
+	@OneToMany(targetEntity = Parcela.class, mappedBy = "bancoDepositoCheque", fetch = FetchType.LAZY)
+	public List<Parcela> getParcelas() {
+		return parcelas;
+	}
+
+	public void setParcelas(List<Parcela> parcelas) {
+		this.parcelas = parcelas;
+	}
+
+	@Column(name="ehbancoempresa", nullable = false)
+	public Boolean getEhBancoEmpresa() {
+		if(ehBancoEmpresa == null){
+			ehBancoEmpresa = false;
+		}
+		return ehBancoEmpresa;
+	}
+
+
+	public void setEhBancoEmpresa(Boolean ehBancoEmpresa) {
+		this.ehBancoEmpresa = ehBancoEmpresa;
+	}
+	
+	
 	
 }

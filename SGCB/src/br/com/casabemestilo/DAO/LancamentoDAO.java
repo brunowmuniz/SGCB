@@ -249,7 +249,9 @@ public class LancamentoDAO implements InterfaceDAO, Serializable {
 													" from" +
 														" Lancamento l" +
 													" where" +
-														" l.dataLancamento between :dataInicial and :dataFinal"+
+														" l.dataLancamento between :dataInicial and :dataFinal" +
+													" and" +
+														" l.contacontabil.contaBaixa = false"+
 													" group by l.contacontabil")
 								 .setDate("dataInicial", dataInicial)
 								 .setDate("dataFinal", dataFinal)
@@ -279,12 +281,14 @@ public class LancamentoDAO implements InterfaceDAO, Serializable {
 	public List<Lancamento> lancamentoDia(Date dataLancamento) {
 		session = Conexao.getInstance();
 		listaLancamento = new ArrayList<Lancamento>();
+		
 		listaLancamento = session.createQuery("from Lancamento lancamento" +
 													" where " +
 														" lancamento.dataLancamento = :dataLancamento" +
 													" and" +
 												 		" (lancamento.ehVale = false or" +
-												 			" (lancamento.ehVale = true and lancamento.formapagamento = 3))")
+												 			" (lancamento.ehVale = true and lancamento.formapagamento = 3))" +
+												 	" and lancamento.formapagamento <> 10")
 								 .setDate("dataLancamento", dataLancamento)
 								 .setCacheable(true)
 								 .list();
