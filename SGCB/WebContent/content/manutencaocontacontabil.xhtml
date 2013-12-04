@@ -26,6 +26,10 @@
 							<h:outputText value="#{conta.tipo == 'D' ? 'Débito' : 'Crédito'}" styleClass="negrito"
 								style="color: #{conta.tipo == 'D' ? 'red' : 'green'}"/>
 						</p:column>
+						<p:column headerText="Conta Baixa">
+							<h:outputText value="#{conta.contaBaixa ? 'Sim' : 'Não'}" styleClass="negrito"
+								style="color: #{conta.contaBaixa ? 'red' : 'green'}"/>
+						</p:column>
 					</p:dataTable>
 				</p:panel>
 			</h:form>

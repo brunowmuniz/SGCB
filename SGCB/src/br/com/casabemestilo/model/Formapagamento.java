@@ -33,6 +33,7 @@ public class Formapagamento implements java.io.Serializable {
 	private String nome;
 	private Boolean deleted;
 	private Boolean ehantecipacao;
+	private Boolean ehcartao;
 	private Float percentualAntecipacao;
 	private List<CondicoesPagamento> condicoesPagamentos = new ArrayList<CondicoesPagamento>();
 	private List<Lancamento> lancamentos = new ArrayList<Lancamento>();
@@ -120,5 +121,18 @@ public class Formapagamento implements java.io.Serializable {
 	public void setLancamentos(List<Lancamento> lancamentos) {
 		this.lancamentos = lancamentos;
 	}
+
+	@Column(name="ehcartao", nullable = false)
+	public Boolean getEhcartao() {
+		if(ehcartao == null){
+			ehcartao = false;
+		}
+		return ehcartao;
+	}
+
+	public void setEhcartao(Boolean ehcartao) {
+		this.ehcartao = ehcartao;
+	}
+	
 	
 }

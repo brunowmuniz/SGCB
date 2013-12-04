@@ -33,7 +33,7 @@
 				            <h:outputText value="#{usuario.perfil.descricao}" />
 				        </p:column>
 				             
-				        <p:column headerText="Filiais">				        	
+				        <p:column headerText="Filiais" rendered="false">				        	
 				        	<p:dataList var="filialusuario" itemType="square" value="#{usuarioFilialControl.listaFiliaisDoUsuario(usuario)}">
 				        		<h:outputText value="#{filialusuario.filial.nome}" />
 				        	</p:dataList>				            

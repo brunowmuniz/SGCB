@@ -415,7 +415,7 @@ public class OcDAO implements InterfaceDAO, Serializable {
 	public Double buscaVendasBruto(Date dataInicial, Date dataFinal) {
 		session = Conexao.getInstance();
 		Double totalVendasBruto = (Double) session.createQuery("select" +
-																	" sum(o.valorfinal - o.valorfrete)"+
+																	" sum(o.valorfinal - o.valorfrete - o.valormontagem)"+
 																" from" +
 																	" Oc o" +
 																" where" +
@@ -440,12 +440,31 @@ public class OcDAO implements InterfaceDAO, Serializable {
 													" where" +
 														" o.tipoFrete <> 'brinde'" +
 													" and" +
+														" o.status.id not in(1,2,10)" +
+													" and" +	
 														" o.datalancamento between :dataInicial and :dataFinal")
 											.setDate("dataInicial", dataInicial)
 											.setDate("dataFinal", dataFinal)
 										    .uniqueResult();
 		session.close();
 		return totalFrete;
+	}
+	
+	public Double buscaMontagemPago(Date dataInicial, Date dataFinal) {
+		session = Conexao.getInstance();
+		Double totalMontagem = (Double) session.createQuery("select" +
+														" sum(o.valormontagem)"+
+													" from" +
+														" Oc o" +
+													" where" +													
+														" o.status.id not in(1,2,10)" +
+													" and" +	
+														" o.datalancamento between :dataInicial and :dataFinal")
+											.setDate("dataInicial", dataInicial)
+											.setDate("dataFinal", dataFinal)
+										    .uniqueResult();
+		session.close();
+		return totalMontagem;
 	}
 
 	public Double buscaTotalVendasGrupoComissao(String grupoUsuario, Date dataInicial, Date dataFinal) {
@@ -526,5 +545,7 @@ public class OcDAO implements InterfaceDAO, Serializable {
 	public void setOc(Oc oc) {
 		this.oc = oc;
 	}
+
+	
 
 }

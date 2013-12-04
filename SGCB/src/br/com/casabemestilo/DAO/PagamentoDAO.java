@@ -55,8 +55,11 @@ public class PagamentoDAO implements InterfaceDAO, Serializable {
 	@Override
 	public void update(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
-
+		pagamento = (Pagamento) obj;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		session.update(pagamento);
+		session.getTransaction().commit();
 	}
 
 	@Override
@@ -105,7 +108,28 @@ public class PagamentoDAO implements InterfaceDAO, Serializable {
 												"from "+
 													"Pagamento pagamento "+		
 												" where "+
-													"pagamento.oc.status.id not in (1,10) " +
+													"pagamento.oc.status.id not in (1,10)" +
+												" and " +
+													"pagamento.datalancamento < :dataLancamento" +
+												" and" +
+													" pagamento.deleted = false"+
+												" group by pagamento.condicoesPagamento.formapagamento.id")
+										.setDate("dataLancamento",dataLancamento)
+										.setCacheable(true)
+										.list();
+		session.close();
+		return listaPagamento;
+	}
+	
+	public List<Pagamento> calculaSaldoAnteriorAvulso(Date dataLancamento){
+		session = Conexao.getInstance();
+		listaPagamento = new ArrayList<Pagamento>();
+		listaPagamento = session.createQuery("select "+ 
+													"new Pagamento(pagamento.condicoesPagamento, sum(pagamento.valor)) "+
+												"from "+
+													"Pagamento pagamento "+		
+												" where "+
+													"pagamento.pagamentoAvulso.id is not null" +												
 												" and " +
 													"pagamento.datalancamento < :dataLancamento" +
 												" and" +

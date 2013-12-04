@@ -12,6 +12,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.persistence.Column;
 
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
@@ -45,11 +46,12 @@ public class ContaContabilControl extends Control implements InterfaceControl, S
 	private LazyDataModel<Contacontabil> listaLazyContaContabil;
 	
 	
+	
 	/*
 	 * CONSTRUTORES
 	 * */
 	public ContaContabilControl(List<Contacontabil> listaContaContabil,
-			Contacontabil contacontabil, ContaContabilDAO contaContabilDAO) {
+			Contacontabil contacontabil, ContaContabilDAO contaContabilDAO, Boolean contaBaixa) {
 		super();
 		this.listaContaContabil = listaContaContabil;
 		this.contacontabil = contacontabil;
@@ -287,5 +289,5 @@ public class ContaContabilControl extends Control implements InterfaceControl, S
 		this.listaLazyContaContabil = listaLazyContaContabil;
 	}
 
-
+	
 }

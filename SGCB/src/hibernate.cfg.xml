@@ -8,7 +8,7 @@
   <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/blankerc_sgcb?autoReconnect=true</property>
   <property name="hibernate.connection.username">blankerc_sgcb</property>
   <property name="hibernate.dialect">br.com.casabemestilo.util.MySQLDialect</property>
-  <property name="hibernate.show_sql">false</property>
+  <property name="hibernate.show_sql">true</property>
   <property name="hibernate.format_sql">true</property>
   <property name="hibernate.connection.autocommit">true</property>
   <property name="hibernate.cache.use_query_cache">true</property>
@@ -53,5 +53,7 @@
   <mapping class="br.com.casabemestilo.model.Banco"/>
   <mapping class="br.com.casabemestilo.model.Permissao"/>
   <mapping class="br.com.casabemestilo.model.Pagina"/>
+  <mapping class="br.com.casabemestilo.model.PagamentoAvulso"/>
+  
  </session-factory>
 </hibernate-configuration>

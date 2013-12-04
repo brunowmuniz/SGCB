@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form id="form">
+				<p:panel id="principal" header="Lançamento Avulso de Pagamento">
+					<p:messages id="msgs"/>
+					<p:contextMenu for="tabelapagamento_vis">
+						<p:menuitem value="Deletar" update="tabelapagamento_vis" icon="ui-icon-close" process="@this,tabelapagamento_vis"
+	 								actionListener="#{pagamentoAvulsoControl.removeCondicoesPagamento(pagamentoAvulsoControl.pagamento)}"/>
+					</p:contextMenu>
+					<h:panelGrid styleClass="vTop" style="width: 50%; float: right;">
+						<p:dataTable id="tabelapagamento_vis" value="#{pagamentoAvulsoControl.pagamentoAvulso.pagamentos}" var="pagamento"
+														 selectionMode="single" selection="#{pagamentoAvulsoControl.pagamento}" rowKey="#{pagamento.condicoesPagamento.id}"
+														 emptyMessage="Sem formas de pagamento lançada!" >														
+							<f:facet name="header">
+								Pagamento
+							</f:facet>
+							<p:column headerText="Forma de Pagamento">
+							<h:outputText value="#{pagamento.condicoesPagamento.formapagamento.nome}" />
+							</p:column>
+							<p:column headerText="Condição">
+								<h:outputText value="#{pagamento.condicoesPagamento.nome}"/>
+							</p:column>
+							<p:column headerText="Valor">
+								<h:outputText value="#{pagamento.valor}">
+									<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
+								</h:outputText>
+							</p:column>														
+						</p:dataTable>
+					</h:panelGrid>
+					<h:panelGrid columns="3" id="cadastro">
+						<p:outputLabel for="descricao" value="Descrição: "/>
+						<p:inputText value="#{pagamentoAvulsoControl.pagamentoAvulso.descricao}" size="50" id="descricao"/>
+						<p:spacer width="1"/>						
+						
+						<p:outputLabel for="buscarcliente" value="Cliente: "/>						
+						<p:autoComplete id="buscarcliente" value="#{pagamentoAvulsoControl.cliente}" minQueryLength="3" size="50"
+										completeMethod="#{clienteControl.listaComplete}"									 
+										forceSelection="true" converter="converter.clienteConverter"
+										var="cliente" itemValue="#{cliente}" itemLabel="#{cliente.nome}"
+										disabled="#{pagamentoAvulsoControl.cliente.id != null}">
+							<p:ajax event="itemSelect" update="buscarcliente,limparcliente" process="@this"/>						
+						</p:autoComplete>						
+						<p:commandButton value="Limpar" actionListener="#{pagamentoAvulsoControl.limparCliente()}" update="cadastro" id="limparcliente" disabled="#{pagamentoAvulsoControl.cliente.id == null}" process="@this" />							
+					</h:panelGrid>												
+					<p:outputPanel id="updSelecaoCondicao" autoUpdate="true">
+						<h:panelGrid columns="2">						
+							<p:outputLabel for="ehoc" value="Negociação de OC: "/>
+							<p:selectBooleanCheckbox value="#{pagamentoAvulsoControl.pagamentoAvulso.ehRenegociacao}" id="ehoc"/>
+														
+							<p:outputLabel for="formapagamento" value="Forma de Pagamento: "/>
+							<p:selectOneMenu id="formapagamento" value="#{pagamentoAvulsoControl.pagamento.condicoesPagamento.formapagamento.id}" size="20">						
+								<f:selectItem itemLabel="Selecione Forma de Pagamento" itemValue=""/>
+								<f:selectItems value="#{formaPagamentoControl.getListaFormaPagamentoCombo('')}"/>
+								<p:ajax event="change" update="condicoespagamento,gravarformapagamento,cvcartao" process="formapagamento" listener="#{pagamentoAvulsoControl.defineFormaPagamento}"/>
+							</p:selectOneMenu>							
+							
+							
+																									
+							<p:outputLabel for="condicoespagamento" value="Condição de Pagamento: "/>
+							<p:selectOneMenu id="condicoespagamento" value="#{pagamentoAvulsoControl.pagamento.condicoesPagamento.id}" size="20">
+								<f:selectItem itemLabel="Selecione Condição" itemValue=""/>
+								<f:selectItems value="#{condicoesPagamentoControl.carregaCondicoesPagamentoPorFormaPagamento(pagamentoAvulsoControl.pagamento.condicoesPagamento.formapagamento.id)}"/>
+								<p:ajax event="change" process="@this" listener="#{pagamentoAvulsoControl.defineCondicoesPagamento}" update="banco"/>
+							</p:selectOneMenu>
+							
+							<p:outputLabel value="CV Cartão: " for="cvcartao" rendered="#{pagamentoAvulsoControl.pagamento.condicoesPagamento.formapagamento.ehcartao}" />
+							<p:inputText id="cvcartao" value="#{pagamentoAvulsoControl.pagamento.cvCartao}" size="20" required="#{pagamentoAvulsoControl.pagamento.condicoesPagamento.formapagamento.ehcartao}"
+										 rendered="#{pagamentoAvulsoControl.pagamento.condicoesPagamento.formapagamento.ehcartao}">
+								<p:ajax event="blur" process="@this" />		 
+							</p:inputText>
+							
+							<p:outputLabel value="Banco: " for="banco" rendered="#{pagamentoAvulsoControl.pagamento.condicoesPagamento.formapagamento.id == 4}" />
+							<p:selectOneMenu id="banco" value="#{pagamentoAvulsoControl.pagamento.banco.id}" required="true" rendered="#{pagamentoAvulsoControl.pagamento.condicoesPagamento.formapagamento.id == 4}">
+								<f:selectItem itemLabel="Selecione Banco" itemValue=""/>
+								<f:selectItems value="#{bancoControl.listaBancoCombo('')}"/>
+								<p:ajax event="change" process="@this" update="condicoespagamento,gravarformapagamento"/>
+							</p:selectOneMenu>
+							
+							<p:outputLabel for="valorcondicoespagamento" value="Valor: "/>																											
+							<p:inputText value="#{pagamentoAvulsoControl.pagamento.valor}" id="valorcondicoespagamento">															
+								<f:validateBean />
+								<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
+								<p:ajax event="blur" process="@this" update="valorcondicoespagamento,gravarformapagamento"/>
+							</p:inputText>
+							
+							<p:commandButton id="gravarformapagamento" value="Adicionar Forma Pagamento" update="tabelapagamento_vis,updSelecaoCondicao,:form:msgs" process="@this"
+											actionListener="#{pagamentoAvulsoControl.gravaFormaPagamentoOc()}" disabled="#{pagamentoAvulsoControl.pagamento.condicoesPagamento.id == null or pagamentoAvulsoControl.pagamento.valor == 0}" />
+											
+							<p:commandButton value="Gravar" action="#{pagamentoAvulsoControl.gravar()}" update="@form"/>				
+						</h:panelGrid>						
+					</p:outputPanel>
+				</p:panel>				
+			</h:form>
+		</ui:define>
+		<ui:define name="rodape">
+			<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela para lançamento de pagamentos avulsos." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="pagamentoavulso.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
+		</ui:define>
+	</ui:composition>
+</html>

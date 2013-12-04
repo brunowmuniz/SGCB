@@ -62,7 +62,8 @@
 							<h:outputText value="#{oc.usuario.nome}" />
 				        </p:column>
 				        
-				         <p:column headerText="Filial" width="60" filterBy="#{oc.filial.id}" filterOptions="#{filialControl.listaFilialComboFilter}" filterMatchMode="exact" filterStyleClass="filterUsuari">
+				         <p:column headerText="Filial" width="60" filterBy="#{oc.filial.id}" filterOptions="#{filialControl.listaFilialComboFilter}" filterMatchMode="exact" filterStyleClass="filterUsuario"
+				         		   rendered="false">
 				            <h:outputText value="#{oc.filial.nome}"/>				            	
 				        </p:column>
 				        	

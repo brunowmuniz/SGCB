@@ -23,6 +23,7 @@ import com.sun.org.apache.bcel.internal.generic.SALOAD;
 import br.com.casabemestilo.DAO.FormaPagamentoDAO;
 import br.com.casabemestilo.DAO.LancamentoDAO;
 import br.com.casabemestilo.DAO.OcDAO;
+import br.com.casabemestilo.DAO.PagamentoAvulsoDAO;
 import br.com.casabemestilo.DAO.PagamentoDAO;
 import br.com.casabemestilo.model.CondicoesPagamento;
 import br.com.casabemestilo.model.Formapagamento;
@@ -30,6 +31,7 @@ import br.com.casabemestilo.model.Lancamento;
 import br.com.casabemestilo.model.Movimentacao;
 import br.com.casabemestilo.model.Oc;
 import br.com.casabemestilo.model.Pagamento;
+import br.com.casabemestilo.model.PagamentoAvulso;
 import br.com.casabemestilo.model.TipoMovimentacao;
 
 @ManagedBean
@@ -67,8 +69,11 @@ public class MovimentacaoControl extends Control implements Serializable {
 	public List<Movimentacao> listaCaixa(){
 		OcDAO ocDAO = new OcDAO();
 		LancamentoDAO lancamentoDAO = new LancamentoDAO();
+		PagamentoAvulsoDAO pagamentoAvulsoDAO = new PagamentoAvulsoDAO();
 		List<Object> ocsPagamento = new ArrayList<Object>();
 		List<Oc> ocs = new ArrayList<Oc>();
+		List<PagamentoAvulso> pagamentosAvulsos = new ArrayList<PagamentoAvulso>();
+		List<Object> listaPagamentosAvulsos = new ArrayList<Object>();
 		List<Lancamento> lancamentos = new ArrayList<Lancamento>();
 		List<Formapagamento> formapagamentos = new ArrayList<Formapagamento>();
 		movimentacoes = new ArrayList<Movimentacao>();
@@ -77,8 +82,20 @@ public class MovimentacaoControl extends Control implements Serializable {
 			formapagamentos = new FormaPagamentoDAO().listaAtivos();
 			ocsPagamento = ocDAO.buscaOcDia(dataLancamento);
 			lancamentos = lancamentoDAO.lancamentoDia(dataLancamento);
+			listaPagamentosAvulsos = pagamentoAvulsoDAO.buscaPagamentosAvulsosDia(dataLancamento);
 			List<Pagamento> listaSaldoAnteriorPagamentos = new PagamentoDAO().calculaSaldoAnterior(dataLancamento);
 			List<Lancamento> listaSaldoAnteriorLancamentos = lancamentoDAO.calculaSaldoAnterior(dataLancamento);
+			List<Pagamento> listaSaldoAnteriorPagamentosAvulsos = new PagamentoDAO().calculaSaldoAnteriorAvulso(dataLancamento);
+			
+			//listaSaldoAnteriorPagamentos.addAll(listaSaldoAnteriorPagamentosAvulsos);
+			
+			for(Pagamento pagamento : listaSaldoAnteriorPagamentos){
+				for(Pagamento pagamentoAvulso : listaSaldoAnteriorPagamentosAvulsos){
+					if(pagamento.getCondicoesPagamento().getFormapagamento().getId() == pagamentoAvulso.getCondicoesPagamento().getFormapagamento().getId()){
+						pagamento.setValor(pagamento.getValor() + pagamentoAvulso.getValor());
+					}
+				}
+			}
 			
 			movimentacao = new Movimentacao();
 			movimentacao.setPagamentos(new ArrayList<Pagamento>());
@@ -151,6 +168,45 @@ public class MovimentacaoControl extends Control implements Serializable {
 				movimentacoes.add(movimentacao);
 			}
 			
+			
+			Iterator<Object> iterPagamentosAvulsos = listaPagamentosAvulsos.iterator();			
+			
+			while(iterPagamentosAvulsos.hasNext()){
+				Object[] pagamentosAvulso = (Object[]) iterPagamentosAvulsos.next();
+				PagamentoAvulso pagamentoAvulso = (PagamentoAvulso) pagamentosAvulso[0];
+				Pagamento pagamento = (Pagamento) pagamentosAvulso[1];
+				Boolean adicionarPagamentoAvulso = true;
+				
+				if(pagamentosAvulsos.size() == 0){
+					pagamentoAvulso.setPagamentos(new ArrayList<Pagamento>());
+					pagamentoAvulso.getPagamentos().add(pagamento);
+					pagamentosAvulsos.add(pagamentoAvulso);
+				}else{
+					for(PagamentoAvulso avulso : pagamentosAvulsos){
+						if(avulso.getId() == pagamento.getPagamentoAvulso().getId()){
+							pagamentoAvulso.getPagamentos().add(pagamento);
+							adicionarPagamentoAvulso = false;
+						}
+					}
+					
+					if(adicionarPagamentoAvulso){
+						pagamentoAvulso.setPagamentos(new ArrayList<Pagamento>());
+						pagamentoAvulso.getPagamentos().add(pagamento);
+						pagamentosAvulsos.add(pagamentoAvulso);
+					}
+				}				
+			}
+			
+			for(PagamentoAvulso pagamentoAvulso : pagamentosAvulsos){
+				movimentacao = new Movimentacao();
+				formapagamentos = new ArrayList<Formapagamento>();
+				movimentacao.setDescricao(pagamentoAvulso.getDescricao());				
+				movimentacao.setPagamentos(pagamentoAvulso.getPagamentos());				
+				movimentacao.setLancamento(null);
+				movimentacao.setTipoMovimentacao(TipoMovimentacao.ENTRADA);
+				movimentacoes.add(movimentacao);
+			}
+			
 			for(Lancamento lancamento : lancamentos){
 				movimentacao = new Movimentacao();
 				movimentacao.setDescricao(lancamento.getDescricao());
@@ -158,7 +214,7 @@ public class MovimentacaoControl extends Control implements Serializable {
 				movimentacao.setLancamento(lancamento);
 				movimentacao.setTipoMovimentacao(lancamento.getContacontabil().getTipo() == "D" ? TipoMovimentacao.SAIDA : TipoMovimentacao.ENTRADA);
 				movimentacoes.add(movimentacao);
-			}		
+			}
 			
 		} catch (ConstraintViolationException e) {
 			super.mensagem = e.getMessage();
@@ -194,11 +250,10 @@ public class MovimentacaoControl extends Control implements Serializable {
 			for(Movimentacao movimentacao : movimentacoes){
 				if(movimentacao.getPagamentos() != null){
 					for(Pagamento pagamento : movimentacao.getPagamentos()){
-						if(pagamento.getCondicoesPagamento().getFormapagamento().getId() == idFormaPgto){
-							totalFormaPgto += pagamento.getValor();
+						if(pagamento.getCondicoesPagamento().getFormapagamento().getId() == idFormaPgto){							
+									totalFormaPgto += pagamento.getValor();
 						}
-					}
-					
+					}					
 				}else{
 					if(movimentacao.getLancamento().getFormapagamento().getId() == idFormaPgto){
 						totalFormaPgto += movimentacao.getLancamento().getValor();
@@ -206,6 +261,7 @@ public class MovimentacaoControl extends Control implements Serializable {
 				}
 			}
 		} catch (NullPointerException e) {
+			e.printStackTrace();
 			super.mensagem = e.getMessage();
 			logger.error("[totalMomentoFormaPagamento] Erro NullPointer: " + super.mensagem + "-" + "calculo total momento não realizado!");
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Null: " + super.mensagem, ""));

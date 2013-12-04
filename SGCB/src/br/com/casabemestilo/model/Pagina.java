@@ -21,6 +21,8 @@ public class Pagina implements Serializable{
 
 	private Integer id;
 	
+	private String nome;
+	
 	private String descricao;
 	
 	private String nomePagina;
@@ -97,7 +99,14 @@ public class Pagina implements Serializable{
 		this.deleted = deleted;
 	}
 
-	
+	@Column(name="nome", nullable = false)
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
 
 	@Override
 	public boolean equals (Object obj) {

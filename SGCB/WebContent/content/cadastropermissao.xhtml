@@ -12,7 +12,7 @@
 					<p:messages id="msgs"/>
 					<h:panelGrid columns="3" id="cadastro">
 						<p:outputLabel value="Nome: "/>
-						<p:autoComplete id="buscarcliente" value="#{permissaoControl.permissao.usuario}" minQueryLength="3"
+						<p:autoComplete id="buscarusuario" value="#{permissaoControl.permissao.usuario}" minQueryLength="3"
 											completeMethod="#{usuarioControl.listaComplete}"											 
 											forceSelection="true" converter="converter.UsuarioConverter"
 											var="usuario" itemValue="#{usuario}" itemLabel="#{usuario.nome}"
@@ -22,7 +22,7 @@
 						<p:commandButton value="Limpar" actionListener="#{permissaoControl.limparUsuario}" update="principal" id="limparusuario" rendered="#{permissaoControl.permissao.usuario.id != null}" process="@this" />
 					</h:panelGrid>
 					<p:pickList id="permissao" value="#{permissaoControl.listaPaginasPermissao}" var="pagina" converter="converter.PaginaConverter"
-							itemValue="#{pagina}" itemLabel="#{pagina.nomePagina}" showSourceFilter="true" showTargetFilter="true">							
+							itemValue="#{pagina}" itemLabel="#{pagina.nome}" showSourceFilter="true" showTargetFilter="true">							
 						<f:facet name="sourceCaption">Disponíveis</f:facet>
 						<f:facet name="targetCaption">Permissões</f:facet>						
 					</p:pickList>

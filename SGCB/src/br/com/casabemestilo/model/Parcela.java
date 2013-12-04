@@ -35,7 +35,10 @@ public class Parcela implements java.io.Serializable {
 	private Integer numeroParcela;
 	private String situacaoCheque;
 	private String numeroCheque;
+	private String statusCartao;
 	private Boolean deleted;
+	private Banco bancoDepositoCheque;
+	private Date dataAntecipacao;
 
 	public Parcela() {
 	}
@@ -125,4 +128,34 @@ public class Parcela implements java.io.Serializable {
 		this.deleted = deleted;
 	}
 
+	@Column(name = "statuscartao", nullable = true)
+	public String getStatusCartao() {
+		return statusCartao;
+	}
+
+	public void setStatusCartao(String statusCartao) {
+		this.statusCartao = statusCartao;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "bancodepositocheque")
+	public Banco getBancoDepositoCheque() {
+		return bancoDepositoCheque;
+	}
+
+	public void setBancoDepositoCheque(Banco bancoDepositoCheque) {
+		this.bancoDepositoCheque = bancoDepositoCheque;
+	}
+
+	@Column(name="dataantecipacao", nullable = true)
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getDataAntecipacao() {
+		return dataAntecipacao;
+	}
+
+	public void setDataAntecipacao(Date dataAntecipacao) {
+		this.dataAntecipacao = dataAntecipacao;
+	}
+	
+	
 }
