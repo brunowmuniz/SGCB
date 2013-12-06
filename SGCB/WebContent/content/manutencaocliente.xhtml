@@ -20,7 +20,7 @@
                 		selection="#{clienteControl.cliente}" selectionMode="single"  paginator="true" rows="10"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
                  rowsPerPageTemplate="10,25,50" lazy="true">        
                        		  		
-				        <p:column headerText="Nome">
+				        <p:column headerText="Nome" filterBy="#{cliente.nome}" filterMatchMode="startsWith" filterStyle="width: 70%;">
 				            <h:outputText value="#{cliente.nome}" />
 				        </p:column>
 				

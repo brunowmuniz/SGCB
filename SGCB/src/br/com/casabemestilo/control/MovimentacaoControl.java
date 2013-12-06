@@ -87,15 +87,19 @@ public class MovimentacaoControl extends Control implements Serializable {
 			List<Lancamento> listaSaldoAnteriorLancamentos = lancamentoDAO.calculaSaldoAnterior(dataLancamento);
 			List<Pagamento> listaSaldoAnteriorPagamentosAvulsos = new PagamentoDAO().calculaSaldoAnteriorAvulso(dataLancamento);
 			
-			//listaSaldoAnteriorPagamentos.addAll(listaSaldoAnteriorPagamentosAvulsos);
 			
-			for(Pagamento pagamento : listaSaldoAnteriorPagamentos){
-				for(Pagamento pagamentoAvulso : listaSaldoAnteriorPagamentosAvulsos){
-					if(pagamento.getCondicoesPagamento().getFormapagamento().getId() == pagamentoAvulso.getCondicoesPagamento().getFormapagamento().getId()){
-						pagamento.setValor(pagamento.getValor() + pagamentoAvulso.getValor());
+			if(listaSaldoAnteriorPagamentos.size() == 0){
+				listaSaldoAnteriorPagamentos = listaSaldoAnteriorPagamentosAvulsos;
+			}else{
+				for(Pagamento pagamento : listaSaldoAnteriorPagamentos){
+					for(Pagamento pagamentoAvulso : listaSaldoAnteriorPagamentosAvulsos){
+						if(pagamento.getCondicoesPagamento().getFormapagamento().getId() == pagamentoAvulso.getCondicoesPagamento().getFormapagamento().getId()){
+							pagamento.setValor(pagamento.getValor() + pagamentoAvulso.getValor());
+						}
 					}
 				}
 			}
+			
 			
 			movimentacao = new Movimentacao();
 			movimentacao.setPagamentos(new ArrayList<Pagamento>());

@@ -171,6 +171,29 @@ public class UsuarioControl extends Control implements InterfaceControl,
 		}
     }
     
+    public void alterarSenha(){
+    	Encrypt encrypt = new Encrypt();
+    	try {
+    		usuarioDAO = new UsuarioDAO();
+    		FacesContext facesContext = FacesContext.getCurrentInstance();
+    		HttpSession session = (HttpSession) facesContext.getExternalContext().getSession(true);
+            Usuario user = (Usuario) session.getAttribute("UsuarioLogado");
+            user.setSenha(new Encrypt().md5(usuario.getSenha()));
+            usuarioDAO.update(user);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Senha Alterada!"));
+		} catch (NoSuchAlgorithmException e) {			
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Senha não reiniciada. Erro de Algorítimo: " + e.getMessage(), ""));
+		} catch (UnsupportedEncodingException e) {			
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Senha não reiniciada. Erro de Encoding: " + e.getMessage(), ""));
+		} catch (ConstraintViolationException e) {			
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Senha não reiniciada. Erro de Constraint: " + e.getMessage(), ""));
+		} catch (HibernateException e) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Senha não reiniciada. Erro Hibernate: " + e.getMessage(), ""));
+		} catch (Exception e) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Senha não reiniciada. Erro Genérico: " + e.getMessage(), ""));
+		}
+    }
+    
 	@Override
 	public void gravar() {
 		usuarioDAO = new UsuarioDAO();
@@ -549,6 +572,14 @@ public class UsuarioControl extends Control implements InterfaceControl,
 
 	public void setListaPermissoesUsuario(List listaPermissoesUsuario) {
 		this.listaPermissoesUsuario = listaPermissoesUsuario;
+	}
+
+	public String getNovaSenha() {
+		return novaSenha;
+	}
+
+	public void setNovaSenha(String novaSenha) {
+		this.novaSenha = novaSenha;
 	}
 	
 	

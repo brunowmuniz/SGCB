@@ -16,19 +16,37 @@
 	 <ui:insert name="cabecalho">
 	 
       <p:panel header="SGCB - Sistema de Gestão Casabem Estilo">
-      	<h:panelGrid columns="2" width="100%">      		      			
-      		<h:form id="formcabecalho">
+      	<h:panelGrid columns="3" width="100%">      			
       			<h:panelGrid width="50%" style="float: left; margin-left: 50px;" columns="2">
       				<h:outputText value="Olá #{sessionScope.UsuarioLogado.nome}!" styleClass="negrito nome"/>
-      				<p:commandLink value="Sair" action="#{usuarioControl.sairAplicacao}" ajax="false" styleClass="sair nome"/>
+      				<h:form>
+      					<p:commandLink value="Sair" action="#{usuarioControl.sairAplicacao}" ajax="false" styleClass="sair nome" />
+      				</h:form>
       				<h:outputText value="Perfil: #{sessionScope.UsuarioLogado.perfil.descricao}" styleClass="negrito nome"/>      				
+      				<h:form id="formcabecalho">
+      					<p:growl id="msgTemplate"/>
+						<p:commandLink value="Alterar Senha" onclick="modalAlteracaoSenha.show()" styleClass="sair nome"/>
+						<p:dialog widgetVar="modalAlteracaoSenha" id="modalAlteracaoSenha" resizable="false" header="Alterar Senha">		      							
+							<h:panelGrid columns="2">
+								<p:outputLabel for="senha" value="Senha: "/>
+								<p:password id="senha" value="#{usuarioControl.usuario.senha}">
+									<p:ajax event="blur" process="@this" update="alterarsenha"/>
+								</p:password>					
+								<p:outputLabel for="repitasenha" value="Repita a Senha: "/>
+								<p:password id="repitasenha" value="#{usuarioControl.novaSenha}">
+									<p:ajax event="blur" process="@this" update="alterarsenha"/>
+								</p:password>
+								<p:commandButton actionListener="#{usuarioControl.alterarSenha}" oncomplete="modalAlteracaoSenha.hide()" 
+												id="alterarsenha" value="Alterar Senha" update="formcabecalho"
+												disabled="#{!usuarioControl.usuario.senha.equals(usuarioControl.novaSenha)}"/>
+							</h:panelGrid>
+						</p:dialog>
+					</h:form>			      				
       			</h:panelGrid>
-			</h:form>
       		<h:panelGrid width="50%" style="float:right;">
       			<p:graphicImage url="../imagens/logo_site.png" id="logo_cabecalho" style="float:left;"/>
       		</h:panelGrid>
       	</h:panelGrid>
-      	      	
       </p:panel>
       <p:menubar>
       	<p:submenu label="Vendas">
