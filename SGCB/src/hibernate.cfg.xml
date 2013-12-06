@@ -54,6 +54,5 @@
   <mapping class="br.com.casabemestilo.model.Permissao"/>
   <mapping class="br.com.casabemestilo.model.Pagina"/>
   <mapping class="br.com.casabemestilo.model.PagamentoAvulso"/>
-  
  </session-factory>
 </hibernate-configuration>

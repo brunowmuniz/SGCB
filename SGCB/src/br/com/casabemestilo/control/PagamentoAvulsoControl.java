@@ -86,9 +86,15 @@ public class PagamentoAvulsoControl extends Control implements InterfaceControl,
 	public void gravar() {
 		pagamentoAvulsoDAO = new PagamentoAvulsoDAO();
 		try {
-			pagamentoAvulsoDAO.insert(pagamentoAvulso);
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Pagamento Avulso Lançado!"));
-			pagamentoAvulso = new PagamentoAvulso();
+			if(pagamentoAvulso.getPagamentos() == null){
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Favor adicionar algum pagamento!", ""));
+			}else if(pagamentoAvulso.getPagamentos().size() == 0){
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Favor adicionar algum pagamento!", ""));
+			}else{
+				pagamentoAvulsoDAO.insert(pagamentoAvulso);
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Pagamento Avulso Lançado!"));
+				pagamentoAvulso = new PagamentoAvulso();
+			}			
 		} catch (ConstraintViolationException e) {			
 			super.mensagem = e.getMessage();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));

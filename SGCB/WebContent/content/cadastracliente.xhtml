@@ -7,43 +7,71 @@
 
 	<ui:composition template="../template/template.xhtml">
 		<ui:define name="conteudo">
-			<h:form>
+			<h:form >
 				<p:panel header="Cadastro de Cliente">
-			     	<p:messages id="msgs"/>			     	
-					<h:panelGrid columns="2" id="cadastro">
-						<p:outputLabel for="nome" value="Nome: "/>
-						<p:inputText value="#{clienteControl.cliente.nome}" id="nome" size="60" required="true">
-							<f:validateBean/>
-						</p:inputText>
-						<p:outputLabel for="endereco" value="Endereço: "/>
-						<p:inputText value="#{clienteControl.cliente.endereco}" id="endereco" size="60" required="true">
-							<f:validateBean/>
-						</p:inputText>
-						<p:outputLabel for="cidade" value="Cidade: "/>
-						<p:inputText value="#{clienteControl.cliente.cidade}" id="cidade" size="30" required="true">
-							<f:validateBean/>
-						</p:inputText>
-						<p:outputLabel for="telefone" value="Telefone: "/>
-						<p:inputMask value="#{clienteControl.cliente.telefone}" id="telefone" size="20" mask="(99) 9999-9999" required="true">
-							<f:validateBean/>
-						</p:inputMask>
-						<p:outputLabel for="telefoneadic" value="Telefone contato: "/>
-						<p:inputMask value="#{clienteControl.cliente.telefoneadicional}" id="telefoneadic" size="20" mask="(99) 9999-9999">
-						</p:inputMask>
-						<p:outputLabel for="cpf" value="CPF: "/>
-						<p:inputMask value="#{clienteControl.cliente.cpf}" id="cpf" size="20" mask="999.999.999-99" required="true">
-						</p:inputMask>
-						<p:outputLabel for="rg" value="RG: "/>
-						<p:inputText value="#{clienteControl.cliente.rg}" id="rg" size="20" required="true">
-						</p:inputText>
-						<p:outputLabel for="datanascimento" value="Data de Nascimento: "/>
-						<p:inputMask value="#{clienteControl.cliente.datadenascimento}" id="datanascimento" size="20" mask="99/99/9999" required="true">
-							<f:convertDateTime pattern="dd/MM/yyyy"/>
-						</p:inputMask>						
-						<p:commandButton rendered="#{clienteControl.cliente.id != null}" actionListener="#{clienteControl.alterar}" value="Alterar" icon="ui-icon-arrowrefresh-1-e" update="msgs,cadastro" id="gravar"/>
-						<p:commandButton rendered="#{clienteControl.cliente.id == null}" actionListener="#{clienteControl.gravar}" value="Gravar" icon="ui-icon-disk" update="msgs,cadastro" id="alterar"/>
-						<p:commandButton rendered="#{clienteControl.cliente.id != null}" action="#{clienteControl.sairAlteracao}" value="Sair" icon="ui-icon-close" id="sair" ajax="false"/>
-					</h:panelGrid>
+			     	<p:messages id="msgs"/>
+			     	<h:panelGrid columns="3" styleClass="vTop">
+			     		<h:panelGrid columns="2" id="cadastro">
+							<p:outputLabel for="nome" value="Nome: "/>
+							<p:inputText value="#{clienteControl.cliente.nome}" id="nome" size="60" required="true">
+								<f:validateBean/>
+							</p:inputText>
+							<p:outputLabel for="endereco" value="Endereço: "/>
+							<p:inputText value="#{clienteControl.cliente.endereco}" id="endereco" size="60" required="true">
+								<f:validateBean/>
+							</p:inputText>
+							<p:outputLabel for="cidade" value="Cidade: "/>
+							<p:inputText value="#{clienteControl.cliente.cidade}" id="cidade" size="30" required="true">
+								<f:validateBean/>
+							</p:inputText>
+							<p:outputLabel for="telefone" value="Telefone: "/>
+							<p:inputMask value="#{clienteControl.cliente.telefone}" id="telefone" size="20" mask="(99) 9999-9999" required="true">
+								<f:validateBean/>
+							</p:inputMask>
+							<p:outputLabel for="telefoneadic" value="Telefone contato: "/>
+							<p:inputMask value="#{clienteControl.cliente.telefoneadicional}" id="telefoneadic" size="20" mask="(99) 9999-9999">
+							</p:inputMask>
+						</h:panelGrid>
+						<p:spacer width="10px"/>
+						<p:outputPanel autoUpdate="true">
+							<h:panelGrid columns="2" id="documentos" styleClass="vTop">
+								<p:outputLabel for="tipopessoa" value="Tipo Pessoa: "/>
+								<p:selectOneMenu value="#{clienteControl.cliente.tipoPessoa}" size="1" id="tipopessoa">
+									<f:selectItem itemValue="pf" itemLabel="Pessoa Física"/>
+									<f:selectItem itemValue="pj" itemLabel="Pessoa Jurídica"/>							
+									<p:ajax event="change" process="@this"/>
+								</p:selectOneMenu>
+								
+								<p:outputLabel id="lblcnpj" for="cnpj" value="CNPJ: " rendered="#{clienteControl.cliente.tipoPessoa.equals('pj')}"/>								
+								<p:inputMask value="#{clienteControl.cliente.cnpj}" id="cnpj" size="20" mask="99.999.999/9999-99" 
+												rendered="#{clienteControl.cliente.tipoPessoa.equals('pj')}"
+												required="#{clienteControl.cliente.tipoPessoa.equals('pj')}">
+								</p:inputMask>
+								
+								<p:outputLabel id="lblcpf" for="cpf" value="CPF: " rendered="#{clienteControl.cliente.tipoPessoa.equals('pf')}"/>								
+								<p:inputMask value="#{clienteControl.cliente.cpf}" id="cpf" size="20" mask="999.999.999-99" 
+												rendered="#{clienteControl.cliente.tipoPessoa.equals('pf')}" 
+												required="#{clienteControl.cliente.tipoPessoa.equals('pf')}">
+								</p:inputMask>
+											
+								<p:outputLabel for="rg" value="RG: " rendered="#{clienteControl.cliente.tipoPessoa.equals('pf')}"/>
+								<p:inputText value="#{clienteControl.cliente.rg}" id="rg" size="20" 
+											 rendered="#{clienteControl.cliente.tipoPessoa.equals('pf')}">
+								</p:inputText>
+								<p:outputLabel for="datanascimento" value="Data de Nascimento: " rendered="#{clienteControl.cliente.tipoPessoa.equals('pf')}"/>
+								<p:inputMask value="#{clienteControl.cliente.datadenascimento}" id="datanascimento" size="20" mask="99/99/9999"
+											 rendered="#{clienteControl.cliente.tipoPessoa.equals('pf')}" required="#{clienteControl.cliente.tipoPessoa.equals('pf')}">
+									<f:convertDateTime pattern="dd/MM/yyyy"/>
+								</p:inputMask>
+							</h:panelGrid>
+						</p:outputPanel>
+						<h:panelGrid columns="2">
+							<p:commandButton rendered="#{clienteControl.cliente.id != null}" actionListener="#{clienteControl.alterar}" value="Alterar" icon="ui-icon-arrowrefresh-1-e" update="msgs,cadastro" id="gravar"/>
+							<p:commandButton rendered="#{clienteControl.cliente.id == null}" actionListener="#{clienteControl.gravar}" value="Gravar" icon="ui-icon-disk" update="msgs,cadastro" id="alterar"/>
+							<p:commandButton rendered="#{clienteControl.cliente.id != null}" action="#{clienteControl.sairAlteracao}" value="Sair" icon="ui-icon-close" id="sair" ajax="false"/>
+						</h:panelGrid>						
+												
+			     	</h:panelGrid>	  
 			     </p:panel>
 			</h:form>
 		</ui:define>

@@ -3,6 +3,7 @@ package br.com.casabemestilo.DAO;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -125,13 +126,19 @@ public class ClienteDAO implements Serializable,InterfaceDAO{
 		return listaClientes;
 	}
 	
-	public List<Cliente> listaLazy(int first, int pageSize) {
+	public List<Cliente> listaLazy(int first, int pageSize, Map<String, String> filters) {
 		session = Conexao.getInstance();
 		listaClientes = new ArrayList<Cliente>();
-		listaClientes = session.createQuery("from Cliente cliente" +
-												" where" +
-													" cliente.deleted = false" +
-												" order by cliente.nome")
+		String hql = "from Cliente cliente" +
+							" where" +
+								" cliente.deleted = false";
+		
+		if(filters.containsKey("nome")){
+			hql += " and cliente.nome like '%" + filters.get("nome") + "%'";
+		}
+		
+		hql +=" order by cliente.nome";		
+		listaClientes = session.createQuery(hql)
 								.setFirstResult(first)
 								.setMaxResults(pageSize)
 								.setCacheable(true)
@@ -141,15 +148,32 @@ public class ClienteDAO implements Serializable,InterfaceDAO{
 		return listaClientes;
 	}
 
-	public int totalUsuario() {
+	public int totalUsuario(Map<String, String> filters) {
 		session = Conexao.getInstance();
 		Long linhas = new Long("0");
-		linhas = (Long) session.createQuery("select count(cliente.id) from Cliente cliente" +
-												" where cliente.deleted = false")
+		String hql ="select count(cliente.id) from Cliente cliente" +
+						" where cliente.deleted = false";
+		
+		if(filters.containsKey("nome")){
+			hql += " and cliente.nome like '%" + filters.get("nome") + "%'";
+		}
+		
+		linhas = (Long) session.createQuery(hql)
 							   .setCacheable(true)
 							   .uniqueResult();
+		
 		session.close();
 		return linhas.intValue();
+	}
+	
+	public void insertCliente(List<Cliente> listaCliente) {
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		for(Cliente clientes : listaCliente){
+			System.out.println(clientes);
+			session.save(clientes);			
+		}
+		session.getTransaction().commit();		
 	}
 	
 	/*
@@ -170,6 +194,8 @@ public class ClienteDAO implements Serializable,InterfaceDAO{
 	public void setListaClientes(List<Cliente> listaClientes) {
 		this.listaClientes = listaClientes;
 	}
+
+	
 
 	
 }

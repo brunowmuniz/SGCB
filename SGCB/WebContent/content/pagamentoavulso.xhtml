@@ -36,7 +36,8 @@
 					</h:panelGrid>
 					<h:panelGrid columns="3" id="cadastro">
 						<p:outputLabel for="descricao" value="Descrição: "/>
-						<p:inputText value="#{pagamentoAvulsoControl.pagamentoAvulso.descricao}" size="50" id="descricao"/>
+						<p:inputText value="#{pagamentoAvulsoControl.pagamentoAvulso.descricao}" size="50" id="descricao" required="true"
+									 requiredMessage="Favor informar uma descrição para o pagamento avulso!"/>
 						<p:spacer width="1"/>						
 						
 						<p:outputLabel for="buscarcliente" value="Cliente: "/>						
@@ -86,7 +87,7 @@
 							<p:outputLabel for="valorcondicoespagamento" value="Valor: "/>																											
 							<p:inputText value="#{pagamentoAvulsoControl.pagamento.valor}" id="valorcondicoespagamento">															
 								<f:validateBean />
-								<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
+								<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2" locale="pt_BR" type="number"/>
 								<p:ajax event="blur" process="@this" update="valorcondicoespagamento,gravarformapagamento"/>
 							</p:inputText>
 							

@@ -1,11 +1,17 @@
 package br.com.casabemestilo.control;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -30,6 +36,7 @@ import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Assistenciatecnica;
 import br.com.casabemestilo.model.Cliente;
 import br.com.casabemestilo.model.Oc;
+import br.com.casabemestilo.model.TipoMovimentacao;
 import br.com.casabemestilo.model.Usuario;
 
 @ViewScoped
@@ -89,7 +96,8 @@ public class ClienteControl extends Control implements Serializable,InterfaceCon
 	public void gravar() {
 		try{
     		clienteDAO = new ClienteDAO();
-        	cliente.setDeleted(false);        	
+        	cliente.setDeleted(false);
+        	defineCamposTipoPessoa();
         	clienteDAO.insert(cliente);
         	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Cliente:" + cliente.getNome() + " foi gravado!"));
         	logger.info("Salvo cliente: " + cliente.getNome());
@@ -134,7 +142,8 @@ public class ClienteControl extends Control implements Serializable,InterfaceCon
 	@Override
 	public void alterar() {
 		try{
-    		clienteDAO = new ClienteDAO();    		
+    		clienteDAO = new ClienteDAO();
+    		defineCamposTipoPessoa();
     		clienteDAO.update(cliente);
         	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Cliente:" + cliente.getNome() + " alterado!"));
         	cliente = new Cliente();
@@ -280,10 +289,10 @@ public class ClienteControl extends Control implements Serializable,InterfaceCon
 								    public List<Cliente> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,String> filters) {
 								    	clienteDAO = new ClienteDAO();  
 								    	
-								    	listaLazy = clienteDAO.listaLazy(first, pageSize);
+								    	listaLazy = clienteDAO.listaLazy(first, pageSize, filters);
 								    	
 								    	if (getRowCount() <= 0) {  
-								            setRowCount(clienteDAO.totalUsuario());  
+								            setRowCount(clienteDAO.totalUsuario(filters));  
 								        } 			       
 								        setPageSize(pageSize);  
 								        return listaLazy;  
@@ -314,6 +323,60 @@ public class ClienteControl extends Control implements Serializable,InterfaceCon
 	public String detalharOcCliente(){
 		ELFlash.getFlash().put("oc", getOc());
 		return "cadastraoc?faces-redirect=true";
+	}
+	
+	public void carregaClienteArquivo() throws ConstraintViolationException, HibernateException, Exception{
+		clienteDAO = new ClienteDAO();
+		String teste = "";
+		listaCliente = new ArrayList<Cliente>();
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(new File("e:\\casabem\\cliente.csv")));
+			String linha = null;
+			while((linha = reader.readLine()) != null){
+				String[] linhaCliente = linha.split(";");
+				cliente = new Cliente();
+				cliente.setNome(linhaCliente[1]);
+				cliente.setCpf(linhaCliente[2].replace("/","").replace("-", "").trim());
+				cliente.setEndereco("");
+				cliente.setCidade(linhaCliente[3]);
+				if(linhaCliente[4].indexOf("/") > -1){
+					cliente.setTelefone(linhaCliente[4].split("/")[0]);
+					cliente.setTelefoneadicional(linhaCliente[4].split("/")[1]);
+					teste = "1";
+				}else if (linhaCliente[4] == "") {
+					cliente.setTelefone("");
+					teste = "2";
+				}else if(linhaCliente[4] == null){
+					cliente.setTelefone("");
+					teste = "3";
+				}else{
+					cliente.setTelefone(linhaCliente[4]);
+					teste = "4";
+				}
+				cliente.setDeleted(false);
+				listaCliente.add(cliente);				
+			}
+			clienteDAO.insertCliente(listaCliente);
+			reader.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			System.out.println(cliente);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.out.println(cliente);
+		}catch(ArrayIndexOutOfBoundsException e){
+			System.out.println(cliente);
+		}
+	}
+	
+	private void defineCamposTipoPessoa(){
+		if(cliente.getTipoPessoa().equals("pj")){
+			cliente.setCpf(null);
+			cliente.setRg(null);
+			cliente.setDatadenascimento(null);
+		}else{
+			cliente.setCnpj(null);
+		}
 	}
 	
 	/*

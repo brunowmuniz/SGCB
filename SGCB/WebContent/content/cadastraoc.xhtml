@@ -95,14 +95,19 @@
 												<f:validateBean/>
 											</p:inputMask>
 											
-											<p:outputLabel value="CPF: " for="cpfclienteoc"/>
-											<p:inputMask size="30" value="#{ocControl.oc.cliente.cpf}" required="true" id="cpfclienteoc" mask="999.999.999-99" />
+											<p:outputLabel value="CPF: " for="cpfclienteoc" rendered="#{ocControl.oc.cliente.tipoPessoa.equals('pf')}"/>
+											<p:inputMask size="30" value="#{ocControl.oc.cliente.cpf}" required="true" id="cpfclienteoc" mask="999.999.999-99" 
+														 rendered="#{ocControl.oc.cliente.tipoPessoa.equals('pf')}" disabled="true"/>
 											
-											<p:outputLabel value="RG: " for="rgclienteoc"/>
-											<p:inputText size="30" value="#{ocControl.oc.cliente.rg}" required="true" id="rgclienteoc"/>
+											<p:outputLabel value="RG: " for="rgclienteoc" rendered="#{ocControl.oc.cliente.tipoPessoa.equals('pf')}"/>
+											<p:inputText size="30" value="#{ocControl.oc.cliente.rg}"  id="rgclienteoc" rendered="#{ocControl.oc.cliente.tipoPessoa.equals('pf')}"/>
+											
+											<p:outputLabel value="CNPJ: " for="cnpj" rendered="#{ocControl.oc.cliente.tipoPessoa.equals('pj')}"/>
+											<p:inputText size="30" value="#{ocControl.oc.cliente.cnpj}"  id="cnpj" rendered="#{ocControl.oc.cliente.tipoPessoa.equals('pj')}" disabled="true"
+														 mask="99.999.999/9999-99"/>
 											
 											<p:outputLabel value="Data Nascimento: " for="datanascimentoclienteoc"/>
-											<p:inputMask size="30" value="#{ocControl.oc.cliente.datadenascimento}" required="true" id="datanascimentoclienteoc"
+											<p:inputMask size="30" value="#{ocControl.oc.cliente.datadenascimento}" required="#{ocControl.oc.cliente.tipoPessoa.equals('pf')}" id="datanascimentoclienteoc"
 												mask="99/99/9999">
 												<f:convertDateTime pattern="dd/MM/yyyy"/>
 											</p:inputMask>								

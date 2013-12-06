@@ -40,6 +40,8 @@ public class Cliente implements java.io.Serializable {
 	private String telefone;
 	private String telefoneadicional;
 	private String cpf;
+	private String cnpj;
+	private String tipoPessoa;
 	private String rg;
 	private Date datadenascimento;
 	private Boolean deleted;
@@ -144,7 +146,7 @@ public class Cliente implements java.io.Serializable {
 		this.cpf = cpf;
 	}
 
-	@Column(name = "rg", nullable = false)
+	@Column(name = "rg", nullable = true)
 	@Length(max=20, message="RG incorreto!")
 	public String getRg() {
 		return this.rg;
@@ -189,6 +191,28 @@ public class Cliente implements java.io.Serializable {
 
 	public void setPagamentos(List<Pagamento> pagamentos) {
 		this.pagamentos = pagamentos;
+	}
+
+	@Column(name="tipopessoa", nullable = false)
+	public String getTipoPessoa() {
+		if(tipoPessoa == null){
+			tipoPessoa = "pf";
+		}
+		return tipoPessoa;
+	}
+
+	public void setTipoPessoa(String tipoPessoa) {
+		this.tipoPessoa = tipoPessoa;
+	}
+	
+	@Column(name = "cnpj", nullable = true, length = 18)
+	@Length(max=18, message="CNPJ incorreto!")
+	public String getCnpj() {
+		return cnpj;
+	}
+
+	public void setCnpj(String cnpj) {
+		this.cnpj = cnpj;
 	}
 
 	@Override
