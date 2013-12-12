@@ -1,6 +1,12 @@
 package br.com.casabemestilo.control;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -18,6 +24,8 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
+import br.com.casabemestilo.DAO.BancoDAO;
+import br.com.casabemestilo.DAO.ClienteDAO;
 import br.com.casabemestilo.DAO.CondicoesPagamentoDAO;
 import br.com.casabemestilo.DAO.FormaPagamentoDAO;
 import br.com.casabemestilo.DAO.OcDAO;
@@ -59,6 +67,8 @@ public class PagamentoAvulsoControl extends Control implements InterfaceControl,
 	
 	private LazyDataModel<PagamentoAvulso> listarPagamentoAvulsoGeral;
 	
+	private Date dataPrimeiraParcela;
+	
 	
 	
 	public PagamentoAvulsoControl() {
@@ -94,6 +104,7 @@ public class PagamentoAvulsoControl extends Control implements InterfaceControl,
 				pagamentoAvulsoDAO.insert(pagamentoAvulso);
 				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Pagamento Avulso Lançado!"));
 				pagamentoAvulso = new PagamentoAvulso();
+				cliente = new Cliente();
 			}			
 		} catch (ConstraintViolationException e) {			
 			super.mensagem = e.getMessage();
@@ -138,8 +149,26 @@ public class PagamentoAvulsoControl extends Control implements InterfaceControl,
 
 	@Override
 	public void alterar() {
-		// TODO Auto-generated method stub
+		pagamentoAvulsoDAO = new PagamentoAvulsoDAO();		
 		
+		try {			
+			pagamentoAvulsoDAO.update(pagamentoAvulso);
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Pagamento Avulso Alterado!"));			
+		} catch (ConstraintViolationException e) {			
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));
+			logger.error("[alterar - pagamentoavulso] Erro Constraint: " + super.mensagem);
+		} catch (HibernateException e) {			
+			e.printStackTrace();
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Hibernate: " + super.mensagem, ""));
+			logger.error("[alterar - pagamentoavulso] Erro Hibernate: " + super.mensagem);
+		} catch (Exception e) {			
+			super.mensagem = e.getMessage();
+			e.printStackTrace();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Geral: " + super.mensagem, ""));
+			logger.error("[alterar - pagamentoavulso] Erro genérico: " + super.mensagem);
+		}		
 	}
 
 	@Override
@@ -185,9 +214,15 @@ public class PagamentoAvulsoControl extends Control implements InterfaceControl,
 		getPagamento().setCondicoesPagamento(condicoesPagamento);
 	}
 	
-	public void gravaFormaPagamentoOc(){
-		Calendar c = Calendar.getInstance();
-		c.setTime(new Date());
+	
+	@SuppressWarnings("static-access")
+	public void gravaFormaPagamentoOc(){				
+		Calendar calendar = Calendar.getInstance();
+		Calendar calendarParcela = Calendar.getInstance();
+		calendar.setTime(getDataPrimeiraParcela());
+		calendarParcela.setTime(getDataPrimeiraParcela());
+		int diaPrimeiraParcela = calendar.get(calendar.DAY_OF_MONTH);
+		
 		
 		if(getPagamentoAvulso().getPagamentos() == null){
 			getPagamentoAvulso().setPagamentos(new ArrayList<Pagamento>());
@@ -198,18 +233,34 @@ public class PagamentoAvulsoControl extends Control implements InterfaceControl,
 			parcela.setPagamento(pagamento);
 			parcela.setNumeroParcela(1);
 			parcela.setValor(pagamento.getValor());
-			parcela.setDataentrada(c.getTime());
+			parcela.setDataentrada(new Date());
 			parcela.setSituacaoCheque(parcela.getPagamento().getCondicoesPagamento().getFormapagamento().getId() == 4 ? "Emitido" : null);
 			parcela.setStatusCartao(parcela.getPagamento().getCondicoesPagamento().getFormapagamento().getEhcartao() ? "Pendente" : null);
 			pagamento.getParcelas().add(parcela);
 		}else{
 			for(int i = 1; i <= pagamento.getCondicoesPagamento().getParcelas(); i++){
 				Parcela parcela = new Parcela();
-				c.add(Calendar.DAY_OF_MONTH,30);
+				if(i > 1){
+					calendarParcela.add(calendarParcela.MONTH,1);			
+					calendar.add(calendar.DATE, calendarParcela.getActualMaximum(calendarParcela.DAY_OF_MONTH));
+					if(diaPrimeiraParcela >= 29){
+						if(calendar.get(calendar.DAY_OF_MONTH) < diaPrimeiraParcela && diaPrimeiraParcela >= calendarParcela.getActualMaximum(calendarParcela.DAY_OF_MONTH)){
+							calendar.set(calendar.DATE, calendar.getActualMaximum(calendar.DAY_OF_MONTH));
+						}
+							
+						if(calendar.get(calendar.DAY_OF_MONTH) <  diaPrimeiraParcela &&  diaPrimeiraParcela <= calendarParcela.getActualMaximum(calendarParcela.DAY_OF_MONTH)){
+							calendar.set(calendar.DATE,  diaPrimeiraParcela);					
+						}
+						
+						if(calendar.get(calendar.DAY_OF_MONTH) > diaPrimeiraParcela){
+							calendar.set(calendar.DATE,  diaPrimeiraParcela);					
+						}
+					}
+				}
 				parcela.setPagamento(pagamento);
 				parcela.setNumeroParcela(i);
 				parcela.setValor(pagamento.getValor() / pagamento.getCondicoesPagamento().getParcelas());
-				parcela.setDataentrada(c.getTime());
+				parcela.setDataentrada(calendar.getTime());
 				parcela.setSituacaoCheque(parcela.getPagamento().getCondicoesPagamento().getFormapagamento().getId() == 4 ? "Emitido" : null);
 				parcela.setStatusCartao(parcela.getPagamento().getCondicoesPagamento().getFormapagamento().getEhcartao() ? "Pendente" : null);
 				pagamento.getParcelas().add(parcela);
@@ -278,6 +329,165 @@ public class PagamentoAvulsoControl extends Control implements InterfaceControl,
 			totalPagamento += pagamento.getValor();
 		}
 		return totalPagamento;
+	}
+	
+	public void insereChequesPendentes(){		
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(new File("c:\\temp\\casabem\\receber-pendentes.csv")));
+			String linha = null;
+			Calendar calendar = Calendar.getInstance();
+			Calendar dataLimite = Calendar.getInstance();
+			Calendar dataLancamento = Calendar.getInstance();
+			String diaAtual = "";			
+			pagamentoAvulsos = new ArrayList<PagamentoAvulso>();			
+			Pagamento pagamento = new Pagamento();
+			Parcela parcela = new Parcela();
+			List<Pagamento> pagamentos = new ArrayList<Pagamento>();
+			Boolean existeCliente = false;
+			
+			dataLimite.set(dataLimite.YEAR, 2013);
+			dataLimite.set(dataLimite.MONTH, 11);
+			dataLimite.set(dataLimite.DATE, 05);
+			
+			while((linha = reader.readLine()) != null){
+				String[] linhaCheque = linha.split(",");	
+				calendar = Calendar.getInstance();
+				dataLancamento = Calendar.getInstance();
+				existeCliente = false;
+				dataLancamento.set(dataLancamento.YEAR, Integer.parseInt(linhaCheque[5].split("/")[2]));
+				dataLancamento.set(dataLancamento.MONTH, Integer.parseInt(linhaCheque[5].split("/")[1])-1); // Os meses no dataLancamento começam no 0
+				dataLancamento.set(dataLancamento.DATE, Integer.parseInt(linhaCheque[5].split("/")[0]));
+				
+				if(dataLancamento.compareTo(dataLimite) <= 0){
+					if(diaAtual.equals("")){
+						diaAtual =  linhaCheque[0];
+								
+						pagamentoAvulso = new PagamentoAvulso();
+						pagamento = new Pagamento(); 
+						pagamentoAvulso.setDescricao("Super Gerente");
+						pagamentoAvulso.setDataLancamento(new Date());
+						pagamentoAvulso.setDeleted(false);
+						pagamentoAvulso.setEhRenegociacao(false);
+						pagamentoAvulso.setPagamentos(new ArrayList<Pagamento>());
+						
+						pagamento = new Pagamento();
+						pagamento.setBanco(null);
+						pagamento.setCliente(new ClienteDAO().buscaObjetoId(Integer.parseInt(linhaCheque[6])));
+						pagamento.setCondicoesPagamento(new CondicoesPagamentoDAO().buscaObjetoId(52));
+						pagamento.setDatalancamento(new Date());
+						pagamento.setDeleted(false);
+						pagamento.setPagamentoAvulso(pagamentoAvulso);
+						pagamento.setParcelas(new ArrayList<Parcela>());
+						pagamento.setValor(new Float("0"));
+						pagamento.setBanco(new BancoDAO().buscaObjetoId(1));
+						
+						parcela = new Parcela();
+						parcela.setSituacaoCheque("Pendente");
+						parcela.setDeleted(false);
+						calendar.set(calendar.YEAR, Integer.parseInt(linhaCheque[0].split("/")[2]));
+						calendar.set(calendar.MONTH, Integer.parseInt(linhaCheque[0].split("/")[1])-1); // Os meses no Calendar começam no 0
+						calendar.set(calendar.DATE, Integer.parseInt(linhaCheque[0].split("/")[0]));
+						//parcela.setDataentrada(new SimpleDateFormat("yyyy-mm-dd").parse(linhaCheque[0]));
+						parcela.setDataentrada(calendar.getTime());
+						parcela.setDeleted(false);
+						parcela.setNumeroCheque(linhaCheque[4].split("/")[0]);
+						parcela.setNumeroParcela(Integer.parseInt(linhaCheque[4].split("/")[1]));
+						parcela.setPagamento(pagamento);
+						parcela.setValor(new Float(linhaCheque[12].replace(".", "") + "." + linhaCheque[13]));					
+						pagamento.getParcelas().add(parcela);
+						pagamento.setValor(new Float(linhaCheque[12].replace(".", "") + "." + linhaCheque[13]));
+						pagamentos.add(pagamento);
+					}else{
+						for(Pagamento pagamentoCliente : pagamentos){
+							try {
+								if(pagamentoCliente.getCliente().getId() == Integer.parseInt(linhaCheque[6])){
+									parcela = new Parcela();								
+									parcela.setSituacaoCheque("Pendente");
+									parcela.setDeleted(false);
+									calendar.set(calendar.YEAR, Integer.parseInt(linhaCheque[0].split("/")[2]));
+									calendar.set(calendar.MONTH, Integer.parseInt(linhaCheque[0].split("/")[1])-1); // Os meses no Calendar começam no 0
+									calendar.set(calendar.DATE, Integer.parseInt(linhaCheque[0].split("/")[0]));
+									//parcela.setDataentrada(new SimpleDateFormat("yyyy-mm-dd").parse(linhaCheque[0]));
+									parcela.setDataentrada(calendar.getTime());
+									parcela.setDeleted(false);
+									parcela.setNumeroCheque(linhaCheque[4].split("/")[0]);
+									parcela.setNumeroParcela(Integer.parseInt(linhaCheque[4].split("/")[1]));
+									parcela.setPagamento(pagamento);
+									parcela.setValor(new Float(linhaCheque[12].replace(".", "") + "." + linhaCheque[13]));								
+									pagamentoCliente.getParcelas().add(parcela);
+									pagamentoCliente.setValor(pagamentoCliente.getValor() + new Float(linhaCheque[12].replace(".", "") + "." + linhaCheque[13]));
+									existeCliente = true;
+								}
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+							
+						}
+						if(!existeCliente){
+							pagamento = new Pagamento();
+							pagamento.setBanco(null);
+							pagamento.setCliente(new ClienteDAO().buscaObjetoId(Integer.parseInt(linhaCheque[6])));
+							if(pagamento.getCliente() == null){
+								System.out.println("Erro cliente");
+							}
+							if(pagamento.getCliente().getId() == null){
+								System.out.println("Erro id");
+							}
+							pagamento.setCondicoesPagamento(new CondicoesPagamentoDAO().buscaObjetoId(52));
+							pagamento.setDatalancamento(new Date());
+							pagamento.setDeleted(false);
+							pagamento.setPagamentoAvulso(pagamentoAvulso);
+							pagamento.setParcelas(new ArrayList<Parcela>());
+							pagamento.setValor(new Float("0"));
+							pagamento.setBanco(new BancoDAO().buscaObjetoId(1));
+							
+							parcela = new Parcela();
+							parcela.setSituacaoCheque("Pendente");
+							parcela.setDeleted(false);
+							calendar.set(calendar.YEAR, Integer.parseInt(linhaCheque[0].split("/")[2]));
+							calendar.set(calendar.MONTH, Integer.parseInt(linhaCheque[0].split("/")[1])-1); // Os meses no Calendar começam no 0
+							calendar.set(calendar.DATE, Integer.parseInt(linhaCheque[0].split("/")[0]));
+							//parcela.setDataentrada(new SimpleDateFormat("yyyy-mm-dd").parse(linhaCheque[0]));
+							parcela.setDataentrada(calendar.getTime());
+							parcela.setDeleted(false);
+							parcela.setNumeroCheque(linhaCheque[4].split("/")[0]);
+							parcela.setNumeroParcela(Integer.parseInt(linhaCheque[4].split("/")[1]));
+							parcela.setPagamento(pagamento);
+							parcela.setValor(new Float(linhaCheque[12].replace(".", "") + "." + linhaCheque[13]));					
+							pagamento.getParcelas().add(parcela);
+							pagamento.setValor(new Float(linhaCheque[12].replace(".", "") + "." + linhaCheque[13]));
+							pagamentos.add(pagamento);
+						}
+					}
+				}else{
+					System.out.println("Lançamento depois: " + linhaCheque[5]);
+				}
+			}
+			
+			for(Pagamento pagamentoCliente : pagamentos){
+				pagamentoAvulso.getPagamentos().add(pagamentoCliente);
+			}
+			
+			pagamentoAvulso.getPagamentos().add(pagamento);
+			
+			pagamentoAvulsoDAO = new PagamentoAvulsoDAO();
+			pagamentoAvulsoDAO.insert(pagamentoAvulso);
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {			
+			e.printStackTrace();
+		} catch (ConstraintViolationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (HibernateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
+		
 	}
 	
 	/*
@@ -376,4 +586,16 @@ public class PagamentoAvulsoControl extends Control implements InterfaceControl,
 			LazyDataModel<PagamentoAvulso> listarPagamentoAvulsoGeral) {
 		this.listarPagamentoAvulsoGeral = listarPagamentoAvulsoGeral;
 	}
+
+	public Date getDataPrimeiraParcela() {
+		if(dataPrimeiraParcela == null){
+			dataPrimeiraParcela = new Date();
+		}
+		return dataPrimeiraParcela;
+	}
+
+	public void setDataPrimeiraParcela(Date dataPrimeiraParcela) {
+		this.dataPrimeiraParcela = dataPrimeiraParcela;
+	}
+	
 }

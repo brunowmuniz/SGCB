@@ -43,6 +43,7 @@ import com.sun.faces.context.flash.ELFlash;
 import br.com.casabemestilo.DAO.ComissaoDAO;
 import br.com.casabemestilo.DAO.ComissaoVendedorDAO;
 import br.com.casabemestilo.DAO.CondicoesPagamentoDAO;
+import br.com.casabemestilo.DAO.FilialDAO;
 import br.com.casabemestilo.DAO.FormaPagamentoDAO;
 import br.com.casabemestilo.DAO.FornecedoresDAO;
 import br.com.casabemestilo.DAO.OcDAO;
@@ -137,6 +138,24 @@ public class OcControl extends Control implements InterfaceControl,
 		if(ELFlash.getFlash().get("oc") != null){
 			oc = (Oc) ELFlash.getFlash().get("oc");			
 			ELFlash.getFlash().put("oc",null);
+		}
+		
+		if(oc.getFilial().getId() == null){
+			try {
+				oc.setFilial(new FilialDAO().buscaObjetoId(1));
+			} catch (ConstraintViolationException e) {
+				e.printStackTrace();
+				super.mensagem = e.getMessage();
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem,""));
+			} catch (HibernateException e) {
+				e.printStackTrace();
+				super.mensagem = e.getMessage();
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Hibernate: " + super.mensagem,""));
+			} catch (Exception e) {
+				e.printStackTrace();
+				super.mensagem = e.getMessage();
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Genérico: " + super.mensagem,""));
+			}
 		}
 	}
 	    

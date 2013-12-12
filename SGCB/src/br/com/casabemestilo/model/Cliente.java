@@ -45,6 +45,9 @@ public class Cliente implements java.io.Serializable {
 	private String rg;
 	private Date datadenascimento;
 	private Boolean deleted;
+	private String ie;
+	private String bairro;
+	private String cep;
 	private List<Oc> ocs = new ArrayList<Oc>();
 	private List<Pagamento> pagamentos = new ArrayList<Pagamento>();
 
@@ -213,6 +216,33 @@ public class Cliente implements java.io.Serializable {
 
 	public void setCnpj(String cnpj) {
 		this.cnpj = cnpj;
+	}	
+	
+	@Column(name="ie", nullable = true)
+	public String getIe() {
+		return ie;
+	}
+
+	public void setIe(String ie) {
+		this.ie = ie;
+	}
+
+	@Column(name="bairro", nullable = true)
+	public String getBairro() {
+		return bairro;
+	}
+
+	public void setBairro(String bairro) {
+		this.bairro = bairro;
+	}
+
+	@Column(name="cep", nullable = true)
+	public String getCep() {
+		return cep;
+	}
+
+	public void setCep(String cep) {
+		this.cep = cep;
 	}
 
 	@Override
@@ -220,8 +250,10 @@ public class Cliente implements java.io.Serializable {
 		return "Cliente [id=" + id + ", nome=" + nome + ", endereco="
 				+ endereco + ", cidade=" + cidade + ", telefone=" + telefone
 				+ ", telefoneadicional=" + telefoneadicional + ", cpf=" + cpf
-				+ ", rg=" + rg + ", datadenascimento=" + datadenascimento
-				+ ", deleted=" + deleted + "]";
+				+ ", cnpj=" + cnpj + ", tipoPessoa=" + tipoPessoa + ", rg="
+				+ rg + ", datadenascimento=" + datadenascimento + ", deleted="
+				+ deleted + ", ie=" + ie + ", bairro=" + bairro + ", cep="
+				+ cep + "]";
 	}
 	
 

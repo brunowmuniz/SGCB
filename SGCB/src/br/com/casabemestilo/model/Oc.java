@@ -269,6 +269,9 @@ public class Oc implements java.io.Serializable {
 	@Temporal(TemporalType.DATE)
 	@Column(name = "datalancamento", nullable = false, length = 10)
 	public Date getDatalancamento() {
+		if(datalancamento == null){
+			datalancamento = new Date();
+		}
 		return this.datalancamento;
 	}
 

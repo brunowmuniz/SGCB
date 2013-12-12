@@ -68,7 +68,7 @@
 							<p:selectOneMenu id="condicoespagamento" value="#{pagamentoAvulsoControl.pagamento.condicoesPagamento.id}" size="20">
 								<f:selectItem itemLabel="Selecione Condição" itemValue=""/>
 								<f:selectItems value="#{condicoesPagamentoControl.carregaCondicoesPagamentoPorFormaPagamento(pagamentoAvulsoControl.pagamento.condicoesPagamento.formapagamento.id)}"/>
-								<p:ajax event="change" process="@this" listener="#{pagamentoAvulsoControl.defineCondicoesPagamento}" update="banco"/>
+								<p:ajax event="change" process="@this" listener="#{pagamentoAvulsoControl.defineCondicoesPagamento}" update="banco,primeiraparcela,lblprimeiraparcela"/>
 							</p:selectOneMenu>
 							
 							<p:outputLabel value="CV Cartão: " for="cvcartao" rendered="#{pagamentoAvulsoControl.pagamento.condicoesPagamento.formapagamento.ehcartao}" />
@@ -90,6 +90,12 @@
 								<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2" locale="pt_BR" type="number"/>
 								<p:ajax event="blur" process="@this" update="valorcondicoespagamento,gravarformapagamento"/>
 							</p:inputText>
+							
+							<p:outputLabel id="lblprimeiraparcela" for="primeiraparcela" value="Data 1ª Parc.: " rendered="#{!pagamentoAvulsoControl.pagamento.condicoesPagamento.avista}" />
+							<p:calendar value="#{pagamentoAvulsoControl.dataPrimeiraParcela}" id="primeiraparcela" pattern="dd/MM/yyyy" locale="pt" 
+										rendered="#{!pagamentoAvulsoControl.pagamento.condicoesPagamento.avista}">
+								<p:ajax event="dateSelect" process="@this"/>
+							</p:calendar>
 							
 							<p:commandButton id="gravarformapagamento" value="Adicionar Forma Pagamento" update="tabelapagamento_vis,updSelecaoCondicao,:form:msgs" process="@this"
 											actionListener="#{pagamentoAvulsoControl.gravaFormaPagamentoOc()}" disabled="#{pagamentoAvulsoControl.pagamento.condicoesPagamento.id == null or pagamentoAvulsoControl.pagamento.valor == 0}" />

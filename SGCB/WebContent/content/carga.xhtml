@@ -7,9 +7,12 @@
 
 	<ui:composition template="../template/template.xhtml">
 		<ui:define name="conteudo">
-			<h:form>
-				<p:commandButton value="Carrega Dados" actionListener="#{clienteControl.carregaClienteArquivo}"/>
-			</h:form>
+			<p:panel header="Carga de Objetos">
+				<h:form>
+					<p:commandButton value="Carrega Dados" actionListener="#{pagamentoAvulsoControl.insereChequesPendentes()}"/>
+				</h:form>
+			</p:panel>
+			
 		</ui:define>
 	</ui:composition>
 </html>

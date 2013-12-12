@@ -15,23 +15,13 @@
 						
 						<h:panelGrid columns="2" styleClass="vAlTop" style="width: 350px">
 							<p:outputLabel for="numero" value="Número OC:"/>
-							<h:outputText value="#{ocControl.oc.id == null ? 'Nova OC' : ocControl.oc.id}"  id="numero" style="width: 100px; " styleClass="negrito" update="cadastro"/>
+							<h:outputText value="#{ocControl.oc.id == null ? 'Nova OC' : ocControl.oc.id}"  id="numero" style="width: 100px; " styleClass="negrito" update="cadastro"/>							
 							
-							<p:outputLabel for="filialoc" value="Filial: "/>
-							<p:selectOneMenu value="#{ocControl.oc.filial.id}" size="1" id="filialoc" required="#{ocControl.oc.id == null}"
-											 requiredMessage="Favor selecionar a filial" rendered="#{ocControl.oc.id == null}">
-								<f:selectItem itemLabel="Selecione a filial" itemValue="" noSelectionOption="true"/>
-								<f:selectItems value="#{filialControl.listaFilialCombo}"/>
-								<p:ajax event="change" update="vendedor"/>
-							</p:selectOneMenu>
-							<h:outputText value="#{ocControl.oc.filial.nome}" rendered="#{ocControl.oc.id != null}" styleClass="negrito"/>
 							
-							<p:outputLabel for="#{ocControl.oc.id == null ? 'dataedicao' : 'data'}" value="Data: "/>
-							<h:outputText value="#{ocControl.oc.datalancamento}" id="dataedicao" style="width: 100px;" styleClass="negrito"
-											rendered="#{ocControl.oc.id != null}">									
+							<p:outputLabel for="data" value="Data: "/>
+							<h:outputText value="#{ocControl.oc.datalancamento}" id="data" style="width: 100px;" styleClass="negrito">									
 								<f:convertDateTime pattern="dd/MM/yyyy"/>									
-							</h:outputText>							
-							<p:calendar value="#{ocControl.oc.datalancamento}" id="data" pattern="dd/MM/yyyy" locale="pt" rendered="#{ocControl.oc.id == null}" />									
+							</h:outputText>									
 						</h:panelGrid>
 						
 						<h:panelGrid columns="2" styleClass="vAlTop" style="width: 350px">

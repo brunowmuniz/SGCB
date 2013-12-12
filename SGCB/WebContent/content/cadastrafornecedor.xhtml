@@ -32,7 +32,9 @@
 							<f:validateBean/>
 						</p:inputText>						
 						<p:outputLabel for="ehrede" value="Rede: "/>
-						<p:selectBooleanCheckbox value="#{fornecedoresControl.fornecedor.ehrede}" id="ehrede"/>												
+						<p:selectBooleanCheckbox value="#{fornecedoresControl.fornecedor.ehrede}" id="ehrede"/>
+						<p:outputLabel for="obsfornecedor" value="Observações: "/>
+						<p:inputTextarea value="#{fornecedoresControl.fornecedor.observacoes}" id="obsfornecedor" rows="10" cols="50"/>											
 						<p:commandButton rendered="#{fornecedoresControl.fornecedor.id != null}" actionListener="#{fornecedoresControl.alterar}" value="Alterar" update="msgs,cadastro" id="gravar"/>
 						<p:commandButton rendered="#{fornecedoresControl.fornecedor.id == null}" actionListener="#{fornecedoresControl.gravar}" value="Gravar" update="msgs,cadastro" id="alterar"/>
 						<p:commandButton rendered="#{fornecedoresControl.fornecedor.id != null}" action="#{fornecedoresControl.sairAlteracao}" value="Sair" id="sair" ajax="false"/>
