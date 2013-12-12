@@ -7,9 +7,9 @@
 
 	<ui:composition template="../template/template.xhtml">
 		<ui:define name="conteudo">
-			<h:form id="form" >
-				<p:messages id="msgs"/>
+			<h:form id="form" >				
 				<p:panel id="principal" header="Lista de Pagamentos Avulsos">
+					<p:messages id="msgs"/>
 					<h:panelGrid columns="2">
 						<p:outputLabel for="dataInicial" value="Período Inicial: "/>
 						<p:calendar value="#{pagamentoAvulsoControl.dataInicial}" pattern="dd/MM/yyyy" locale="pt" id="dataInicial">
@@ -28,9 +28,19 @@
 					<p:dataTable var="pagamentoAvulso" value="#{pagamentoAvulsoControl.listarPagamentoAvulsoGeralAll}" id="pagamentosavulsos" emptyMessage="Sem Pagamento Avulso lançado para o período!" paginator="true"
 										selection="#{pagamentoAvulsoControl.pagamentoAvulso}" selectionMode="single" lazy="true" rows="25" rowKey="#{pagamentoAvulso.id}"
 										paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                 						rowsPerPageTemplate="10,25,50">
+                 						rowsPerPageTemplate="10,25,50" editable="true">
+                 		
+                 		<p:ajax event="rowEdit" listener="#{pagamentoAvulsoControl.alterar}" process="pagamentosavulsos" update=":form:msgs"/>
+                 		
                  		<p:column headerText="Descrição">
-                 			#{pagamentoAvulso.descricao}
+                 			<p:cellEditor>
+                 				<f:facet name="output">
+                 					<h:outputText value="#{pagamentoAvulso.descricao}" />
+	                 			</f:facet>
+	                 			<f:facet name="input">
+	                 				<p:inputText value="#{pagamentoAvulso.descricao}" style="width: 150px;"/>
+	                 			</f:facet>
+                 			</p:cellEditor>
                  		</p:column>
                  		
                  		<p:column headerText="Data" width="100px">
@@ -61,6 +71,9 @@
            						<f:convertNumber locale="pt_BR" maxIntegerDigits="6" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2" type="currency" currencyCode="BRL"/>
            					</h:outputText>
                  		</p:column>
+                 		<p:column headerText="Editar" icon="ui-icon-pencil" style="width: 6px;">
+				        	<p:rowEditor />
+				        </p:column>
                  	</p:dataTable>
 				</p:panel>
 			</h:form>

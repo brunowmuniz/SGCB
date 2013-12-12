@@ -20,6 +20,10 @@
 							<p:inputText value="#{clienteControl.cliente.endereco}" id="endereco" size="60" required="true">
 								<f:validateBean/>
 							</p:inputText>
+							<p:outputLabel for="bairro" value="Bairro: "/>
+							<p:inputText value="#{clienteControl.cliente.bairro}" id="bairro" size="30" />
+							<p:outputLabel for="cep" value="CEP: "/>
+							<p:inputMask mask="99.999-999" value="#{clienteControl.cliente.cep}" id="cep" size="30" />
 							<p:outputLabel for="cidade" value="Cidade: "/>
 							<p:inputText value="#{clienteControl.cliente.cidade}" id="cidade" size="30" required="true">
 								<f:validateBean/>
@@ -58,6 +62,9 @@
 								<p:inputText value="#{clienteControl.cliente.rg}" id="rg" size="20" 
 											 rendered="#{clienteControl.cliente.tipoPessoa.equals('pf')}">
 								</p:inputText>
+								<p:outputLabel for="ie" value="IE: " rendered="#{clienteControl.cliente.tipoPessoa.equals('pj')}"/>
+								<p:inputMask mask="999/999999" value="#{clienteControl.cliente.ie}" id="ie" size="20" 
+											 rendered="#{clienteControl.cliente.tipoPessoa.equals('pj')}" />
 								<p:outputLabel for="datanascimento" value="Data de Nascimento: " rendered="#{clienteControl.cliente.tipoPessoa.equals('pf')}"/>
 								<p:inputMask value="#{clienteControl.cliente.datadenascimento}" id="datanascimento" size="20" mask="99/99/9999"
 											 rendered="#{clienteControl.cliente.tipoPessoa.equals('pf')}" required="#{clienteControl.cliente.tipoPessoa.equals('pf')}">

@@ -8,6 +8,7 @@ import org.hibernate.exception.ConstraintViolationException;
 
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
 import br.com.casabemestilo.model.Banco;
+import br.com.casabemestilo.model.Oc;
 import br.com.casabemestilo.util.Conexao;
 
 public class BancoDAO implements InterfaceDAO {
@@ -43,10 +44,13 @@ public class BancoDAO implements InterfaceDAO {
 	}
 
 	@Override
-	public Object buscaObjetoId(Integer id) throws Exception,
+	public Banco buscaObjetoId(Integer id) throws Exception,
 			HibernateException, ConstraintViolationException {
-		// TODO Auto-generated method stub
-		return null;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		banco = (Banco) session.get(Banco.class, id);
+		session.close();
+		return banco;
 	}
 
 	@Override

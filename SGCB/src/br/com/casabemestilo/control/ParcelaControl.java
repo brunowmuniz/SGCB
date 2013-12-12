@@ -144,8 +144,8 @@ public class ParcelaControl extends Control implements InterfaceControl,
 				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Parcelas Antecipadas: Para parcelas antecipadas, favor utilizar a ação de 'Antecipar' e logo após os botões de 'Antecipar Seleção' ou 'Antecipar Todos' logo abaixo de ação nesta tela", ""));				
 			}else{
 				parcelaDAO.update(parcela);
-				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("OC: " + parcela.getPagamento().getOc().getId() + " - " + "Parcela: " + parcela.getNumeroParcela() + " foi alterada!"));
-				logger.info("OC: " + parcela.getPagamento().getOc().getId() + "-" + "Parcela: " + parcela.getNumeroParcela() + " foi alterada!");
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Parcela: " + parcela.getNumeroParcela() + " foi alterada!"));
+				logger.info("Parcela: " + parcela.getNumeroParcela() + " foi alterada!");
 			}			
 		} catch (ConstraintViolationException e) {
 			super.mensagem = e.getMessage();

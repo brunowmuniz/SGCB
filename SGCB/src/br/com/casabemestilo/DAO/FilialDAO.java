@@ -10,6 +10,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
 import br.com.casabemestilo.model.Cliente;
 import br.com.casabemestilo.model.Filial;
+import br.com.casabemestilo.model.Oc;
 import br.com.casabemestilo.util.Conexao;
 
 public class FilialDAO implements Serializable, InterfaceDAO {
@@ -68,8 +69,12 @@ public class FilialDAO implements Serializable, InterfaceDAO {
 	@Override
 	public Filial buscaObjetoId(Integer id) throws Exception,
 			HibernateException, ConstraintViolationException {
-		// TODO Auto-generated method stub
-		return null;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		filial = (Filial) session.get(Filial.class, id);
+		session.close();
+		return filial;
+		
 	}
 
 	@Override

@@ -327,34 +327,43 @@ public class ClienteControl extends Control implements Serializable,InterfaceCon
 	
 	public void carregaClienteArquivo() throws ConstraintViolationException, HibernateException, Exception{
 		clienteDAO = new ClienteDAO();
-		String teste = "";
-		listaCliente = new ArrayList<Cliente>();
 		try {
-			BufferedReader reader = new BufferedReader(new FileReader(new File("e:\\casabem\\cliente.csv")));
+			BufferedReader reader = new BufferedReader(new FileReader(new File("c:\\temp\\casabem\\cliente.csv")));
 			String linha = null;
+			int i = 0;
+			listaCliente = new ArrayList<Cliente>();
 			while((linha = reader.readLine()) != null){
 				String[] linhaCliente = linha.split(";");
-				cliente = new Cliente();
+				cliente = new Cliente();				
+				//cliente.setId(Integer.parseInt(linhaCliente[0]));
 				cliente.setNome(linhaCliente[1]);
-				cliente.setCpf(linhaCliente[2].replace("/","").replace("-", "").trim());
-				cliente.setEndereco("");
-				cliente.setCidade(linhaCliente[3]);
+				cliente.setIe(linhaCliente[3]);				
+				cliente.setCidade(linhaCliente[7] + "/"+ linhaCliente[6]);
+				cliente.setBairro(linhaCliente[8]);
+				cliente.setEndereco(linhaCliente[9]);
+				cliente.setCep(linhaCliente[10]);
+				if(linhaCliente[2].length() > 12){
+					cliente.setTipoPessoa("pj");
+					cliente.setCnpj(linhaCliente[2]);
+					cliente.setCpf(null);
+				}else{
+					cliente.setTipoPessoa("pf");
+					cliente.setCnpj(null);
+					cliente.setCpf(linhaCliente[2]);
+				}
 				if(linhaCliente[4].indexOf("/") > -1){
 					cliente.setTelefone(linhaCliente[4].split("/")[0]);
-					cliente.setTelefoneadicional(linhaCliente[4].split("/")[1]);
-					teste = "1";
+					cliente.setTelefoneadicional(linhaCliente[4].split("/")[1]);					
 				}else if (linhaCliente[4] == "") {
-					cliente.setTelefone("");
-					teste = "2";
+					cliente.setTelefone("");					
 				}else if(linhaCliente[4] == null){
 					cliente.setTelefone("");
-					teste = "3";
 				}else{
 					cliente.setTelefone(linhaCliente[4]);
-					teste = "4";
 				}
 				cliente.setDeleted(false);
-				listaCliente.add(cliente);				
+				listaCliente.add(cliente);
+				System.out.println("Adiciona lista " + cliente);				
 			}
 			clienteDAO.insertCliente(listaCliente);
 			reader.close();
@@ -365,6 +374,7 @@ public class ClienteControl extends Control implements Serializable,InterfaceCon
 			e.printStackTrace();
 			System.out.println(cliente);
 		}catch(ArrayIndexOutOfBoundsException e){
+			e.printStackTrace();
 			System.out.println(cliente);
 		}
 	}

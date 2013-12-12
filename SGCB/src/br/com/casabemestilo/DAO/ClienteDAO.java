@@ -176,6 +176,48 @@ public class ClienteDAO implements Serializable,InterfaceDAO{
 		session.getTransaction().commit();		
 	}
 	
+	public void updateCliente(List<Cliente> clientes) {
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		int i = 0;
+		for(Cliente cliente : clientes){
+			session.createQuery("update Cliente cliente set cliente.ie = :ie," +
+										  " cliente.cidade = :cidade," +
+										  " cliente.bairro = :bairro," +
+										  " cliente.endereco = :endereco," +
+										  " cliente.cep = :cep," +
+										  " cliente.telefone = :telefone," +													  
+										  " cliente.telefoneadicional = :telefoneadicional," +
+										  " cliente.tipoPessoa = :tipoPessoa," +
+										  " cliente.cnpj = :cnpj," +
+										  " cliente.cpf = :cpf" +
+								" where " +
+										  " cliente.id=:id")
+					.setString("ie", cliente.getIe())
+					.setString("cidade", cliente.getCidade())
+					.setString("bairro", cliente.getBairro())
+					.setString("endereco", cliente.getEndereco())
+					.setString("cep", cliente.getCep())
+					.setString("telefone", cliente.getTelefone())
+					.setString("telefoneadicional", cliente.getTelefoneadicional())
+					.setString("tipoPessoa", cliente.getTipoPessoa())
+					.setString("cnpj", cliente.getCnpj())
+					.setString("cpf", cliente.getCpf())
+					.setInteger("id",cliente.getId())
+					.executeUpdate();
+			i++;
+			System.out.println("Alterado " + cliente);
+			if(i == 100){
+				i= 0;
+				session.getTransaction().commit();
+				session = Conexao.getInstance();
+				session.beginTransaction();
+				System.out.println("Comitando mais 100 registros");
+			}
+		}
+		session.getTransaction().commit();
+	}
+	
 	/*
 	 * GETTERS & SETTERS
 	 * */

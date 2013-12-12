@@ -6,6 +6,7 @@ import org.hibernate.exception.ConstraintViolationException;
 
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
 import br.com.casabemestilo.control.PagamentoAvulsoControl;
+import br.com.casabemestilo.model.Oc;
 import br.com.casabemestilo.model.PagamentoAvulso;
 import br.com.casabemestilo.util.Conexao;
 
@@ -42,8 +43,11 @@ public class PagamentoAvulsoDAO implements InterfaceDAO, Serializable {
 	@Override
 	public void update(Object obj) throws Exception, HibernateException,
 			ConstraintViolationException {
-		// TODO Auto-generated method stub
-		
+		pagamentoAvulso = (PagamentoAvulso) obj;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		session.update(pagamentoAvulso);
+		session.getTransaction().commit();		
 	}
 
 	@Override
@@ -57,10 +61,13 @@ public class PagamentoAvulsoDAO implements InterfaceDAO, Serializable {
 	}
 
 	@Override
-	public Object buscaObjetoId(Integer id) throws Exception,
+	public PagamentoAvulso buscaObjetoId(Integer id) throws Exception,
 			HibernateException, ConstraintViolationException {
-		// TODO Auto-generated method stub
-		return null;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		pagamentoAvulso = (PagamentoAvulso) session.get(PagamentoAvulso.class, id);
+		session.close();
+		return pagamentoAvulso;
 	}
 
 	@Override

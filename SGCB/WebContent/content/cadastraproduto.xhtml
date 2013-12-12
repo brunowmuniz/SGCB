@@ -51,14 +51,19 @@
 							<f:validateBean/>
 							<f:convertNumber maxIntegerDigits="3"/>
 						</p:spinner>
-						<p:outputLabel for="temmontagem" value="Montagem: "/>
-						<p:selectBooleanCheckbox id="temmontagem" value="#{produtoControl.produto.temMontagem}">
-							<p:ajax event="change" process="@this" update="ehplanejado" />  
-						</p:selectBooleanCheckbox>
-						<p:outputLabel for="ehplanejado" value="Planejado: "/>
-						<p:selectBooleanCheckbox id="ehplanejado" value="#{produtoControl.produto.ehPlanejado}">
-							<p:ajax event="change"  process="@this" update="cadastro"/>   
-						</p:selectBooleanCheckbox>
+						<p:outputPanel autoUpdate="true">
+							<h:panelGrid columns="2" id="cadastro_tipo">
+								<p:outputLabel for="temmontagem" value="Montagem: "/>
+								<p:selectBooleanCheckbox id="temmontagem" value="#{produtoControl.produto.temMontagem}">
+									<p:ajax event="change" process="@this" update="ehplanejado" />  
+								</p:selectBooleanCheckbox>
+								<p:outputLabel for="ehplanejado" value="Planejado: "/>
+								<p:selectBooleanCheckbox id="ehplanejado" value="#{produtoControl.produto.ehPlanejado}">
+									<p:ajax event="change"  process="@this" update="cadastro_tipo"/>   
+								</p:selectBooleanCheckbox>
+							</h:panelGrid>
+						</p:outputPanel>
+						
 						
 						<p:commandButton rendered="#{produtoControl.produto.id != null}" actionListener="#{produtoControl.alterar}" value="Alterar" update="msgs,cadastro" id="gravar"/>
 						<p:commandButton rendered="#{produtoControl.produto.id == null}" actionListener="#{produtoControl.gravar}" value="Gravar" update="msgs,cadastro" id="alterar"/>
