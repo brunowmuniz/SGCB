@@ -18,7 +18,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 
 @Entity
-@Table(name = "banco", catalog = "blankerc_sgcb")
+@Table(name = "banco")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Banco implements Serializable{
 

@@ -22,7 +22,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 
 @Entity
-@Table(name = "condicoespagamento", catalog = "blankerc_sgcb")
+@Table(name = "condicoespagamento")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class CondicoesPagamento implements java.io.Serializable {
 

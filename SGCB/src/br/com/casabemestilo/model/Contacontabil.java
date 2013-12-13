@@ -15,7 +15,7 @@ import javax.persistence.Table;
 
 
 @Entity
-@Table(name = "contacontabil", catalog = "blankerc_sgcb")
+@Table(name = "contacontabil")
 public class Contacontabil implements java.io.Serializable {
 
 	

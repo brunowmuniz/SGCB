@@ -18,7 +18,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-@Table(name = "assistenciatecnica", catalog = "blankerc_sgcb")
+@Table(name = "assistenciatecnica")
 public class Assistenciatecnica implements java.io.Serializable {
 
 

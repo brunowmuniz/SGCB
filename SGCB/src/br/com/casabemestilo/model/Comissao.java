@@ -20,7 +20,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 
 @Entity
-@Table(name = "comissao", catalog = "blankerc_sgcb")
+@Table(name = "comissao")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Comissao implements java.io.Serializable {
 
