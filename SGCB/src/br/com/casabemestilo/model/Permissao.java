@@ -15,7 +15,7 @@ import javax.persistence.Table;
 
 
 @Entity
-@Table(name="permissao", catalog = "blankerc_sgcb")
+@Table(name="permissao")
 public class Permissao  implements Serializable{
 
 	

@@ -39,7 +39,7 @@ import sun.java2d.opengl.OGLContext;
 
 
 @Entity
-@Table(name = "oc", catalog = "blankerc_sgcb")
+@Table(name = "oc")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Oc implements java.io.Serializable {
 

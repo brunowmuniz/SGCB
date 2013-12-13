@@ -27,7 +27,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 
 @Entity
-@Table(name = "pagamentoavulso", catalog = "blankerc_sgcb")
+@Table(name = "pagamentoavulso")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class PagamentoAvulso implements  Serializable{
 	

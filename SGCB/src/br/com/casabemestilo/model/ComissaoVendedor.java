@@ -14,7 +14,7 @@ import javax.persistence.Table;
 import br.com.casabemestilo.control.Control;
 
 @Entity
-@Table(name = "comissaovendedor", catalog = "blankerc_sgcb")
+@Table(name = "comissaovendedor")
 public class ComissaoVendedor extends Control implements Serializable {
 	
 	

@@ -14,7 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "usuariofilial", catalog = "blankerc_sgcb")
+@Table(name = "usuariofilial")
 public class UsuarioFilial implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
