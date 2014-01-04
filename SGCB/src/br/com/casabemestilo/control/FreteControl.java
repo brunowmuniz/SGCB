@@ -170,6 +170,16 @@ public class FreteControl extends Control implements Serializable,
 			frete.setDatafim(new Date());
 			frete.setOcprodutos(listaOcprodutos);
 			frete.setValor(listaOcprodutos.get(0).getOc().getValorfrete());
+			observacoes += "(Frete/Montagem por:";
+			for(Iterator iterMontador = listaMontadores.iterator(); iterMontador.hasNext();){
+				Integer idMontador = Integer.parseInt(iterMontador.next().toString());				
+				
+				observacoes += new UsuarioDAO().buscaObjetoId(idMontador).getNome();
+				if(iterMontador.hasNext()){
+					observacoes += ", ";
+				}
+			}
+			observacoes += ")";
 			frete.setObservacoes(observacoes);
 			this.listaMontadores = listaMontadores;
 			calculaComissaoMontagem();
@@ -270,6 +280,7 @@ public class FreteControl extends Control implements Serializable,
 				valorTotalBrutoProdPlanejado += ocproduto.getValortotal();
 			}
 		}
+		
 		
 		if(valorTotalBrutoProdutoMontagem != 0){			
 			valorLiquidoProduto = valorTotalBrutoProdutoMontagem * (oc.getValorliquido() / oc.getValorfinal());

@@ -11,12 +11,20 @@
 				<p:panel id="principal" header="Lançamentos">
 					<p:messages id="msgs"/>
 					<h:panelGrid columns="2" id="cadastro">
-						<p:outputLabel value="Descrição: " for="desclancamento"/>
+						<p:outputLabel value="Descrição: " for="desclancamento" rendered="#{lancamentoControl.lancamento.contacontabil.id != 19 and lancamentoControl.lancamento.contacontabil.id != 10}"/>
 						<p:inputText id="desclancamento" value="#{lancamentoControl.lancamento.descricao}" size="40" required="true"
-									requiredMessage="Favor informar descritivo do lançamento">
+									requiredMessage="Favor informar descritivo do lançamento" rendered="#{lancamentoControl.lancamento.contacontabil.id != 19 and lancamentoControl.lancamento.contacontabil.id != 10}">
 							<p:ajax event="blur" process="@this" />
 							<f:validateBean />
 						</p:inputText>
+						
+						<p:outputLabel value="Fornecedor: " for="descfornecedor" rendered="#{lancamentoControl.lancamento.contacontabil.id == 19 or lancamentoControl.lancamento.contacontabil.id == 10}"/>
+						<p:selectOneMenu id="descfornecedor" value="#{lancamentoControl.fornecedor.id}" rendered="#{lancamentoControl.lancamento.contacontabil.id == 19 or lancamentoControl.lancamento.contacontabil.id == 10}"
+										required="true" requiredMessage="Favor informar um fornecedor">
+							<f:selectItem itemValue="0" itemLabel="Selecione Fornecedor" noSelectionOption="true"/>								
+							<f:selectItems value="#{fornecedoresControl.getListaFornecedorCombo('')}"/>
+							<p:ajax event="change" process="@this" update="cadastro"/>						
+						</p:selectOneMenu>
 						
 						<p:outputLabel value="Valor: " for="valorlancamento"/>
 						<p:inputText id="valorlancamento" value="#{lancamentoControl.lancamento.valor}" required="true" requiredMessage="Insira o valor do lançamento">
@@ -32,8 +40,8 @@
 							<p:ajax event="change" process="@this" update="cadastro"/>						
 						</p:selectOneMenu>
 						
-						<p:outputLabel value="Nº de boletos: " for="numboletos" rendered="#{lancamentoControl.lancamento.contacontabil.id == 19}"/>
-						<p:inputText value="#{lancamentoControl.numBoletos}" id="numboletos" rendered="#{lancamentoControl.lancamento.contacontabil.id == 19}">
+						<p:outputLabel value="Nº de boletos: " for="numboletos" rendered="#{lancamentoControl.lancamento.contacontabil.id == 19 or lancamentoControl.lancamento.contacontabil.id == 10}"/>
+						<p:inputText value="#{lancamentoControl.numBoletos}" id="numboletos" rendered="#{lancamentoControl.lancamento.contacontabil.id == 19 or lancamentoControl.lancamento.contacontabil.id == 10}">
 							<p:ajax event="blur" process="@this" update="gravar,msgs" listener="#{lancamentoControl.validaParcelasFornecedor()}"/>
 						</p:inputText>
 						
@@ -67,7 +75,7 @@
 							<p:ajax event="change" process="@this" update="totalparcelas,gravar,msgs" listener="#{lancamentoControl.validaParcelasFornecedor()}"/>
 						</p:spinner>		
 						
-						<p:outputLabel for="datalancamento" value="Data Lançamento: " id="lbldatalancamento"/>
+						<p:outputLabel for="datalancamento" value="Data Vencimento: " id="lbldatalancamento"/>
 						<p:calendar value="#{lancamentoControl.lancamento.dataLancamento}" id="datalancamento" pattern="dd/MM/yyyy" locale="pt_BR" 
 									required="true" requiredMessage="Favor informar a data da primeira parcela"/>							
 						<p:tooltip for="lbldatalancamento" value="Se for várias parcelas a data da primeira, senão a data do lançamento!" showEffect="fade" hideEffect="fade" rendered="false"/>

@@ -122,6 +122,11 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 			hql += " and p.statusCartao = '" + filters.get("statusCartao") + "'";
 		}
 		
+		if(filters.containsKey("pagamento.oc.cliente.nome")){
+			hql += " and (oc.nome like '%" + filters.get("pagamento.oc.cliente.nome") + "%' or" +
+					" cliente.nome like '%" + filters.get("pagamento.oc.cliente.nome") + "%')";			
+		}
+		
 		linhas = (Long) session.createQuery(hql)
 							   .setDate("dataInicial", dataInicial)
 							   .setDate("dataFinal", dataFinal)
@@ -135,6 +140,8 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 	public List<Parcela> listaParcelasAVencer(int first, int pageSize, Date dataInicial, Date dataFinal, Map<String, String> filters) {
 		session = Conexao.getInstance();
 		String hql = "from Parcela p" +
+						" left join fetch p.pagamento.oc.cliente as oc" +
+						" left join fetch p.pagamento.cliente as cliente" +
 							" where" +
 							" p.dataentrada between :dataInicial and :dataFinal " +
 						" and " +
@@ -154,7 +161,14 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 			hql += " and p.statusCartao = '" + filters.get("statusCartao") + "'";
 		}
 		
+		if(filters.containsKey("pagamento.oc.cliente.nome")){
+			hql += " and (oc.nome like '%" + filters.get("pagamento.oc.cliente.nome") + "%' or" +
+					" cliente.nome like '%" + filters.get("pagamento.oc.cliente.nome") + "%')";			
+		}
+		
 		hql += " order by dataentrada";
+		
+		System.out.println("Teste: " + first + "-" + pageSize);
 				
 		listaParcela = session.createQuery(hql)
 							  .setDate("dataInicial", dataInicial)
@@ -180,7 +194,12 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 							" and" +
 								" p.deleted = false";
 		
-		if(filter.containsKey("situacaoCheque")){
+		if(filter.containsKey("situacaoCheque") && filter.containsKey("situacaoCheque_2")){
+			hql += " and (p.situacaoCheque = '" + filter.get("situacaoCheque") + "'" +
+						" or p.situacaoCheque = '" + filter.get("situacaoCheque_2") + "')"; 
+		}
+		
+		if(filter.containsKey("situacaoCheque") && !filter.containsKey("situacaoCheque_2")){
 			hql += " and p.situacaoCheque = '" + filter.get("situacaoCheque") + "'"; 
 		}
 		
@@ -217,6 +236,7 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 							"join fetch p.pagamento.banco " +
 							"left join fetch p.bancoDepositoCheque " +
 							"join fetch p.pagamento.cliente " +
+							"join fetch p.pagamento " +
 						"where " +
 							"p.dataentrada between :dataInicial and :dataFinal " +
 						"and " +
@@ -224,7 +244,12 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 						" and" +
 							" p.deleted = false";
 		
-		if(filter.containsKey("situacaoCheque")){
+		if(filter.containsKey("situacaoCheque") && filter.containsKey("situacaoCheque_2")){
+			hql += " and (p.situacaoCheque = '" + filter.get("situacaoCheque") + "'" +
+						" or p.situacaoCheque = '" + filter.get("situacaoCheque_2") + "')"; 
+		}
+		
+		if(filter.containsKey("situacaoCheque") && !filter.containsKey("situacaoCheque_2")){
 			hql += " and p.situacaoCheque = '" + filter.get("situacaoCheque") + "'"; 
 		}
 		

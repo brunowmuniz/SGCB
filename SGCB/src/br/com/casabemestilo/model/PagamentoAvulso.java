@@ -24,6 +24,7 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Fetch;
 
 @Entity
@@ -40,7 +41,8 @@ public class PagamentoAvulso implements  Serializable{
 	private List<Pagamento> pagamentos;
 	private Date dataLancamento;
 	private Boolean ehRenegociacao;
-
+	private Cliente cliente;
+	
 	public PagamentoAvulso(Integer id, List<Pagamento> pagamentos, String descricao, Boolean deleted) {		
 		this.id = id;
 		this.descricao = descricao;
@@ -118,6 +120,7 @@ public class PagamentoAvulso implements  Serializable{
 	public void setEhRenegociacao(Boolean ehRenegociacao) {
 		this.ehRenegociacao = ehRenegociacao;
 	}
+	
 
 	@Override
 	public String toString() {

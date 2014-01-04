@@ -43,11 +43,11 @@
 						<p:column headerText="OC">
 							<h:outputText value="#{entrada.pagamento.oc.id}" />
 						</p:column>
-									
-						<p:column headerText="Data da Compra">
-							<h:outputText value="#{entrada.pagamento.datalancamento}">
-								<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
-							</h:outputText>
+						
+						<p:column headerText="Cliente" filterBy="#{entrada.pagamento.oc.cliente.nome}" 
+								  filterMatchMode="startsWith" filterStyle="width: 70%;">
+							<h:outputText value="#{entrada.pagamento.oc.cliente.nome}" rendered="#{entrada.pagamento.oc.id != null}"/>
+							<h:outputText value="#{entrada.pagamento.cliente.nome}" rendered="#{entrada.pagamento.pagamentoAvulso.id != null}"/>
 						</p:column>
 						
 						<p:column headerText="Data da Parcela">
@@ -123,10 +123,10 @@
 							<h:outputText value="#{entrada.pagamento.oc.id}" />
 						</p:column>
 									
-						<p:column headerText="Data da Compra">
-							<h:outputText value="#{entrada.pagamento.datalancamento}">
-								<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
-							</h:outputText>
+						<p:column headerText="Cliente" filterBy="#{entrada.pagamento.oc.cliente.nome}" 
+								  filterMatchMode="startsWith" filterStyle="width: 70%;">
+							<h:outputText value="#{entrada.pagamento.oc.cliente.nome}" rendered="#{entrada.pagamento.oc.id != null}"/>
+							<h:outputText value="#{entrada.pagamento.cliente.nome}" rendered="#{entrada.pagamento.pagamentoAvulso.id != null}"/>
 						</p:column>
 						
 						<p:column headerText="Data da Parcela">								

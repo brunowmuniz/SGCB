@@ -24,6 +24,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import main.DataUtil;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -111,6 +112,8 @@ public class OcControl extends Control implements InterfaceControl,
 	
 	private String retorno;
 	
+	private Float valorDescontoAtual = new Float("0");
+	
 		
 	
 	/*
@@ -136,13 +139,18 @@ public class OcControl extends Control implements InterfaceControl,
 	@PostConstruct
 	public void init(){		
 		if(ELFlash.getFlash().get("oc") != null){
-			oc = (Oc) ELFlash.getFlash().get("oc");			
+			oc = (Oc) ELFlash.getFlash().get("oc");
+			valorDescontoAtual = oc.getDesconto();
+			recalculaValorTotalOcproduto();
+			if(valorDescontoAtual != 0){
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Você não poderá alterar o valor sugerido dos produtos, enquanto o desconto for diferente de 0 (zero)! ", ""));
+			}
 			ELFlash.getFlash().put("oc",null);
 		}
 		
 		if(oc.getFilial().getId() == null){
 			try {
-				oc.setFilial(new FilialDAO().buscaObjetoId(1));
+				oc.setFilial(new FilialDAO().buscaObjetoId(2));
 			} catch (ConstraintViolationException e) {
 				e.printStackTrace();
 				super.mensagem = e.getMessage();
@@ -390,6 +398,7 @@ public class OcControl extends Control implements InterfaceControl,
 			ocDAO = new OcDAO();
 			if(oc.getStatus().getId() != 7 && oc.getPagamentos().size() > 0){
 				oc.setStatus(new StatusDAO().buscaObjetoId(2));
+				lancaParcelas();
 			}
 			if(oc.getStatus().getId() == 7 && oc.getValorliquido() == 0){			
 				calculaValorComissao();
@@ -560,16 +569,15 @@ public class OcControl extends Control implements InterfaceControl,
 				Produto produto = new Produto();				
 				produto = produtoDAO.buscaObjetoId(ocprodutos.getProduto().getId());
 				if(ocprodutos.getTiposaida().equalsIgnoreCase("estoque")){
-					produto.setEstoque(produto.getEstoque() - ocprodutos.getQuantidade());
+					ocprodutos.getProduto().setEstoque(produto.getEstoque() - ocprodutos.getQuantidade());
 					ocprodutos.setStatus((Status) new StatusDAO().buscaObjetoId(7));
 				}else if(ocprodutos.getTiposaida().equalsIgnoreCase("showroom")){
-					produto.setShowroom(produto.getShowroom() - ocprodutos.getQuantidade());
+					ocprodutos.getProduto().setShowroom(produto.getShowroom() - ocprodutos.getQuantidade());
 					ocprodutos.setStatus((Status) new StatusDAO().buscaObjetoId(7));
 				}else{
-					produto.setEncomenda(produto.getEncomenda() + ocprodutos.getQuantidade());
+					ocprodutos.getProduto().setEncomenda(produto.getEncomenda() + ocprodutos.getQuantidade());
 					ocprodutos.setStatus((Status) new StatusDAO().buscaObjetoId(3));
 				}
-				//produtoDAO.update(produto);
 			}			
 			oc.setStatus(new StatusDAO().buscaObjetoId(7));
 			lancaParcelas();
@@ -593,14 +601,13 @@ public class OcControl extends Control implements InterfaceControl,
 	}
 	
 	public void lancaParcelas(){
-		Float valorParcelas = new Float(0.0);				
+		Float valorParcelas = new Float(0.0);
+		List<Date> dataParcelas = new ArrayList<Date>();
 		try {
-			for(Pagamento pagamento : oc.getPagamentos()){
-				Calendar c = Calendar.getInstance();
-				c.setTime(new Date());
+			for(Pagamento pagamento : oc.getPagamentos()){				
+				dataParcelas = new DataUtil().gerarDatas(new Date(), pagamento.getCondicoesPagamento().getAvista() ? 1 : pagamento.getCondicoesPagamento().getParcelas(), pagamento.getCondicoesPagamento().getAvista());
 				if(pagamento.getCondicoesPagamento().getFormapagamento().getEhantecipacao()){
 					Parcela parcela = new Parcela();
-					c.add(Calendar.DAY_OF_MONTH, 1);
 					/*percentualRetencao = pagamento.getCondicoesPagamento().getPercentual() / 100;
 					valorLiquido = pagamento.getValor() - (pagamento.getValor() * percentualRetencao);				
 					valorParcelas = valorLiquido / pagamento.getCondicoesPagamento().getParcelas();
@@ -611,7 +618,7 @@ public class OcControl extends Control implements InterfaceControl,
 					parcela.setPagamento(pagamento);
 					parcela.setNumeroParcela(1);
 					parcela.setValor(pagamento.getValor() / pagamento.getCondicoesPagamento().getParcelas());
-					parcela.setDataentrada(c.getTime());
+					parcela.setDataentrada(dataParcelas.get(0));
 					parcela.setSituacaoCheque(parcela.getPagamento().getCondicoesPagamento().getFormapagamento().getId() == 4 ? "Emitido" : null);
 					parcela.setStatusCartao(parcela.getPagamento().getCondicoesPagamento().getFormapagamento().getEhcartao() ? "Pendente" : null);
 					pagamento.getParcelas().add(parcela);
@@ -620,7 +627,7 @@ public class OcControl extends Control implements InterfaceControl,
 					parcela.setPagamento(pagamento);
 					parcela.setNumeroParcela(1);
 					parcela.setValor(pagamento.getValor());
-					parcela.setDataentrada(c.getTime());
+					parcela.setDataentrada(dataParcelas.get(0));
 					parcela.setSituacaoCheque(parcela.getPagamento().getCondicoesPagamento().getFormapagamento().getId() == 4 ? "Emitido" : null);
 					parcela.setStatusCartao(parcela.getPagamento().getCondicoesPagamento().getFormapagamento().getEhcartao() ? "Pendente" : null);
 					pagamento.getParcelas().add(parcela);
@@ -629,12 +636,11 @@ public class OcControl extends Control implements InterfaceControl,
 					valorLiquido = pagamento.getValor() - (pagamento.getValor() * percentualRetencao);				
 					valorParcelas = valorLiquido / pagamento.getCondicoesPagamento().getParcelas();*/
 					for(int i = 1; i <= pagamento.getCondicoesPagamento().getParcelas(); i++){
-						Parcela parcela = new Parcela();
-						c.add(Calendar.DAY_OF_MONTH,30);
+						Parcela parcela = new Parcela();						
 						parcela.setPagamento(pagamento);
 						parcela.setNumeroParcela(i);
 						parcela.setValor(pagamento.getValor() / pagamento.getCondicoesPagamento().getParcelas());
-						parcela.setDataentrada(c.getTime());
+						parcela.setDataentrada(dataParcelas.get(i-1));
 						parcela.setSituacaoCheque(parcela.getPagamento().getCondicoesPagamento().getFormapagamento().getId() == 4 ? "Emitido" : null);
 						parcela.setStatusCartao(parcela.getPagamento().getCondicoesPagamento().getFormapagamento().getEhcartao() ? "Pendente" : null);
 						pagamento.getParcelas().add(parcela);
@@ -761,7 +767,7 @@ public class OcControl extends Control implements InterfaceControl,
 	
 	
 	public void calculaValorTotal(){
-		oc.setValorfinal(oc.getValor() + oc.getValorfrete() + oc.getValormontagem());
+		oc.setValorfinal((oc.getValor() - oc.getDesconto()) + oc.getValorfrete() + oc.getValormontagem());
 	}
 	
 	public Double calculaVendaBruto(Date dataInicial, Date dataFinal) {
@@ -938,6 +944,35 @@ public class OcControl extends Control implements InterfaceControl,
 		listaOc = ocDAO.buscaUltimasOcsCliente(oc.getCliente(), qtdeUltsOcs);
 		
 		return listaOc;
+	}
+	
+	public void aplicaDesconto(){
+		try {
+			List<Float> percentualProdutos = new ArrayList<Float>();
+			
+			int i = 0;
+			
+			for(Ocproduto ocproduto : oc.getOcprodutos()){
+				percentualProdutos.add(ocproduto.getValortotal() / (oc.getValorfinal() - (oc.getValorfrete() + oc.getValormontagem())));
+			}			
+			
+			oc.setValorfinal((oc.getValorfinal() + valorDescontoAtual) - oc.getDesconto());
+			
+			for(Ocproduto ocproduto : oc.getOcprodutos()){
+				System.out.println(percentualProdutos.get(i) + "-" + (oc.getValorfinal() - (oc.getValorfrete() + oc.getValormontagem())));
+				ocproduto.setValorunitario(((oc.getValorfinal() - oc.getValorfrete() - oc.getValormontagem()) * percentualProdutos.get(i++)) / ocproduto.getQuantidade());
+				ocproduto.setValortotal(ocproduto.getValorunitario() * ocproduto.getQuantidade());
+			}
+			
+			
+			valorDescontoAtual = oc.getDesconto();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Desconto Aplicado!"));
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Você não poderá alterar o valor sugerido dos produtos, enquanto o desconto for diferente de 0 (zero)! ", ""));
+		} catch (Exception e) {
+			e.printStackTrace();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao aplicar desconto: " + e.getMessage(), ""));
+		}
+		
 	}
 	
 	/*
@@ -1195,8 +1230,6 @@ public class OcControl extends Control implements InterfaceControl,
 	public void setEhClienteChequeOc(Boolean ehClienteChequeOc) {
 		this.ehClienteChequeOc = ehClienteChequeOc;
 	}
-
-	
 
 		
 }

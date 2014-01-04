@@ -203,7 +203,7 @@ public class Lancamento implements java.io.Serializable {
 		this.ehVale = ehVale;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="funcionario")
 	public Usuario getUsuario() {
 		return usuario;

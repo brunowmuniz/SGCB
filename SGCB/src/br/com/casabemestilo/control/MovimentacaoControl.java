@@ -95,7 +95,14 @@ public class MovimentacaoControl extends Control implements Serializable {
 					for(Pagamento pagamentoAvulso : listaSaldoAnteriorPagamentosAvulsos){
 						if(pagamento.getCondicoesPagamento().getFormapagamento().getId() == pagamentoAvulso.getCondicoesPagamento().getFormapagamento().getId()){
 							pagamento.setValor(pagamento.getValor() + pagamentoAvulso.getValor());
+							pagamentoAvulso.setDeleted(true);
 						}
+					}
+				}
+				
+				for(Pagamento pagamentoAvulso : listaSaldoAnteriorPagamentosAvulsos){	
+					if(!pagamentoAvulso.getDeleted()){
+						listaSaldoAnteriorPagamentos.add(pagamentoAvulso);
 					}
 				}
 			}

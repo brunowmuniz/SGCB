@@ -349,7 +349,7 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		listaStatus.add(10);		
 		listaOc = session.createQuery("select new Oc(o.id, o.usuario, sum(o.valorliquido), sum(o.valorfinal)) " +
 											"from Oc o " +
-										" left join o.comissaoVendedores comissaoVendedor "+
+										/*" left join o.comissaoVendedores comissaoVendedor "+*/
 										"where "+
 											"o.deleted = :ocDeleted " +
 										"and " +

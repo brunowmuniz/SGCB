@@ -4,14 +4,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
-
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
 import br.com.casabemestilo.model.Cliente;
-import br.com.casabemestilo.model.Perfil;
 import br.com.casabemestilo.util.Conexao;
 
 public class ClienteDAO implements Serializable,InterfaceDAO{	
@@ -94,7 +91,7 @@ public class ClienteDAO implements Serializable,InterfaceDAO{
 			ConstraintViolationException {
 		session = Conexao.getInstance();
 		session.beginTransaction();
-		listaClientes = session.createQuery("from Cliente").list();
+		listaClientes = session.createQuery("from Cliente order by c.nome").list();
 		session.close();
 		return listaClientes;
 	}
@@ -104,7 +101,7 @@ public class ClienteDAO implements Serializable,InterfaceDAO{
 			ConstraintViolationException {
 		session = Conexao.getInstance();
 		session.beginTransaction();
-		listaClientes = session.createQuery("from Cliente c where c.deleted=0").list();
+		listaClientes = session.createQuery("from Cliente c where c.deleted=0 order by c.nome").list();
 		session.close();
 		return listaClientes;
 	}
@@ -118,7 +115,8 @@ public class ClienteDAO implements Serializable,InterfaceDAO{
 		listaClientes = session.createQuery("from Cliente c where " +
 															" c.deleted=:deletado " +
 														" and" +
-															" c.nome like :desc")
+															" c.nome like :desc" +
+															" order by c.nome")
 							 .setBoolean("deletado", cliente.getDeleted())
 							 .setString("desc", "%" + cliente.getNome() + "%")
 							 .list();
@@ -137,7 +135,8 @@ public class ClienteDAO implements Serializable,InterfaceDAO{
 			hql += " and cliente.nome like '%" + filters.get("nome") + "%'";
 		}
 		
-		hql +=" order by cliente.nome";		
+		hql +=" order by cliente.nome";
+		
 		listaClientes = session.createQuery(hql)
 								.setFirstResult(first)
 								.setMaxResults(pageSize)
@@ -236,8 +235,4 @@ public class ClienteDAO implements Serializable,InterfaceDAO{
 	public void setListaClientes(List<Cliente> listaClientes) {
 		this.listaClientes = listaClientes;
 	}
-
-	
-
-	
 }
