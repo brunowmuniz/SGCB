@@ -38,11 +38,38 @@
 		             	<p:ajax event="rowSelect" update=":form:ctxlancamento"/>
 						
 						<p:column headerText="Conta Contábil" filterBy="#{lancamento.contacontabil.id}" filterOptions="#{contaContabilControl.listaContasCombo('filter')}" filterMatchMode="exact">
-							<h:outputText value="#{lancamento.contacontabil.nome}" />
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{lancamento.contacontabil.nome}" />
+								</f:facet>
+								<f:facet name="input">
+									<p:selectOneMenu size="1" value="#{lancamento.contacontabil.id}" style="width: 120px;">
+										<f:selectItems value="#{contaContabilControl.listaContasCombo('')}"/>
+										<p:ajax event="change" process="@this" update="@this,editdesc"/>
+									</p:selectOneMenu>
+								</f:facet>															
+							</p:cellEditor>
+							
 						</p:column>
 									
 						<p:column headerText="Descrição" filterBy="#{lancamento.descricao}" filterMatchMode="startsWith" filterStyle="width: 100%;">
-							<h:outputText value="#{lancamento.descricao}" />
+							<p:cellEditor id="editdesc">
+								<f:facet name="output">
+									<h:outputText value="#{lancamento.descricao}" />		
+								</f:facet>
+								<f:facet name="input">
+									<p:selectOneMenu id="descfornecedor" value="#{lancamentoControl.fornecedor.id}" rendered="#{lancamento.contacontabil.id == 19 or lancamento.contacontabil.id == 10}"
+													required="true" requiredMessage="Favor informar um fornecedor" style="width: 120px;">
+										<f:selectItem itemValue="0" itemLabel="Selecione Fornecedor" noSelectionOption="true"/>								
+										<f:selectItems value="#{fornecedoresControl.getListaFornecedorCombo('')}"/>
+										<p:ajax event="change" process="@this" update="@this"/>
+									</p:selectOneMenu>
+									<p:inputText id="desclancamento" value="#{lancamento.descricao}" size="40" required="true"
+												requiredMessage="Favor informar descritivo do lançamento" rendered="#{lancamento.contacontabil.id != 19 and lancamento.contacontabil.id != 10}">
+										<p:ajax event="blur" process="@this" />									
+									</p:inputText>
+								</f:facet>
+							</p:cellEditor>							
 						</p:column>
 						
 						<p:column headerText="Nº Boleto" filterBy="#{lancamento.numBoleto}" filterMatchMode="startsWith" filterStyle="width: 100%;">
@@ -53,8 +80,7 @@
 								<f:facet name="input">
 									<p:inputText value="#{lancamento.numBoleto}" />
 								</f:facet>
-							</p:cellEditor>
-							
+							</p:cellEditor>						
 						</p:column>
 						
 						<p:column headerText="Forma Pgto.">
@@ -100,6 +126,19 @@
 									</p:calendar>
 								</f:facet>
 							</p:cellEditor>							
+						</p:column>
+						<p:column headerText="Status" style="width: 70px;">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText value="#{lancamento.status}" />										
+								</f:facet>
+								<f:facet name="input">
+									<p:selectOneMenu value="#{lancamento.status}" size="1" style="width: 100px;">
+										<f:selectItem itemValue="Pendente" itemLabel="Pendente"/>
+										<f:selectItem itemValue="Quitado" itemLabel="Quitado"/>
+									</p:selectOneMenu>
+								</f:facet>
+							</p:cellEditor>
 						</p:column>
 						
 						<p:column headerText="Editar" icon="ui-icon-pencil" style="width: 6px;">

@@ -35,7 +35,6 @@ import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import sun.java2d.opengl.OGLContext;
 
 
 @Entity
@@ -61,6 +60,7 @@ public class Oc implements java.io.Serializable {
 	private Date datalancamento;
 	private Boolean deleted;
 	private String tipoFrete;
+	private Float desconto;
 	private List<Pagamento> pagamentos = new ArrayList<Pagamento>();
 	private List<Ocproduto> ocprodutos = new ArrayList<Ocproduto>();
 	private List<ComissaoVendedor> comissaoVendedores = new ArrayList<ComissaoVendedor>();
@@ -289,6 +289,18 @@ public class Oc implements java.io.Serializable {
 
 	public void setDeleted(Boolean deleted) {
 		this.deleted = deleted;
+	}
+	
+	@Column(name="desconto",nullable = false)
+	public Float getDesconto() {
+		if(desconto == null){
+			desconto = new Float("0");
+		}
+		return desconto;
+	}
+	
+	public void setDesconto(Float desconto) {
+		this.desconto = desconto;
 	}
 
 	@OneToMany(targetEntity = Pagamento.class, mappedBy = "oc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

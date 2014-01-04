@@ -55,7 +55,7 @@
 										<h:panelGrid columns="3">
 											<p:outputLabel for="buscarcliente" value="Busca Cliente: "/>
 											<p:autoComplete id="buscarcliente" value="#{ocControl.oc.cliente}" minQueryLength="3"
-																completeMethod="#{clienteControl.listaComplete}"											 
+																completeMethod="#{clienteControl.listaComplete}" size="60"											 
 																forceSelection="true" converter="converter.clienteConverter"
 																var="cliente" itemValue="#{cliente}" itemLabel="#{cliente.nome}"
 																disabled="#{ocControl.oc.cliente.id != null}">
@@ -87,7 +87,7 @@
 											
 											<p:outputLabel value="CPF: " for="cpfclienteoc" rendered="#{ocControl.oc.cliente.tipoPessoa.equals('pf')}"/>
 											<p:inputMask size="30" value="#{ocControl.oc.cliente.cpf}" required="true" id="cpfclienteoc" mask="999.999.999-99" 
-														 rendered="#{ocControl.oc.cliente.tipoPessoa.equals('pf')}" disabled="true"/>
+														 rendered="#{ocControl.oc.cliente.tipoPessoa.equals('pf')}" />
 											
 											<p:outputLabel value="RG: " for="rgclienteoc" rendered="#{ocControl.oc.cliente.tipoPessoa.equals('pf')}"/>
 											<p:inputText size="30" value="#{ocControl.oc.cliente.rg}"  id="rgclienteoc" rendered="#{ocControl.oc.cliente.tipoPessoa.equals('pf')}"/>
@@ -149,7 +149,7 @@
 														
 								<p:dialog widgetVar="modalFreteMontagem" id="modalFreteMontagem" resizable="false" header="Montadores">
 									<p:outputPanel id="updMontagemFrete" autoUpdate="true">
-										<h:panelGrid columns="2">
+										<h:panelGrid columns="2" id="pnlFreteMontagem">
 											<p:outputLabel for="listaMontadores" value="Montador"/>
 											<p:selectManyMenu value="#{freteControl.listaMontadores}" id="listaMontadores">
 												<f:selectItem itemValue="" noSelectionOption="true"/>
@@ -158,14 +158,17 @@
 											</p:selectManyMenu>
 											<p:outputLabel value="Observações: " for="observacoesfretemontagem"/>
 											<p:inputTextarea id="observacoesfretemontagem" value="#{ocControl.observacoesFreteMontAT}" cols="20" rows="5" maxlength="100"/>
-											<p:commandButton actionListener="#{ocControl.acaoProduto(6,freteControl.listaMontadores)}" oncomplete="modalFreteMontagem.hide()" id="freteExecucaoAcao" value="Gravar Frete/Execução" disabled="#{freteControl.listaMontadores.size() == 0}" update=":form:msgs,listaprodutoocfechada"/>
+											<p:commandButton actionListener="#{ocControl.acaoProduto(6,freteControl.listaMontadores)}" 
+															oncomplete="modalFreteMontagem.hide()" id="freteExecucaoAcao" 
+															value="Gravar Frete/Execução" disabled="#{freteControl.listaMontadores.size() == 0}" 
+															update=":form:msgs,listaprodutoocfechada" process="pnlFreteMontagem"/>
 										</h:panelGrid>		
 									</p:outputPanel>
 								</p:dialog>
 								
 								<p:dialog widgetVar="modalAssistenciaTecnica" id="modalAssistenciaTecnica" resizable="false" header="Montadores">
 									<p:outputPanel id="updAssistTec" autoUpdate="true">
-										<h:panelGrid columns="2">
+										<h:panelGrid columns="2" id="pnlAT">
 											<p:outputLabel for="listaMontadores" value="Montador"/>
 											<p:selectManyMenu value="#{assistenciaTecnicaControl.listaMontadores}" id="listaMontadoresAT">
 												<f:selectItem itemValue="" noSelectionOption="true"/>
@@ -174,7 +177,11 @@
 											</p:selectManyMenu>
 											<p:outputLabel value="Observações: " for="observacoesat"/>
 											<p:inputTextarea id="observacoesat" value="#{ocControl.observacoesFreteMontAT}" cols="20" rows="5" maxlength="100"/>										
-											<p:commandButton actionListener="#{ocControl.acaoProduto(8,assistenciaTecnicaControl.listaMontadores)}" oncomplete="modalAssistenciaTecnica.hide()" id="AssistenciaTecnicaAcao" value="Gravar Assist. Técnica" disabled="#{assistenciaTecnicaControl.listaMontadores.size() == 0}" update=":form:msgs,listaprodutoocfechada"/>
+											<p:commandButton actionListener="#{ocControl.acaoProduto(8,assistenciaTecnicaControl.listaMontadores)}" 
+															 oncomplete="modalAssistenciaTecnica.hide()" id="AssistenciaTecnicaAcao" 
+															 value="Gravar Assist. Técnica" 
+															 disabled="#{assistenciaTecnicaControl.listaMontadores.size() == 0}" 
+															 update=":form:msgs,listaprodutoocfechada" process="pnlAT"/>
 										</h:panelGrid>		
 									</p:outputPanel>
 								</p:dialog>
@@ -377,7 +384,7 @@
 								        </p:column>
 								      
 								        <p:column headerText="Editar" style="width: 6px;">
-								        	<p:rowEditor />
+								        	<p:rowEditor rendered="#{ocControl.oc.desconto == 0}"/>								        	
 								        </p:column>			        
 									</p:dataTable>	
 									
@@ -482,7 +489,7 @@
 												<p:outputLabel value="Frete: " />
 												<p:inputText value="#{ocControl.oc.valorfrete}">
 													<f:validateBean />
-													<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="4" minFractionDigits="2"/>
+													<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1"/>
 													<p:ajax event="blur" process="@this" update="@this,valorfinaloc" listener="#{ocControl.calculaValorTotal}"/>
 												</p:inputText>
 												
@@ -496,8 +503,8 @@
 												
 												<p:outputLabel value="Montagem: " />
 												<p:inputText value="#{ocControl.oc.valormontagem}">
-													<f:validateBean />
-													<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="4" minFractionDigits="2"/>
+													<f:validateBean />													
+													<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1"/>
 													<p:ajax event="blur" process="@this" update="@this,valorfinaloc" listener="#{ocControl.calculaValorTotal}"/>
 												</p:inputText>
 												
@@ -510,28 +517,33 @@
 												<p:outputLabel for="obsoc" value="Observações: "/>
 												<p:inputTextarea value="#{ocControl.oc.observacoes}" id="obsoc" rows="10" cols="50"/>
 											</h:panelGrid>
-											<h:panelGrid columns="2">
+											<h:panelGrid columns="4">
 												<p:outputLabel for="valoroc" value="Valor: "/>
-												<p:inputText value="#{ocControl.oc.valor}" id="valoroc">
+												<p:inputText value="#{ocControl.oc.valor}" id="valoroc" disabled="true">
 													<f:validateBean />
-													<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
+													<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1"/>
 													<p:ajax event="blur" process="@this"/>
 												</p:inputText>
+												<h:outputText value="?" id="helpvaloroc" styleClass="negrito"/>
+												<p:tooltip for="helpvaloroc" showEffect="slide" value="Valor com somatório somente dos produtos da OC (não inclui frete, nem montagem e nem os descontos aplicados)"/>
 												
-												<p:outputLabel for="valorfinanciadooc" value="Valor Financ.: "/>
-												<p:inputText value="#{ocControl.oc.valorfinanciado}" id="valorfinanciadooc">
+												<p:outputLabel for="desconto" value="Desconto (R$): "/>
+												<p:inputText value="#{ocControl.oc.desconto}" id="desconto">
 													<f:validateBean />
-													<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
-													<p:ajax event="blur" process="@this"/>
+													<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1"/>													
+													<p:ajax event="blur" process="@this" update=":form:oc:listaprodutooc,:form:msgs,valoroc,valorfinaloc" listener="#{ocControl.aplicaDesconto}"/>
 												</p:inputText>
+												<h:outputText value="?" id="helpdesconto" styleClass="negrito"/>
+												<p:tooltip for="helpdesconto" showEffect="slide" value="Desconto aplicado somente nos produtos da OC (não inclui frete e nem montagem)"/>
 												
 												<p:outputLabel for="valorfinaloc" value="Valor Final: "/>
-												<p:inputText value="#{ocControl.oc.valorfinal}" id="valorfinaloc">
+												<p:inputText value="#{ocControl.oc.valorfinal}" id="valorfinaloc" disabled="true">
 													<f:validateBean />
-													<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
+													<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1"/>
 													<p:ajax event="blur" process="@this" update="@this,updSelecaoCondicao"/>																																							 
 												</p:inputText>
-												<p:message for="valorfinaloc"/>
+												<h:outputText value="?" id="helpvalorfinal" styleClass="negrito"/>
+												<p:tooltip for="helpvalorfinal" showEffect="slide" value="Valor do total da OC [(total dos produtos + frete + montagem) - desconto]"/>
 											</h:panelGrid>
 										</p:panel>
 										<p:panel rendered="#{sessionScope.UsuarioLogado.perfil.id != 2 and (ocControl.oc.status.id == 2 or ocControl.oc.status.id == 1)}">
@@ -580,7 +592,7 @@
 														<p:outputLabel for="valorcondicoespagamento" value="Valor: "/>																											
 														<p:inputText value="#{ocControl.pagamento.valor}" id="valorcondicoespagamento">															
 															<f:validateBean />
-															<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
+															<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1"/>
 															<p:ajax event="blur" process="@this" update="valorcondicoespagamento,gravarformapagamento"/>
 														</p:inputText>
 														<p:commandButton id="gravarformapagamento" value="Adicionar Forma Pagamento" update="updFormaPagamento,updSelecaoCondicao,:form:msgs,gravarpgto" process="@this"
@@ -631,7 +643,7 @@
 												</p:column>
 												<p:column headerText="Valor">
 													<h:outputText value="#{pagamento.valor}">
-														<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
+														<f:convertNumber locale="pt_BR" maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="6" minFractionDigits="2"/>
 													</h:outputText>
 												</p:column>														
 											</p:dataTable>

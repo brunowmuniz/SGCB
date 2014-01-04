@@ -97,7 +97,10 @@ public class PagamentoAvulsoDAO implements InterfaceDAO, Serializable {
 		List<Object> pagamentoAvulsos = new ArrayList<Object>();
 		pagamentoAvulsos = session.createQuery("from PagamentoAvulso pagamentoAvulso " +
 												" inner join pagamentoAvulso.pagamentos pagamento " +
-												" where pagamentoAvulso.dataLancamento = :dataLancamento")
+												" where " +
+													" pagamentoAvulso.dataLancamento = :dataLancamento" +
+												" and" +
+													" pagamentoAvulso.deleted = false")
 									.setDate("dataLancamento", dataLancamento)
 									.setCacheable(true)
 									.list();

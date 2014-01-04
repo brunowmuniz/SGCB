@@ -141,6 +141,24 @@ public class PagamentoDAO implements InterfaceDAO, Serializable {
 		session.close();
 		return listaPagamento;
 	}
+	
+	public Double calculaPagamentosAvulsos(Date dataInicial, Date dataFinal) {
+		session = Conexao.getInstance();
+		Double totalPagamentoAvulso = (Double) session.createQuery("select " +
+																" sum(p.valor)" +
+															" from Pagamento p" +
+															" where" +
+																" p.deleted = false" +
+															" and" +
+																" p.oc.id is null" +
+															" and" +
+																" p.datalancamento between :dataInicial and :dataFinal")
+												.setDate("dataInicial", dataInicial)
+												.setDate("dataFinal", dataFinal)
+												.uniqueResult();
+		session.close();
+		return totalPagamentoAvulso;
+	}
 
 	/*
 	 * GETTERS & SETTERS

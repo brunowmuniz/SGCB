@@ -145,6 +145,16 @@ public class LancamentoDAO implements InterfaceDAO, Serializable {
 			hql += " and l.numBoleto like '%" + filters.get("numBoleto") + "%'";
 		}
 		
+		if(filters.containsKey("contacontabil.tipo")){
+			hql += " and l.contacontabil.tipo = '" + filters.get("contacontabil.tipo") + "'";
+		}
+		
+		if(filters.containsKey("status")){
+			hql += " and l.status = '" + filters.get("status") + "'";
+		}
+		
+		hql += " order by l.dataLancamento";
+		
 		listaLancamento = session.createQuery(hql)
 								.setDate("dataInicial", dataInicial)
 								.setDate("dataFinal", dataFinal)
@@ -185,6 +195,14 @@ public class LancamentoDAO implements InterfaceDAO, Serializable {
 		
 		if(filters.containsKey("numBoleto")){
 			hql += " and l.numBoleto like '%" + filters.get("numBoleto") + "%'";
+		}
+		
+		if(filters.containsKey("contacontabil.tipo")){
+			hql += " and l.contacontabil.tipo = '" + filters.get("contacontabil.tipo") + "'";
+		}
+		
+		if(filters.containsKey("status")){
+			hql += " and l.status = '" + filters.get("status") + "'";
 		}
 		
 		linhas = (Long) session.createQuery(hql)
@@ -288,7 +306,8 @@ public class LancamentoDAO implements InterfaceDAO, Serializable {
 													" and" +
 												 		" (lancamento.ehVale = false or" +
 												 			" (lancamento.ehVale = true and lancamento.formapagamento = 3))" +
-												 	" and lancamento.formapagamento <> 10")
+												 	" and lancamento.formapagamento <> 10" +
+												 	" and lancamento.deleted = false")
 								 .setDate("dataLancamento", dataLancamento)
 								 .setCacheable(true)
 								 .list();
@@ -307,13 +326,25 @@ public class LancamentoDAO implements InterfaceDAO, Serializable {
 											 		 " lancamento.dataLancamento < :dataLancamento" +
 											 	" and" +
 											 		" (lancamento.ehVale = false or" +
-											 			" (lancamento.ehVale = true and lancamento.formapagamento = 3))"+
+											 			" (lancamento.ehVale = true and lancamento.formapagamento = 3))" +
+											 	" and" +
+											 		" lancamento.deleted = false" +
 												" group by lancamento.formapagamento.id")
 								.setDate("dataLancamento", dataLancamento)
 								.setCacheable(true)
 								.list();
 		session.close();
 		return listaLancamento;
+	}
+	
+	public void insertCarga(List<Lancamento> lancamentos){
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		for(Lancamento lancamento : lancamentos){
+			session.save(lancamento);
+			System.out.println("Inserido " + lancamento);
+		}
+		session.getTransaction().commit();
 	}
 	
 	/*

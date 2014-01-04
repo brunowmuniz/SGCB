@@ -133,7 +133,9 @@ public class UsuarioDAO implements InterfaceDAO, Serializable {
 											" and" +
 												" uf.deleted = false" +
 											" and" +
-												" uf.filial.id= :filial")
+												" uf.filial.id= :filial" +
+											" and" +
+												" uf.usuario.deleted= false")
 								.setInteger("filial", filial.getId())
 								.list();
 		session.close();

@@ -2,16 +2,12 @@ package br.com.casabemestilo.DAO;
 
 import java.io.Serializable;
 import java.util.List;
-
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
-
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
 import br.com.casabemestilo.control.FornecedoresControl;
-import br.com.casabemestilo.model.Cliente;
 import br.com.casabemestilo.model.Fornecedor;
-import br.com.casabemestilo.model.Produto;
 import br.com.casabemestilo.util.Conexao;
 
 public class FornecedoresDAO implements InterfaceDAO, Serializable {
@@ -107,7 +103,7 @@ public class FornecedoresDAO implements InterfaceDAO, Serializable {
 			ConstraintViolationException {
 		session = Conexao.getInstance();
 		session.beginTransaction();
-		listaFornecedores = session.createQuery("from Fornecedor f where f.deleted=0").list();
+		listaFornecedores = session.createQuery("from Fornecedor f where f.deleted=0 order by f.nome").list();
 		session.close();
 		return listaFornecedores;
 	}
@@ -151,7 +147,5 @@ public class FornecedoresDAO implements InterfaceDAO, Serializable {
 	public void setFornecedor(Fornecedor fornecedor) {
 		this.fornecedor = fornecedor;
 	}
-	
-	
 	
 }

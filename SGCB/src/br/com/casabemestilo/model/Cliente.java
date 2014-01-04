@@ -177,7 +177,7 @@ public class Cliente implements java.io.Serializable {
 	public void setOcs(List<Oc> ocs) {
 		this.ocs = ocs;
 	}
-	
+
 	@Column(name = "deleted", nullable = false)
 	public Boolean getDeleted() {
 		return deleted;

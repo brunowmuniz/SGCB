@@ -199,6 +199,26 @@ public class ContaContabilControl extends Control implements InterfaceControl, S
 		}
 		return listaContaContabilCombo;
 	}
+	
+	public List listaContasDebitoCombo(String filter){
+		listarTodos();
+		List listaContaContabilCombo = new ArrayList();
+		
+		if(filter.equals("filter")){
+			SelectItem si = new SelectItem();
+			si.setLabel("Todos");
+			si.setValue("");
+			si.setNoSelectionOption(true);
+			listaContaContabilCombo.add(si);
+		}
+		
+		for(Contacontabil contacontabil : listaContaContabil){
+			if(contacontabil.getTipo().equals("D")){
+				listaContaContabilCombo.add(new SelectItem(contacontabil.getId(), contacontabil.getNome()));
+			}
+		}
+		return listaContaContabilCombo;
+	}
 
 	public LazyDataModel<Contacontabil> listaLazyContaContabilGeral(){
 		if(listaLazyContaContabil == null){

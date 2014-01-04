@@ -19,6 +19,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
+import main.DataUtil;
+
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.primefaces.model.LazyDataModel;
@@ -202,10 +204,10 @@ public class PagamentoAvulsoControl extends Control implements InterfaceControl,
 	public void defineFormaPagamento() throws ConstraintViolationException, HibernateException, Exception{		
 		getPagamento().getCondicoesPagamento().setFormapagamento(new FormaPagamentoDAO().buscaObjetoId(getPagamento().getCondicoesPagamento().getFormapagamento().getId()));
 		if(getPagamento().getCondicoesPagamento().getFormapagamento().getId() == 4){
-			getPagamento().setBanco(new Banco());
-			getPagamento().setCliente(new Cliente());
-			getPagamento().getCliente().setId(getCliente().getId());
+			getPagamento().setBanco(new Banco());			
 		}
+		getPagamento().setCliente(new Cliente());
+		getPagamento().getCliente().setId(getCliente().getId());
 	}
 
 	public void defineCondicoesPagamento() throws ConstraintViolationException, HibernateException, Exception{
@@ -215,18 +217,13 @@ public class PagamentoAvulsoControl extends Control implements InterfaceControl,
 	}
 	
 	
-	@SuppressWarnings("static-access")
-	public void gravaFormaPagamentoOc(){				
-		Calendar calendar = Calendar.getInstance();
-		Calendar calendarParcela = Calendar.getInstance();
-		calendar.setTime(getDataPrimeiraParcela());
-		calendarParcela.setTime(getDataPrimeiraParcela());
-		int diaPrimeiraParcela = calendar.get(calendar.DAY_OF_MONTH);
-		
-		
+	public void gravaFormaPagamentoOc(){
+		List<Date> dataParcelas = new ArrayList<Date>();
 		if(getPagamentoAvulso().getPagamentos() == null){
 			getPagamentoAvulso().setPagamentos(new ArrayList<Pagamento>());
 		}
+		
+		dataParcelas = new DataUtil().gerarDatas(getDataPrimeiraParcela(), pagamento.getCondicoesPagamento().getParcelas(), true);
 		
 		if(getPagamento().getCondicoesPagamento().getAvista()){
 			Parcela parcela = new Parcela();
@@ -234,37 +231,20 @@ public class PagamentoAvulsoControl extends Control implements InterfaceControl,
 			parcela.setNumeroParcela(1);
 			parcela.setValor(pagamento.getValor());
 			parcela.setDataentrada(new Date());
-			parcela.setSituacaoCheque(parcela.getPagamento().getCondicoesPagamento().getFormapagamento().getId() == 4 ? "Emitido" : null);
-			parcela.setStatusCartao(parcela.getPagamento().getCondicoesPagamento().getFormapagamento().getEhcartao() ? "Pendente" : null);
+			parcela.setSituacaoCheque(parcela.getPagamento().getCondicoesPagamento().getFormapagamento().getId() == 4 ? "Quitado" : null);
+			parcela.setStatusCartao(parcela.getPagamento().getCondicoesPagamento().getFormapagamento().getEhcartao() ? "Quitado" : null);
 			pagamento.getParcelas().add(parcela);
-		}else{
+		}else{			
 			for(int i = 1; i <= pagamento.getCondicoesPagamento().getParcelas(); i++){
 				Parcela parcela = new Parcela();
-				if(i > 1){
-					calendarParcela.add(calendarParcela.MONTH,1);			
-					calendar.add(calendar.DATE, calendarParcela.getActualMaximum(calendarParcela.DAY_OF_MONTH));
-					if(diaPrimeiraParcela >= 29){
-						if(calendar.get(calendar.DAY_OF_MONTH) < diaPrimeiraParcela && diaPrimeiraParcela >= calendarParcela.getActualMaximum(calendarParcela.DAY_OF_MONTH)){
-							calendar.set(calendar.DATE, calendar.getActualMaximum(calendar.DAY_OF_MONTH));
-						}
-							
-						if(calendar.get(calendar.DAY_OF_MONTH) <  diaPrimeiraParcela &&  diaPrimeiraParcela <= calendarParcela.getActualMaximum(calendarParcela.DAY_OF_MONTH)){
-							calendar.set(calendar.DATE,  diaPrimeiraParcela);					
-						}
-						
-						if(calendar.get(calendar.DAY_OF_MONTH) > diaPrimeiraParcela){
-							calendar.set(calendar.DATE,  diaPrimeiraParcela);					
-						}
-					}
-				}
 				parcela.setPagamento(pagamento);
 				parcela.setNumeroParcela(i);
 				parcela.setValor(pagamento.getValor() / pagamento.getCondicoesPagamento().getParcelas());
-				parcela.setDataentrada(calendar.getTime());
+				parcela.setDataentrada(dataParcelas.get(i-1));
 				parcela.setSituacaoCheque(parcela.getPagamento().getCondicoesPagamento().getFormapagamento().getId() == 4 ? "Emitido" : null);
 				parcela.setStatusCartao(parcela.getPagamento().getCondicoesPagamento().getFormapagamento().getEhcartao() ? "Pendente" : null);
 				pagamento.getParcelas().add(parcela);
-			}
+			}			
 		}
 		
 		getPagamento().setPagamentoAvulso(getPagamentoAvulso());
