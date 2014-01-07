@@ -29,6 +29,7 @@ import br.com.casabemestilo.model.Banco;
 import br.com.casabemestilo.model.Pagamento;
 import br.com.casabemestilo.model.Parcela;
 import br.com.casabemestilo.model.ParcelaDia;
+import java.util.Iterator;
 
 
 @ManagedBean
@@ -70,6 +71,9 @@ public class ParcelaControl extends Control implements InterfaceControl,
 	private Integer ocFiltro;
 	
 	private String statusFiltro = "";
+	
+	private Integer formaPagamentoFiltro;
+	
 	
 	
 	/*
@@ -327,7 +331,7 @@ public class ParcelaControl extends Control implements InterfaceControl,
 		List<ParcelaDia> listaParcelasDia = new ArrayList<ParcelaDia>();
 		ParcelaDia parcelaDia = new ParcelaDia();
 		parcelaDAO = new ParcelaDAO();
-		defineFiltro();
+		defineFiltroCheque();
 		int linhas = parcelaDAO.totalParcelasAVencerCheque(getDataInicial(), getDataFinal(), dataTableParcela.getFilters());
 		listaParcela = parcelaDAO.listaParcelasAVencerCheque(0, linhas, getDataInicial(), getDataFinal(), dataTableParcela.getFilters());
 		Calendar diaLancamento = Calendar.getInstance();
@@ -358,6 +362,42 @@ public class ParcelaControl extends Control implements InterfaceControl,
 		return listaParcelasDia;
 	}
 	
+	
+	public List<ParcelaDia> listarParcelasDiaPagamento(){
+		List<ParcelaDia> listaParcelasDia = new ArrayList<ParcelaDia>();
+		ParcelaDia parcelaDia = new ParcelaDia();
+		parcelaDAO = new ParcelaDAO();
+		defineFiltroPagamentos();
+		int linhas = parcelaDAO.totalParcelasAVencer(getDataInicial(), getDataFinal(), dataTableParcela.getFilters());
+		listaParcela = parcelaDAO.listaParcelasAVencer(0, linhas, getDataInicial(), getDataFinal(), dataTableParcela.getFilters());
+		Calendar diaLancamento = Calendar.getInstance();
+		for(Parcela parcelaPgto : listaParcela){
+			if(parcelaPgto.getId() == listaParcela.get(0).getId()){
+				diaLancamento.setTime(parcelaPgto.getDataentrada());
+				parcelaDia.setDataParcela(parcelaPgto.getDataentrada());
+				parcelaDia.setTotalCheques(1);
+				parcelaDia.setValorTotalParcelas(parcelaPgto.getValor());
+				parcelaDia.getParcelas().add(parcelaPgto);
+			}else{
+				if(!diaLancamento.getTime().equals(parcelaPgto.getDataentrada())){
+					listaParcelasDia.add(parcelaDia);
+					parcelaDia = new ParcelaDia();
+					diaLancamento.setTime(parcelaPgto.getDataentrada());
+					parcelaDia.setDataParcela(parcelaPgto.getDataentrada());
+					parcelaDia.setTotalCheques(1);
+					parcelaDia.setValorTotalParcelas(parcelaPgto.getValor());
+					parcelaDia.getParcelas().add(parcelaPgto);
+				}else{
+					parcelaDia.getParcelas().add(parcelaPgto);
+					parcelaDia.setTotalCheques(parcelaDia.getTotalCheques() + 1);
+					parcelaDia.setValorTotalParcelas(parcelaDia.getValorTotalParcelas() + parcelaPgto.getValor());
+				}
+			}
+		}
+		listaParcelasDia.add(parcelaDia);
+		return listaParcelasDia;
+	}
+	
 	public float totalValorParcelasPeriodo(){
 		float totalValorCheques = 0;
 		for(Parcela cheque : listaParcela){
@@ -366,8 +406,9 @@ public class ParcelaControl extends Control implements InterfaceControl,
 		return totalValorCheques;
 	}
 	
-	private void defineFiltro(){
+	private void defineFiltroCheque(){
 		dataTableParcela.setFilters(new HashMap<String, String>());
+	
 		if(statusFiltro.equals("")){
 			statusFiltro = "pendente,emitido";
 		}
@@ -377,7 +418,6 @@ public class ParcelaControl extends Control implements InterfaceControl,
 		}else{
 			dataTableParcela.getFilters().put("situacaoCheque", statusFiltro);
 		}
-		
 		
 		if(clienteFiltro != null){
 			dataTableParcela.getFilters().put("pagamento.cliente.nome", getClienteFiltro());
@@ -391,6 +431,34 @@ public class ParcelaControl extends Control implements InterfaceControl,
 		if(getParcela().getNumeroCheque() != null){
 			if(!getParcela().getNumeroCheque().equals("")){				
 				dataTableParcela.getFilters().put("numeroCheque", getParcela().getNumeroCheque());
+			}			
+		}
+	}
+	
+	private void defineFiltroPagamentos(){
+		dataTableParcela.setFilters(new HashMap<String, String>());
+		
+		if(statusFiltro.equals("")){
+			statusFiltro = "pendente";
+		}
+		
+		dataTableParcela.getFilters().put("statusCartao", statusFiltro);
+		if(formaPagamentoFiltro != null){
+			if(formaPagamentoFiltro != 0){
+				dataTableParcela.getFilters().put("pagamento.condicoesPagamento.formapagamento.id", formaPagamentoFiltro.toString());
+			}			
+		}
+		
+		
+		if(clienteFiltro != null){
+			if(!clienteFiltro.equals("")){
+				dataTableParcela.getFilters().put("pagamento.oc.cliente.nome", getClienteFiltro());
+			}			
+		}
+		
+		if(getParcela().getNumeroCheque() != null){
+			if(!getParcela().getNumeroCheque().equals("")){				
+				dataTableParcela.getFilters().put("pagamento.cvCartao", getParcela().getNumeroCheque());
 			}			
 		}
 	}
@@ -561,7 +629,13 @@ public class ParcelaControl extends Control implements InterfaceControl,
 	public void setStatusFiltro(String statusFiltro) {
 		this.statusFiltro = statusFiltro;
 	}
-	
-	
+
+	public Integer getFormaPagamentoFiltro() {
+		return formaPagamentoFiltro;
+	}
+
+	public void setFormaPagamentoFiltro(Integer formaPagamentoFiltro) {
+		this.formaPagamentoFiltro = formaPagamentoFiltro;
+	}
 	
 }

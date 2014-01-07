@@ -29,7 +29,7 @@ public class Montagem implements java.io.Serializable {
 	private Ocproduto ocproduto;
 	private Date datainicio;
 	private Date datefim;
-	private String observações;
+	private String observacoes;
 	private Float valor;
 
 	public Montagem() {
@@ -42,12 +42,12 @@ public class Montagem implements java.io.Serializable {
 	}
 
 	public Montagem(Usuario usuario, Ocproduto ocproduto, Date datainicio,
-			Date datefim, String observações, Float valor) {
+			Date datefim, String observacoes, Float valor) {
 		this.usuario = usuario;
 		this.ocproduto = ocproduto;
 		this.datainicio = datainicio;
 		this.datefim = datefim;
-		this.observações = observações;
+		this.observacoes = observacoes;
 		this.valor = valor;
 	}
 
@@ -102,13 +102,13 @@ public class Montagem implements java.io.Serializable {
 		this.datefim = datefim;
 	}
 
-	@Column(name = "observações", length = 65535)
-	public String getObservações() {
-		return this.observações;
+	@Column(name="observacoes", length = 63565)
+	public String getObservacoes() {
+		return observacoes;
 	}
 
-	public void setObservações(String observações) {
-		this.observações = observações;
+	public void setObservacoes(String observacoes) {
+		this.observacoes = observacoes;
 	}
 
 	@Column(name = "valor", precision = 5)

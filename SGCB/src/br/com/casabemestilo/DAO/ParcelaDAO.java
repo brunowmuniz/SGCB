@@ -103,7 +103,7 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 		Long linhas = new Long(0);
 		session = Conexao.getInstance();
 		String hql = "select count(*) from Parcela p " +
-							"where" +
+							" where" +
 								" p.dataentrada between :dataInicial and :dataFinal" +
 							" and " +
 								" p.pagamento.condicoesPagamento.formapagamento.id <> 4" +
@@ -123,8 +123,8 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 		}
 		
 		if(filters.containsKey("pagamento.oc.cliente.nome")){
-			hql += " and (oc.nome like '%" + filters.get("pagamento.oc.cliente.nome") + "%' or" +
-					" cliente.nome like '%" + filters.get("pagamento.oc.cliente.nome") + "%')";			
+			hql += " and (p.pagamento.oc.cliente.nome like '%" + filters.get("pagamento.oc.cliente.nome") + "%' or" +
+					" p.pagamento.cliente.nome like '%" + filters.get("pagamento.oc.cliente.nome") + "%')";			
 		}
 		
 		linhas = (Long) session.createQuery(hql)
@@ -167,8 +167,6 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 		}
 		
 		hql += " order by dataentrada";
-		
-		System.out.println("Teste: " + first + "-" + pageSize);
 				
 		listaParcela = session.createQuery(hql)
 							  .setDate("dataInicial", dataInicial)
@@ -190,7 +188,7 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 							"where " +
 								"p.dataentrada between :dataInicial and :dataFinal" +
 							" and " +
-								"p.pagamento.condicoesPagamento.formapagamento.id = 4" +
+								"p.pagamento.condicoesPagamento.formapagamento.id in(:formaPagamento)" +
 							" and" +
 								" p.deleted = false";
 		
@@ -221,7 +219,8 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 		
 		linhas = (Long) session.createQuery(hql)
 								.setDate("dataInicial", dataInicial)
-								.setDate("dataFinal", dataFinal)								
+								.setDate("dataFinal", dataFinal)
+								.setString("formaPagamento",filter.get("formapagamento"))
 								.setCacheable(true)
 								.uniqueResult();
 		
@@ -240,7 +239,7 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 						"where " +
 							"p.dataentrada between :dataInicial and :dataFinal " +
 						"and " +
-							"p.pagamento.condicoesPagamento.formapagamento.id = 4" +
+							"p.pagamento.condicoesPagamento.formapagamento.id in(:formaPagamento)" +
 						" and" +
 							" p.deleted = false";
 		

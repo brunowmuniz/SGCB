@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+	<ui:composition template="../template/template.xhtml">
+		<ui:define name="conteudo">
+			<p:panel header="Relatório de Pagamentos Pendentes">				
+				<h:form id="form">
+					<p:messages id="msgs"/>
+					<h:panelGrid columns="3" id="filtros" styleClass="vTop">
+						<h:panelGrid columns="2">
+							<p:outputLabel value="Data Inicial: " for="dtInicial" />
+							<p:calendar value="#{parcelaControl.dataInicial}" pattern="dd/MM/yyyy" id="dtInicial"/>
+							<p:outputLabel value="Data Final: " for="dtFinal" />
+							<p:calendar value="#{parcelaControl.dataFinal}" pattern="dd/MM/yyyy" id="dtFinal"/>
+							
+							
+							<p:commandButton value="Pesquisar" process="filtros" update="@form" />
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<p:outputLabel for="clienteFiltro" value="Cliente Pagador: "/>
+							<p:inputText id="clienteFiltro" value="#{parcelaControl.clienteFiltro}" size="57" />							
+							<p:outputLabel for="formapagamento" value="Forma de Pagamento: "/>
+							<p:selectOneMenu  id="formapagamento" value="#{parcelaControl.formaPagamentoFiltro}" size="1">
+								<f:selectItems value="#{formaPagamentoControl.getListaFormaPagamentoCombo('filter')}"/>
+							</p:selectOneMenu>
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<p:outputLabel for="statusFiltro" value="Status: "/>
+							<p:selectOneMenu value="#{parcelaControl.statusFiltro}" size="1" id="statusFiltro">
+							<f:selectItem itemLabel="Pendente" itemValue="pendente"/>
+								<f:selectItem itemLabel="Quitado" itemValue="quitado"/>
+								<f:selectItem itemLabel="Antecipado" itemValue="antecipado"/>								
+							</p:selectOneMenu>
+							<p:outputLabel value="CV cartão: " for="cvcartao" />
+							<p:inputText value="#{parcelaControl.parcela.numeroCheque}" id="cvcartao"/>						
+						</h:panelGrid>
+					</h:panelGrid>
+										
+					<p:dataTable value="#{parcelaControl.listarParcelasDiaPagamento()}" var="parcelaDia" selection="#{parcelaControl.parcela}" selectionMode="single" 
+								 id="entradaparcelaedit" rowKey="#{parcela.id}" binding="#{parcelaControl.dataTableParcela}">
+						
+						<p:columnGroup type="header">							
+								<p:row>								
+									<p:column headerText="OC" />
+									<p:column headerText="Cliente" />
+									<p:column headerText="Data da Parcela" />
+									<p:column headerText="Parcela" />
+									<p:column headerText="Condição" />
+									<p:column headerText="Valor" />
+									<p:column headerText="CV" />									
+									<p:column headerText="Status Parcela" />
+								</p:row>																					
+						</p:columnGroup>
+							
+						<p:subTable var="parcela" value="#{parcelaDia.parcelas}">
+							<p:column>
+								<h:outputText value="#{parcela.pagamento.oc.id}" /> 
+							</p:column>
+							
+							<p:column>
+								<h:outputText value="#{parcela.pagamento.cliente.nome}" rendered="#{parcela.pagamento.pagamentoAvulso.id != null}"/>
+								<h:outputText value="#{parcela.pagamento.oc.cliente.nome}" rendered="#{parcela.pagamento.oc.id != null}"/>
+							</p:column>
+							
+							<p:column>
+								<h:outputText value="#{parcela.dataentrada}">
+									<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
+								</h:outputText>									
+							</p:column>
+							
+							<p:column>
+								<h:outputText value="#{parcela.numeroParcela}" />
+							</p:column>
+							
+							<p:column>
+								<h:outputText value="#{parcela.pagamento.condicoesPagamento.formapagamento.nome} - #{parcela.pagamento.condicoesPagamento.nome}" />
+							</p:column>
+							
+							<p:column>
+								<h:outputText value="#{parcela.valor}" >
+									<f:convertNumber locale="pt_BR" maxIntegerDigits="8" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+								</h:outputText>
+							</p:column>
+							
+							<p:column>
+								<h:outputText value="#{parcela.pagamento.cvCartao}" />
+							</p:column>
+							
+							<p:column>
+								<h:outputText value="#{parcela.statusCartao}" />
+							</p:column>
+							
+													
+							
+					        <p:columnGroup type="footer">
+					        	<p:row>
+					        		<p:column colspan="11" style="text-align: right;">
+					        			<f:facet name="footer">					        				
+						        			<h:outputText value="#{parcelaDia.dataParcela}" style="text-align: right;">
+						        				<f:convertDateTime pattern="dd/MM/yyyy"/>
+						        			</h:outputText>
+						        			<h:outputText value=" - #{parcelaDia.totalCheques} parcelas" style="text-align: right;"/>
+						        			<h:outputText value=" - total de " style="text-align: right;"/>
+						        			<h:outputText value="#{parcelaDia.valorTotalParcelas}" style="text-align: right;">
+					        					<f:convertNumber locale="pt_BR" maxIntegerDigits="8" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+					        				</h:outputText>
+					        			</f:facet>
+					        		</p:column>					        		
+					        	</p:row>
+					        </p:columnGroup>
+						</p:subTable>
+						<f:facet name="footer">
+							<h:outputText value="Total período" />							
+		        			<h:outputText value=" - #{parcelaControl.listaParcela.size()} parcelas" style="text-align: right;"/>
+		        			<h:outputText value=" - total de " style="text-align: right;"/>
+		        			<h:outputText value="#{parcelaControl.totalValorParcelasPeriodo()}" style="text-align: right;">
+	        					<f:convertNumber locale="pt_BR" maxIntegerDigits="8" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+	        				</h:outputText>
+						</f:facet>
+					</p:dataTable>
+				</h:form>
+			</p:panel>			
+		</ui:define>
+		<ui:define name="rodape">
+			<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela de relatório de pagamentos (exceto cheque) pendentes por período" styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="relatoriopagamento.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
+		</ui:define>
+	</ui:composition>
+</html>
