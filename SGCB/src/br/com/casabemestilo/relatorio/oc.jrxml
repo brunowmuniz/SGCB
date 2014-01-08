@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="oc" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="bd9a2b3a-0c16-4159-ad98-e0a1b1c719ae">
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="1.3310000000000006"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="80"/>
+	<property name="ireport.y" value="364"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["C:\\Desenvolvimento\\SGCB\\src\\br\\com\\casabemestilo\\relatorio\\"]]></defaultValueExpression>
 	</parameter>
@@ -43,7 +43,7 @@
 		<fieldDescription><![CDATA[ocprodutos]]></fieldDescription>
 	</field>
 	<field name="valorfinanciado" class="java.lang.Float">
-		<fieldDescription><![CDATA[valorfinanciado]]></fieldDescription>
+		<fieldDescription><![CDATA[desconto]]></fieldDescription>
 	</field>
 	<field name="valorfinal" class="java.lang.Float">
 		<fieldDescription><![CDATA[valorfinal]]></fieldDescription>
@@ -225,7 +225,9 @@
 			</textField>
 			<staticText>
 				<reportElement uuid="e02f6028-534e-499d-8e46-21b3be405b61" x="344" y="346" width="36" height="20"/>
-				<textElement/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Frete:]]></text>
 			</staticText>
 			<textField pattern="¤ #,##0.00">
@@ -235,7 +237,9 @@
 			</textField>
 			<staticText>
 				<reportElement uuid="ad27b709-9f15-44f4-8cd4-14dc873c5c7f" x="345" y="376" width="59" height="20"/>
-				<textElement/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Montagem:]]></text>
 			</staticText>
 			<textField pattern="¤ #,##0.00">
@@ -280,12 +284,12 @@
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[V. Financ.:]]></text>
+				<text><![CDATA[Desconto:]]></text>
 			</staticText>
 			<textField pattern="¤ #,##0.00">
 				<reportElement uuid="f3252590-e934-444d-a57f-b333a6e74ad0" x="423" y="433" width="105" height="20"/>
 				<textElement/>
-				<textFieldExpression><![CDATA[$F{valorfinanciado}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{desconto}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="794a993b-c1a3-47b7-ab21-9d1132c6a3eb" x="343" y="463" width="60" height="20"/>
