@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+
+<h:head>	
+	<title>SGC - Sistema de Gestão Casttini</title>
+	<link rel="stylesheet" href="css/sgcb.css" type="text/css" />
+	<h:outputScript name="locale-primefaces.js" library="js" />
+	<style>
+		#logo, .logo{
+			position: absolute;
+			left:50%;
+			top:50%;
+			margin-left:-190px;
+			margin-top:-165px;	
+		}
+	</style>
+</h:head>
+<h:body>
+	<h:form>
+		<p:growl id="msg" showDetail="true" sticky="true"/>
+		
+		<p:panel id="logo" styleClass="logo" style="width: 380px; height: 280px;" header="Login :: SGC - Sistema de Gestão Casttini">
+			<h:panelGrid columns="1">
+				<p:graphicImage url="imagens/logo-casttini.jpg" id="logo_cabecalho" style="padding-left:40px;" />				
+				<br/>			
+				<h:outputText value="Seja bem-vindo ao SGC, por favor, faça o seu login abaixo." styleClass="negrito"/>
+			</h:panelGrid>
+			
+			<h:panelGrid columns="2" style="padding-top: 20px; margin-left: 75px;" >				
+				<p:outputLabel value="Login:" for="login"/>
+				<p:inputText  id="login" value="#{usuarioControl.usuario.login}" required="true" requiredMessage="Favor informar o login para acesso!"/>				
+								
+				<p:outputLabel value="Senha:" for="senha"/>
+				<p:password id="senha" value="#{usuarioControl.usuario.senha}" required="true" requiredMessage="Favor informar a senha para acesso!"/>
+			</h:panelGrid>
+			
+			<h:panelGrid>
+				<p:commandButton value="Entrar"	action="#{usuarioControl.consultarUsuarioLogin}" ajax="false" update="perfis,msg" 
+								style="margin-left: 145px;"/>
+			</h:panelGrid>
+		</p:panel>
+	</h:form>
+
+</h:body>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-45740424-1', 'blanker.com.br');
+  ga('send', 'pageview');
+</script>
+</html>
