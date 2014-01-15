@@ -195,30 +195,24 @@ public class OcProdutoControl extends Control implements InterfaceControl,
 		ocProdutoDAO = new OcProdutoDAO();
 		ProdutoDAO produtoDAO = new ProdutoDAO();
 		try {			
-			pedido.setDatasolicitacao(new Date());	
+			pedido.setDatasolicitacao(new Date());
 			pedido.getFornecedor().setId(fornecedor.getId());
-			for(Ocproduto ocproduto : listaOcproduto){				
+			for(Ocproduto ocproduto : listaOcproduto){
 				Pedidoproduto pedidoproduto = new Pedidoproduto();
 				pedidoproduto.setProduto(ocproduto.getProduto());
 				pedidoproduto.setQuantidade(ocproduto.getQuantidade());
 				pedidoproduto.setPedido(pedido);
 				pedidoproduto.setOcproduto(ocproduto);
-				pedidoprodutos.add(pedidoproduto);
-				
+				pedidoprodutos.add(pedidoproduto);				
 			}			
 			pedido.setPedidoprodutos(pedidoprodutos);
 			pedidoDAO.insert(pedido);
 			fornecedor = new FornecedoresDAO().buscaObjetoId(fornecedor.getId());
 			for(Ocproduto ocproduto : listaOcproduto){
-				ocproduto.getStatus().setId(4);
-				ocProdutoDAO.update(ocproduto);
-				ocproduto.getOc().setStatus(retornaMenorStatusOcProduto(ocproduto.getOc(), true));
+				ocproduto.setStatus(new StatusDAO().buscaObjetoId(4));
+				ocproduto.getProduto().setEncomenda(ocproduto.getProduto().getEncomenda() - ocproduto.getQuantidade());			
+				ocproduto.getOc().setStatus(retornaMenorStatusOcProduto(ocproduto.getOc(), false));
 				ocDAO.update(ocproduto.getOc());
-			}
-			for(Ocproduto ocproduto : listaOcproduto){
-				Produto produto = ocproduto.getProduto();
-				produto.setEncomenda(produto.getEncomenda() - ocproduto.getQuantidade());
-				produtoDAO.update(produto);
 			}
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Pedido para o fornecedor " + fornecedor.getNome() + " foi gravado!"));
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Alterado o status do produto para 'Pendente de Chegada'"));
@@ -237,12 +231,10 @@ public class OcProdutoControl extends Control implements InterfaceControl,
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Genérico: " + super.mensagem, ""));
 			logger.error("[gravar_pedido] Erro Genérico: " + super.mensagem + "-" + "Pedido: " + pedido.getId() + "para o fornecedor " + fornecedor.getNome() + "não foi gravado!");
 		}
-		
-		
 	}
 	
-	public void addProdutoPedido(SelectEvent selectEvent){
-		listaOcproduto.add((Ocproduto) selectEvent.getObject());
+	public void addProdutoPedido(SelectEvent selectEvent){		
+		listaOcproduto.add((Ocproduto) selectEvent.getObject());		
 	}
 	
 	public void subProdutoPedido(UnselectEvent unselectEvent){
@@ -256,20 +248,24 @@ public class OcProdutoControl extends Control implements InterfaceControl,
 	
 	public Status retornaMenorStatusOcProduto(Oc oc, Boolean buscaBanco){
 		Status status = new Status();
-		listaOcproduto = new ArrayList<Ocproduto>();
+		List<Ocproduto> listaProdutosDaOc = new ArrayList<Ocproduto>();
 		if(buscaBanco){
 			ocProdutoDAO = new OcProdutoDAO();
-			listaOcproduto = ocProdutoDAO.buscaOcProdutoPorOc(oc);
+			listaProdutosDaOc = ocProdutoDAO.buscaOcProdutoPorOc(oc);
 		}else{
-			listaOcproduto = oc.getOcprodutos();
+			listaProdutosDaOc = oc.getOcprodutos();
 		}
-		status = listaOcproduto.get(0).getStatus();
-		for(Ocproduto ocproduto : listaOcproduto){
+		status = listaProdutosDaOc.get(0).getStatus();
+		for(Ocproduto ocproduto : listaProdutosDaOc){
 			if(status.getId() > ocproduto.getStatus().getId()){
 				status = ocproduto.getStatus();
 			}
 		}
 		return status;
+	}
+	
+	public void limparListaDeProdutosAEncomendar(){
+		listaOcproduto = new ArrayList<Ocproduto>();
 	}
 	
 	/*

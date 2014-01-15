@@ -15,7 +15,7 @@
 						<p:selectOneMenu required="true" value="#{ocProdutoControl.fornecedor.id}" id="fornecedor">
 							<f:selectItem itemValue="0" itemLabel="Todos"/>							
 							<f:selectItems value="#{fornecedoresControl.getListaFornecedorCombo('')}"/>
-							<p:ajax event="change" process="pnlacao" update="produtoencomenda,pnlacao"/>
+							<p:ajax event="change" process="pnlacao" update="produtoencomenda,pnlacao" listener="#{ocProdutoControl.limparListaDeProdutosAEncomendar()}"/>
 						</p:selectOneMenu>
 												
 						<p:commandButton icon="ui-icon-cart" value="Gerar Pedido" id="gerarencomenda" rendered="#{ocProdutoControl.fornecedor.id != null and ocProdutoControl.fornecedor.id != 0}"
