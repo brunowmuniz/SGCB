@@ -291,7 +291,7 @@ public class Oc implements java.io.Serializable {
 		this.deleted = deleted;
 	}
 	
-	@Column(name="desconto",nullable = false)
+	@Column(name="desconto",nullable = false, scale = 8, precision = 2)
 	public Float getDesconto() {
 		if(desconto == null){
 			desconto = new Float("0");
@@ -359,7 +359,6 @@ public class Oc implements java.io.Serializable {
 	public String toString() {
 		return "Oc [id=" + id + ", usuario=" + usuario.getNome() + "]";
 	}
-	
-	
+		
 	
 }

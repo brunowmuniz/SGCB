@@ -188,7 +188,7 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 							"where " +
 								"p.dataentrada between :dataInicial and :dataFinal" +
 							" and " +
-								"p.pagamento.condicoesPagamento.formapagamento.id in(:formaPagamento)" +
+								"p.pagamento.condicoesPagamento.formapagamento.id = 4" +
 							" and" +
 								" p.deleted = false";
 		
@@ -219,8 +219,7 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 		
 		linhas = (Long) session.createQuery(hql)
 								.setDate("dataInicial", dataInicial)
-								.setDate("dataFinal", dataFinal)
-								.setString("formaPagamento",filter.get("formapagamento"))
+								.setDate("dataFinal", dataFinal)								
 								.setCacheable(true)
 								.uniqueResult();
 		
@@ -239,7 +238,7 @@ public class ParcelaDAO implements InterfaceDAO, Serializable {
 						"where " +
 							"p.dataentrada between :dataInicial and :dataFinal " +
 						"and " +
-							"p.pagamento.condicoesPagamento.formapagamento.id in(:formaPagamento)" +
+							"p.pagamento.condicoesPagamento.formapagamento.id = 4" +
 						" and" +
 							" p.deleted = false";
 		

@@ -191,8 +191,8 @@
 										<h:panelGrid id="dadosproduto">
 											<h:panelGrid columns="3">
 												<p:outputLabel for="buscaproduto" value="Código/Nome: "/>
-												<p:autoComplete id="buscaproduto" value="#{ocProdutoControl.ocproduto.produto}" minQueryLength="3"
-																		completeMethod="#{produtoControl.buscaProdutoCodigoNome}"											 
+												<p:autoComplete id="buscaproduto" value="#{ocProdutoControl.ocproduto.produto}" minQueryLength="3"  
+																		completeMethod="#{produtoControl.buscaProdutoCodigoNome}" size="60"
 																		forceSelection="true"  converter="converter.ProdutoConverter"
 																		var="produto" itemValue="#{produto}" itemLabel="#{produto.fornecedor.nome} - #{produto.descricao}">
 													<p:ajax event="itemSelect" update="dadosproduto" process="@this" />
@@ -204,7 +204,7 @@
 												<p:inputText disabled="#{ocProdutoControl.ocproduto.produto.id != null}" value="#{ocProdutoControl.ocproduto.produto.codigo}" id="codigoproduto"/>
 												
 												<p:outputLabel for="nomeproduto" value="Nome: " />
-												<p:inputText disabled="#{ocProdutoControl.ocproduto.produto.id != null}" value="#{ocProdutoControl.ocproduto.produto.descricao}" id="nomeproduto"/>
+												<p:inputText disabled="#{ocProdutoControl.ocproduto.produto.id != null}" value="#{ocProdutoControl.ocproduto.produto.descricao}" id="nomeproduto" size="60"/>
 												
 												<p:outputLabel for="nomefornecedor" value="Fornecedor: " />
 												<p:inputText disabled="#{ocProdutoControl.ocproduto.produto.id != null}" value="#{ocProdutoControl.ocproduto.produto.fornecedor.nome}" id="nomefornecedor" rendered="#{ocProdutoControl.ocproduto.produto.id != null}"/>
@@ -272,7 +272,7 @@
 												</p:inputText>											
 											
 												<p:outputLabel for="valortotal" value="Valor Total: " />
-												<p:inputText value="#{ocProdutoControl.ocproduto.valortotal}" id="valortotal">
+												<p:inputText value="#{ocProdutoControl.ocproduto.valorTotalSemDesconto}" id="valortotal">
 													<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1" />		
 												</p:inputText>																															
 												
@@ -297,11 +297,9 @@
 									<p:dataTable id="listaprodutooc" value="#{ocControl.oc.ocprodutos}"
 									 			 var="ocproduto" rowKey="#{ocproduto.produto.id}" emptyMessage="Sem proddutos cadastrados para a OC" 
 									 			 rowIndexVar="linha" editable="true" selection="#{ocControl.ocproduto}" selectionMode="single"
-									 			 rendered="#{ocControl.oc.status.id == 2 or ocControl.oc.status.id == 1 or ocControl.oc.id == null}">
+									 			 rendered="#{ocControl.oc.status.id == 2 or ocControl.oc.status.id == 1 or ocControl.oc.id == null}">									 	
 									 	
-									 	<p:ajax event="rowEdit" listener="#{ocControl.calculaValorTotalProdutos}" update=":form:oc:valoroc,:form:oc:valorfinaloc" 
-									 			process=":form:oc:valorfinaloc,listaprodutooc" />
-									 									 
+        								 								 
 										<p:column headerText="Item">
 								            <h:outputText value="#{linha + 1}" />
 								        </p:column>
@@ -314,7 +312,7 @@
 								            <h:outputText value="#{ocproduto.produto.fornecedor.nome} - #{ocproduto.produto.descricao}" />
 								        </p:column>
 								        
-								        <p:column headerText="Tipo de Saída">
+								        <p:column headerText="Tipo de Saída" rendered="false">
 								        	<p:cellEditor id="tiposaida">
 								        		<f:facet name="output" >
 								        			<h:outputText value="Estoque" rendered="#{ocproduto.tiposaida == 'estoque'}" />
@@ -333,11 +331,17 @@
 								        	</p:cellEditor>
 								        </p:column>
 								        
-								        <p:column headerText="Status" rendered="#{ocControl.oc.id != null}" styleClass="status_#{oc.status.id}">							        		
+								        <p:column headerText="Tipo de Saída">
+								        	<h:outputText value="Estoque" rendered="#{ocproduto.tiposaida == 'estoque'}" />
+						        			<h:outputText value="Encomenda" rendered="#{ocproduto.tiposaida == 'encomenda'}" />
+						        			<h:outputText value="Showroom" rendered="#{ocproduto.tiposaida == 'showroom'}" />
+								        </p:column>
+								        
+								        <p:column headerText="Status" rendered="#{ocControl.oc.id != null}" styleClass="status_#{ocproduto.status.id}">							        		
 							        		<h:outputText value="#{ocproduto.status.descricao}" />
 								        </p:column>
 								             
-								        <p:column headerText="Valor Unitário">
+								        <p:column headerText="Valor Unitário" rendered="false">
 								        	<p:cellEditor>
 								        		<f:facet name="output">
 								        			<h:outputText value="#{ocproduto.valorunitario}">
@@ -353,7 +357,13 @@
 								        	</p:cellEditor>            
 								        </p:column>
 								        
-								        <p:column headerText="Quantidade">
+								        <p:column headerText="Valor Unitário">	
+								        	<h:outputText value="#{ocproduto.valorunitario}">
+										       	<f:convertNumber type="currency" locale="pt_BR" maxFractionDigits="2" minFractionDigits="2" maxIntegerDigits="6" minIntegerDigits="1"/>										        												        			
+										    </h:outputText>
+								        </p:column>
+								        
+								        <p:column headerText="Quantidade" rendered="false">
 								        	<p:cellEditor>
 								        		<f:facet name="output">
 								        			<h:outputText value="#{ocproduto.quantidade}" />
@@ -368,7 +378,11 @@
 								        	</p:cellEditor>            
 								        </p:column>
 								        
-								        <p:column headerText="Total">
+								        <p:column headerText="Quantidade">
+								        	<h:outputText value="#{ocproduto.quantidade}" />
+								        </p:column>
+								        
+								        <p:column headerText="Valor" rendered="false">
 								        	<p:cellEditor>
 								        		<f:facet name="output">
 								        			<h:outputText value="#{ocproduto.valortotal}" id="valortotalout">
@@ -382,9 +396,38 @@
 								        		</f:facet>
 								        	</p:cellEditor>         
 								        </p:column>
+								        
+								        <p:column headerText="Valor">
+								        	<h:outputText value="#{ocproduto.valorTotalSemDesconto}">
+								        		<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1" />		
+								        	</h:outputText>
+								        </p:column>
+								        
+								        <p:column headerText="Desconto (%)">
+								        	<p:cellEditor>
+								        		<f:facet name="output">
+								        			<h:outputText value="#{ocproduto.desconto}" id="descontout">
+										        		<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2" maxIntegerDigits="3" minIntegerDigits="1"/>
+										        	</h:outputText>
+										        	<h:outputText value="%" />
+								        		</f:facet>
+								        		<f:facet name="input">
+								        			<p:inputText value="#{ocproduto.desconto}" id="descontoin">
+														<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1" />
+														<p:ajax event="blur" listener="#{ocControl.recalculaProdutoOC(linha)}" update="valorfinal,:form:oc:valorfinaloc,:form:oc:desconto" process="@this"/>		
+													</p:inputText>
+								        		</f:facet>
+								        	</p:cellEditor>
+								        </p:column>
+								        
+								        <p:column headerText="Valor Final">
+								        	<h:outputText value="#{ocproduto.valortotal}" id="valorfinal">
+								        		<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1" />		
+								        	</h:outputText>
+								        </p:column>	
 								      
 								        <p:column headerText="Editar" style="width: 6px;">
-								        	<p:rowEditor rendered="#{ocControl.oc.desconto == 0}"/>								        	
+								        	<p:rowEditor/>								        	
 								        </p:column>			        
 									</p:dataTable>	
 									
@@ -409,7 +452,7 @@
 								            <h:outputText value="#{ocproduto.produto.fornecedor.nome} - #{ocproduto.produto.descricao}" />
 								        </p:column>
 								        
-								        <p:column headerText="Tipo de Saída">
+								        <p:column headerText="Tipo de Saída" rendered="false">
 								        	<p:cellEditor id="tiposaida">
 								        		<f:facet name="output" >
 								        			<h:outputText value="Estoque" rendered="#{ocproduto.tiposaida == 'estoque'}" />
@@ -428,11 +471,17 @@
 								        	</p:cellEditor>
 								        </p:column>
 								        
+								        <p:column headerText="Tipo de Saída">
+								        	<h:outputText value="Estoque" rendered="#{ocproduto.tiposaida == 'estoque'}" />
+						        			<h:outputText value="Encomenda" rendered="#{ocproduto.tiposaida == 'encomenda'}" />
+						        			<h:outputText value="Showroom" rendered="#{ocproduto.tiposaida == 'showroom'}" />
+								        </p:column>
+								        
 								        <p:column headerText="Status" rendered="#{ocControl.oc.id != null}" styleClass="status_#{ocproduto.status.id}">							        		
 							        		<h:outputText value="#{ocproduto.status.descricao}" />
 								        </p:column>
 								             
-								        <p:column headerText="Valor Unitário">
+								        <p:column headerText="Valor Unitário" rendered="false">
 								        	<p:cellEditor>
 								        		<f:facet name="output">
 								        			<h:outputText value="#{ocproduto.valorunitario}">
@@ -448,7 +497,13 @@
 								        	</p:cellEditor>            
 								        </p:column>
 								        
-								        <p:column headerText="Quantidade">
+								        <p:column headerText="Valor Unitário">	
+								        	<h:outputText value="#{ocproduto.valorunitario}">
+										       	<f:convertNumber type="currency" locale="pt_BR" maxFractionDigits="2" minFractionDigits="2" maxIntegerDigits="6" minIntegerDigits="1"/>										        												        			
+										    </h:outputText>
+								        </p:column>
+								        
+								        <p:column headerText="Quantidade" rendered="false">
 								        	<p:cellEditor>
 								        		<f:facet name="output">
 								        			<h:outputText value="#{ocproduto.quantidade}" />
@@ -463,7 +518,11 @@
 								        	</p:cellEditor>            
 								        </p:column>
 								        
-								        <p:column headerText="Total">
+								        <p:column headerText="Quantidade" rendered="false">
+								        	<h:outputText value="#{ocproduto.quantidade}" />
+								        </p:column>
+								        
+								        <p:column headerText="Valor" rendered="false">
 								        	<p:cellEditor>
 								        		<f:facet name="output">
 								        			<h:outputText value="#{ocproduto.valortotal}" id="valortotalout">
@@ -476,7 +535,35 @@
 													</p:inputText>
 								        		</f:facet>
 								        	</p:cellEditor>         
-								        </p:column>								        			        
+								        </p:column>
+								        
+								        <p:column headerText="Valor">
+								        	<h:outputText value="#{ocproduto.valorTotalSemDesconto}">
+								        		<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1" />		
+								        	</h:outputText>
+								        </p:column>
+								        
+								        <p:column headerText="Desconto (%)">
+								        	<p:cellEditor>
+								        		<f:facet name="output">
+								        			<h:outputText value="#{ocproduto.desconto}" id="descontout">
+										        		<f:convertNumber locale="pt_BR" maxFractionDigits="2" minFractionDigits="2" maxIntegerDigits="3" minIntegerDigits="1"/>
+										        	</h:outputText>	
+										        	<h:outputText value="%" />
+								        		</f:facet>
+								        		<f:facet name="input">
+								        			<p:inputText value="#{ocproduto.desconto}" id="descontoin">
+														<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1" />
+														<p:ajax event="blur" process="@this" update="valorfinal,:form:oc:valorfinaloc,:form:oc:desconto"/>		
+													</p:inputText>
+								        		</f:facet>
+								        	</p:cellEditor>
+								        </p:column>
+								        <p:column headerText="Valor Final">
+								        	<h:outputText value="#{ocproduto.valortotal}" id="valorfinal">
+								        		<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1" />		
+								        	</h:outputText>
+								        </p:column>							        				        			        
 									</p:dataTable>																																	
 								</p:outputPanel>								
 							</p:tab>
@@ -528,10 +615,8 @@
 												<p:tooltip for="helpvaloroc" showEffect="slide" value="Valor com somatório somente dos produtos da OC (não inclui frete, nem montagem e nem os descontos aplicados)"/>
 												
 												<p:outputLabel for="desconto" value="Desconto (R$): "/>
-												<p:inputText value="#{ocControl.oc.desconto}" id="desconto">
-													<f:validateBean />
-													<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1"/>													
-													<p:ajax event="blur" process="@this" update=":form:oc:listaprodutooc,:form:msgs,valoroc,valorfinaloc" listener="#{ocControl.aplicaDesconto}"/>
+												<p:inputText value="#{ocControl.oc.desconto}" id="desconto" disabled="true">
+													<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1"/>	
 												</p:inputText>
 												<h:outputText value="?" id="helpdesconto" styleClass="negrito"/>
 												<p:tooltip for="helpdesconto" showEffect="slide" value="Desconto aplicado somente nos produtos da OC (não inclui frete e nem montagem)"/>
