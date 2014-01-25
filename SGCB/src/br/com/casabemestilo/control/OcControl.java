@@ -3,6 +3,8 @@ package br.com.casabemestilo.control;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -142,15 +144,12 @@ public class OcControl extends Control implements InterfaceControl,
 			oc = (Oc) ELFlash.getFlash().get("oc");
 			valorDescontoAtual = oc.getDesconto();
 			recalculaValorTotalOcproduto();
-			if(valorDescontoAtual != 0){
-				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Você não poderá alterar o valor sugerido dos produtos, enquanto o desconto for diferente de 0 (zero)! ", ""));
-			}
 			ELFlash.getFlash().put("oc",null);
 		}
 		
 		if(oc.getFilial().getId() == null){
 			try {
-				oc.setFilial(new FilialDAO().buscaObjetoId(2));
+				oc.setFilial(new FilialDAO().buscaObjetoId(1));
 			} catch (ConstraintViolationException e) {
 				e.printStackTrace();
 				super.mensagem = e.getMessage();
@@ -182,6 +181,7 @@ public class OcControl extends Control implements InterfaceControl,
 	public void adicionarProdutoOc(Ocproduto ocproduto){
 		ocproduto.setOc(this.getOc());
 		ocproduto.getStatus().setId(1);
+		ocproduto.setValortotal(ocproduto.getValorTotalSemDesconto());
 		oc.getOcprodutos().add(ocproduto);
 		ocproduto = new Ocproduto();
 		calculaValorTotalProdutos();
@@ -190,6 +190,7 @@ public class OcControl extends Control implements InterfaceControl,
 	public void gravarProdutoAdicionaOc(Ocproduto ocproduto) throws ConstraintViolationException, HibernateException, Exception{		
 		Produto produto = new Produto();
 		ocproduto.getProduto().setDeleted(false);
+		ocproduto.setValortotal(ocproduto.getValorTotalSemDesconto());
 		ocproduto.getProduto().setFornecedor(new FornecedoresDAO().buscaObjetoId(ocproduto.getProduto().getFornecedor().getId()));
 		if(ocproduto.getProduto().getEhPlanejado()){
 			ocproduto.getProduto().setTemMontagem(true);
@@ -207,6 +208,7 @@ public class OcControl extends Control implements InterfaceControl,
 			OcProdutoDAO ocProdutoDAO = new OcProdutoDAO();
 			ocProdutoDAO.delete(ocproduto);
 			oc.getOcprodutos().remove(ocproduto);
+			ocproduto = new Ocproduto();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Produto deletado!"));
 		} catch (ConstraintViolationException e) {			
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Condição não deletada [Erro Constraint]",""));
@@ -273,6 +275,8 @@ public class OcControl extends Control implements InterfaceControl,
 	
 	public void gravaFormaPagamentoOc(){
 		Float totalPagamento = new Float(0);
+		BigDecimal pagamentoOc;
+		BigDecimal valorOc; 
 		for(Pagamento pagamentos : getOc().getPagamentos()){
 			if(!pagamentos.getDeleted()){
 				totalPagamento += pagamentos.getValor();
@@ -280,7 +284,10 @@ public class OcControl extends Control implements InterfaceControl,
 		}
 		
 		if(getOc().getTipoFrete().equalsIgnoreCase("loja")){
-			if((totalPagamento + getPagamento().getValor()) > getOc().getValorfinal()){
+			pagamentoOc = new BigDecimal(totalPagamento + getPagamento().getValor()).setScale(2,RoundingMode.HALF_EVEN);
+			valorOc = new BigDecimal(getOc().getValorfinal()).setScale(2,RoundingMode.HALF_EVEN);
+			System.out.println("loja:" + pagamentoOc + "-" + valorOc);
+			if(pagamentoOc.doubleValue() > valorOc.doubleValue()){
 				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "As condições de pagamento excedem o valor da compra", ""));
 			}else{
 				getPagamento().setOc(getOc());
@@ -291,7 +298,10 @@ public class OcControl extends Control implements InterfaceControl,
 				setPagamento(new Pagamento());
 			}
 		}else{
-			if((totalPagamento + getPagamento().getValor()) > (getOc().getValorfinal() - getOc().getValorfrete())){
+			pagamentoOc = new BigDecimal(totalPagamento + getPagamento().getValor()).setScale(2,RoundingMode.HALF_EVEN);
+			valorOc = new BigDecimal(getOc().getValorfinal() - getOc().getValorfrete()).setScale(2,RoundingMode.HALF_EVEN);
+			System.out.println("demais:" + pagamentoOc + "-" + valorOc);
+			if(pagamentoOc.doubleValue() > valorOc.doubleValue()){
 				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "As condições de pagamento excedem o valor da compra", ""));
 			}else{
 				getPagamento().setOc(getOc());
@@ -796,17 +806,22 @@ public class OcControl extends Control implements InterfaceControl,
 			HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
 			Map<String, Object> parametros = new HashMap<String, Object>();
 			String caminhoRelatorio = request.getSession().getServletContext().getRealPath("/WEB-INF/classes/br/com/casabemestilo/relatorio/");
+			String caminhoImagem = "";
 			
 			listaOc = new ArrayList<Oc>();
 			
-			if(caminhoRelatorio.indexOf("home") > -1)
+			if(caminhoRelatorio.indexOf("home") > -1){
 				caminhoRelatorio += "/";
-			else
+				caminhoImagem = "http://www.blanker.com.br/imagens/logo_site.png";
+			}else{
 				caminhoRelatorio += "\\";
+				caminhoImagem = "http://localhost:8080/SGCB/imagens/logo_site.png";
+			}
 			
 			caminho = getClass().getResourceAsStream("../relatorio/oc.jrxml");
 			response.setContentType("application/pdf");			
 			parametros.put("SUBREPORT_DIR", caminhoRelatorio);
+			parametros.put("IMAGE_DIR", caminhoImagem);
 			response.setHeader("Content-Disposition","attachment; filename=\"OC:" + oc.getId() +" - " + oc.getCliente().getNome() +".pdf\"");
 			JasperReport pathReport = JasperCompileManager.compileReport(caminho);
 			
@@ -934,7 +949,7 @@ public class OcControl extends Control implements InterfaceControl,
 	
 	public void recalculaValorTotalOcproduto(){
 		for(Ocproduto ocproduto : oc.getOcprodutos()){
-			ocproduto.setValortotal(ocproduto.getValorunitario() * ocproduto.getQuantidade());
+			ocproduto.setValorTotalSemDesconto(ocproduto.getValorunitario() * ocproduto.getQuantidade());
 		}
 	}
 	
@@ -946,33 +961,17 @@ public class OcControl extends Control implements InterfaceControl,
 		return listaOc;
 	}
 	
-	public void aplicaDesconto(){
-		try {
-			List<Float> percentualProdutos = new ArrayList<Float>();
-			
-			int i = 0;
-			
-			for(Ocproduto ocproduto : oc.getOcprodutos()){
-				percentualProdutos.add(ocproduto.getValortotal() / (oc.getValorfinal() - (oc.getValorfrete() + oc.getValormontagem())));
-			}			
-			
-			oc.setValorfinal((oc.getValorfinal() + valorDescontoAtual) - oc.getDesconto());
-			
-			for(Ocproduto ocproduto : oc.getOcprodutos()){
-				System.out.println(percentualProdutos.get(i) + "-" + (oc.getValorfinal() - (oc.getValorfrete() + oc.getValormontagem())));
-				ocproduto.setValorunitario(((oc.getValorfinal() - oc.getValorfrete() - oc.getValormontagem()) * percentualProdutos.get(i++)) / ocproduto.getQuantidade());
-				ocproduto.setValortotal(ocproduto.getValorunitario() * ocproduto.getQuantidade());
-			}
-			
-			
-			valorDescontoAtual = oc.getDesconto();
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Desconto Aplicado!"));
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Você não poderá alterar o valor sugerido dos produtos, enquanto o desconto for diferente de 0 (zero)! ", ""));
-		} catch (Exception e) {
-			e.printStackTrace();
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao aplicar desconto: " + e.getMessage(), ""));
+	public void recalculaProdutoOC(int linha){
+		ocproduto = oc.getOcprodutos().get(linha);
+		float valorDesconto = ocproduto.getValorTotalSemDesconto()  * (ocproduto.getDesconto() / 100);  
+		ocproduto.setValortotal(ocproduto.getValorTotalSemDesconto() - valorDesconto);
+		System.out.println(valorDesconto + "," + ocproduto.toString() );
+		oc.getOcprodutos().set(linha, ocproduto);
+		oc.setDesconto(new Float("0"));
+		for(Ocproduto ocprod : oc.getOcprodutos()){
+			oc.setDesconto(oc.getDesconto() + (ocprod.getValorTotalSemDesconto() - ocprod.getValortotal()));			
 		}
-		
+		oc.setValorfinal((oc.getValor() + oc.getValorfrete() + oc.getValormontagem()) - oc.getDesconto());
 	}
 	
 	/*

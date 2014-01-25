@@ -47,7 +47,9 @@ public class Ocproduto implements java.io.Serializable {
 	private Integer quantidade;
 	private Float valorsugerido;
 	private Float valorunitario;
+	private Float valorTotalSemDesconto;
 	private Float valortotal;
+	private Float desconto;
 	private List<Pedidoproduto> pedidoprodutos;
 	private Frete frete; 
 	private Assistenciatecnica assistenciatecnica;
@@ -189,19 +191,11 @@ public class Ocproduto implements java.io.Serializable {
 
 	@Column(name="valortotal", scale=6, precision=2)
 	public Float getValortotal() {		
-		if(getId() == null && valortotal == null){
-			valortotal = new Float(0.00);
-		}
 		return valortotal;
 	}
 
-	public void setValortotal(Float valortotal) {		
-		if((valortotal == 0.00 || this.valortotal != valortotal) && getId() == null){
-			this.valortotal = getValorunitario() * getQuantidade();
-		}else{
-			this.valortotal = valortotal;
-		}
-		
+	public void setValortotal(Float valortotal) {
+		this.valortotal = valortotal;
 	}
 	
 	@OneToMany(targetEntity = Pedidoproduto.class, mappedBy = "ocproduto", fetch = FetchType.LAZY)
@@ -213,6 +207,40 @@ public class Ocproduto implements java.io.Serializable {
 		this.pedidoprodutos = pedidoprodutos;
 	}
 
-	
+	@Column(name="desconto", nullable = false, scale = 5, precision = 2)
+	public Float getDesconto() {
+		if(desconto == null){
+			desconto = new Float("0");
+		}
+		return desconto;
+	}
+
+	public void setDesconto(Float desconto) {
+		this.desconto = desconto;
+	}
+
+	@Column(name="valorTotalSemDesconto", nullable = false, scale = 8, precision = 2)
+	public Float getValorTotalSemDesconto() {
+		if(getId() == null && valorTotalSemDesconto == null){
+			valorTotalSemDesconto = new Float(0.00);
+		}
+		return valorTotalSemDesconto;
+	}
+
+	public void setValorTotalSemDesconto(Float valorTotalSemDesconto) {
+		if((valorTotalSemDesconto == 0.00 || this.valorTotalSemDesconto != valorTotalSemDesconto) && getId() == null){
+			this.valorTotalSemDesconto = getValorunitario() * getQuantidade();
+		}else{
+			this.valorTotalSemDesconto = valorTotalSemDesconto;
+		}
+	}
+
+	@Override
+	public String toString() {
+		return "Ocproduto [quantidade=" + quantidade
+				+ ", valorTotalSemDesconto=" + valorTotalSemDesconto
+				+ ", valortotal=" + valortotal + ", desconto=" + desconto + "]";
+	}
+
 	
 }

@@ -74,8 +74,8 @@
 				        </p:column>
 				        
 				        <p:column headerText="Imprimir" width="20" style="padding-left: 5px;">
-		                 	<p:commandButton action="#{ocControl.impressaoOc(oc)}" ajax="false" icon="ui-icon-print" rendered="#{oc.status.id != 1 and oc.status.id != 2 and oc.status.id != 10 and oc.status.id != 9}"/>	
-		                 </p:column>				        	        	        
+		                 	<p:commandButton action="#{ocControl.impressaoOc(oc)}" ajax="false" icon="ui-icon-print" rendered="#{oc.status.id != 1 and oc.status.id != 10}"/>		
+		                </p:column>
 				    </p:dataTable>
 		
 		     	</p:panel>

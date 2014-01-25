@@ -4,9 +4,10 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets">
+
 	<ui:composition template="../template/template.xhtml">
 		<ui:define name="conteudo">
-			<p:panel header="Relatório de Cheques">				
+			<p:panel header="Relatório de Cheques Pendentes">				
 				<h:form id="form">
 					<p:messages id="msgs"/>
 					<h:panelGrid columns="3" id="filtros" styleClass="vTop">
@@ -15,10 +16,8 @@
 							<p:calendar value="#{parcelaControl.dataInicial}" pattern="dd/MM/yyyy" id="dtInicial"/>
 							<p:outputLabel value="Data Final: " for="dtFinal" />
 							<p:calendar value="#{parcelaControl.dataFinal}" pattern="dd/MM/yyyy" id="dtFinal"/>
-							<p:outputLabel for="formapagamento"/>
-							<p:selectManyMenu id="formapagamento" value="#{parcelaControl.formaPagamentoFiltro}" size="4">
-								<f:selectItems value="#{formaPagamentoControl.getListaFormaPagamentoCombo('')}"/>
-							</p:selectManyMenu>
+							<p:outputLabel value="OC: " for="ocFiltro" />
+							<p:inputText value="#{parcelaControl.ocFiltro}" id="ocFiltro"/>
 							
 							<p:commandButton value="Pesquisar" process="filtros" update="@form" />
 						</h:panelGrid>
@@ -29,9 +28,8 @@
 							<p:selectOneMenu size="1" value="#{parcelaControl.bancoFiltro}" id="bancoFiltro">
 								<f:selectItems value="#{bancoControl.listaBancoCombo('filter')}"/>
 							</p:selectOneMenu>
-							<p:outputLabel value="OC: " for="ocFiltro" />
-							<p:inputText value="#{parcelaControl.ocFiltro}" id="ocFiltro"/>
-							
+							<p:outputLabel value="Nº Cheque: " for="numChequeFiltro" />
+							<p:inputText value="#{parcelaControl.parcela.numeroCheque}" id="numChequeFiltro"/>
 						</h:panelGrid>
 						<h:panelGrid columns="2">
 							<p:outputLabel for="statusFiltro" value="Status: "/>
@@ -42,9 +40,7 @@
 								<f:selectItem itemLabel="Antecipado" itemValue="antecipado"/>
 								<f:selectItem itemLabel="Pendentes" itemValue="pendente"/>
 								<f:selectItem itemLabel="Emitidos" itemValue="emitido"/>
-							</p:selectOneMenu>
-							<p:outputLabel value="Nº Cheque: " for="numChequeFiltro" />
-							<p:inputText value="#{parcelaControl.parcela.numeroCheque}" id="numChequeFiltro"/>						
+							</p:selectOneMenu>							
 						</h:panelGrid>
 					</h:panelGrid>
 										
