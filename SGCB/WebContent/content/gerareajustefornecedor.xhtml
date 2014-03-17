@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+	<ui:composition template="../template/template.xhtml">		
+		<ui:define name="conteudo">
+			<h:form id="form">
+				<p:messages id="msgs"/>
+				<p:panel header="Reajuste de produtos por fornecedor">
+					<h:panelGrid columns="2" id="cadastro">
+					
+						<p:outputLabel for="fornecedor" value="Fornecedor: "/>
+						<p:selectOneMenu value="#{produtoControl.produto.fornecedor.id}" id="fornecedor" required="true">
+							<f:selectItem itemValue="0" itemLabel="Selecione Fornecedor"/>							
+							<f:selectItems value="#{fornecedoresControl.getListaFornecedorCombo('')}"/>
+							<p:ajax event="change" process="@this" update="btnReajusteValores,ConfirmacaoProduto"
+									listener="#{produtoControl.verificaQtdeProdutoAjuste}"/>																									
+						</p:selectOneMenu>
+						
+						<p:outputLabel for="percentual" value="Reajuste(%): "/>
+						<p:inputText value="#{produtoControl.percentualReajuste}" id="percentual">
+							<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="3" minFractionDigits="2"/>
+							<p:ajax event="blur" update="@this,btnReajusteValores" process="@this"/>
+						</p:inputText>
+						
+						<p:commandButton value="Reajustar Valores" id="btnReajusteValores" oncomplete="ConfirmacaoProduto.show()" 
+										 disabled="#{produtoControl.produto.fornecedor.id == 0 or produtoControl.percentualReajuste == 0}"/>						
+										 
+						<p:confirmDialog message="Deseja atualizar #{produtoControl.quantidade} produto(s)?" severity="alert"
+										 header="Reajuste de Produto" hideEffect="fade" widgetVar="ConfirmacaoProduto" id="ConfirmacaoProduto">
+							<h:panelGrid columns="2" style="margin: 0 auto;">
+								<p:commandButton value="Sim" actionListener="#{produtoControl.reajustarProdutoFornecedor}" 
+											 oncomplete="ConfirmacaoProduto.hide()" update="@form"/>
+								<p:commandButton value="Não" oncomplete="ConfirmacaoProduto.hide()"/>
+							</h:panelGrid>							
+						</p:confirmDialog>						
+					</h:panelGrid>
+				</p:panel>
+			</h:form>
+		</ui:define>		
+		<ui:define name="rodape">
+			<p:panel header="Descritivo Tela" styleClass="rodape">
+	    		<p:outputLabel value="Tela para reajuste em massa dos produtos por fornecedor." styleClass="rodape_esquerda"/>
+	    		<p:outputLabel value="gerareajustefornecedor.jsf" styleClass="rodape_direita"/>
+	    	</p:panel>
+		</ui:define>
+	</ui:composition>
+</html>
