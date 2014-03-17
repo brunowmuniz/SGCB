@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+                                         "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+ <session-factory>
+  <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+  <property name="hibernate.connection.password">973532</property>
+  <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/blankerc_sgcb?autoReconnect=true</property>
+  <property name="hibernate.connection.username">blankerc_sgcb</property>
+  <property name="hibernate.dialect">br.com.casabemestilo.util.MySQLDialect</property>
+  <property name="hibernate.show_sql">false</property>
+  <property name="hibernate.format_sql">true</property>
+  <property name="hibernate.connection.autocommit">true</property>
+  <property name="hibernate.cache.use_query_cache">true</property>
+  <property name="hibernate.cache.use_minimal_puts">true</property>
+  <property name="hibernate.cache.use_second_level_cache">true</property>
+  <property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</property>
+  <property name="hibernate.cache.region_prefix"/>
+  <property name="net.sf.ehcache.configurationResourceName">/ehcache.xml</property>
+  <property name="hibernate.hbm2ddl.auto">update</property>
+  <!-- Configurações de C3P0 -->
+  <property name="hibernate.c3p0.idleConnectionTestPeriod">20</property>
+  <property name="hibernate.c3p0.min_size">2</property>
+  <property name="hibernate.c3p0.max_size">20</property>
+  <property name="hibernate.c3p0.max_statements">50</property>
+  <property name="hibernate.c3p0.idle_test_period">1</property>
+  <property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
+  <property name="hibernate.transaction.auto_close_session">true</property>
+  <mapping class="br.com.casabemestilo.model.Ocproduto"/>
+  <mapping class="br.com.casabemestilo.model.Lancamento"/>
+  <mapping class="br.com.casabemestilo.model.Usuario"/>
+  <mapping class="br.com.casabemestilo.model.Produto"/>
+  <mapping class="br.com.casabemestilo.model.Assistenciatecnica"/>
+  <mapping class="br.com.casabemestilo.model.Fornecedor"/>
+  <mapping class="br.com.casabemestilo.model.Comissao"/>
+  <mapping class="br.com.casabemestilo.model.CondicoesPagamento"/>
+  <mapping class="br.com.casabemestilo.model.Pagamento"/>
+  <mapping class="br.com.casabemestilo.model.Contacontabil"/>
+  <mapping class="br.com.casabemestilo.model.Cliente"/>
+  <mapping class="br.com.casabemestilo.model.Formapagamento"/>
+  <mapping class="br.com.casabemestilo.model.Montagem"/>
+  <mapping class="br.com.casabemestilo.model.Perfil"/>
+  <mapping class="br.com.casabemestilo.model.Parcela"/>
+  <mapping class="br.com.casabemestilo.model.Pedido"/>
+  <mapping class="br.com.casabemestilo.model.Pedidoproduto"/>
+  <mapping class="br.com.casabemestilo.model.Frete"/>
+  <mapping class="br.com.casabemestilo.model.Status"/>
+  <mapping class="br.com.casabemestilo.model.Oc"/>
+  <mapping class="br.com.casabemestilo.model.Filial"/>
+  <mapping class="br.com.casabemestilo.model.UsuarioFilial"/>
+  <mapping class="br.com.casabemestilo.model.ComissaoMontador"/>
+  <mapping class="br.com.casabemestilo.model.ComissaoVendedor"/>
+  <mapping class="br.com.casabemestilo.model.Banco"/>
+  <mapping class="br.com.casabemestilo.model.Permissao"/>
+  <mapping class="br.com.casabemestilo.model.Pagina"/>
+  <mapping class="br.com.casabemestilo.model.PagamentoAvulso"/>
+ </session-factory>
+</hibernate-configuration>
