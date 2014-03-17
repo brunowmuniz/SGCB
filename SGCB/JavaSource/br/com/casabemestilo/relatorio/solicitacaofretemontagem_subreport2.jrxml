@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="solicitacaofretemontagem_subreport2" pageWidth="802" pageHeight="555" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isSummaryNewPage="true" uuid="161bde0e-7d44-45ac-ab10-6a854047c1c1">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="SGCB-JDBC"/>
+	<parameter name="IDFRETEPRODUTOOC" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+     frete.`id` AS frete_id,
+     ocproduto.`produto` AS ocproduto_produto,
+     produto.`descricao` AS produto_descricao,
+     produto.`fornecedor` AS produto_fornecedor,
+     produto.`codigo` AS produto_codigo,
+     fornecedor.`nome` AS fornecedor_nome,
+     ocproduto.`quantidade` AS ocproduto_quantidade,
+     produto.`temmontagem` AS produto_temmontagem
+FROM
+     `frete` frete INNER JOIN `ocproduto` ocproduto ON frete.`id` = ocproduto.`frete`
+     INNER JOIN `produto` produto ON ocproduto.`produto` = produto.`id`
+     INNER JOIN `fornecedor` fornecedor ON produto.`fornecedor` = fornecedor.`id`
+WHERE
+     frete.id = $P{IDFRETEPRODUTOOC}]]>
+	</queryString>
+	<field name="frete_id" class="java.lang.Integer"/>
+	<field name="ocproduto_produto" class="java.lang.Integer"/>
+	<field name="produto_descricao" class="java.lang.String"/>
+	<field name="produto_fornecedor" class="java.lang.Integer"/>
+	<field name="produto_codigo" class="java.lang.String"/>
+	<field name="fornecedor_nome" class="java.lang.String"/>
+	<field name="ocproduto_quantidade" class="java.lang.Integer"/>
+	<field name="produto_temmontagem" class="java.lang.Boolean"/>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="6fe082c1-69a8-4a86-97a1-2c3bb4a6678e" x="0" y="0" width="160" height="20"/>
+				<textElement/>
+				<text><![CDATA[Descrição]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9a9cc486-7d10-4863-98ae-86555bd68859" x="160" y="0" width="160" height="20"/>
+				<textElement/>
+				<text><![CDATA[Código]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0c354846-e166-4daf-9c83-625340a8ff52" x="320" y="0" width="160" height="20"/>
+				<textElement/>
+				<text><![CDATA[Fornecedor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bab9970a-6c17-41cb-93bf-f5659df3f447" x="480" y="0" width="160" height="20"/>
+				<textElement/>
+				<text><![CDATA[Quantidade]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7f294a2d-5425-4347-915a-a26c76a7745c" x="640" y="1" width="130" height="20"/>
+				<textElement/>
+				<text><![CDATA[Tem Montagem?]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<textField>
+				<reportElement uuid="dd0c9e24-5828-4895-85b6-7f646ff8aef5" x="0" y="0" width="160" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{produto_descricao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="dc223513-79c4-4c55-aeb4-be237ec07093" x="160" y="0" width="160" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{produto_codigo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="137db063-7eac-4a2c-a398-e47c0ce3a1d3" x="320" y="0" width="160" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{fornecedor_nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="8746e5b4-a967-432e-82d6-e39476204ac3" x="480" y="0" width="160" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{ocproduto_quantidade}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="fa8dfce0-8e0d-4860-a0ea-5b6e1e820273" x="640" y="0" width="130" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[($F{produto_temmontagem}.toString() == "true" ? "Sim" : "Não")]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
