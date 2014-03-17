@@ -3,6 +3,7 @@ package br.com.casabemestilo.model;
 // Generated 24/05/2013 18:36:37 by Hibernate Tools 4.0.0
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +19,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
@@ -50,6 +53,8 @@ public class Produto implements java.io.Serializable {
 	private Boolean deleted;
 	private Boolean temMontagem;
 	private Boolean ehPlanejado;
+	private Date dataReajuste;
+	private String usuarioReajuste;
 	private List<Ocproduto> ocprodutos = new ArrayList<Ocproduto>();
 	private List<Pedidoproduto> pedidoprodutos = new ArrayList<Pedidoproduto>();
 
@@ -218,6 +223,25 @@ public class Produto implements java.io.Serializable {
 
 	public void setEhPlanejado(Boolean ehPlanejado) {
 		this.ehPlanejado = ehPlanejado;
+	}
+	
+	@Column(name="datareajuste", nullable = true)
+	@Temporal(TemporalType.TIMESTAMP)
+	public Date getDataReajuste() {		
+		return dataReajuste;
+	}
+
+	public void setDataReajuste(Date dataReajuste) {
+		this.dataReajuste = dataReajuste;
+	}
+
+	@Column(name="usuarioreajuste", nullable = true)
+	public String getUsuarioReajuste() {
+		return usuarioReajuste;
+	}
+
+	public void setUsuarioReajuste(String usuarioReajuste) {
+		this.usuarioReajuste = usuarioReajuste;
 	}
 
 	@OneToMany(targetEntity = Ocproduto.class, mappedBy = "produto", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

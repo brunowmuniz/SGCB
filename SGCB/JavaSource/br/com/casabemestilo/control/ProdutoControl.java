@@ -11,7 +11,9 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.servlet.http.HttpSession;
 
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
@@ -27,6 +29,7 @@ import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Fornecedor;
 import br.com.casabemestilo.model.Oc;
 import br.com.casabemestilo.model.Produto;
+import br.com.casabemestilo.model.Usuario;
 
 @ManagedBean
 @ViewScoped
@@ -43,7 +46,10 @@ public class ProdutoControl extends Control implements InterfaceControl,
 	private ProdutoDAO produtoDAO;
 	
 	private LazyDataModel<Produto> listaLazyProduto;
+
+	private Double percentualReajuste;
 	
+	private Integer quantidade;
 	
 	/*
 	 * CONSTRUTORES
@@ -257,6 +263,35 @@ public class ProdutoControl extends Control implements InterfaceControl,
 		return listaLazyProduto;
 	}
 	
+	public void reajustarProdutoFornecedor(ActionEvent actionEvent){		
+		try {
+			HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+	        Usuario usuarioLogado = (Usuario) session.getAttribute("UsuarioLogado");
+			produtoDAO = new ProdutoDAO();
+			quantidade = produtoDAO.reajustarProdutoFornecedor(produto.getFornecedor().getId(), percentualReajuste, usuarioLogado.getNome());
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Atualizado " + quantidade + " produto(s)!", ""));
+			produto = new Produto();
+			percentualReajuste = null;
+		} catch (ConstraintViolationException e) {
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));
+			logger.error("Erro Constraint: " + super.mensagem + "- reajuste de produto!");
+		}catch (HibernateException e) {
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Hibernate: " + super.mensagem, ""));
+			logger.error("Erro Hibernate: " + super.mensagem + "- reajuste de produto!");
+		}catch (Exception e) {
+			super.mensagem = e.getMessage();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Geral: " + super.mensagem, ""));
+			logger.error("Erro Geral: " + super.mensagem + "- reajuste de produto!");
+		} 
+	}
+	
+	public void verificaQtdeProdutoAjuste(){		
+		produtoDAO = new ProdutoDAO();
+		quantidade = produtoDAO.buscaQtdeProdutoReajuste(produto.getFornecedor().getId());			
+	}
+	
 	/*
 	 * GETTERS & SETTERS
 	 * */
@@ -290,6 +325,28 @@ public class ProdutoControl extends Control implements InterfaceControl,
 
 	public void setListaLazyProduto(LazyDataModel<Produto> listaLazyProduto) {
 		this.listaLazyProduto = listaLazyProduto;
+	}
+	
+	public Double getPercentualReajuste() {
+		if(percentualReajuste == null){
+			percentualReajuste = new Double("0");
+		}
+		return percentualReajuste;
+	}
+
+	public void setPercentualReajuste(Double percentualReajuste) {
+		this.percentualReajuste = percentualReajuste;
+	}
+
+	public Integer getQuantidade() {
+		if(quantidade == null){
+			quantidade = 0;
+		}
+		return quantidade;
+	}
+
+	public void setQuantidade(Integer quantidade) {
+		this.quantidade = quantidade;
 	}
 	
 }

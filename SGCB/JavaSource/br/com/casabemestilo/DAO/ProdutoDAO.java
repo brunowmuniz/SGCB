@@ -2,6 +2,7 @@ package br.com.casabemestilo.DAO;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -208,6 +209,44 @@ public class ProdutoDAO implements InterfaceDAO, Serializable {
 		
 		session.close();
 		return linhas.intValue();
+	}
+	
+	public int reajustarProdutoFornecedor(Integer idFornecedor, Double percentualAjuste, String usuarioNome) {		
+		int qtdeProdutoAtualizado = 0;
+		session = Conexao.getInstance();
+		session.beginTransaction();
+		qtdeProdutoAtualizado = session.createQuery("update Produto p " +
+														"set " +
+															"p.valorsugerido = p.valorsugerido  * :percentualAjuste, " +
+															"p.valorcusto = p.valorcusto * :percentualAjuste, " +
+															"p.dataReajuste = :dataReajuste, " +
+															"p.usuarioReajuste = :usuarioNome "+				
+													"where " +
+														"p.fornecedor.id= :idFornecedor " +
+													"and " +
+														"p.deleted = false")
+									   .setDouble("percentualAjuste",1 + (percentualAjuste / 100))
+									   .setInteger("idFornecedor", idFornecedor)
+									   .setTimestamp("dataReajuste", new Date())
+									   .setString("usuarioNome", usuarioNome)
+									   .executeUpdate();
+		session.getTransaction().commit();
+		return qtdeProdutoAtualizado;
+	}
+	
+	public int buscaQtdeProdutoReajuste(Integer idFornecedor) {
+		Long qtdeProduto = new Long("0");
+		session = Conexao.getInstance();
+		qtdeProduto = (Long) session.createQuery("select count(*) from " +
+														"Produto p " +
+													"where " +
+														"p.fornecedor.id= :idFornecedor " +
+													" and" +
+														" p.deleted = false")
+									 .setInteger("idFornecedor", idFornecedor)
+							         .setCacheable(true)
+							         .uniqueResult();
+		return qtdeProduto.intValue();
 	}
 	
 	/*
