@@ -156,7 +156,7 @@ public class OcControl extends Control implements InterfaceControl,
 		
 		if(oc.getFilial().getId() == null){
 			try {
-				oc.setFilial(new FilialDAO().buscaObjetoId(2));
+				oc.setFilial(new FilialDAO().buscaObjetoId(1));
 			} catch (ConstraintViolationException e) {
 				e.printStackTrace();
 				super.mensagem = e.getMessage();
@@ -828,10 +828,10 @@ public class OcControl extends Control implements InterfaceControl,
 			
 			if(caminhoRelatorio.indexOf("home") > -1){
 				caminhoRelatorio += "/";
-				caminhoImagem = "http://www.blanker.com.br/SGC/imagens/logo-casttini.jpg";
+				caminhoImagem = "http://www.blanker.com.br/SGC/imagens/logo_site.png";
 			}else{
 				caminhoRelatorio += "\\";
-				caminhoImagem = "http://localhost:8080/SGC/imagens/logo-casttini.jpg";
+				caminhoImagem = "http://localhost:8080/SGC/imagens/logo_site.png";
 			}
 			
 			caminho = getClass().getResourceAsStream("../relatorio/oc.jrxml");
