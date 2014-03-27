@@ -233,8 +233,8 @@ public class OcProdutoControl extends Control implements InterfaceControl,
 		}
 	}
 	
-	public void addProdutoPedido(SelectEvent selectEvent){		
-		listaOcproduto.add((Ocproduto) selectEvent.getObject());		
+	public void addProdutoPedido(SelectEvent selectEvent){
+		listaOcproduto.add((Ocproduto) selectEvent.getObject());
 	}
 	
 	public void subProdutoPedido(UnselectEvent unselectEvent){
@@ -267,6 +267,13 @@ public class OcProdutoControl extends Control implements InterfaceControl,
 	public void limparListaDeProdutosAEncomendar(){
 		listaOcproduto = new ArrayList<Ocproduto>();
 	}
+	
+	public void calculaProduto(){
+		getOcproduto().setValorunitario(getOcproduto().getProduto().getValorsugerido());
+		getOcproduto().setValorTotalSemDesconto(getOcproduto().getValorunitario() * getOcproduto().getQuantidade());
+	}
+	
+	
 	
 	/*
 	 * GETTERS & SETTERS

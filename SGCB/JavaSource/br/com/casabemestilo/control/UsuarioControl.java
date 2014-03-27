@@ -2,6 +2,7 @@ package br.com.casabemestilo.control;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
@@ -151,8 +152,6 @@ public class UsuarioControl extends Control implements InterfaceControl,
     		return "erro";
     	}
     }
-    
-    
     
     public String sairAplicacao(){
     	 FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -492,7 +491,7 @@ public class UsuarioControl extends Control implements InterfaceControl,
 		}		
 		return listaUsuario;
 	}
-	
+
 	/*
 	 * GETTERS & SETTERS
 	 * */

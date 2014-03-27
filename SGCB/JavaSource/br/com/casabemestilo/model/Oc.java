@@ -299,7 +299,7 @@ public class Oc implements java.io.Serializable {
 		return desconto;
 	}
 	
-	public void setDesconto(Float desconto) {
+	public void setDesconto(float desconto) {
 		this.desconto = desconto;
 	}
 
@@ -359,6 +359,7 @@ public class Oc implements java.io.Serializable {
 	public String toString() {
 		return "Oc [id=" + id + ", usuario=" + usuario.getNome() + "]";
 	}
-		
+	
+	
 	
 }

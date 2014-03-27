@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -25,6 +26,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import main.DataUtil;
 import net.sf.jasperreports.engine.JRDataSource;
@@ -38,6 +40,7 @@ import net.sf.jasperreports.engine.data.JRBeanArrayDataSource;
 
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
+import org.primefaces.component.confirmdialog.ConfirmDialog;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.LazyDataModel;
@@ -116,7 +119,7 @@ public class OcControl extends Control implements InterfaceControl,
 	
 	private Float valorDescontoAtual = new Float("0");
 	
-		
+	private DecimalFormat df = new DecimalFormat();
 	
 	/*
 	 * CONSTRUTORES
@@ -139,7 +142,11 @@ public class OcControl extends Control implements InterfaceControl,
 	 * MÉTODOS
 	 * */
 	@PostConstruct
-	public void init(){		
+	public void init(){
+		
+		df.setMaximumFractionDigits(2);
+		df.setMinimumFractionDigits(0);
+		
 		if(ELFlash.getFlash().get("oc") != null){
 			oc = (Oc) ELFlash.getFlash().get("oc");
 			valorDescontoAtual = oc.getDesconto();
@@ -149,7 +156,7 @@ public class OcControl extends Control implements InterfaceControl,
 		
 		if(oc.getFilial().getId() == null){
 			try {
-				oc.setFilial(new FilialDAO().buscaObjetoId(1));
+				oc.setFilial(new FilialDAO().buscaObjetoId(2));
 			} catch (ConstraintViolationException e) {
 				e.printStackTrace();
 				super.mensagem = e.getMessage();
@@ -245,15 +252,14 @@ public class OcControl extends Control implements InterfaceControl,
 	
 	public void calculaValorTotalProdutos(){
 		oc.setValor(0);		
-		for(Ocproduto ocproduto : oc.getOcprodutos()){
-			ocproduto.setValortotal(ocproduto.getValorunitario() * ocproduto.getQuantidade());
-		}
+		oc.setDesconto(0);
 		
 		for(Iterator<Ocproduto> iterOcProd = oc.getOcprodutos().iterator(); iterOcProd.hasNext();){
 			Ocproduto ocproduto =  iterOcProd.next();			
-			oc.setValor(oc.getValor() + ocproduto.getValortotal());
+			oc.setValor(oc.getValor() + ocproduto.getValorTotalSemDesconto());
+			oc.setDesconto(oc.getDesconto() + (ocproduto.getValorTotalSemDesconto() * (ocproduto.getDesconto() /100)));
 		}
-		oc.setValorfinal(oc.getValor() + oc.getValorfrete() + oc.getValormontagem());
+		oc.setValorfinal((oc.getValor() + oc.getValorfrete() + oc.getValormontagem()) - oc.getDesconto());
 		ocproduto = new Ocproduto();
 	}
 
@@ -344,7 +350,12 @@ public class OcControl extends Control implements InterfaceControl,
 	public void gravar() {
 		try {
 			ocDAO = new OcDAO();
-			oc.setStatus((Status) new StatusDAO().buscaObjetoId(1));			
+			oc.setStatus((Status) new StatusDAO().buscaObjetoId(1));
+			for(Ocproduto ocproduto : oc.getOcprodutos()){
+				if(ocproduto.getStatus().getId() == 11 && oc.getStatus().getId() != 11){
+					oc.setStatus((Status) new StatusDAO().buscaObjetoId(11));
+				}					
+			}			
 			recalculaValorTotalOcproduto();
 			retorno = ocDAO.insertOc(oc);
 			if(retorno.equalsIgnoreCase("ok")){
@@ -403,7 +414,7 @@ public class OcControl extends Control implements InterfaceControl,
 	}
 
 	@Override
-	public void alterar() {
+	public void alterar() {	    
 		try {
 			ocDAO = new OcDAO();
 			if(oc.getStatus().getId() != 7 && oc.getPagamentos().size() > 0){
@@ -413,6 +424,11 @@ public class OcControl extends Control implements InterfaceControl,
 			if(oc.getStatus().getId() == 7 && oc.getValorliquido() == 0){			
 				calculaValorComissao();
 				oc.setStatus(new OcProdutoControl().retornaMenorStatusOcProduto(oc, false));
+			}
+			for(Ocproduto ocproduto : oc.getOcprodutos()){
+				if(ocproduto.getStatus().getId() == 11 && oc.getStatus().getId() != 11){
+					oc.setStatus((Status) new StatusDAO().buscaObjetoId(11));
+				}					
 			}
 			recalculaValorTotalOcproduto();
 			retorno = ocDAO.updateOc(oc);
@@ -812,10 +828,10 @@ public class OcControl extends Control implements InterfaceControl,
 			
 			if(caminhoRelatorio.indexOf("home") > -1){
 				caminhoRelatorio += "/";
-				caminhoImagem = "http://www.blanker.com.br/imagens/logo_site.png";
+				caminhoImagem = "http://www.blanker.com.br/SGC/imagens/logo-casttini.jpg";
 			}else{
 				caminhoRelatorio += "\\";
-				caminhoImagem = "http://localhost:8080/SGCB/imagens/logo_site.png";
+				caminhoImagem = "http://localhost:8080/SGC/imagens/logo-casttini.jpg";
 			}
 			
 			caminho = getClass().getResourceAsStream("../relatorio/oc.jrxml");
@@ -961,17 +977,50 @@ public class OcControl extends Control implements InterfaceControl,
 		return listaOc;
 	}
 	
-	public void recalculaProdutoOC(int linha){
-		ocproduto = oc.getOcprodutos().get(linha);
-		float valorDesconto = ocproduto.getValorTotalSemDesconto()  * (ocproduto.getDesconto() / 100);  
-		ocproduto.setValortotal(ocproduto.getValorTotalSemDesconto() - valorDesconto);
-		System.out.println(valorDesconto + "," + ocproduto.toString() );
+	public void recalculaProdutoOC(int linha) throws ConstraintViolationException, HibernateException, Exception{				
+		HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+	    Usuario user = (Usuario) session.getAttribute("UsuarioLogado");
+	    
+	    ocproduto = oc.getOcprodutos().get(linha);	    
+		float valorDesconto = ocproduto.getValorTotalSemDesconto()  * (ocproduto.getDesconto() / 100);
+		Double descontoAplicado = new Double(df.format(ocproduto.getDesconto()).replace(",", "."));
+		
+		ocproduto.setValortotal(ocproduto.getValorTotalSemDesconto() - valorDesconto);		
 		oc.getOcprodutos().set(linha, ocproduto);
 		oc.setDesconto(new Float("0"));
 		for(Ocproduto ocprod : oc.getOcprodutos()){
 			oc.setDesconto(oc.getDesconto() + (ocprod.getValorTotalSemDesconto() - ocprod.getValortotal()));			
 		}
 		oc.setValorfinal((oc.getValor() + oc.getValorfrete() + oc.getValormontagem()) - oc.getDesconto());
+		
+		if(descontoAplicado > user.getPercentualDesconto().doubleValue()){
+			ocproduto.setStatus(new StatusDAO().buscaObjetoId(11));
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Desconto não permitido, a margem do usuário é de " + df.format(user.getPercentualDesconto()) + "%. A OC ficará com o status PENDENTE DE APROVAÇÃO depois de salvo!", ""));
+		}else{
+			ocproduto.setStatus(new StatusDAO().buscaObjetoId(1));			
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Desconto Aplicado!"));
+		}
+	}
+	
+	public void liberarDescontoProduto(int linha){
+		Boolean isPendenteAprovacao = false;
+		try {
+			ocproduto = oc.getOcprodutos().get(linha);
+			ocproduto.setStatus(new StatusDAO().buscaObjetoId(1));
+			for(Ocproduto ocproduto : oc.getOcprodutos()){
+				if(ocproduto.getStatus().getId() == 11){
+					isPendenteAprovacao = true;
+				}
+			}
+			if(!isPendenteAprovacao){
+				oc.setStatus(new StatusDAO().buscaObjetoId(1));
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("OC liberada, favor clicar em 'ALTERAR OC'!"));
+			}
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Desconto Liberado!"));
+		} catch (Exception e) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro na liberação do desconto!", ""));
+			e.printStackTrace();
+		}
 	}
 	
 	/*
