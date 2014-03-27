@@ -22,7 +22,7 @@
 						
 						<p:outputLabel for="percentual" value="Reajuste(%): "/>
 						<p:inputText value="#{produtoControl.percentualReajuste}" id="percentual">
-							<f:convertNumber maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="3" minFractionDigits="2"/>
+							<f:convertNumber locale="pt_BR" maxFractionDigits="2" minIntegerDigits="1" maxIntegerDigits="3" minFractionDigits="2"/>
 							<p:ajax event="blur" update="@this,btnReajusteValores" process="@this"/>
 						</p:inputText>
 						
