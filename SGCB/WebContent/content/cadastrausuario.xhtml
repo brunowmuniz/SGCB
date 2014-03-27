@@ -11,10 +11,12 @@
 				<p:panel header="Cadastro de Usuário">
 			     	<p:messages id="msgs"/>			     	
 					<h:panelGrid columns="2" id="cadastro">
+						
 						<p:outputLabel for="nome" value="Nome: "/>
 						<p:inputText value="#{usuarioControl.usuario.nome}" id="nome" size="60">
 							<f:validateBean/>
 						</p:inputText>
+						
 						<p:outputLabel for="senha" value="Senha: "/>
 						<p:password value="#{usuarioControl.usuario.senha}" id="senha" size="15" 
 									feedback="true"
@@ -28,19 +30,28 @@
 							<f:validateBean/>
 							<p:ajax event="blur" process="@this" update="@this,msgs" listener="#{usuarioControl.verificaLoginExistente}"/>
 						</p:inputText>
+						
 						<p:outputLabel for="filialUsuario" value="Filial: " rendered="false"/>					
 						<p:selectManyMenu id="filialUsuario" value="#{usuarioControl.listaUsuarioFilial}"
 										 required="true" requiredMessage="Selecionar uma filial ao menos" rendered="false">
 							<f:selectItems value="#{filialControl.listaFilialCombo}" />							
 						</p:selectManyMenu>	
+						
 						<p:outputLabel for="perfilUsuario" value="Perfil: "/>
 						<p:selectOneMenu id="perfilUsuario" value="#{usuarioControl.usuario.perfil.id}"
 										 required="true" requiredMessage="Selecionar um perfil" >						
 							<f:selectItem itemLabel="Selecione Perfil" itemValue=""/>
 							<f:selectItems value="#{perfilControl.listaPerfilCombo}" />												
 						</p:selectOneMenu>				
+						
 						<p:outputLabel for="deletado" value="Deletado: " rendered="#{usuarioControl.usuario.id == 0}"/>
 						<p:selectBooleanCheckbox id="deletado" value="#{usuarioControl.usuario.deleted}" rendered="#{usuarioControl.usuario.id == 0}"/>
+						
+						<p:outputLabel for="percentualDesconto" value="Desconto (%): "/>
+						<p:inputText id="percentualDesconto" value="#{usuarioControl.usuario.percentualDesconto}" size="15">
+							<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="3" minFractionDigits="0" minIntegerDigits="1"/>
+							<p:ajax event="blur" process="@this" update="@this"/>
+						</p:inputText>
 						
 						<p:commandButton rendered="#{usuarioControl.usuario.id != null}" actionListener="#{usuarioControl.alterar}" value="Alterar" update="msgs,cadastro" id="gravar"/>
 						<p:commandButton rendered="#{usuarioControl.usuario.id == null}" actionListener="#{usuarioControl.gravar}" value="Gravar" update="msgs,cadastro" id="alterar"/>
