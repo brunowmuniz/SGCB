@@ -54,6 +54,7 @@ public class Usuario implements java.io.Serializable {
 	private BigDecimal totalComissaoVendedor;
 	private BigDecimal totalComissaoMontador;
 	private BigDecimal totalValeFuncionario;
+	private BigDecimal percentualDesconto;
 	private List<Lancamento> lancamentos = new ArrayList<Lancamento>();
 	private List<Permissao> permissoes = new ArrayList<Permissao>();
 
@@ -160,6 +161,15 @@ public class Usuario implements java.io.Serializable {
 
 	public void setSenha(String senha) {
 		this.senha = senha;
+	}
+	
+	@Column(name="percentualdesconto", nullable = true)
+	public BigDecimal getPercentualDesconto() {
+		return percentualDesconto;
+	}
+
+	public void setPercentualDesconto(BigDecimal percentualDesconto) {
+		this.percentualDesconto = percentualDesconto;
 	}
 
 	@OneToMany(targetEntity = Comissao.class, mappedBy = "usuario")

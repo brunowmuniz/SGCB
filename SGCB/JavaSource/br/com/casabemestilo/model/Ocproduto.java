@@ -181,7 +181,7 @@ public class Ocproduto implements java.io.Serializable {
 	public Float getValorunitario() {
 		if(valorunitario == null){
 			valorunitario = new Float(0.00);
-		}
+		}		
 		return valorunitario;
 	}
 
@@ -220,19 +220,12 @@ public class Ocproduto implements java.io.Serializable {
 	}
 
 	@Column(name="valorTotalSemDesconto", nullable = false, scale = 8, precision = 2)
-	public Float getValorTotalSemDesconto() {
-		if(getId() == null && valorTotalSemDesconto == null){
-			valorTotalSemDesconto = new Float(0.00);
-		}
+	public Float getValorTotalSemDesconto() {		
 		return valorTotalSemDesconto;
 	}
 
 	public void setValorTotalSemDesconto(Float valorTotalSemDesconto) {
-		if((valorTotalSemDesconto == 0.00 || this.valorTotalSemDesconto != valorTotalSemDesconto) && getId() == null){
-			this.valorTotalSemDesconto = getValorunitario() * getQuantidade();
-		}else{
-			this.valorTotalSemDesconto = valorTotalSemDesconto;
-		}
+		this.valorTotalSemDesconto = valorTotalSemDesconto;		
 	}
 
 	@Override
