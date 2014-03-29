@@ -21,6 +21,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 import org.hibernate.annotations.Cache;
@@ -163,8 +164,12 @@ public class Usuario implements java.io.Serializable {
 		this.senha = senha;
 	}
 	
-	@Column(name="percentualdesconto", nullable = true)
+	@Column(name="percentualdesconto", nullable = false, precision = 5, scale = 2)
+	@Max(value=100, message="O desconto máximo para qualquer produto é 100%")
 	public BigDecimal getPercentualDesconto() {
+		if(percentualDesconto == null){
+			percentualDesconto = new BigDecimal("0");
+		}
 		return percentualDesconto;
 	}
 
