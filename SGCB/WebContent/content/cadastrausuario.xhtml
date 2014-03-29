@@ -51,6 +51,7 @@
 						<p:inputText id="percentualDesconto" value="#{usuarioControl.usuario.percentualDesconto}" size="15">
 							<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="3" minFractionDigits="0" minIntegerDigits="1"/>
 							<p:ajax event="blur" process="@this" update="@this"/>
+							<f:validateBean />
 						</p:inputText>
 						
 						<p:commandButton rendered="#{usuarioControl.usuario.id != null}" actionListener="#{usuarioControl.alterar}" value="Alterar" update="msgs,cadastro" id="gravar"/>
