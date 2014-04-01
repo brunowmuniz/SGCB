@@ -20,7 +20,7 @@
 						<p:calendar value="#{comissaoMontadorControl.dataFinal}" pattern="dd/MM/yyyy" locale="pt" id="dataFinal">
 							<p:ajax event="dateSelect" process="@this"/>
 						</p:calendar>
-						<p:outputLabel for="vendedorbusca" value="Vendedor: "/>
+						<p:outputLabel for="vendedorbusca" value="Montador: "/>
 						<p:selectOneMenu id="vendedorbusca" value="#{comissaoMontadorControl.comissaoMontador.montador.id}" size="1">
 							<f:selectItem noSelectionOption="true" itemLabel="Selecione Montador"/>
 							<f:selectItems value="#{usuarioControl.listaUsuarioMontador}"/>							
