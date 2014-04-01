@@ -153,14 +153,26 @@ public class UsuarioDAO implements InterfaceDAO, Serializable {
 		return this.usuario;
 	}
 	
-	public boolean verificaLoginExistente(String login) {
+	public boolean verificaLoginExistente(Usuario usuario) {
+		boolean existeUsuario = false;
 		session = Conexao.getInstance();
 		this.usuario = new Usuario();
-		this.usuario = (Usuario) session.createQuery("From Usuario u where u.login= :login")
-										.setString("login", login)
-										.uniqueResult();
+		if(usuario.getId() == null){
+			this.usuario = (Usuario) session.createQuery("From Usuario u where u.login= :login")
+											.setString("login", usuario.getLogin())
+											.uniqueResult();
+		}else{
+			this.usuario = (Usuario) session.createQuery("From Usuario u where u.login= :login and u.id <> :id")
+											.setString("login", usuario.getLogin())
+											.setInteger("id", usuario.getId())
+											.uniqueResult();
+		}
+		if(this.usuario != null){
+			existeUsuario = true;
+		}
+		
 		session.close();
-		return this.usuario.getId() != null;
+		return existeUsuario;
 	}
 	
 	public List<Usuario> listaMontador() {

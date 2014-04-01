@@ -282,7 +282,7 @@ public class FreteControl extends Control implements Serializable,
 		}
 		
 		
-		if(valorTotalBrutoProdutoMontagem != 0){			
+		if(valorTotalBrutoProdutoMontagem != 0 || valorTotalBrutoProdPlanejado != 0){			
 			valorLiquidoProduto = valorTotalBrutoProdutoMontagem * (oc.getValorliquido() / oc.getValorfinal());
 			valorLiquidoProdPlanejado = valorTotalBrutoProdPlanejado * (oc.getValorliquido() / oc.getValorfinal());
 					

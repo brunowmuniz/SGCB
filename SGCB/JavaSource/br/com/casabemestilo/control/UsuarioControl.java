@@ -202,19 +202,17 @@ public class UsuarioControl extends Control implements InterfaceControl,
 			usuario = usuarioDAO.insert(usuario);			
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Usuário: " + usuario.getNome() + " gravado!"));
 			logger.info("Salvo perfil: " + usuario.toString());			
-			for (Iterator<String> iterUsuarioFilial = listaUsuarioFilial.iterator(); iterUsuarioFilial.hasNext();) {
-				UsuarioFilial usuarioFilial =  new UsuarioFilial();
-				usuarioFilial.getFilial().setId(Integer.parseInt(iterUsuarioFilial.next()));
-				usuarioFilial.setUsuario(usuario);
-				UsuarioFilialDAO usuarioFilialDAO = new UsuarioFilialDAO();
-				try {
-					usuarioFilialDAO.insert(usuarioFilial);
-					logger.info("Salvo filialusuario: " + usuarioFilial.getFilial().getNome());
-				} catch (Exception e) {
-					super.mensagem = e.getMessage();
-					FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));
-					logger.error("Erro - filialusuario: " + super.mensagem + "-" + usuarioFilial.getFilial().getNome());
-				}
+			UsuarioFilial usuarioFilial =  new UsuarioFilial();			
+			usuarioFilial.getFilial().setId(1);
+			usuarioFilial.setUsuario(usuario);
+			UsuarioFilialDAO usuarioFilialDAO = new UsuarioFilialDAO();			
+			try {
+				usuarioFilialDAO.insert(usuarioFilial);
+				logger.info("Salvo filialusuario: " + usuarioFilial.getFilial().getNome());
+			} catch (Exception e) {
+				super.mensagem = e.getMessage();
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));
+				logger.error("Erro - filialusuario: " + super.mensagem + "-" + usuarioFilial.getFilial().getNome());
 			}
         	usuario = new Usuario();
 		} catch (ConstraintViolationException e) {
@@ -253,43 +251,7 @@ public class UsuarioControl extends Control implements InterfaceControl,
 			if(novaSenha != ""){
 				usuario.setSenha(novaSenha);
 			}
-    		usuarioDAO.update(usuario);    		
-    		if(listaUsuarioFilial.size() != usuario.getUsuarioFiliais().size()){
-    			for(Iterator<String> iterFilial = listaUsuarioFilial.iterator(); iterFilial.hasNext();){
-    				Boolean ehAdicionar = true;
-    				Integer idFilial = Integer.parseInt(iterFilial.next());
-    				for(Iterator<UsuarioFilial> iterUsuarioFilial = usuario.getUsuarioFiliais().iterator(); iterUsuarioFilial.hasNext() && ehAdicionar;){
-    					UsuarioFilial usuarioFilial = iterUsuarioFilial.next();
-    					if(usuarioFilial.getFilial().getId() == idFilial){
-    						ehAdicionar = false;
-    					}
-    				}
-    				if(ehAdicionar){
-    					UsuarioFilial usuarioFilial = new UsuarioFilial();
-    					UsuarioFilialDAO usuarioFilialDAO = new UsuarioFilialDAO();
-    					usuarioFilial.getUsuario().setId(usuario.getId());
-    					usuarioFilial.getFilial().setId(idFilial);
-    					usuario.getUsuarioFiliais().add(usuarioFilial);
-    					usuarioFilialDAO.insert(usuarioFilial);
-    				}
-    			}
-    			
-    			for(Iterator<UsuarioFilial> iterUsuarioFilial = usuario.getUsuarioFiliais().iterator(); iterUsuarioFilial.hasNext();){
-    				Boolean ehDeletar = true;
-    				UsuarioFilial usuarioFilial = iterUsuarioFilial.next();
-    				for(Iterator<String> iterFilial = listaUsuarioFilial.iterator(); iterFilial.hasNext() && ehDeletar;){
-    					Integer idFilial = Integer.parseInt(iterFilial.next());
-    					if(idFilial == usuarioFilial.getFilial().getId()){
-    						ehDeletar = false;
-    					}
-    				}
-    				if(ehDeletar){
-    					UsuarioFilialDAO usuarioFilialDAO = new UsuarioFilialDAO();
-    					usuarioFilial.setDeleted(true);
-    					usuarioFilialDAO.delete(usuarioFilial);
-    				}
-    			}
-    		}    		
+    		usuarioDAO.update(usuario); 		
         	FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Usuário:" + usuario.getNome() + " alterado!"));
     	}catch (ConstraintViolationException e) {
 			super.mensagem = e.getMessage();
@@ -378,7 +340,7 @@ public class UsuarioControl extends Control implements InterfaceControl,
 	public void verificaLoginExistente(){
 		boolean isLoginExiste;
 		usuarioDAO = new UsuarioDAO();
-		isLoginExiste = usuarioDAO.verificaLoginExistente(usuario.getLogin());
+		isLoginExiste = usuarioDAO.verificaLoginExistente(usuario);
 		if(isLoginExiste){
 			usuario.setLogin("");
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Login já existe, favor informar outro!", ""));
