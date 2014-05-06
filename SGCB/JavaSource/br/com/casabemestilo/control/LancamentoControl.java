@@ -6,12 +6,14 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.faces.application.FacesMessage;
@@ -24,6 +26,7 @@ import main.DataUtil;
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.component.export.Exporter;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
@@ -39,6 +42,8 @@ import br.com.casabemestilo.model.Fornecedor;
 import br.com.casabemestilo.model.Lancamento;
 import br.com.casabemestilo.model.LancamentoDia;
 import br.com.casabemestilo.model.Oc;
+import br.com.casabemestilo.util.ExtendedExcelExporter;
+import br.com.casabemestilo.util.ExtendedPDFExporter;
 
 @ManagedBean
 @ViewScoped
@@ -487,6 +492,24 @@ public class LancamentoControl extends Control implements InterfaceControl,
 				dataTableLancamento.getFilters().put("numBoleto", lancamento.getNumBoleto());
 			}			
 		}
+	}
+	
+	public void exportarExcel(DataTable tabela, String nomeArquivo) throws IOException{
+		DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, new Locale("pt", "BR"));
+		nomeArquivo += df.format(dataInicial) + " até " + df.format(dataFinal);
+		FacesContext context = FacesContext.getCurrentInstance();
+	    Exporter exporter = new ExtendedExcelExporter();
+	    exporter.export(context,tabela, nomeArquivo, false, false, "ISO-8859-1", null, null);
+	    context.responseComplete();
+	}
+	
+	public void exportarPDF(DataTable tabela, String nomeArquivo) throws IOException{
+		DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, new Locale("pt", "BR"));
+		nomeArquivo += df.format(dataInicial) + " até " + df.format(dataFinal);
+		FacesContext context = FacesContext.getCurrentInstance();
+	    Exporter exporter = new ExtendedPDFExporter();
+	    exporter.export(context, tabela, nomeArquivo, false, false, "ISO-8859-1", null, null);
+	    context.responseComplete();
 	}
 	
 	/*
