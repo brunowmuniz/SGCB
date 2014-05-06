@@ -22,6 +22,14 @@
 						</p:calendar>
 						
 						<p:commandButton value="Buscar" update="form"/>
+						<h:panelGrid columns="2">
+							<h:commandLink action="#{lancamentoControl.exportarExcel(table,'contas a pagar de ')}">
+								<p:graphicImage value="../imagens/excel.png"/>							
+							</h:commandLink>
+							<h:commandLink action="#{lancamentoControl.exportarPDF(table,'contas a pagar de ')}">
+								<p:graphicImage value="../imagens/pdf.png"/>							
+							</h:commandLink>
+						</h:panelGrid>
 					</h:panelGrid>
 					<p:contextMenu for="entradalancamento" id="ctxlancamento">
 					 	<p:menuitem value="Deletar Essa" update="entradalancamento,msgs" icon="ui-icon-trash" actionListener="#{lancamentoControl.deletar}"/>
@@ -32,7 +40,7 @@
 					<p:dataTable id="entradalancamento" value="#{lancamentoControl.listaLancamentoGeralAll('lancamento')}" var="lancamento" lazy="true" emptyMessage="Sem parcelas a vencer" paginator="true"
 								selection="#{lancamentoControl.lancamento}" selectionMode="single" rows="25"
 								paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-		             			rowsPerPageTemplate="25,50,100" rowKey="#{lancamento.id}" editable="true">
+		             			rowsPerPageTemplate="25,50,100" rowKey="#{lancamento.id}" editable="true" binding="#{table}">
 		             			
 		             	<p:ajax event="rowEdit" listener="#{lancamentoControl.alterar}" process="entradalancamento" update=":form:msgs"/>
 		             	<p:ajax event="rowSelect" update=":form:ctxlancamento"/>
@@ -98,15 +106,14 @@
 						
 						<p:column headerText="Valor da Parcela">
 							<p:cellEditor id="valorparcela">
-								<f:facet name="output">
-									<h:outputText value="R$ " styleClass="#{lancamento.contacontabil.tipo == 'D' ? 'debito' : 'credito'}"/>									
+								<f:facet name="output">																		
 						        	<h:outputText value="#{lancamento.valor}" styleClass="#{lancamento.contacontabil.tipo == 'D' ? 'debito' : 'credito'}">
-						        		<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+						        		<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2" type="currency"/>
 						        	</h:outputText>
 								</f:facet>
 								<f:facet name="input">
 									<p:inputText value="#{lancamento.valor}">
-										<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+										<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2" type="currency"/>
 										<p:ajax event="blur" update="@this"/>
 									</p:inputText>
 								</f:facet>
@@ -141,7 +148,7 @@
 							</p:cellEditor>
 						</p:column>
 						
-						<p:column headerText="Editar" icon="ui-icon-pencil" style="width: 6px;">
+						<p:column headerText="Editar" icon="ui-icon-pencil" style="width: 6px;" exportable="false">
 				        	<p:rowEditor />
 				        </p:column>
 					</p:dataTable>
