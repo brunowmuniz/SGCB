@@ -79,6 +79,8 @@ public class LancamentoControl extends Control implements InterfaceControl,
 	
 	private Fornecedor fornecedor = new Fornecedor();
 	
+	private String tipoArquivo = "xls";
+	
 	/*
 	 * CONSTRUTORES
 	 * */
@@ -205,14 +207,14 @@ public class LancamentoControl extends Control implements InterfaceControl,
 	@Override
 	public void alterar() {
 		try {
-			if(lancamento.getContacontabil().getId() == 19 || lancamento.getContacontabil().getId() == 10){
-				fornecedor = new FornecedoresDAO().buscaObjetoId(fornecedor.getId());
-				lancamento.setDescricao(fornecedor.getNome());
-			}
-			lancamento.setContacontabil(new ContaContabilDAO().buscaObjetoId(lancamento.getContacontabil().getId()));
-			lancamentoDAO = new LancamentoDAO();
-			lancamentoDAO.update(lancamento);
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Lançamento Alterado!"));
+			if((lancamento.getContacontabil().getId() == 19 || lancamento.getContacontabil().getId() == 10) && lancamento.getDescricao().equals("")){
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,"Sem fornecedor/freteiro definido!", ""));
+			}else{
+				lancamento.setContacontabil(new ContaContabilDAO().buscaObjetoId(lancamento.getContacontabil().getId()));
+				lancamentoDAO = new LancamentoDAO();
+				lancamentoDAO.update(lancamento);
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Lançamento Alterado!"));
+			}			
 		} catch (ConstraintViolationException e) {
 			super.mensagem = e.getMessage();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));
@@ -270,10 +272,11 @@ public class LancamentoControl extends Control implements InterfaceControl,
 	}
 	
 	public LazyDataModel<Lancamento> listaLancamentoGeralAll(String tipoLancamento){
+		
 		if(tipoLancamento.equalsIgnoreCase("vale")){
 			lancamento = new Lancamento();
 			lancamento.setEhVale(true);
-		}		
+		}
 		if(listaLancamentoGeral == null){
 			listaLancamentoGeral = new LazyDataModel<Lancamento>() {
 				private List<Lancamento> listaLazyLancamentos;
@@ -300,12 +303,8 @@ public class LancamentoControl extends Control implements InterfaceControl,
 			    	LancamentoDAO lancamentoDAO = new LancamentoDAO();
 			    	
 			    	listaLazyLancamentos = lancamentoDAO.listaLazyLancamento(first, pageSize, filters, getDataInicial(), getDataFinal(), getLancamento().getEhVale());
-			    	
-			    	if (getRowCount() <= 0) { 
-			            setRowCount(lancamentoDAO.totalLancamento(filters, getDataInicial(), getDataFinal(), getLancamento().getEhVale()));  
-			        }  
-			    	
-			        setPageSize(pageSize);  
+			        setRowCount(lancamentoDAO.totalLancamento(filters, getDataInicial(), getDataFinal(), getLancamento().getEhVale()));  			        			    	
+			        setPageSize(pageSize); 
 			        return listaLazyLancamentos;
 			    }
 			};
@@ -468,6 +467,7 @@ public class LancamentoControl extends Control implements InterfaceControl,
 	}
 	
 	private void defineFiltro(){
+		dataTableLancamento = new DataTable();
 		dataTableLancamento.setFilters(new HashMap<String, String>());
 		if(lancamento.getStatus() == null){
 			lancamento.setStatus("pendente");
@@ -494,22 +494,23 @@ public class LancamentoControl extends Control implements InterfaceControl,
 		}
 	}
 	
-	public void exportarExcel(DataTable tabela, String nomeArquivo) throws IOException{
+	public void exportarArquivo(DataTable tabela, String nomeArquivo, String tipoArquivo) throws IOException{
+		this.tipoArquivo = tipoArquivo;
+		Exporter exporter = null;
 		DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, new Locale("pt", "BR"));
 		nomeArquivo += df.format(dataInicial) + " até " + df.format(dataFinal);
 		FacesContext context = FacesContext.getCurrentInstance();
-	    Exporter exporter = new ExtendedExcelExporter();
+		if(tipoArquivo.equals("xls")){
+			exporter = new ExtendedExcelExporter();
+		}else{
+			exporter = new ExtendedPDFExporter();
+		}	    
 	    exporter.export(context,tabela, nomeArquivo, false, false, "ISO-8859-1", null, null);
 	    context.responseComplete();
-	}
+	}	
 	
-	public void exportarPDF(DataTable tabela, String nomeArquivo) throws IOException{
-		DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, new Locale("pt", "BR"));
-		nomeArquivo += df.format(dataInicial) + " até " + df.format(dataFinal);
-		FacesContext context = FacesContext.getCurrentInstance();
-	    Exporter exporter = new ExtendedPDFExporter();
-	    exporter.export(context, tabela, nomeArquivo, false, false, "ISO-8859-1", null, null);
-	    context.responseComplete();
+	public void buscaLancamentoPeriodo(){		
+		listaLancamentoGeralAll("lancamento");
 	}
 	
 	/*
@@ -603,8 +604,7 @@ public class LancamentoControl extends Control implements InterfaceControl,
 		return listaLancamentoGeral;
 	}
 
-	public void setListaLancamentoGeral(
-			LazyDataModel<Lancamento> listaLancamentoGeral) {
+	public void setListaLancamentoGeral(LazyDataModel<Lancamento> listaLancamentoGeral) {
 		this.listaLancamentoGeral = listaLancamentoGeral;
 	}
 
@@ -650,5 +650,13 @@ public class LancamentoControl extends Control implements InterfaceControl,
 	public void setFornecedor(Fornecedor fornecedor) {
 		this.fornecedor = fornecedor;
 	}
-	
+
+	public String getTipoArquivo() {
+		return tipoArquivo;
+	}
+
+	public void setTipoArquivo(String tipoArquivo) {
+		this.tipoArquivo = tipoArquivo;
+	}
+
 }
