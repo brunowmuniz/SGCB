@@ -8,6 +8,9 @@
 	<ui:composition template="../template/template.xhtml">
 		<ui:define name="conteudo">
 			<h:form id="form">
+				<f:metadata>    
+				    <f:event type="preRenderView" listener="#{lancamentoControl.buscaLancamentoPeriodo}"/>    
+				</f:metadata>
 				<p:panel header="Lista de Lançamentos Por Data" id="principal">
 					<p:messages id="msgs"/>
 					<h:panelGrid columns="2" id="dataslancamento">
@@ -21,12 +24,12 @@
 							<p:ajax event="change" process="@this" />
 						</p:calendar>
 						
-						<p:commandButton value="Buscar" update="form"/>
+						<p:commandButton value="Buscar" actionListener="#{lancamentoControl.buscaLancamentoPeriodo}" update="form"/>
 						<h:panelGrid columns="2">
-							<h:commandLink action="#{lancamentoControl.exportarExcel(table,'contas a pagar de ')}">
+							<h:commandLink action="#{lancamentoControl.exportarArquivo(table,'contas a pagar de ','xls')}">
 								<p:graphicImage value="../imagens/excel.png"/>							
 							</h:commandLink>
-							<h:commandLink action="#{lancamentoControl.exportarPDF(table,'contas a pagar de ')}">
+							<h:commandLink action="#{lancamentoControl.exportarArquivo(table,'contas a pagar de ','pdf')}">
 								<p:graphicImage value="../imagens/pdf.png"/>							
 							</h:commandLink>
 						</h:panelGrid>
@@ -37,15 +40,19 @@
 					 				disabled="#{lancamentoControl.lancamento.qtdeParcela == 1 or lancamentoControl.lancamento.qtdeParcela == lancamentoControl.lancamento.parcela}"
 					 				actionListener="#{lancamentoControl.deletarLote}"/>
 					 </p:contextMenu>
-					<p:dataTable id="entradalancamento" value="#{lancamentoControl.listaLancamentoGeralAll('lancamento')}" var="lancamento" lazy="true" emptyMessage="Sem parcelas a vencer" paginator="true"
+					<p:dataTable id="entradalancamento" value="#{lancamentoControl.listaLancamentoGeral}" var="lancamento" lazy="true" emptyMessage="Sem parcelas a vencer" paginator="true"
 								selection="#{lancamentoControl.lancamento}" selectionMode="single" rows="25"
 								paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-		             			rowsPerPageTemplate="25,50,100" rowKey="#{lancamento.id}" editable="true" binding="#{table}">
+		             			rowsPerPageTemplate="25,50,100" rowKey="#{lancamento.id}" editable="true" binding="#{table}" >
 		             			
 		             	<p:ajax event="rowEdit" listener="#{lancamentoControl.alterar}" process="entradalancamento" update=":form:msgs"/>
 		             	<p:ajax event="rowSelect" update=":form:ctxlancamento"/>
 						
-						<p:column headerText="Conta Contábil" filterBy="#{lancamento.contacontabil.id}" filterOptions="#{contaContabilControl.listaContasCombo('filter')}" filterMatchMode="exact">
+						<p:column filterBy="#{lancamento.contacontabil.id}" filterOptions="#{contaContabilControl.listaContasCombo('filter')}" filterMatchMode="exact"
+								  exportable="#{lancamentoControl.tipoArquivo != 'xls'}">
+							<f:facet name="header">
+								<h:outputText value="Conta Contábil" />
+							</f:facet>
 							<p:cellEditor>
 								<f:facet name="output">
 									<h:outputText value="#{lancamento.contacontabil.nome}" />
@@ -60,16 +67,19 @@
 							
 						</p:column>
 									
-						<p:column headerText="Descrição" filterBy="#{lancamento.descricao}" filterMatchMode="startsWith" filterStyle="width: 100%;">
+						<p:column filterBy="#{lancamento.descricao}" filterMatchMode="startsWith" filterStyle="width: 100%;">
+							<f:facet name="header">
+								<h:outputText value="Descrição" />
+							</f:facet>
 							<p:cellEditor id="editdesc">
 								<f:facet name="output">
 									<h:outputText value="#{lancamento.descricao}" />		
 								</f:facet>
 								<f:facet name="input">
-									<p:selectOneMenu id="descfornecedor" value="#{lancamentoControl.fornecedor.id}" rendered="#{lancamento.contacontabil.id == 19 or lancamento.contacontabil.id == 10}"
+									<p:selectOneMenu id="descfornecedor" value="#{lancamento.descricao}" rendered="#{lancamento.contacontabil.id == 19 or lancamento.contacontabil.id == 10}"
 													required="true" requiredMessage="Favor informar um fornecedor" style="width: 120px;">
 										<f:selectItem itemValue="0" itemLabel="Selecione Fornecedor" noSelectionOption="true"/>								
-										<f:selectItems value="#{fornecedoresControl.getListaFornecedorCombo('')}"/>
+										<f:selectItems value="#{fornecedoresControl.listaDescricaoFornecedorCombo}"/>
 										<p:ajax event="change" process="@this" update="@this"/>
 									</p:selectOneMenu>
 									<p:inputText id="desclancamento" value="#{lancamento.descricao}" size="40" required="true"
@@ -80,7 +90,10 @@
 							</p:cellEditor>							
 						</p:column>
 						
-						<p:column headerText="Nº Boleto" filterBy="#{lancamento.numBoleto}" filterMatchMode="startsWith" filterStyle="width: 100%;">
+						<p:column filterBy="#{lancamento.numBoleto}" filterMatchMode="startsWith" filterStyle="width: 100%;">
+							<f:facet name="header">
+								<h:outputText value="Nº Boleto" />
+							</f:facet>
 							<p:cellEditor>
 								<f:facet name="output">
 									<h:outputText value="#{lancamento.numBoleto}" rendered="#{lancamento.numBoleto != null}"/>
@@ -91,20 +104,32 @@
 							</p:cellEditor>						
 						</p:column>
 						
-						<p:column headerText="Forma Pgto.">
+						<p:column exportable="#{lancamentoControl.tipoArquivo != 'xls'}">
+							<f:facet name="header">
+								<h:outputText value="Forma Pgto." />
+							</f:facet>
 							<h:outputText value="#{lancamento.formapagamento.nome}" />
 						</p:column>
 						
-						<p:column headerText="É Parcelado">
+						<p:column exportable="#{lancamentoControl.tipoArquivo != 'xls'}">
+							<f:facet name="header">
+								<h:outputText value="É Parcelado" />
+							</f:facet>
 							<h:outputText value="#{lancamento.qtdeParcela == 1 ? 'Não' : 'Sim'}" style="color:#{lancamento.qtdeParcela == 1 ? 'red' : 'green'}"/>
 						</p:column>
 						
-						<p:column headerText="Parcela">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Parcela" />
+							</f:facet>
 							<h:outputText value="Parcela Única" rendered="#{lancamento.qtdeParcela == 1}"/>
 							<h:outputText value="#{lancamento.parcela}/#{lancamento.qtdeParcela}" rendered="#{lancamento.qtdeParcela != 1}"/>
 						</p:column>
 						
-						<p:column headerText="Valor da Parcela">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Valor da Parcela" />
+							</f:facet>
 							<p:cellEditor id="valorparcela">
 								<f:facet name="output">																		
 						        	<h:outputText value="#{lancamento.valor}" styleClass="#{lancamento.contacontabil.tipo == 'D' ? 'debito' : 'credito'}">
@@ -120,7 +145,10 @@
 							</p:cellEditor>
 						</p:column>
 						
-						<p:column headerText="Data do Lançamento">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Data do Lançamento" />
+							</f:facet>
 							<p:cellEditor>
 								<f:facet name="output">
 									<h:outputText value="#{lancamento.dataLancamento}">
@@ -134,7 +162,10 @@
 								</f:facet>
 							</p:cellEditor>							
 						</p:column>
-						<p:column headerText="Status" style="width: 70px;">
+						<p:column style="width: 70px;" exportable="#{lancamentoControl.tipoArquivo != 'xls'}">
+							<f:facet name="header">
+								<h:outputText value="Status" />
+							</f:facet>
 							<p:cellEditor>
 								<f:facet name="output">
 									<h:outputText value="#{lancamento.status}" />										
@@ -149,7 +180,7 @@
 						</p:column>
 						
 						<p:column headerText="Editar" icon="ui-icon-pencil" style="width: 6px;" exportable="false">
-				        	<p:rowEditor />
+				        	<p:rowEditor/>
 				        </p:column>
 					</p:dataTable>
 				</p:panel>

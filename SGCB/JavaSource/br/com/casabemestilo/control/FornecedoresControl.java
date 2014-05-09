@@ -231,6 +231,18 @@ public class FornecedoresControl extends Control implements InterfaceControl,
         }
 		return listaFornecedorCombo;
 	}
+	
+	public List getListaDescricaoFornecedorCombo() {
+		listaFornecedorCombo = new ArrayList();
+		listarAtivos();		
+		for (Fornecedor fornecedores : listaFornecedores) {
+            SelectItem si = new SelectItem();
+            si.setLabel(fornecedores.getNome());
+            si.setValue(fornecedores.getNome());
+            listaFornecedorCombo.add(si);
+        }
+		return listaFornecedorCombo;
+	}
 
 	public void setListaFornecedorCombo(List listaFornecedorCombo) {
 		this.listaFornecedorCombo = listaFornecedorCombo;
