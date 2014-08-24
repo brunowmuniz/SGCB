@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -359,6 +360,7 @@ public class FreteControl extends Control implements Serializable,
 			parametros.put("USUARIO_IMPRESSAO", usuarioLogado.getNome());
 			parametros.put("SUBREPORT_DIR", caminhoRelatorio);
 			parametros.put("TOTALCOMISSAOMONTAGEM", totalMontagem);
+			parametros.put("REPORT_LOCALE", new Locale("pt","BR"));
 			response.setHeader("Content-Disposition","attachment; filename=\"Solicitação_Frete-" + frete.getId() +".pdf\"");
 			JasperReport pathReport = JasperCompileManager.compileReport(caminho);			
 			

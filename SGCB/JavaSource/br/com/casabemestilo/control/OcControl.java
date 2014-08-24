@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -838,6 +839,7 @@ public class OcControl extends Control implements InterfaceControl,
 			response.setContentType("application/pdf");			
 			parametros.put("SUBREPORT_DIR", caminhoRelatorio);
 			parametros.put("IMAGE_DIR", caminhoImagem);
+			parametros.put("REPORT_LOCALE", new Locale("pt","BR"));
 			response.setHeader("Content-Disposition","attachment; filename=\"OC:" + oc.getId() +" - " + oc.getCliente().getNome() +".pdf\"");
 			JasperReport pathReport = JasperCompileManager.compileReport(caminho);
 			
