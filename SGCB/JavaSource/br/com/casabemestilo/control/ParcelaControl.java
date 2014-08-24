@@ -2,11 +2,13 @@ package br.com.casabemestilo.control;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.faces.application.FacesMessage;
@@ -29,6 +31,9 @@ import br.com.casabemestilo.model.Banco;
 import br.com.casabemestilo.model.Pagamento;
 import br.com.casabemestilo.model.Parcela;
 import br.com.casabemestilo.model.ParcelaDia;
+import br.com.casabemestilo.util.ExtendedExcelExporter;
+import br.com.casabemestilo.util.ExtendedPDFExporter;
+
 import java.util.Iterator;
 
 
@@ -73,7 +78,8 @@ public class ParcelaControl extends Control implements InterfaceControl,
 	private String statusFiltro = "";
 	
 	private Integer formaPagamentoFiltro;
-	
+
+	private String tipoArquivo = "xls";
 	
 	
 	/*
@@ -259,10 +265,8 @@ public class ParcelaControl extends Control implements InterfaceControl,
 									    	ParcelaDAO parcelaDAO = new ParcelaDAO();
 									    	
 									    	listaLazyParcela = parcelaDAO.listaParcelasAVencerCheque(first, pageSize, getDataInicial(), getDataFinal(),filters);
-									    	if (getRowCount() <= 0) {  
-									            setRowCount(parcelaDAO.totalParcelasAVencerCheque(getDataInicial(), getDataFinal(),filters));  
-									        }  
-									        
+									    	  
+									        setRowCount(parcelaDAO.totalParcelasAVencerCheque(getDataInicial(), getDataFinal(),filters));  
 									        setPageSize(pageSize);  
 									        return listaLazyParcela;  
 									    }
@@ -463,6 +467,21 @@ public class ParcelaControl extends Control implements InterfaceControl,
 		}
 	}
 	
+	public void exportarArquivo(DataTable tabela, String nomeArquivo, String tipoArquivo) throws IOException{
+		this.tipoArquivo = tipoArquivo;
+		Exporter exporter = null;
+		DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, new Locale("pt", "BR"));
+		nomeArquivo += df.format(dataInicial) + " até " + df.format(dataFinal);
+		FacesContext context = FacesContext.getCurrentInstance();
+		if(tipoArquivo.equals("xls")){
+			exporter = new ExtendedExcelExporter();
+		}else{
+			exporter = new ExtendedPDFExporter();
+		}	    
+	    exporter.export(context,tabela, nomeArquivo, false, false, "ISO-8859-1", null, null);
+	    context.responseComplete();
+	}
+	
 	/*
 	 * GETTERS & SETTERS
 	 * */
@@ -636,6 +655,14 @@ public class ParcelaControl extends Control implements InterfaceControl,
 
 	public void setFormaPagamentoFiltro(Integer formaPagamentoFiltro) {
 		this.formaPagamentoFiltro = formaPagamentoFiltro;
+	}
+	
+	public String getTipoArquivo() {
+		return tipoArquivo;
+	}
+
+	public void setTipoArquivo(String tipoArquivo) {
+		this.tipoArquivo = tipoArquivo;
 	}
 	
 }
