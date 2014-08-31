@@ -165,8 +165,8 @@ public class ProdutoDAO implements InterfaceDAO, Serializable {
 		return listaProduto;
 	}
 	
-	public List<Produto> listaLazy(int first, int pageSize,
-			Map<String, String> filters) {
+	public List<Produto> listaLazy(int first, int pageSize, Map<String, String> filters, 
+								   Produto produtoFiltro, String filtroLocal, String filtroTemMontagem) {
 		session = Conexao.getInstance();
 		listaProduto = new ArrayList<Produto>();
 		
@@ -179,6 +179,20 @@ public class ProdutoDAO implements InterfaceDAO, Serializable {
 		if(filters.containsKey("fornecedor.id")){
 			hql += " and produto.fornecedor.id = " + filters.get("fornecedor.id");
 		}
+		if(!produtoFiltro.getCodigo().equals("")){
+			hql +=" and produto.codigo like '%" + produtoFiltro.getCodigo() + "%'";
+		}
+		if(!filtroTemMontagem.equals("")){
+			hql += " and produto.temMontagem = " + filtroTemMontagem;
+		}
+		if(!filtroLocal.equals("")){
+			if (filtroLocal.equals("1")) hql += " and produto.estoque > 0";
+			if (filtroLocal.equals("2")) hql += " and produto.showroom > 0";
+			if (filtroLocal.equals("3")) hql += " and produto.encomenda > 0";
+			if (filtroLocal.equals("1,2")) hql += " and (produto.estoque > 0 or produto.showroom > 0)";
+			if (filtroLocal.equals("1,3")) hql += " and (produto.estoque > 0 or produto.encomenda > 0)";
+			if (filtroLocal.equals("2,3")) hql += " and (produto.showroom > 0 or produto.encomenda > 0)";	
+		}
 		
 		listaProduto = session.createQuery(hql)
 							  .setFirstResult(first)
@@ -189,7 +203,8 @@ public class ProdutoDAO implements InterfaceDAO, Serializable {
 		return listaProduto;
 	}
 
-	public int totalProduto(Map<String, String> filters) {
+	public int totalProduto(Map<String, String> filters, Produto produtoFiltro, 
+							String filtroLocal, String filtroTemMontagem) {
 		session = Conexao.getInstance();
 		Long linhas = new Long("0");
 		
@@ -201,6 +216,21 @@ public class ProdutoDAO implements InterfaceDAO, Serializable {
 		}
 		if(filters.containsKey("fornecedor.id")){
 			hql += " and produto.fornecedor.id = " + filters.get("fornecedor.id");
+		}
+		if(!produtoFiltro.getCodigo().equals("")){
+			hql +=" and produto.codigo like '%" + produtoFiltro.getCodigo() + "%'";
+		}
+		if(!filtroTemMontagem.equals("")){
+			hql += " and produto.temMontagem = " + filtroTemMontagem;
+		}
+		
+		if(!filtroLocal.equals("")){
+			if (filtroLocal.equals("1")) hql += " and produto.estoque > 0";
+			if (filtroLocal.equals("2")) hql += " and produto.showroom > 0";
+			if (filtroLocal.equals("3")) hql += " and produto.encomenda > 0";
+			if (filtroLocal.equals("1,2")) hql += " and (produto.estoque > 0 or produto.showroom > 0)";
+			if (filtroLocal.equals("1,3")) hql += " and (produto.estoque > 0 or produto.encomenda > 0)";
+			if (filtroLocal.equals("2,3")) hql += " and (produto.showroom > 0 or produto.encomenda > 0)";	
 		}
 		
 		linhas = (Long) session.createQuery(hql)

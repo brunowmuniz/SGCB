@@ -1,8 +1,12 @@
 package br.com.casabemestilo.control;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -17,6 +21,8 @@ import javax.servlet.http.HttpSession;
 
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.component.export.Exporter;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
@@ -30,6 +36,8 @@ import br.com.casabemestilo.model.Fornecedor;
 import br.com.casabemestilo.model.Oc;
 import br.com.casabemestilo.model.Produto;
 import br.com.casabemestilo.model.Usuario;
+import br.com.casabemestilo.util.ExtendedExcelExporter;
+import br.com.casabemestilo.util.ExtendedPDFExporter;
 
 @ManagedBean
 @ViewScoped
@@ -41,6 +49,8 @@ public class ProdutoControl extends Control implements InterfaceControl,
 	
 	private Produto produto = new Produto();
 	
+	private Produto produtoFiltro;
+	
 	private List<Produto> listaProduto;
 	
 	private ProdutoDAO produtoDAO;
@@ -50,6 +60,12 @@ public class ProdutoControl extends Control implements InterfaceControl,
 	private Double percentualReajuste;
 	
 	private Integer quantidade;
+	
+	private String filtroLocal = "";
+	
+	private String filtroTemMontagem = "";
+	
+	private String tipoArquivo = "xls";
 	
 	/*
 	 * CONSTRUTORES
@@ -225,7 +241,7 @@ public class ProdutoControl extends Control implements InterfaceControl,
 	}
 	
 	public LazyDataModel<Produto> listaLazyProdutoGeral(){
-		if(listaLazyProduto == null){
+		if(listaLazyProduto == null){			
 			listaLazyProduto = new LazyDataModel<Produto>() {
 								private List<Produto> listaLazy;
 								
@@ -249,11 +265,8 @@ public class ProdutoControl extends Control implements InterfaceControl,
 							    public List<Produto> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,String> filters) {
 							    	produtoDAO = new ProdutoDAO();  
 							    	
-							    	listaLazy = produtoDAO.listaLazy(first, pageSize, filters);
-							    	
-							    	if (getRowCount() <= 0) {  
-							            setRowCount(produtoDAO.totalProduto(filters));  
-							        }  
+							    	listaLazy = produtoDAO.listaLazy(first, pageSize, filters, getProdutoFiltro(), getFiltroLocal(),getFiltroTemMontagem());
+							        setRowCount(produtoDAO.totalProduto(filters, getProdutoFiltro(), getFiltroLocal(),getFiltroTemMontagem()));
 							       
 							        setPageSize(pageSize);  
 							        return listaLazy;  
@@ -290,6 +303,46 @@ public class ProdutoControl extends Control implements InterfaceControl,
 	public void verificaQtdeProdutoAjuste(){		
 		produtoDAO = new ProdutoDAO();
 		quantidade = produtoDAO.buscaQtdeProdutoReajuste(produto.getFornecedor().getId());			
+	}
+	
+	public void buscarFiltro(){
+		listaLazyProdutoGeral();
+	}
+	
+	public void exportarArquivo(DataTable tabela, String nomeArquivo, String tipoArquivo) throws IOException{
+		this.tipoArquivo = tipoArquivo;
+		Exporter exporter = null;
+		DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, new Locale("pt", "BR"));
+		nomeArquivo += df.format(new Date()) + "@";
+		
+		if(filtroLocal.equals("")) nomeArquivo += "TODOS";
+		if(filtroLocal.equals("1")) nomeArquivo += "Em Estoque";
+		if(filtroLocal.equals("2")) nomeArquivo += "Showroom";
+		if(filtroLocal.equals("3")) nomeArquivo += "Encomenda";
+		if(filtroLocal.equals("1,2")) nomeArquivo += "Em Estoque + Encomenda";
+		if(filtroLocal.equals("2,3")) nomeArquivo += "Encomenda + Showroom";
+		if(filtroLocal.equals("1,3")) nomeArquivo += "Em Estoque + Encomenda";
+		
+		if(!getProdutoFiltro().getCodigo().equals("")) nomeArquivo += "@" + getProdutoFiltro().getCodigo();
+		
+		if(!filtroTemMontagem.equals("")){
+			if(filtroTemMontagem.equals("false")){
+				nomeArquivo += "@" + "Sem Montagem";
+			}else{
+				nomeArquivo += "@" + "Com Montagem";
+			}
+		}else{
+			nomeArquivo += "@Com e Sem Montagem";
+		}
+		
+		FacesContext context = FacesContext.getCurrentInstance();
+		if(tipoArquivo.equals("xls")){
+			exporter = new ExtendedExcelExporter();
+		}else{
+			exporter = new ExtendedPDFExporter();
+		}	    
+	    exporter.export(context,tabela, nomeArquivo, false, false, "ISO-8859-1", null, null);
+	    context.responseComplete();
 	}
 	
 	/*
@@ -347,6 +400,42 @@ public class ProdutoControl extends Control implements InterfaceControl,
 
 	public void setQuantidade(Integer quantidade) {
 		this.quantidade = quantidade;
+	}
+	
+	public String getFiltroLocal() {
+		return filtroLocal;
+	}
+
+	public void setFiltroLocal(String filtroLocal) {
+		this.filtroLocal = filtroLocal;
+	}
+
+	public Produto getProdutoFiltro() {
+		if(produtoFiltro == null){
+			produtoFiltro = new Produto();
+			produtoFiltro.setCodigo("");
+		}
+		return produtoFiltro;
+	}
+
+	public void setProdutoFiltro(Produto produtoFiltro) {
+		this.produtoFiltro = produtoFiltro;
+	}
+
+	public String getTipoArquivo() {
+		return tipoArquivo;
+	}
+
+	public void setTipoArquivo(String tipoArquivo) {
+		this.tipoArquivo = tipoArquivo;
+	}
+
+	public String getFiltroTemMontagem() {
+		return filtroTemMontagem;
+	}
+
+	public void setFiltroTemMontagem(String filtroTemMontagem) {
+		this.filtroTemMontagem = filtroTemMontagem;
 	}
 	
 }
