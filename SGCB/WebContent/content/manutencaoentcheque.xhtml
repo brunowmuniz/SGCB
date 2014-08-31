@@ -20,15 +20,25 @@
 						<p:outputLabel for="acao" value="Ação: "/>
 						<p:selectOneMenu id="acao" value="#{parcelaControl.acao}" size="1">
 							<f:selectItem itemValue="antecipar" itemLabel="Antecipação"/>						
-							<f:selectItem itemValue="editar" itemLabel="Edição"/>
+							<f:selectItem itemValue="editar" itemLabel="Edição"/>							
 						</p:selectOneMenu>
 					</h:panelGrid>
+					
 					<h:panelGrid columns="5">
 						<p:commandButton value="Pesquisar" action="#{parcelaControl.buscaParcelasAVencerCheque}" update="form" />
 						<p:spacer width="10px" />
 						<p:commandButton value="Antecipar Todos" oncomplete="modalBancoDestinoTodos.show()" rendered="#{parcelaControl.acao == 'antecipar'}"/>
 						<p:spacer width="10px"/>
 						<p:commandButton value="Antecipar Selecionados"  oncomplete="modalBancoDestinoSelecao.show()" rendered="#{parcelaControl.acao == 'antecipar'}"/>
+					</h:panelGrid>
+					
+					<h:panelGrid columns="2" rendered="#{parcelaControl.acao == 'editar'}" id="exportacao">
+						<h:commandLink action="#{parcelaControl.exportarArquivo(table,'Lista de Cheques ','xls')}">
+							<p:graphicImage value="../imagens/excel.png"/>							
+						</h:commandLink>
+						<h:commandLink action="#{parcelaControl.exportarArquivo(table,'Lista de Cheques ','pdf')}">
+							<p:graphicImage value="../imagens/pdf.png"/>							
+						</h:commandLink>
 					</h:panelGrid>
 					
 					<p:dialog widgetVar="modalBancoDestinoSelecao" id="modalBancoDestinoSelecao" resizable="false" header="Banco de Destino dos cheques">
@@ -71,21 +81,30 @@
 					<p:dataTable id="entradaparcelaedit" value="#{parcelaControl.listaParcelaAVencerCheque}" var="entrada" lazy="true" emptyMessage="Sem parcelas a vencer" paginator="true"
 								selection="#{parcelaControl.parcela}" selectionMode="single" rows="50" rendered="#{parcelaControl.acao == 'editar'}"
 								paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-		             			rowsPerPageTemplate="25,50,100" rowKey="#{entrada.id}" editable="true">
+		             			rowsPerPageTemplate="25,50,100" rowKey="#{entrada.id}" editable="true" binding="#{table}">
 		             			
 		             	<p:ajax event="rowEdit" listener="#{parcelaControl.alterar}" process="entradaparcelaedit" update=":form:msgs"/>
 						
-						<p:column headerText="OC" filterBy="#{entrada.pagamento.oc.id}" filterMatchMode="startsWith" filterStyle="width: 30px;">
+						<p:column filterBy="#{entrada.pagamento.oc.id}" filterMatchMode="startsWith" filterStyle="width: 30px;">
+							<f:facet name="header">
+								<h:outputText value="OC" />
+							</f:facet>
 							<h:outputText value="#{entrada.pagamento.oc.id}" />
 						</p:column>
 									
-						<p:column headerText="Data da Compra" style="width: 40px;">
+						<p:column style="width: 40px;">
+							<f:facet name="header">
+								<h:outputText value="Data da Compra" />
+							</f:facet>
 							<h:outputText value="#{entrada.pagamento.datalancamento}">
 								<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
 							</h:outputText>
 						</p:column>
 						
-						<p:column headerText="Data da Parcela">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Data da Parcela" />
+							</f:facet>
 							<p:cellEditor>
 								<f:facet name="output">
 									<h:outputText value="#{entrada.dataentrada}">
@@ -99,13 +118,25 @@
 								</f:facet>
 							</p:cellEditor>							
 						</p:column>
-						<p:column headerText="Cliente Pagador" filterBy="#{entrada.pagamento.cliente.nome}" filterMatchMode="startsWith" filterStyle="width: 100%;">							
+						
+						<p:column filterBy="#{entrada.pagamento.cliente.nome}" filterMatchMode="startsWith" filterStyle="width: 100%;">							
+							<f:facet name="header">
+								<h:outputText value="Cliente Pagador" />
+							</f:facet>
 							<h:outputText value="#{entrada.pagamento.cliente.nome}" />
 						</p:column>
-						<p:column style="width: 50px;" headerText="Banco" filterBy="#{entrada.pagamento.banco.id}" filterMatchMode="exact" filterOptions="#{bancoControl.listaBancoCombo('filter')}" filterStyle="width: 80px;">
+						
+						<p:column style="width: 50px;" filterBy="#{entrada.pagamento.banco.id}" filterMatchMode="exact" filterOptions="#{bancoControl.listaBancoCombo('filter')}" filterStyle="width: 80px;">
+							<f:facet name="header">
+								<h:outputText value="Banco" />
+							</f:facet>
 							<h:outputText value="#{entrada.pagamento.banco.descricao}" />
 						</p:column>
-						<p:column headerText="Nº Cheque" filterBy="#{entrada.numeroCheque}" filterMatchMode="startsWith" filterStyle="width: 70%;">
+						
+						<p:column filterBy="#{entrada.numeroCheque}" filterMatchMode="startsWith" filterStyle="width: 70%;">
+							<f:facet name="header">
+								<h:outputText value="Nº Cheque" />
+							</f:facet>
 							<p:cellEditor>
 								<f:facet name="output">
 									<h:outputText value="#{entrada.numeroCheque}" />
@@ -115,7 +146,11 @@
 								</f:facet>
 							</p:cellEditor>
 						</p:column>
-						<p:column headerText="Status" filterBy="#{entrada.situacaoCheque}" filterMatchMode="exact" filterOptions="#{parcelaControl.listaStatusCheque}" filterStyle="width: 80px;">
+						
+						<p:column filterBy="#{entrada.situacaoCheque}" filterMatchMode="exact" filterOptions="#{parcelaControl.listaStatusCheque}" filterStyle="width: 80px;">
+							<f:facet name="header">
+								<h:outputText value="Status" />
+							</f:facet>
 							<p:cellEditor>
 								<f:facet name="output">
 									<h:panelGrid columns="1" style="border-style: hidden; border-color: #fff">
@@ -134,25 +169,35 @@
 									</p:selectOneMenu>
 								</f:facet>
 							</p:cellEditor>							
-						</p:column>
+						</p:column>						
 						
-						
-						<p:column headerText="Parcela">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Parcela" />
+							</f:facet>
 							<p:outputLabel value="#{entrada.numeroParcela} / #{entrada.pagamento.condicoesPagamento.parcelas}"/>
 						</p:column>
-						<p:column headerText="Forma de Pagamento" rendered="false">
+						<p:column rendered="false">
+							<f:facet name="header">
+								<h:outputText value="Forma de Pagamento" />
+							</f:facet>
 							<p:outputLabel value="#{entrada.pagamento.condicoesPagamento.formapagamento.nome}"/>
 						</p:column>
-						<p:column headerText="Condição">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Condição" />
+							</f:facet>
 							<p:outputLabel value="#{entrada.pagamento.condicoesPagamento.nome}"/>
 						</p:column>
 						
-						<p:column headerText="Valor">
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Valor" />
+							</f:facet>
 							<p:cellEditor id="valorparcela">
-								<f:facet name="output">
-									<h:outputText value="R$ "/>
+								<f:facet name="output">									
 						        	<h:outputText value="#{entrada.valor}">
-						        		<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+						        		<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2" type="currency"/>
 						        	</h:outputText>
 								</f:facet>
 								<f:facet name="input">
@@ -163,14 +208,15 @@
 								</f:facet>
 							</p:cellEditor>
 						</p:column>
-						<p:column headerText="Editar" icon="ui-icon-pencil" style="width: 6px;">
+						<p:column headerText="Editar" icon="ui-icon-pencil" style="width: 6px;" exportable="false">
 				        	<p:rowEditor />
 				        </p:column>
 					</p:dataTable>
+					
 					<p:dataTable id="entradaparcelaant" value="#{parcelaControl.listaParcelaAVencerCheque}" var="entrada" lazy="true" emptyMessage="Sem parcelas a vencer" paginator="true"
 								selection="#{parcelaControl.listaParcela}" selectionMode="multiple" rows="25" rendered="#{parcelaControl.acao == 'antecipar'}"
 								paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-		             			rowsPerPageTemplate="25,50,100" rowKey="#{entrada.id}" binding="#{parcelaControl.dataTableParcela}">
+		             			rowsPerPageTemplate="25,50,100" rowKey="#{entrada.id}" binding="#{parcelaControl.dataTableParcela}" >
 						
 						<p:column headerText="OC" filterBy="#{entrada.pagamento.oc.id}" filterMatchMode="startsWith" filterStyle="width: 50%;">
 							<h:outputText value="#{entrada.pagamento.oc.id}" />
