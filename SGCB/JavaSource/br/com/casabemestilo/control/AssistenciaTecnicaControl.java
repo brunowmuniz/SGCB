@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -333,6 +334,7 @@ public class AssistenciaTecnicaControl extends Control implements Serializable,I
 			parametros.put("USUARIO_IMPRESSAO", usuarioLogado.getNome());
 			parametros.put("MONTADOR", montadores);
 			parametros.put("SUBREPORT_DIR", caminhoRelatorio);
+			parametros.put("REPORT_LOCALE", new Locale("pt","BR"));
 			response.setHeader("Content-Disposition","attachment; filename=\"Solicitação_Assistencia_Tecnica-" + assistenciatecnica.getId() +".pdf\"");
 			JasperReport pathReport = JasperCompileManager.compileReport(caminho);
 			
