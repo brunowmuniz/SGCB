@@ -431,25 +431,27 @@ public class UsuarioControl extends Control implements InterfaceControl,
 
 	
 	public List<Usuario> listaComplete(String nomeUsuario){
-		usuarioDAO = new UsuarioDAO();
-		listaUsuario = new ArrayList<Usuario>();		
-		usuario.setNome(nomeUsuario);
-		usuario.setDeleted(false);
-		try {
-			listaUsuario = usuarioDAO.listaSelecao(usuario);
-			if(listaUsuario.isEmpty()){
-				usuario.setNome(nomeUsuario);
-				listaUsuario.add(usuario);
+		listaUsuario = new ArrayList<Usuario>();
+		if(nomeUsuario.indexOf(" ") > -1){
+			usuarioDAO = new UsuarioDAO();
+			usuario.setNome(nomeUsuario);
+			usuario.setDeleted(false);
+			try {
+				listaUsuario = usuarioDAO.listaSelecao(usuario);
+				if(listaUsuario.isEmpty()){
+					usuario.setNome(nomeUsuario);
+					listaUsuario.add(usuario);
+				}
+			} catch (ConstraintViolationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (HibernateException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		} catch (ConstraintViolationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}		
 		return listaUsuario;
 	}

@@ -15,7 +15,7 @@
 					<p:dataTable value="#{contaContabilControl.listaLazyContaContabilGeral()}" var="conta" id="contascontabeis" rowKey="#{conta.id}"  
                 		selection="#{contaContabilControl.contacontabil}" selectionMode="single"  paginator="true" rows="10"  
                 		paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                 		rowsPerPageTemplate="10,25,50" lazy="true">
+                 		rowsPerPageTemplate="10,25,50" lazy="true" filterEvent="blur">
 						<p:column headerText="Cód.">
 							<h:outputText value="#{conta.id}" />
 						</p:column>

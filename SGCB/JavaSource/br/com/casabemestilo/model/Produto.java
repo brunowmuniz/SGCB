@@ -53,6 +53,7 @@ public class Produto implements java.io.Serializable {
 	private Boolean deleted;
 	private Boolean temMontagem;
 	private Boolean ehPlanejado;
+	private Boolean ehModulado;
 	private Date dataReajuste;
 	private String usuarioReajuste;
 	private List<Ocproduto> ocprodutos = new ArrayList<Ocproduto>();
@@ -200,11 +201,12 @@ public class Produto implements java.io.Serializable {
 	
 	@Column(name="temmontagem", nullable = false)
 	public Boolean getTemMontagem() {
-		if(temMontagem == null || getEhPlanejado()){
+		if(temMontagem == null || getEhPlanejado() || getEhModulado()){
 			temMontagem = true;
 		}
 		if(!temMontagem){
 			ehPlanejado = false;
+			ehModulado = false;
 		}
 		return temMontagem;
 	}
@@ -220,9 +222,21 @@ public class Produto implements java.io.Serializable {
 		}
 		return ehPlanejado;
 	}
-
+	
 	public void setEhPlanejado(Boolean ehPlanejado) {
 		this.ehPlanejado = ehPlanejado;
+	}
+	
+	@Column(name = "modulado", nullable = false)
+	public Boolean getEhModulado() {
+		if(ehModulado == null){
+			ehModulado = false;
+		}
+		return ehModulado;
+	}
+	
+	public void setEhModulado(Boolean ehModulado) {
+		this.ehModulado = ehModulado;
 	}
 	
 	@Column(name="datareajuste", nullable = true)

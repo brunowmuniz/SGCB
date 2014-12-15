@@ -36,7 +36,7 @@
 					<p:dataTable id="entradaparcelaedit" value="#{parcelaControl.listaParcelaAVencer}" var="entrada" lazy="true" emptyMessage="Sem parcelas a vencer" paginator="true"
 							selection="#{parcelaControl.parcela}"  selectionMode="single" rendered="#{parcelaControl.acao == 'editar'}"
 							paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-	             			rowsPerPageTemplate="10,25,50,100" rowKey="#{entrada.id}" editable="true" rows="50" >
+	             			rowsPerPageTemplate="10,25,50,100" rowKey="#{entrada.id}" editable="true" rows="50" filterEvent="blur">
 	             			
 		             	<p:ajax event="rowEdit" listener="#{parcelaControl.alterar}" process="entradaparcelaedit" update=":form:msgs"/>
 						

@@ -52,7 +52,8 @@
 					 
 					 <p:dataTable var="produto" value="#{produtoControl.listaLazyProdutoGeral()}" id="produtos" rowKey="#{produto.id}"  
                 				  selection="#{produtoControl.produto}" selectionMode="single" paginator="true" rows="50"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                 				  rowsPerPageTemplate="25,50,100" lazy="true" binding="#{table}" emptyMessage="Sem Produtos!">                		  		
+                 				  rowsPerPageTemplate="25,50,100" lazy="true" binding="#{table}" emptyMessage="Sem Produtos!" filterEvent="blur">                		  		
+				        
 				        <p:column filterBy="#{produto.descricao}" filterMatchMode="startsWith" filterStyle="width: 70%;">
 				            <f:facet name="header">
 				        		<h:outputText value="Descrição" />
@@ -60,7 +61,7 @@
 				            <h:outputText value="#{produto.descricao}" />
 				        </p:column>
 				
-				        <p:column>
+				        <p:column filterBy="#{produto.codigo}" filterMatchMode="startswith" filterStyle="width: 70%">
 				        	<f:facet name="header">
 				        		<h:outputText value="Código" />
 				        	</f:facet>

@@ -3,7 +3,7 @@ package br.com.casabemestilo.control;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.faces.application.FacesMessage;
@@ -11,19 +11,15 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
-
 import org.hibernate.HibernateException;
-import org.hibernate.TransactionException;
 import org.hibernate.exception.ConstraintViolationException;
-
+import org.primefaces.model.LazyDataModel;
+import org.primefaces.model.SortOrder;
 import com.sun.faces.context.flash.ELFlash;
-
-import br.com.casabemestilo.DAO.ClienteDAO;
 import br.com.casabemestilo.DAO.FornecedoresDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
-import br.com.casabemestilo.model.Cliente;
-import br.com.casabemestilo.model.Filial;
 import br.com.casabemestilo.model.Fornecedor;
+
 
 @ManagedBean
 @ViewScoped
@@ -40,6 +36,8 @@ public class FornecedoresControl extends Control implements InterfaceControl,
 	private FornecedoresDAO fornecedoresDAO;
 	
 	private List listaFornecedorCombo;
+	
+	private LazyDataModel<Fornecedor> listaLazyFornecedor;
 	
 	
 	/*
@@ -187,6 +185,42 @@ public class FornecedoresControl extends Control implements InterfaceControl,
 		return "manutencaofornecedor?faces-redirect=true";
 	}
 	
+	public LazyDataModel<Fornecedor> listaLazyFornecedorGeral(){
+		if(listaLazyFornecedor == null){
+			listaLazyFornecedor = new LazyDataModel<Fornecedor>() {
+								private List<Fornecedor> listaLazy;
+								
+								public Fornecedor getRowData(String idFornecedor) {
+							    	Integer id = Integer.valueOf(idFornecedor);
+							    	
+							        for(Fornecedor fornecedor : listaLazy) {
+							            if(fornecedor.getId().equals(id))
+							                return fornecedor;
+							        }
+							        
+							        return null;
+							    }
+
+							    @Override
+							    public Object getRowKey(Fornecedor fornecedor) {
+							        return fornecedor.getId();
+							    }
+
+							    @Override
+							    public List<Fornecedor> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,String> filters) {
+							    	fornecedoresDAO = new FornecedoresDAO();  
+							    	
+							    	listaLazy = fornecedoresDAO.listaLazy(first, pageSize, filters);
+							        setRowCount(fornecedoresDAO.totalFornecedores(filters));
+							       
+							        setPageSize(pageSize);  
+							        return listaLazy;  
+							    }
+			};
+		}
+		return listaLazyFornecedor;
+	}
+	
 	/*
 	 * GETTERS & SETTERS
 	 * */	
@@ -246,6 +280,7 @@ public class FornecedoresControl extends Control implements InterfaceControl,
 
 	public void setListaFornecedorCombo(List listaFornecedorCombo) {
 		this.listaFornecedorCombo = listaFornecedorCombo;
-	}
+	}	
+	
 	
 }

@@ -17,8 +17,8 @@
 					 </p:contextMenu>
 					 
 					 <p:dataTable var="cliente" value="#{clienteControl.listaLazyClienteGeral()}" id="clientes" rowKey="#{cliente.id}"  
-                		selection="#{clienteControl.cliente}" selectionMode="single"  paginator="true" rows="10"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                 rowsPerPageTemplate="10,25,50" lazy="true">        
+                				  selection="#{clienteControl.cliente}" selectionMode="single"  paginator="true" rows="10"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                				  rowsPerPageTemplate="10,25,50" lazy="true" filterEvent="blur">        
                        		  		
 				        <p:column headerText="Nome" filterBy="#{cliente.nome}" filterMatchMode="startsWith" filterStyle="width: 70%;">
 				            <h:outputText value="#{cliente.nome}" />

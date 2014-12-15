@@ -176,6 +176,9 @@ public class ProdutoDAO implements InterfaceDAO, Serializable {
 		if(filters.containsKey("descricao")){
 			hql += " and produto.descricao like '%" + filters.get("descricao") + "%'";
 		}
+		if(filters.containsKey("codigo")){
+			hql += " and produto.codigo like '%" + filters.get("codigo") + "%'";
+		}
 		if(filters.containsKey("fornecedor.id")){
 			hql += " and produto.fornecedor.id = " + filters.get("fornecedor.id");
 		}
@@ -213,6 +216,9 @@ public class ProdutoDAO implements InterfaceDAO, Serializable {
 		
 		if(filters.containsKey("descricao")){
 			hql += " and produto.descricao like '%" + filters.get("descricao") + "%'";
+		}
+		if(filters.containsKey("codigo")){
+			hql += " and produto.codigo like '%" + filters.get("codigo") + "%'";
 		}
 		if(filters.containsKey("fornecedor.id")){
 			hql += " and produto.fornecedor.id = " + filters.get("fornecedor.id");

@@ -6,9 +6,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -37,6 +41,7 @@ import br.com.casabemestilo.model.Assistenciatecnica;
 import br.com.casabemestilo.model.Cliente;
 import br.com.casabemestilo.model.Oc;
 import br.com.casabemestilo.model.TipoMovimentacao;
+import br.com.casabemestilo.model.UF;
 import br.com.casabemestilo.model.Usuario;
 
 @ViewScoped
@@ -55,6 +60,8 @@ public class ClienteControl extends Control implements Serializable,InterfaceCon
 	private LazyDataModel<Cliente> listaLazyCliente;
 	
 	private Oc oc;
+	
+	private Integer idade;
 	
 	
 	/*
@@ -85,7 +92,10 @@ public class ClienteControl extends Control implements Serializable,InterfaceCon
 	public void init(){
 		if(ELFlash.getFlash().get("cliente") != null){
 			cliente = (Cliente) ELFlash.getFlash().get("cliente");
-		}		
+		}	
+		if(cliente.getUf() == null){
+			cliente.setUf(new UF());
+		}
 	}
 		
 	    
@@ -241,24 +251,29 @@ public class ClienteControl extends Control implements Serializable,InterfaceCon
 	}
 	
 	public List<Cliente> listaComplete(String nomeCliente){
-		listaCliente = new ArrayList<Cliente>();		
-		cliente.setNome(nomeCliente);
-		cliente.setDeleted(false);
-		try {
-			listaCliente = new ClienteDAO().listaSelecao(cliente);
-			if(listaCliente.isEmpty()){
-				cliente.setNome(nomeCliente);
-				listaCliente.add(cliente);
+		listaCliente = new ArrayList<Cliente>();
+		if(nomeCliente.indexOf(" ") > - 1){
+			cliente.setNome(nomeCliente);
+			cliente.setDeleted(false);
+			try {
+				listaCliente = new ClienteDAO().listaSelecao(cliente);
+				if(listaCliente.isEmpty()){
+					cliente.setNome(nomeCliente);
+					if(cliente.getUf() == null){
+						cliente.setUf(new UF());
+					}
+					listaCliente.add(cliente);
+				}
+			} catch (ConstraintViolationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (HibernateException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		} catch (ConstraintViolationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (HibernateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}		
 		return listaCliente;
 	}
@@ -325,59 +340,6 @@ public class ClienteControl extends Control implements Serializable,InterfaceCon
 		return "cadastraoc?faces-redirect=true";
 	}
 	
-	public void carregaClienteArquivo() throws ConstraintViolationException, HibernateException, Exception{
-		clienteDAO = new ClienteDAO();
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader(new File("c:\\temp\\casabem\\cliente.csv")));
-			String linha = null;
-			int i = 0;
-			listaCliente = new ArrayList<Cliente>();
-			while((linha = reader.readLine()) != null){
-				String[] linhaCliente = linha.split(";");
-				cliente = new Cliente();				
-				//cliente.setId(Integer.parseInt(linhaCliente[0]));
-				cliente.setNome(linhaCliente[1]);
-				cliente.setIe(linhaCliente[3]);				
-				cliente.setCidade(linhaCliente[7] + "/"+ linhaCliente[6]);
-				cliente.setBairro(linhaCliente[8]);
-				cliente.setEndereco(linhaCliente[9]);
-				cliente.setCep(linhaCliente[10]);
-				if(linhaCliente[2].length() > 12){
-					cliente.setTipoPessoa("pj");
-					cliente.setCnpj(linhaCliente[2]);
-					cliente.setCpf(null);
-				}else{
-					cliente.setTipoPessoa("pf");
-					cliente.setCnpj(null);
-					cliente.setCpf(linhaCliente[2]);
-				}
-				if(linhaCliente[4].indexOf("/") > -1){
-					cliente.setTelefone(linhaCliente[4].split("/")[0]);
-					cliente.setTelefoneadicional(linhaCliente[4].split("/")[1]);					
-				}else if (linhaCliente[4] == "") {
-					cliente.setTelefone("");					
-				}else if(linhaCliente[4] == null){
-					cliente.setTelefone("");
-				}else{
-					cliente.setTelefone(linhaCliente[4]);
-				}
-				cliente.setDeleted(false);
-				listaCliente.add(cliente);
-				System.out.println("Adiciona lista " + cliente);				
-			}
-			clienteDAO.insertCliente(listaCliente);
-			reader.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			System.out.println(cliente);
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.out.println(cliente);
-		}catch(ArrayIndexOutOfBoundsException e){
-			e.printStackTrace();
-			System.out.println(cliente);
-		}
-	}
 	
 	private void defineCamposTipoPessoa(){
 		if(cliente.getTipoPessoa().equals("pj")){
@@ -388,6 +350,42 @@ public class ClienteControl extends Control implements Serializable,InterfaceCon
 			cliente.setCnpj(null);
 		}
 	}
+	
+	public List<Cliente> listarAniversariante(){
+		listaCliente = new ArrayList<Cliente>();		
+		List<Cliente> clientes = new ArrayList<Cliente>();
+		Calendar calDiaMes = Calendar.getInstance();
+		String hoje = "";
+		
+		listarTodos();		
+		calDiaMes.setTime(new Date());
+		hoje = calDiaMes.get(calDiaMes.DAY_OF_MONTH) + "/" + calDiaMes.get(calDiaMes.MONTH);
+		
+		for(Cliente cliente : listaCliente){
+			if(cliente.getDatadenascimento() != null && cliente.getTipoPessoa().equals("pf")){
+				calDiaMes.setTime(cliente.getDatadenascimento());				
+				if(hoje.equals(calDiaMes.get(calDiaMes.DAY_OF_MONTH) + "/" + calDiaMes.get(calDiaMes.MONTH))){
+					clientes.add(cliente);
+				}
+			}
+		}		
+		return clientes;
+	}
+	
+	public Boolean temClienteAniversariante(){
+		return !listarAniversariante().isEmpty();
+	}
+	
+	
+	public Integer retornarIdade(Date dataNascimento){
+		Calendar dtNascimento = Calendar.getInstance();
+		Calendar dtHoje = Calendar.getInstance();
+		dtHoje.setTime(new Date());
+		dtNascimento.setTime(dataNascimento);
+		idade = dtHoje.get(dtHoje.YEAR) - dtNascimento.get(dtNascimento.YEAR);
+		return idade;
+	}
+	
 	
 	/*
 	 * GETTERS & SETTERS
@@ -432,7 +430,12 @@ public class ClienteControl extends Control implements Serializable,InterfaceCon
 	public void setOc(Oc oc) {
 		this.oc = oc;
 	}
-	
-	
 
+	public Integer getIdade() {
+		return idade;
+	}
+
+	public void setIdade(Integer idade) {
+		this.idade = idade;
+	}
 }

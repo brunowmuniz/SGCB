@@ -91,7 +91,7 @@ public class ClienteDAO implements Serializable,InterfaceDAO{
 			ConstraintViolationException {
 		session = Conexao.getInstance();
 		session.beginTransaction();
-		listaClientes = session.createQuery("from Cliente order by c.nome").list();
+		listaClientes = session.createQuery("from Cliente c order by c.nome").list();
 		session.close();
 		return listaClientes;
 	}
@@ -205,17 +205,16 @@ public class ClienteDAO implements Serializable,InterfaceDAO{
 					.setInteger("id",cliente.getId())
 					.executeUpdate();
 			i++;
-			System.out.println("Alterado " + cliente);
 			if(i == 100){
 				i= 0;
 				session.getTransaction().commit();
 				session = Conexao.getInstance();
 				session.beginTransaction();
-				System.out.println("Comitando mais 100 registros");
 			}
 		}
 		session.getTransaction().commit();
 	}
+	
 	
 	/*
 	 * GETTERS & SETTERS
@@ -235,4 +234,5 @@ public class ClienteDAO implements Serializable,InterfaceDAO{
 	public void setListaClientes(List<Cliente> listaClientes) {
 		this.listaClientes = listaClientes;
 	}
+		
 }

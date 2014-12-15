@@ -24,17 +24,21 @@
 							<p:inputText value="#{clienteControl.cliente.bairro}" id="bairro" size="30" />
 							<p:outputLabel for="cep" value="CEP: "/>
 							<p:inputMask mask="99.999-999" value="#{clienteControl.cliente.cep}" id="cep" size="30" />
-							<p:outputLabel for="cidade" value="Cidade: "/>
-							<p:inputText value="#{clienteControl.cliente.cidade}" id="cidade" size="30" required="true">
-								<f:validateBean/>
-							</p:inputText>
+							
 							<p:outputLabel for="telefone" value="Telefone: "/>
 							<p:inputMask value="#{clienteControl.cliente.telefone}" id="telefone" size="20" mask="(99) 9999-9999" required="true">
 								<f:validateBean/>
 							</p:inputMask>
+							
 							<p:outputLabel for="telefoneadic" value="Telefone contato: "/>
 							<p:inputMask value="#{clienteControl.cliente.telefoneadicional}" id="telefoneadic" size="20" mask="(99) 9999-9999">
 							</p:inputMask>
+							
+							<p:outputLabel for="email" value="E-mail: "/>
+							<p:inputText value="#{clienteControl.cliente.email}" id="email" size="60">
+								<f:validateBean />
+							</p:inputText>
+							
 						</h:panelGrid>
 						<p:spacer width="10px"/>
 						<p:outputPanel autoUpdate="true">
@@ -70,6 +74,16 @@
 											 rendered="#{clienteControl.cliente.tipoPessoa.equals('pf')}" required="#{clienteControl.cliente.tipoPessoa.equals('pf')}">
 									<f:convertDateTime pattern="dd/MM/yyyy"/>
 								</p:inputMask>
+								<p:outputLabel for="cidade" value="Cidade: "/>
+								<p:inputText value="#{clienteControl.cliente.cidade}" id="cidade" size="30" required="true">
+									<f:validateBean/>
+								</p:inputText>
+								<p:outputLabel for="uf" value="UF: "/>
+								<p:selectOneMenu id="uf" value="#{clienteControl.cliente.uf.id}"
+									 required="true" requiredMessage="Selecione uma UF" >						
+									<f:selectItem itemLabel="" itemValue=""/>
+									<f:selectItems value="#{uFControl.listarUfCombo()}" />
+								</p:selectOneMenu>
 							</h:panelGrid>
 						</p:outputPanel>
 						<h:panelGrid columns="2">

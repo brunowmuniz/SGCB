@@ -1,7 +1,9 @@
 package br.com.casabemestilo.DAO;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
@@ -111,8 +113,51 @@ public class FornecedoresDAO implements InterfaceDAO, Serializable {
 	@Override
 	public List<Fornecedor> listaSelecao(Object obj) throws Exception,
 			HibernateException, ConstraintViolationException {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stubs
 		return null;
+	}
+	
+	public List<Fornecedor> listaLazy(int first, int pageSize,
+			Map<String, String> filters) {
+		session = Conexao.getInstance();
+		listaFornecedores = new ArrayList<Fornecedor>();
+		
+		String hql = "from Fornecedor fornecedor" +
+			" where fornecedor.deleted = false ";
+		
+		if(filters.containsKey("nome")){
+			hql += " and (fornecedor.nome like '%" + filters.get("nome") + "%' or" +
+						  " fornecedor.razaosocial like '%" + filters.get("nome") + "%')";
+		}
+		
+		listaFornecedores = session.createQuery(hql)
+				  					.setFirstResult(first)
+				  					.setMaxResults(pageSize)
+				  					.setCacheable(true)
+				  					.list();
+		session.close();
+		
+		return listaFornecedores;
+	}
+
+
+	public int totalFornecedores(Map<String, String> filters) {
+		session = Conexao.getInstance();
+		Long linhas = new Long("0");
+		
+		String hql = "select count(fornecedor.id) from Fornecedor fornecedor" +
+					 " where fornecedor.deleted = false ";
+		
+		if(filters.containsKey("nome")){
+			hql += " and (fornecedor.nome like '%" + filters.get("nome") + "%' or" +
+						  " fornecedor.razaosocial like '%" + filters.get("nome") + "%')";
+		}
+		
+		linhas = (Long) session.createQuery(hql)
+							   .setCacheable(true)
+							   .uniqueResult();
+		
+		return linhas.intValue();
 	}
 
 
@@ -147,5 +192,6 @@ public class FornecedoresDAO implements InterfaceDAO, Serializable {
 	public void setFornecedor(Fornecedor fornecedor) {
 		this.fornecedor = fornecedor;
 	}
+
 	
 }

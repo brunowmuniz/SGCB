@@ -12,7 +12,7 @@
 					<p:messages id="msgs"/>
 					<h:panelGrid columns="3" id="cadastro">
 						<p:outputLabel value="Nome: "/>
-						<p:autoComplete id="buscarusuario" value="#{permissaoControl.permissao.usuario}" minQueryLength="3"
+						<p:autoComplete id="buscarusuario" value="#{permissaoControl.permissao.usuario}" minQueryLength="4"
 											completeMethod="#{usuarioControl.listaComplete}"											 
 											forceSelection="true" converter="converter.UsuarioConverter"
 											var="usuario" itemValue="#{usuario}" itemLabel="#{usuario.nome}"

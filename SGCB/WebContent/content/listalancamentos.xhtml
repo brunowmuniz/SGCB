@@ -43,7 +43,7 @@
 					<p:dataTable id="entradalancamento" value="#{lancamentoControl.listaLancamentoGeral}" var="lancamento" lazy="true" emptyMessage="Sem parcelas a vencer" paginator="true"
 								selection="#{lancamentoControl.lancamento}" selectionMode="single" rows="25"
 								paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-		             			rowsPerPageTemplate="25,50,100" rowKey="#{lancamento.id}" editable="true" binding="#{table}" >
+		             			rowsPerPageTemplate="25,50,100" rowKey="#{lancamento.id}" editable="true" binding="#{table}" filterEvent="blur">
 		             			
 		             	<p:ajax event="rowEdit" listener="#{lancamentoControl.alterar}" process="entradalancamento" update=":form:msgs"/>
 		             	<p:ajax event="rowSelect" update=":form:ctxlancamento"/>

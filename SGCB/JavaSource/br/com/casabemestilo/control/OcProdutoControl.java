@@ -5,38 +5,26 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ValueChangeEvent;
-
 import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.RowSelection;
 import org.hibernate.exception.ConstraintViolationException;
-import org.primefaces.component.datatable.DataTable;
-import org.primefaces.component.selectbooleancheckbox.SelectBooleanCheckbox;
-import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
-
 import br.com.casabemestilo.DAO.FornecedoresDAO;
-import br.com.casabemestilo.DAO.FreteDAO;
 import br.com.casabemestilo.DAO.OcDAO;
 import br.com.casabemestilo.DAO.OcProdutoDAO;
-import br.com.casabemestilo.DAO.ParcelaDAO;
 import br.com.casabemestilo.DAO.PedidoDAO;
 import br.com.casabemestilo.DAO.ProdutoDAO;
 import br.com.casabemestilo.DAO.StatusDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
 import br.com.casabemestilo.model.Fornecedor;
-import br.com.casabemestilo.model.Frete;
 import br.com.casabemestilo.model.Oc;
 import br.com.casabemestilo.model.Ocproduto;
-import br.com.casabemestilo.model.Parcela;
 import br.com.casabemestilo.model.Pedido;
 import br.com.casabemestilo.model.Pedidoproduto;
 import br.com.casabemestilo.model.Produto;
@@ -63,6 +51,7 @@ public class OcProdutoControl extends Control implements InterfaceControl,
 	private List<Ocproduto> listaOutrosProdOc;
 	
 	private List<Ocproduto> listaOcProdutoAcao = new ArrayList<Ocproduto>();
+	
 	
 	
 	/*
@@ -274,6 +263,17 @@ public class OcProdutoControl extends Control implements InterfaceControl,
 	}
 	
 	
+	public void calculaProduto(Boolean ehCargaValorSugerido){
+		if(ehCargaValorSugerido){
+			getOcproduto().setValorunitario(getOcproduto().getProduto().getValorsugerido());
+		}
+		getOcproduto().setValorTotalSemDesconto(getOcproduto().getValorunitario() * getOcproduto().getQuantidade());
+	}
+	
+	public String retornarFornecedorProdutoOc(Produto produto){
+		return produto.getDescricao() != null ? produto.getFornecedor().getNome() + "-" + produto.getDescricao() : "";
+	}
+	
 	
 	/*
 	 * GETTERS & SETTERS
@@ -339,5 +339,6 @@ public class OcProdutoControl extends Control implements InterfaceControl,
 	public void setListaOcProdutoAcao(List<Ocproduto> listaOcProdutoAcao) {
 		this.listaOcProdutoAcao = listaOcProdutoAcao;
 	}
+	
 	
 }
