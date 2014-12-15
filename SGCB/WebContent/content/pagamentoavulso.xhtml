@@ -41,7 +41,7 @@
 						<p:spacer width="1"/>						
 						
 						<p:outputLabel for="buscarcliente" value="Cliente: "/>						
-						<p:autoComplete id="buscarcliente" value="#{pagamentoAvulsoControl.cliente}" minQueryLength="3" size="50"
+						<p:autoComplete id="buscarcliente" value="#{pagamentoAvulsoControl.cliente}" minQueryLength="4" size="50"
 										completeMethod="#{clienteControl.listaComplete}"									 
 										forceSelection="true" converter="converter.clienteConverter"
 										var="cliente" itemValue="#{cliente}" itemLabel="#{cliente.nome}"

@@ -14,10 +14,12 @@
 					 	<p:menuitem value="Editar" icon="ui-icon-pencil" action="#{fornecedoresControl.alterarCadastro}" ajax="false"/>
 					 </p:contextMenu>
 					 
-					 <p:dataTable var="fornecedor" value="#{fornecedoresControl.listarAtivos()}" id="fornecedores" rowKey="#{fornecedor.id}"  
-                		selection="#{fornecedoresControl.fornecedor}" selectionMode="single"  paginator="true" rows="10"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                 		rowsPerPageTemplate="10,25,50" >                		  		
-				        <p:column headerText="Nome">
+					 <p:dataTable var="fornecedor" value="#{fornecedoresControl.listaLazyFornecedorGeral()}" id="fornecedores" rowKey="#{fornecedor.id}"  
+                		selection="#{fornecedoresControl.fornecedor}" selectionMode="single"  paginator="true" rows="50"  paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                 		rowsPerPageTemplate="25,50,100" filteredValue="#{fornecedoresControl.listaFornecedores}" widgetVar="fornecedores" filterEvent="blur"
+                 		binding="#{table}" lazy="true" emptyMessage="Sem fornecedor com este nome/razão social">                		  		
+				        
+				        <p:column headerText="Nome" filterBy="#{fornecedor.nome}" filterMatchMode="startsWith" filterStyle="width: 70%;">				        	
 				            <h:outputText value="#{fornecedor.nome}" />
 				        </p:column>
 				
@@ -27,6 +29,10 @@
 				        
 				        <p:column headerText="Telefone">				        	
 				        	<h:outputText value="#{fornecedor.telefone}" />				            
+				        </p:column>
+				        
+				        <p:column headerText="e-mail">				        	
+				        	<h:outputText value="#{fornecedor.email}" />				            
 				        </p:column>
 				        
 				        <p:column headerText="Endereço/Cidade">

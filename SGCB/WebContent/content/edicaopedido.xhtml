@@ -17,14 +17,13 @@
 						<p:spacer width="40px" rendered="#{pedidoControl.pedido.id != null}"/>
 						
 						<p:outputLabel for="fornecedor" value="Fornecedor: "/>
-						<h:outputText value="#{pedidoControl.pedido.fornecedor.nome}" id="fornecedor" styleClass="negrito" rendered="#{pedidoControl.pedido.id != null}"/>
-						<p:inplace event="click" id="fornecedorins" label="Selecione um fornecedor" rendered="#{pedidoControl.pedido.id == null}">
-							<p:selectOneMenu required="true" value="#{pedidoControl.pedido.fornecedor.id}" id="fornecedorsel" requiredMessage="Selecione um fornecedor!">
-								<f:selectItem itemValue="0" itemLabel="Selecione Fornecedor" noSelectionOption="true"/>
-								<f:selectItems value="#{fornecedoresControl.getListaFornecedorCombo('')}"/>
-								<p:ajax event="change" process="@this" update="btnbuscaproduto"/>
-							</p:selectOneMenu>
-						</p:inplace>
+						<h:outputText value="#{pedidoControl.pedido.fornecedor.nome}" id="fornecedorlbl" styleClass="negrito" rendered="#{pedidoControl.pedido.id != null}"/>						
+						<p:selectOneMenu required="true" value="#{pedidoControl.pedido.fornecedor.id}" id="fornecedor" requiredMessage="Selecione um fornecedor!">
+							<f:selectItem itemValue="0" itemLabel="Selecione Fornecedor" noSelectionOption="true"/>
+							<f:selectItems value="#{fornecedoresControl.getListaFornecedorCombo('')}"/>
+							<p:ajax event="change" process="@this" update="btnbuscaproduto"/>
+						</p:selectOneMenu>
+						
 						
 						<p:spacer width="40px" rendered="#{pedidoControl.pedido.id == null}"/>
 												
@@ -66,8 +65,8 @@
 									<p:outputLabel for="buscaproduto" value="Código/Nome: "/>
 									<p:autoComplete id="buscaproduto" value="#{pedidoControl.pedidoproduto.produto}" minQueryLength="3"
 															completeMethod="#{pedidoControl.buscaProdutoCodigoNomeFornecedor}"											 
-															forceSelection="true"  converter="converter.ProdutoConverter"
-															var="produto" itemValue="#{produto}" itemLabel="#{produto.fornecedor.nome} - #{produto.descricao}">
+															forceSelection="true"  converter="converter.ProdutoConverter"																					
+															var="produto" itemValue="#{produto}" itemLabel="#{ocProdutoControl.retornarFornecedorProdutoOc(produto)}">
 										<p:ajax event="itemSelect" update="dadosproduto" process="@this" />
 									</p:autoComplete>																						
 								</h:panelGrid>									

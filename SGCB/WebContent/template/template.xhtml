@@ -43,7 +43,19 @@
 						</p:dialog>
 					</h:form>			      				
       			</h:panelGrid>
-      		<h:panelGrid width="50%" style="float:right;">
+      		<p:ajaxStatus>
+	    		<f:facet name="default">
+	    			<p:spacer height="60px" />    			
+	    		</f:facet>
+	    		<f:facet name="start">	    			
+	    			<h:outputText value="Aguarde..." styleClass="nome negrito"/><br />
+    				<p:graphicImage value="/imagens/load.gif" style="margin-left:6px;" />	    			    							
+	    		</f:facet>
+	    		<f:facet name="complete">
+	    			<p:spacer height="60px" />    			
+	    		</f:facet>
+	    	</p:ajaxStatus>	
+      		<h:panelGrid width="40%" style="float:right;">      			
       			<p:graphicImage url="../imagens/logo_site.png" id="logo_cabecalho" style="float:left;" />
       		</h:panelGrid>
       	</h:panelGrid>
@@ -131,20 +143,13 @@
 			<p:menuitem value="Cadastro de Permissão" url="cadastropermissao.jsf" />
       	</p:submenu>     	      	
       </p:menubar>
-    </ui:insert>        
+    </ui:insert>
     <ui:insert name="conteudo">
       <h:outputLabel value="Conteudo" />
     </ui:insert>
     <ui:insert name="rodape">     	
     </ui:insert>
-    <ui:insert name="lendo">
-    	<p:ajaxStatus onstart="aguarde.show();" onsuccess="aguarde.hide();" onerror="aguarde.hide();"/>
-			
-		<p:dialog modal="true" widgetVar="aguarde" header="Aguarde.." 
-		        draggable="false" closable="false" closeOnEscape="false" resizable="false">
-			<p:graphicImage value="/imagens/loading.gif" style="margin-left:6px;" />
-		</p:dialog>
-    </ui:insert>
+    
     <script>
 	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

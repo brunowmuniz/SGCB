@@ -254,15 +254,17 @@ public class PedidoControl extends Control implements InterfaceControl,
 	
 	public List<Produto> buscaProdutoCodigoNomeFornecedor(String busca){
 		List<Produto> listaProduto = new ArrayList<Produto>();
-		Produto produtoBusca = new Produto();
-		produtoBusca.setDescricao(busca);
-		produtoBusca.setCodigo(busca);
-		produtoBusca.setFornecedor(pedido.getFornecedor());
-		listaProduto = new ProdutoDAO().listaProdutoCodigoNomeFornecedor(produtoBusca);
-		if(listaProduto.isEmpty()){
-			produtoBusca.getFornecedor().setNome("Cadastrar ");
-			listaProduto.add(produtoBusca);
-		}
+		if(busca.indexOf(" ") > - 1){
+			Produto produtoBusca = new Produto();
+			produtoBusca.setDescricao(busca);
+			produtoBusca.setCodigo(busca);
+			produtoBusca.setFornecedor(pedido.getFornecedor());
+			listaProduto = new ProdutoDAO().listaProdutoCodigoNomeFornecedor(produtoBusca);
+			if(listaProduto.isEmpty()){
+				produtoBusca.getFornecedor().setNome("Cadastrar ");
+				listaProduto.add(produtoBusca);
+			}			
+		}		
 		return listaProduto;
 	}
 	

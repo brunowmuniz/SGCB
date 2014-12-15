@@ -17,7 +17,7 @@
 					<p:dataTable var="pagina" value="#{paginaControl.listaPaginaGeralAll}" id="pagina" emptyMessage="Sem páginas cadastradas!" paginator="true"
 										selection="#{paginaControl.pagina}" selectionMode="single" lazy="true" rows="25" rowKey="#{pagina.id}"
 										paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                 						rowsPerPageTemplate="10,25,50" editable="true">
+                 						rowsPerPageTemplate="10,25,50" editable="true" filterEvent="blur">
                  			
                  			<p:ajax event="rowEdit" listener="#{paginaControl.alterar}" process="pagina" update=":form:msgs"/>
                  						

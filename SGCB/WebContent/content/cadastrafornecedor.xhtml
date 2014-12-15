@@ -11,26 +11,47 @@
 				<p:panel header="Cadastro de Fornecedor">
 			     	<p:messages id="msgs"/>			     	
 					<h:panelGrid columns="2" id="cadastro">
-						<p:outputLabel for="nome" value="Nome: "/>
+						<p:outputLabel for="nome" value="Nome Fantasia: "/>
 						<p:inputText value="#{fornecedoresControl.fornecedor.nome}" id="nome" size="60" required="true">
+							<f:validateBean/>
+						</p:inputText>
+						<p:outputLabel for="razaosocial" value="Razão Social: "/>
+						<p:inputText value="#{fornecedoresControl.fornecedor.razaosocial}" id="razaosocial" size="60">
 							<f:validateBean/>
 						</p:inputText>
 						<p:outputLabel for="cnpj" value="CNPJ: "/>
 						<p:inputMask value="#{fornecedoresControl.fornecedor.cnpj}" id="cnpj" size="20" required="true" mask="99.999.999/9999-99">
 							<f:validateBean/>
 						</p:inputMask>
+						<p:outputLabel for="ie" value="IE: "/>
+						<p:inputMask value="#{fornecedoresControl.fornecedor.ie}" id="ie" size="20" mask="999/999999">
+							<f:validateBean/>
+						</p:inputMask>
 						<p:outputLabel for="telefone" value="Telefone: "/>
 						<p:inputMask value="#{fornecedoresControl.fornecedor.telefone}" id="telefone" size="20" mask="(99) 9999-9999">
 							<f:validateBean/>
 						</p:inputMask>
+						<p:outputLabel for="email" value="E-mail: "/>
+						<p:inputText value="#{fornecedoresControl.fornecedor.email}" id="email" size="60">
+							<f:validateBean/>							
+						</p:inputText>
 						<p:outputLabel for="endereco" value="Endereço: "/>
 						<p:inputText value="#{fornecedoresControl.fornecedor.endereco}" id="endereco" size="60">
 							<f:validateBean/>
-						</p:inputText>
+						</p:inputText>						
+						
 						<p:outputLabel for="cidade" value="Cidade: "/>
 						<p:inputText value="#{fornecedoresControl.fornecedor.cidade}" id="cidade" size="30">
 							<f:validateBean/>
-						</p:inputText>						
+						</p:inputText>
+						
+						<p:outputLabel for="uf" value="UF: "/>
+						<p:selectOneMenu id="uf" value="#{fornecedoresControl.fornecedor.uf.id}"
+									 required="true" requiredMessage="Selecione uma UF" >						
+							<f:selectItem itemLabel="" itemValue=""/>
+							<f:selectItems value="#{uFControl.listarUfCombo()}" />
+						</p:selectOneMenu>
+																	
 						<p:outputLabel for="ehrede" value="Rede: "/>
 						<p:selectBooleanCheckbox value="#{fornecedoresControl.fornecedor.ehrede}" id="ehrede"/>
 						<p:outputLabel for="obsfornecedor" value="Observações: "/>

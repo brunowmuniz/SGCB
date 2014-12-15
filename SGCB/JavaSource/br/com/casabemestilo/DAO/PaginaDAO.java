@@ -108,10 +108,16 @@ public class PaginaDAO implements InterfaceDAO {
 	public List<Pagina> listaPaginas(int first, int pageSize,  Map<String, String> filters) {
 		session = Conexao.getInstance();
 		paginas = new ArrayList<Pagina>();
-		String hql = "from Pagina pagina";
+		String hql = "from Pagina pagina " +
+						"where " +
+							" pagina.deleted = false";
 		
 		if(filters.containsKey("nomePagina")){
-			hql += " where pagina.nomePagina like '%" + filters.get("nomePagina") + "%'";
+			hql += " and pagina.nomePagina like '%" + filters.get("nomePagina") + "%'";
+		}
+		
+		if(filters.containsKey("nome")){
+			hql += " and pagina.nome like '%" + filters.get("nome") + "%'";
 		}
 		
 		paginas = session.createQuery(hql)

@@ -12,7 +12,11 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import static javax.persistence.GenerationType.IDENTITY;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -21,6 +25,8 @@ import javax.validation.constraints.Max;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 
 /**
@@ -34,6 +40,7 @@ public class Cliente implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	private Integer id;
+	private UF uf;
 	private String nome;
 	private String endereco;
 	private String cidade;
@@ -48,6 +55,7 @@ public class Cliente implements java.io.Serializable {
 	private String ie;
 	private String bairro;
 	private String cep;
+	private String email;
 	private List<Oc> ocs = new ArrayList<Oc>();
 	private List<Pagamento> pagamentos = new ArrayList<Pagamento>();
 
@@ -180,6 +188,9 @@ public class Cliente implements java.io.Serializable {
 
 	@Column(name = "deleted", nullable = false)
 	public Boolean getDeleted() {
+		if(deleted == null){
+			deleted = false;
+		}
 		return deleted;
 	}
 
@@ -243,6 +254,29 @@ public class Cliente implements java.io.Serializable {
 
 	public void setCep(String cep) {
 		this.cep = cep;
+	}
+	
+	@Column(name="email", nullable = true)
+	@Email
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	
+	@ManyToOne
+	@JoinColumn(name = "uf", nullable = false)
+	public UF getUf() {
+		if(uf == null){
+			uf = new UF();
+		}
+		return uf;
+	}
+
+	public void setUf(UF uf) {
+		this.uf = uf;
 	}
 
 	@Override

@@ -5,30 +5,24 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ValueChangeEvent;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import main.DataUtil;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
@@ -38,10 +32,8 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanArrayDataSource;
-
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
-import org.primefaces.component.confirmdialog.ConfirmDialog;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.LazyDataModel;
@@ -76,7 +68,6 @@ import br.com.casabemestilo.model.Pedidoproduto;
 import br.com.casabemestilo.model.Produto;
 import br.com.casabemestilo.model.Status;
 import br.com.casabemestilo.model.Usuario;
-import br.com.casabemestilo.util.ConnectionFactory;
 
 @ManagedBean
 @ViewScoped
@@ -157,7 +148,7 @@ public class OcControl extends Control implements InterfaceControl,
 		
 		if(oc.getFilial().getId() == null){
 			try {
-				oc.setFilial(new FilialDAO().buscaObjetoId(1));
+				oc.setFilial(new FilialDAO().buscaObjetoId(1));				
 			} catch (ConstraintViolationException e) {
 				e.printStackTrace();
 				super.mensagem = e.getMessage();
@@ -355,7 +346,7 @@ public class OcControl extends Control implements InterfaceControl,
 			for(Ocproduto ocproduto : oc.getOcprodutos()){
 				if(ocproduto.getStatus().getId() == 11 && oc.getStatus().getId() != 11){
 					oc.setStatus((Status) new StatusDAO().buscaObjetoId(11));
-				}					
+				}
 			}			
 			recalculaValorTotalOcproduto();
 			retorno = ocDAO.insertOc(oc);
@@ -829,10 +820,10 @@ public class OcControl extends Control implements InterfaceControl,
 			
 			if(caminhoRelatorio.indexOf("home") > -1){
 				caminhoRelatorio += "/";
-				caminhoImagem = "http://www.blanker.com.br/SGC/imagens/logo_site.png";
+				caminhoImagem = "http://www.blanker.com.br/SGCB/imagens/logo_site.png";
 			}else{
 				caminhoRelatorio += "\\";
-				caminhoImagem = "http://localhost:8080/SGC/imagens/logo_site.png";
+				caminhoImagem = "http://localhost:8080/SGCB/imagens/logo_site.png";
 			}
 			
 			caminho = getClass().getResourceAsStream("../relatorio/oc.jrxml");
@@ -985,6 +976,39 @@ public class OcControl extends Control implements InterfaceControl,
 	    
 	    ocproduto = oc.getOcprodutos().get(linha);	    
 		float valorDesconto = ocproduto.getValorTotalSemDesconto()  * (ocproduto.getDesconto() / 100);
+		Double descontoAplicado = new Double(df.format(ocproduto.getDesconto()).replace(",", "."));
+		
+		ocproduto.setValortotal(ocproduto.getValorTotalSemDesconto() - valorDesconto);		
+		oc.getOcprodutos().set(linha, ocproduto);
+		oc.setDesconto(new Float("0"));
+		for(Ocproduto ocprod : oc.getOcprodutos()){
+			oc.setDesconto(oc.getDesconto() + (ocprod.getValorTotalSemDesconto() - ocprod.getValortotal()));
+			System.out.println(oc.getDesconto());
+		}
+		oc.setValorfinal((oc.getValor() + oc.getValorfrete() + oc.getValormontagem()) - oc.getDesconto());
+		
+		if(descontoAplicado > user.getPercentualDesconto().doubleValue()){
+			ocproduto.setStatus(new StatusDAO().buscaObjetoId(11));
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Desconto não permitido, a margem do usuário é de " + df.format(user.getPercentualDesconto()) + "%. A OC ficará com o status PENDENTE DE APROVAÇÃO depois de salvo!", ""));
+		}else{
+			ocproduto.setStatus(new StatusDAO().buscaObjetoId(1));			
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Desconto Aplicado!"));
+		}
+	}
+	
+	public void recalculaProdutoOC(int linha, String tipoDesconto) throws ConstraintViolationException, HibernateException, Exception{				
+		HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+	    Usuario user = (Usuario) session.getAttribute("UsuarioLogado");
+	    float valorDesconto = new Float("0");
+	    
+	    ocproduto = oc.getOcprodutos().get(linha);
+	    if(tipoDesconto.equals("percentual")){
+	    	valorDesconto = ocproduto.getValorTotalSemDesconto()  * (ocproduto.getDesconto() / 100);
+	    }else{
+	    	valorDesconto = ocproduto.getValorTotalSemDesconto() - ocproduto.getValortotal();
+	    	ocproduto.setDesconto((valorDesconto / ocproduto.getValorTotalSemDesconto()) * 100);
+	    }
+		
 		Double descontoAplicado = new Double(df.format(ocproduto.getDesconto()).replace(",", "."));
 		
 		ocproduto.setValortotal(ocproduto.getValorTotalSemDesconto() - valorDesconto);		

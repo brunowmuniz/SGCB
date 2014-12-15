@@ -20,7 +20,8 @@
 						</p:calendar>
 						<p:commandButton value="Pesquisar" actionListener="#{ocControl.buscarVendasMesAno}" update="@form"/>
 					</h:panelGrid>
-					<p:dataTable value="#{ocControl.listaVendasMesAno}" var="oc" id="vendasmesano" style="width: 50%;">
+					<p:dataTable value="#{ocControl.listaVendasMesAno}" var="oc" id="vendasmesano" style="width: 50%;"
+								 emptyMessage="Sem vendas para este período!">
 						<p:column headerText="Mês/Ano">
 							<h:outputText value="#{oc.datalancamento}">
 								<f:convertDateTime pattern="MM/yyyy" locale="pt_BR"/>

@@ -18,7 +18,7 @@
 					 <p:dataTable var="condicoesPagamento" value="#{condicoesPagamentoControl.listaLazyCondicoesPagamentoGeral()}" id="retencoes" rowKey="#{condicoesPagamento.id}"  
                 		selectionMode="single" selection="#{condicoesPagamentoControl.condicoesPagamento}" paginator="true" rows="10"  
                 		paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                 		rowsPerPageTemplate="10,25,50" lazy="true">
+                 		rowsPerPageTemplate="10,25,50" lazy="true" filterEvent="blur">
                  		                		  		
 				        <p:column headerText="Descrição" filterBy="#{condicoesPagamento.nome}" filterMatchMode="startswith" filterStyle="width: 70%;">
 				            <h:outputText value="#{condicoesPagamento.nome}" />

@@ -29,9 +29,9 @@
 			     	</p:contextMenu>
 			     	
 					<p:dataTable var="oc" value="#{ocControl.listarOcGeralAll}" id="ocs" emptyMessage="Sem OC cadastrada!" paginator="true"
-										selection="#{ocControl.oc}" selectionMode="single" lazy="true" rows="10" rowKey="#{oc.id}"
+										selection="#{ocControl.oc}" selectionMode="single" lazy="true" rows="10" rowKey="#{oc.id}" widgetVar="ocs"
 										paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                 						rowsPerPageTemplate="10,25,50">
+                 						rowsPerPageTemplate="10,25,50" filterEvent="blur">
                  						
 				        <p:column headerText="Codigo" width="40">
 				            <h:outputText value="#{oc.id}" />
@@ -43,8 +43,8 @@
 				            </h:outputText>
 				        </p:column>
 				
-				        <p:column headerText="Nome" filterBy="#{oc.cliente.nome}" filterMatchMode="startsWith" filterStyle="width: 70%;">
-				            <h:outputText value="#{oc.cliente.nome}" />
+				        <p:column headerText="Nome" filterBy="#{oc.cliente.nome}" filterMatchMode="startswith" filterStyle="width: 70%;">
+				        	<h:outputText value="#{oc.cliente.nome}" />
 				        </p:column>
 				        
 				        <p:column headerText="Valor Total" width="60">

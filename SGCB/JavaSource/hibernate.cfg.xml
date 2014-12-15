@@ -26,6 +26,8 @@
   <property name="hibernate.c3p0.idle_test_period">1</property>
   <property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
   <property name="hibernate.transaction.auto_close_session">true</property>
+  
+  <mapping class="br.com.casabemestilo.model.UF"/>
   <mapping class="br.com.casabemestilo.model.Ocproduto"/>
   <mapping class="br.com.casabemestilo.model.Lancamento"/>
   <mapping class="br.com.casabemestilo.model.Usuario"/>

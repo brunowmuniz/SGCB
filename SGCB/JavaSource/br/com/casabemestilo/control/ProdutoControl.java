@@ -223,14 +223,16 @@ public class ProdutoControl extends Control implements InterfaceControl,
 	
 	public List<Produto> buscaProdutoCodigoNome(String busca){
 		listaProduto = new ArrayList<Produto>();
-		Produto produtoBusca = new Produto();
-		produtoBusca.setDescricao(busca);
-		produtoBusca.setCodigo(busca);
-		listaProduto = new ProdutoDAO().listaProdutoCodigoNome(produtoBusca);
-		if(listaProduto.isEmpty()){
-			produtoBusca.getFornecedor().setNome("Cadastrar ");
-			listaProduto.add(produtoBusca);
-		}
+		if(busca.indexOf(" ") > -1){
+			Produto produtoBusca = new Produto();
+			produtoBusca.setDescricao(busca);
+			produtoBusca.setCodigo(busca);
+			listaProduto = new ProdutoDAO().listaProdutoCodigoNome(produtoBusca);
+			if(listaProduto.isEmpty()){
+				produtoBusca.getFornecedor().setNome("Cadastrar ");
+				listaProduto.add(produtoBusca);
+			}
+		}		
 		return listaProduto;
 	}
 	

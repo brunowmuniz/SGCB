@@ -20,7 +20,8 @@
 						</p:calendar>
 						<p:commandButton value="Pesquisar" update="@form"/>
 					</h:panelGrid>					
-					<p:dataTable value="#{ocControl.listaCalculaVendasPorVendedor()}" var="vendedor" style="width: 50%;">
+					<p:dataTable value="#{ocControl.listaCalculaVendasPorVendedor()}" var="vendedor" style="width: 50%;"
+								 emptyMessage="Sem vendas para este período!">
 						<p:column headerText="Vendedor">
 							<h:outputText value="#{vendedor.usuario.nome}" />
 						</p:column>

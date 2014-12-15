@@ -3,13 +3,39 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 	<ui:composition template="../template/template.xhtml">
 		<ui:define name="conteudo">
-			<p:panel style="text-align: center; height: 50px;">
-				<h:outputText value="SELECIONE UMA OPÇÃO DAS OPÇÕES ACIMA!"/>
+			<style>
+				.ui-datalist-data{
+					list-style-type: none !important;
+				}
+			</style>
+			<p:panel header="Aniversariantes do dia">
+				<p:outputLabel value="Não há aniversariantes hoje!" styleClass="nome erro" rendered="#{!clienteControl.temClienteAniversariante()}"/>
+				<p:dataList value="#{clienteControl.listarAniversariante()}" var="aniversariante" rendered="#{clienteControl.temClienteAniversariante()}">
+					<p>
+						<br />
+						<b>Nome: </b>#{aniversariante.nome} (#{clienteControl.retornarIdade(aniversariante.datadenascimento)} anos)</p> 
+					<p>
+						<b>Telefone: </b>#{aniversariante.telefone}
+						<h:outputText value=" / #{aniversariante.telefoneadicional}"  
+									  rendered="#{aniversariante.telefoneadicional != '' and aniversariante.telefoneadicional != null}"/>												 
+					</p>						
+					<p>
+						<b><h:outputText value="E-mail: " 
+										 rendered="#{aniversariante.email != null and aniversariante.email != ''}" /></b>
+						<h:outputText value="#{aniversariante.email}"  
+									  rendered="#{aniversariante.email != null and aniversariante.email != ''}"/>
+					</p>										
+					<br />
+				</p:dataList>
 			</p:panel>
+			<p:panel style="text-align: center; height: 50px;" rendered="false">
+				<h:outputText value="SELECIONE UMA OPÇÃO DAS OPÇÕES ACIMA!"/>
+			</p:panel>		
 		</ui:define>
 		<ui:define name="rodape">
 			<p:panel header="Descritivo Tela" styleClass="rodape">

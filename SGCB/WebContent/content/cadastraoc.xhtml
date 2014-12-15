@@ -54,16 +54,25 @@
 									<h:panelGrid id="dadoscliente" >
 										<h:panelGrid columns="3">
 											<p:outputLabel for="buscarcliente" value="Busca Cliente: "/>
-											<p:autoComplete id="buscarcliente" value="#{ocControl.oc.cliente}" minQueryLength="3"
-																completeMethod="#{clienteControl.listaComplete}" size="60"											 
-																forceSelection="true" converter="converter.clienteConverter"
-																var="cliente" itemValue="#{cliente}" itemLabel="#{cliente.nome}"
-																disabled="#{ocControl.oc.cliente.id != null}">
-													<p:ajax event="itemSelect" update="dadoscliente,occliente" process="@this"/>
+											<p:autoComplete id="buscarcliente" value="#{ocControl.oc.cliente}" minQueryLength="4"
+															size="60" forceSelection="true"							 
+															converter="converter.clienteConverter" 
+															completeMethod="#{clienteControl.listaComplete}"
+															var="cliente" itemValue="#{cliente}" itemLabel="#{cliente.nome}"
+															disabled="#{ocControl.oc.cliente.id != null}" widgetVar="buscarcliente">
+													<p:ajax event="itemSelect" update="dadoscliente,occliente" process="@this"/>													
 											</p:autoComplete>
-											<p:commandButton value="Limpar" actionListener="#{ocControl.limparCliente}" update="dadoscliente" id="limparcliente" rendered="#{ocControl.oc.cliente.id != null}" process="@this" />
+											<p:commandButton value="Limpar" actionListener="#{ocControl.limparCliente}" update="dadoscliente" id="limparcliente" rendered="#{ocControl.oc.cliente.id != null}" process="@this" />											
 										</h:panelGrid>
 										<h:panelGrid columns="2">
+											<p:outputLabel for="tipopessoa" value="Tipo Pessoa: "/>
+											<p:selectOneMenu value="#{ocControl.oc.cliente.tipoPessoa}" size="1" id="tipopessoa" 
+															 disabled="#{ocControl.oc.cliente.id != null}">
+												<f:selectItem itemValue="pf" itemLabel="Pessoa Física"/>
+												<f:selectItem itemValue="pj" itemLabel="Pessoa Jurídica"/>							
+												<p:ajax event="change" process="@this" update="infcomplementar"/>
+											</p:selectOneMenu>
+											
 											<p:outputLabel value="Nome: " for="nomeclienteoc"/>
 											<p:inputText size="78" value="#{ocControl.oc.cliente.nome}" required="true" id="nomeclienteoc">
 												<f:validateBean />
@@ -73,34 +82,52 @@
 											<p:inputText size="78" value="#{ocControl.oc.cliente.endereco}" required="true" id="enderecoclienteoc">
 												<f:validateBean/>
 											</p:inputText>
+											
+											<p:outputLabel value="E-mail: " for="email"/>
+											<p:inputText size="78" value="#{ocControl.oc.cliente.email}" id="email">
+												<f:validateBean/>
+											</p:inputText>
 										</h:panelGrid>
-										<h:panelGrid columns="4">	
+										<h:panelGrid columns="4" id="infcomplementar">	
 											<p:outputLabel value="Cidade: " for="cidadeclienteoc"/>
 											<p:inputText size="30" value="#{ocControl.oc.cliente.cidade}" required="true" id="cidadeclienteoc">
 												<f:validateBean/>
 											</p:inputText>
+											
+											<p:outputLabel for="uf" value="UF: " rendered="true"/>
+											<p:selectOneMenu id="uf" value="#{ocControl.oc.cliente.uf.id}" rendered="true"
+															 required="true" requiredMessage="Selecione uma UF">						
+												<f:selectItem itemLabel="" itemValue=""/>
+												<f:selectItems value="#{uFControl.listarUfCombo()}" />
+											</p:selectOneMenu>
+											
+											<p:outputLabel value="CPF: " for="cpfclienteoc" rendered="#{ocControl.oc.cliente.tipoPessoa.equals('pf')}"/>
+											<p:inputMask size="30" value="#{ocControl.oc.cliente.cpf}" required="true" id="cpfclienteoc" mask="999.999.999-99" 
+														 rendered="#{ocControl.oc.cliente.tipoPessoa.equals('pf')}" />
 											
 											<p:outputLabel value="Telefone: " for="telefoneclienteoc"/>
 											<p:inputMask size="30" value="#{ocControl.oc.cliente.telefone}" required="true" id="telefoneclienteoc" mask="(99) 9999-9999">
 												<f:validateBean/>
 											</p:inputMask>
 											
-											<p:outputLabel value="CPF: " for="cpfclienteoc" rendered="#{ocControl.oc.cliente.tipoPessoa.equals('pf')}"/>
-											<p:inputMask size="30" value="#{ocControl.oc.cliente.cpf}" required="true" id="cpfclienteoc" mask="999.999.999-99" 
-														 rendered="#{ocControl.oc.cliente.tipoPessoa.equals('pf')}" />
-											
 											<p:outputLabel value="RG: " for="rgclienteoc" rendered="#{ocControl.oc.cliente.tipoPessoa.equals('pf')}"/>
 											<p:inputText size="30" value="#{ocControl.oc.cliente.rg}"  id="rgclienteoc" rendered="#{ocControl.oc.cliente.tipoPessoa.equals('pf')}"/>
 											
 											<p:outputLabel value="CNPJ: " for="cnpj" rendered="#{ocControl.oc.cliente.tipoPessoa.equals('pj')}"/>
-											<p:inputText size="30" value="#{ocControl.oc.cliente.cnpj}"  id="cnpj" rendered="#{ocControl.oc.cliente.tipoPessoa.equals('pj')}" disabled="true"
-														 mask="99.999.999/9999-99"/>
-											
-											<p:outputLabel value="Data Nascimento: " for="datanascimentoclienteoc"/>
-											<p:inputMask size="30" value="#{ocControl.oc.cliente.datadenascimento}" required="#{ocControl.oc.cliente.tipoPessoa.equals('pf')}" id="datanascimentoclienteoc"
-												mask="99/99/9999">
+											<p:inputMask mask="99.999.999/9999-99" value="#{ocControl.oc.cliente.cnpj}" id="cnpj" size="20" 
+											 			 rendered="#{ocControl.oc.cliente.tipoPessoa.equals('pj')}" required="true"/>
+																						
+											<p:outputLabel value="Data Nascimento: " for="datanascimentoclienteoc"
+														   rendered="#{ocControl.oc.cliente.tipoPessoa.equals('pf')}" />
+											<p:inputMask size="30" value="#{ocControl.oc.cliente.datadenascimento}" 
+														 rendered="#{ocControl.oc.cliente.tipoPessoa.equals('pf')}" 
+														 id="datanascimentoclienteoc" mask="99/99/9999" required="true">
 												<f:convertDateTime pattern="dd/MM/yyyy"/>
-											</p:inputMask>								
+											</p:inputMask>
+											
+											<p:outputLabel for="ie" value="IE: " rendered="#{ocControl.oc.cliente.tipoPessoa.equals('pj')}"/>
+											<p:inputMask mask="999/999999" value="#{ocControl.oc.cliente.ie}" id="ie" size="30" 
+											 rendered="#{ocControl.oc.cliente.tipoPessoa.equals('pj')}" />
 										</h:panelGrid>										
 									</h:panelGrid>
 									<p:spacer width="35px"/>
@@ -191,10 +218,11 @@
 										<h:panelGrid id="dadosproduto">
 											<h:panelGrid columns="3">
 												<p:outputLabel for="buscaproduto" value="Código/Nome: "/>
-												<p:autoComplete id="buscaproduto" value="#{ocProdutoControl.ocproduto.produto}" minQueryLength="3"  
-																		completeMethod="#{produtoControl.buscaProdutoCodigoNome}" size="60"
-																		forceSelection="true"  converter="converter.ProdutoConverter"
-																		var="produto" itemValue="#{produto}" itemLabel="#{produto.fornecedor.nome} - #{produto.descricao}">
+												<p:autoComplete id="buscaproduto" value="#{ocProdutoControl.ocproduto.produto}"  
+																completeMethod="#{produtoControl.buscaProdutoCodigoNome}" size="60"
+																forceSelection="true"  converter="converter.ProdutoConverter"
+																var="produto" itemValue="#{produto}" minQueryLength="5"																
+																itemLabel="#{ocProdutoControl.retornarFornecedorProdutoOc(produto)}">
 													<p:ajax event="itemSelect" update="dadosproduto" process="@this" listener="#{ocProdutoControl.calculaProduto}"/>
 												</p:autoComplete>																						
 												<p:commandButton value="Limpar" actionListener="#{ocProdutoControl.limparOcProduto}" update="dadosproduto" id="limparproduto" disabled="#{ocProdutoControl.ocproduto.produto.id == null}" process="@this,dadosproduto" />											
@@ -258,6 +286,12 @@
 																	  	 disabled="#{ocProdutoControl.ocproduto.produto.id != null}">
 													<p:ajax event="change" process="@this" update="temmontagem"/>
 												</p:selectBooleanCheckbox>
+												
+												<p:outputLabel for="ehmodulado" value="Modulado: "/>
+												<p:selectBooleanCheckbox id="ehmodulado" value="#{ocProdutoControl.ocproduto.produto.ehModulado}"
+																	  	 disabled="#{ocProdutoControl.ocproduto.produto.id != null}">
+													<p:ajax event="change" process="@this" update="temmontagem,valorunitario"/>
+												</p:selectBooleanCheckbox>
 																								
 												<p:outputLabel for="quantidade" value="Quantidade: " />
 												<p:spinner  value="#{ocProdutoControl.ocproduto.quantidade}" id="quantidade" immediate="true" min="1" max="999">
@@ -267,8 +301,8 @@
 												</p:spinner>
 												
 												<p:outputLabel for="valorunitario" value="Valor Unitário: " />
-												<p:inputText value="#{ocProdutoControl.ocproduto.valorunitario}" id="valorunitario" immediate="true" disabled="true">
-													<p:ajax event="blur"  process="@this,valortotal" update="valorunitario,valortotal" />
+												<p:inputText value="#{ocProdutoControl.ocproduto.valorunitario}" id="valorunitario" immediate="true" disabled="#{!ocProdutoControl.ocproduto.produto.ehModulado}">
+													<p:ajax event="blur"  process="@this,valortotal" update="valorunitario,valortotal"  oncomplete="#{ocProdutoControl.calculaProduto(false)}"/>
 													<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1"/>												
 												</p:inputText>											
 											
@@ -406,7 +440,7 @@
 								        	</h:outputText>
 								        </p:column>
 								        
-								        <p:column headerText="Desconto (%)">
+								         <p:column headerText="Desconto (%)">
 								        	<p:cellEditor>
 								        		<f:facet name="output">
 								        			<h:outputText value="#{ocproduto.desconto}" id="descontout">
@@ -416,17 +450,27 @@
 								        		</f:facet>
 								        		<f:facet name="input">
 								        			<p:inputText value="#{ocproduto.desconto}" id="descontoin">
-														<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="0" minIntegerDigits="1" />
-														<p:ajax event="blur" listener="#{ocControl.recalculaProdutoOC(linha)}" update="valorfinal,:form:oc:valorfinaloc,:form:oc:desconto,:form:msgs" process="@this"/>		
+														<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1" />
+														<p:ajax event="blur" listener="#{ocControl.recalculaProdutoOC(linha,'percentual')}" update="valorfinalin,:form:oc:valorfinaloc,:form:oc:desconto,:form:msgs" process="@this"/>														
 													</p:inputText>
 								        		</f:facet>
 								        	</p:cellEditor>
 								        </p:column>
 								        
 								        <p:column headerText="Valor Final">
-								        	<h:outputText value="#{ocproduto.valortotal}" id="valorfinal">
-								        		<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1" />		
-								        	</h:outputText>
+								        	<p:cellEditor>
+								        		<f:facet name="output">
+								        			<h:outputText value="#{ocproduto.valortotal}" id="valorfinal">
+										        		<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1" />		
+										        	</h:outputText>
+								        		</f:facet>
+								        		<f:facet name="input">
+								        			<p:inputText value="#{ocproduto.valortotal}" id="valorfinalin">
+														<f:convertNumber locale="pt_BR" maxFractionDigits="2" maxIntegerDigits="6" minFractionDigits="2" minIntegerDigits="1" />
+														<p:ajax event="blur" listener="#{ocControl.recalculaProdutoOC(linha,'valortotal')}" update="valorfinal,:form:oc:valorfinaloc,:form:oc:desconto,:form:msgs,descontoin" process="@this"/>														
+													</p:inputText>
+								        		</f:facet>
+								        	</p:cellEditor>
 								        </p:column>	
 								      
 								        <p:column headerText="Editar" style="width: 6px;">

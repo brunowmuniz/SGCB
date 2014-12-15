@@ -102,7 +102,7 @@ public class Montagem implements java.io.Serializable {
 		this.datefim = datefim;
 	}
 
-	@Column(name="observacoes", length = 63565)
+	@Column(name="observacoes", length = 200)
 	public String getObservacoes() {
 		return observacoes;
 	}
