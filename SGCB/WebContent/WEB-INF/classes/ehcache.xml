@@ -1,0 +1,125 @@
+<ehcache>
+
+    <diskStore path="java.io.tmpdir" />
+    
+  <defaultCache
+        maxElementsInMemory="100"
+        eternal="false"
+        timeToIdleSeconds="120"
+        timeToLiveSeconds="120"
+        overflowToDisk="true"
+        diskPersistent="false"
+        diskExpiryThreadIntervalSeconds="120"
+        memoryStoreEvictionPolicy="LRU"
+        />
+
+    <cache
+        name="org.hibernate.cache.StandardQueryCache"
+        maxElementsInMemory="100"
+        eternal="false"
+        timeToLiveSeconds="120"
+        overflowToDisk="true"/>
+    
+    <cache
+        name="org.hibernate.cache.UpdateTimestampsCache"
+        maxElementsInMemory="500"
+        eternal="false"
+        overflowToDisk="true"/>
+
+    <cache name="br.com.casabemestilo.model.Oc"
+	    maxElementsInMemory="100"
+	    eternal="false"
+	    timeToIdleSeconds="1800"
+	    timeToLiveSeconds="3600"
+	    overflowToDisk="True"
+	    memoryStoreEvictionPolicy="LRU"/>
+	
+    <cache name="br.com.casabemestilo.model.Ocproduto"
+	    maxElementsInMemory="100"
+	    eternal="false"
+	    timeToIdleSeconds="1800"
+	    timeToLiveSeconds="3600"
+	    overflowToDisk="True"
+	    memoryStoreEvictionPolicy="LRU"/>
+    
+    <cache name="br.com.casabemestilo.model.Pagamento"
+	    maxElementsInMemory="100"
+	    eternal="false"
+	    timeToIdleSeconds="1800"
+	    timeToLiveSeconds="3600"
+	    overflowToDisk="True"
+	    memoryStoreEvictionPolicy="LRU"/>
+    
+    <cache name="br.com.casabemestilo.model.Produto"
+	    maxElementsInMemory="1000"
+	    eternal="false"
+	    timeToIdleSeconds="1800"
+	    timeToLiveSeconds="3600"
+	    overflowToDisk="True"
+	    memoryStoreEvictionPolicy="LRU"/>
+    
+    <cache name="br.com.casabemestilo.model.Fornecedor"
+	    maxElementsInMemory="50"
+	    eternal="false"
+	    timeToIdleSeconds="1800"
+	    timeToLiveSeconds="3600"
+	    overflowToDisk="True"
+	    memoryStoreEvictionPolicy="LRU"/>
+    
+    <cache name="br.com.casabemestilo.model.Cliente"
+	    maxElementsInMemory="1000"
+	    eternal="false"
+	    timeToIdleSeconds="1800"
+	    timeToLiveSeconds="3600"
+	    overflowToDisk="True"
+	    memoryStoreEvictionPolicy="LRU"/>
+    
+    <cache name="br.com.casabemestilo.model.Comissao"
+	    maxElementsInMemory="100"
+	    eternal="false"
+	    timeToIdleSeconds="1800"
+	    timeToLiveSeconds="3600"
+	    overflowToDisk="True"
+	    memoryStoreEvictionPolicy="LRU"/>
+    
+    <cache name="br.com.casabemestilo.model.Parcela"
+	    maxElementsInMemory="1000"
+	    eternal="false"
+	    timeToIdleSeconds="1800"
+	    timeToLiveSeconds="3600"
+	    overflowToDisk="True"
+	    memoryStoreEvictionPolicy="LRU"/>
+    
+     <cache name="br.com.casabemestilo.model.Status"
+	    maxElementsInMemory="15"
+	    eternal="false"
+	    timeToIdleSeconds="1800"
+	    timeToLiveSeconds="3600"
+	    overflowToDisk="True"
+	    memoryStoreEvictionPolicy="LRU"/>
+     
+      <cache name="br.com.casabemestilo.model.CondicoesPagamento"
+	    maxElementsInMemory="50"
+	    eternal="false"
+	    timeToIdleSeconds="1800"
+	    timeToLiveSeconds="3600"
+	    overflowToDisk="True"
+	    memoryStoreEvictionPolicy="LRU"/>
+      
+       <cache name="br.com.casabemestilo.model.Formapagamento"
+	    maxElementsInMemory="50"
+	    eternal="false"
+	    timeToIdleSeconds="1800"
+	    timeToLiveSeconds="3600"
+	    overflowToDisk="True"
+	    memoryStoreEvictionPolicy="LRU"/>
+       
+        <cache name="br.com.casabemestilo.model.Usuario"
+	    maxElementsInMemory="50"
+	    eternal="false"
+	    timeToIdleSeconds="1800"
+	    timeToLiveSeconds="3600"
+	    overflowToDisk="True"
+	    memoryStoreEvictionPolicy="LRU"/>
+    
+</ehcache>
