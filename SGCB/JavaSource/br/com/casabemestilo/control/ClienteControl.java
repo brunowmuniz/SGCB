@@ -352,24 +352,13 @@ public class ClienteControl extends Control implements Serializable,InterfaceCon
 	}
 	
 	public List<Cliente> listarAniversariante(){
-		listaCliente = new ArrayList<Cliente>();		
-		List<Cliente> clientes = new ArrayList<Cliente>();
-		Calendar calDiaMes = Calendar.getInstance();
-		String hoje = "";
+		if(listaCliente == null){
+			listaCliente = new ArrayList<Cliente>();
+			clienteDAO = new ClienteDAO();			
+			listaCliente = clienteDAO.listaAniversariante();
+		}
 		
-		listarTodos();		
-		calDiaMes.setTime(new Date());
-		hoje = calDiaMes.get(calDiaMes.DAY_OF_MONTH) + "/" + calDiaMes.get(calDiaMes.MONTH);
-		
-		for(Cliente cliente : listaCliente){
-			if(cliente.getDatadenascimento() != null && cliente.getTipoPessoa().equals("pf")){
-				calDiaMes.setTime(cliente.getDatadenascimento());				
-				if(hoje.equals(calDiaMes.get(calDiaMes.DAY_OF_MONTH) + "/" + calDiaMes.get(calDiaMes.MONTH))){
-					clientes.add(cliente);
-				}
-			}
-		}		
-		return clientes;
+		return listaCliente;
 	}
 	
 	public Boolean temClienteAniversariante(){

@@ -15,7 +15,7 @@
 			</style>
 			<p:panel header="Aniversariantes do dia">
 				<p:outputLabel value="Não há aniversariantes hoje!" styleClass="nome erro" rendered="#{!clienteControl.temClienteAniversariante()}"/>
-				<p:dataList value="#{clienteControl.listarAniversariante()}" var="aniversariante" rendered="#{clienteControl.temClienteAniversariante()}">
+				<p:dataList value="#{clienteControl.listarAniversariante()}" var="aniversariante" rendered="#{clienteControl.temClienteAniversariante()}" lazy="true">
 					<p>
 						<br />
 						<b>Nome: </b>#{aniversariante.nome} (#{clienteControl.retornarIdade(aniversariante.datadenascimento)} anos)</p> 

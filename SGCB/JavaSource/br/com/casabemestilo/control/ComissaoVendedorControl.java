@@ -1,10 +1,14 @@
 package br.com.casabemestilo.control;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.faces.application.FacesMessage;
@@ -12,11 +16,19 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.component.export.Exporter;
+import org.primefaces.component.selectonemenu.SelectOneMenu;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 import br.com.casabemestilo.DAO.ComissaoVendedorDAO;
 import br.com.casabemestilo.control.Impl.InterfaceControl;
+import br.com.casabemestilo.model.Comissao;
 import br.com.casabemestilo.model.ComissaoVendedor;
+import br.com.casabemestilo.model.Pagamento;
+import br.com.casabemestilo.model.Usuario;
+import br.com.casabemestilo.util.ExtendedExcelExporter;
+import br.com.casabemestilo.util.ExtendedPDFExporter;
 
 @ManagedBean
 @ViewScoped
@@ -35,6 +47,16 @@ public class ComissaoVendedorControl extends Control implements  Serializable, I
 	private LazyDataModel<ComissaoVendedor> listarComissaoVendedorGeral;
 	
 	private Float totalComissaoVendedor;
+	
+	private Integer idFuncionario;
+	
+	private Integer idOc = 0;
+	
+	private Integer idFormaPagamento = 0;
+	
+	private String pagamentosComissao = "";
+	
+	
 	
 	/*
 	 * CONSTRUTOR
@@ -130,11 +152,14 @@ public class ComissaoVendedorControl extends Control implements  Serializable, I
 								    public List<ComissaoVendedor> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,String> filters) {
 								    	comissaoVendedorDAO = new ComissaoVendedorDAO();						    	
 								    								    		
-							    		setTotalComissaoVendedor(comissaoVendedorDAO.calculaComissaoVendedor(getComissaoVendedor().getVendedor().getId(), getDataInicial(), getDataFinal()));
+							    		setTotalComissaoVendedor(comissaoVendedorDAO.calculaComissaoVendedor(getIdFuncionario(), getDataInicial(), getDataFinal()));
 							    		
-							    		listaLazyComissaoVendedor = comissaoVendedorDAO.listaLazyVendedorAnalitico(first, pageSize, getComissaoVendedor().getVendedor().getId(), getDataInicial(), getDataFinal());								    	
+							    		listaLazyComissaoVendedor = comissaoVendedorDAO.listaLazyVendedorAnalitico(first, pageSize, getIdFuncionario(), getDataInicial(), getDataFinal());
+							    		
+							    		setListaComissaoVendedores(listaLazyComissaoVendedor);
+							    									    		
 								    	if (getRowCount() <= 0) {  
-								            setRowCount(comissaoVendedorDAO.totalVendedorAnalitico(getComissaoVendedor().getVendedor().getId(), getDataInicial(), getDataFinal()));  
+								            setRowCount(comissaoVendedorDAO.totalVendedorAnalitico(getIdFuncionario(), getDataInicial(), getDataFinal()));  
 								        }  
 								    	
 								        setPageSize(pageSize);
@@ -148,10 +173,42 @@ public class ComissaoVendedorControl extends Control implements  Serializable, I
 	
 	public void buscaVendasVendedorAnalitico(){		
 		listarComissaoVendedorGeral = null;
+		idFuncionario = getComissaoVendedor().getVendedor().getId();
 		getListarVendasAnalVendedor();
 		if(listarComissaoVendedorGeral == null){
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Vendedor sem comissão para o período!",""));	
 		}
+	}
+	
+	public void exportarArquivo(DataTable tabelaComissao) throws IOException{
+		String nomeArquivo = "Comissão Vendedor ";
+		Exporter exporter = null;
+		DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, new Locale("pt", "BR"));		
+		nomeArquivo += "Periodo de " + df.format(this.dataInicial) + " até " + df.format(this.dataFinal);
+		FacesContext context = FacesContext.getCurrentInstance();		
+		exporter = new ExtendedExcelExporter();
+	    exporter.export(context,tabelaComissao,nomeArquivo, false, false, "ISO-8859-1", null, null);
+	    context.responseComplete();
+	}
+	
+	public String pagamentosComissao(){
+		String retorno = "";		
+		DecimalFormat decFormat = new DecimalFormat("0.00");
+		
+		for (ComissaoVendedor comissaoVendedor : listaComissaoVendedores) {
+			if(comissaoVendedor.getOc().getId() == getIdOc()){
+				for(Pagamento pagamento : comissaoVendedor.getOc().getPagamentos()){
+					if(pagamento.getCondicoesPagamento().getFormapagamento().getId() == getIdFormaPagamento()){
+						if(retorno.equals("")){
+							retorno = "R$ " + decFormat.format(pagamento.getValor()) + "-" + pagamento.getCondicoesPagamento().getNome(); 
+						}else{
+							retorno += " / R$ " + decFormat.format(pagamento.getValor()) + "-" + pagamento.getCondicoesPagamento().getNome();
+						}
+					}
+				}
+			}			
+		}
+		return retorno;
 	}
 
 	
@@ -168,6 +225,9 @@ public class ComissaoVendedorControl extends Control implements  Serializable, I
 	}
 
 	public ComissaoVendedor getComissaoVendedor() {
+		if(comissaoVendedor == null){
+			comissaoVendedor = new ComissaoVendedor();
+		}
 		return comissaoVendedor;
 	}
 
@@ -224,5 +284,40 @@ public class ComissaoVendedorControl extends Control implements  Serializable, I
 	public void setTotalComissaoVendedor(Float totalComissaoVendedor) {
 		this.totalComissaoVendedor = totalComissaoVendedor;
 	}
+
+	public Integer getIdFuncionario() {
+		return idFuncionario;
+	}
+
+	public void setIdFuncionario(Integer idFuncionario) {
+		this.idFuncionario = idFuncionario;
+	}
+
+	public Integer getIdOc() {
+		return idOc;
+	}
+
+	public void setIdOc(Integer idOc) {
+		this.idOc = idOc;
+	}
+
+	public Integer getIdFormaPagamento() {
+		return idFormaPagamento;
+	}
+
+	public void setIdFormaPagamento(Integer idFormaPagamento) {
+		this.idFormaPagamento = idFormaPagamento;
+	}
+
+	public String getPagamentosComissao() {
+		pagamentosComissao = pagamentosComissao();
+		return pagamentosComissao;
+	}
+
+	public void setPagamentosComissao(String pagamentosComissao) {
+		this.pagamentosComissao = pagamentosComissao;
+	}
 	
+	
+
 }

@@ -8,36 +8,89 @@
 	<ui:composition template="../template/template.xhtml">
 		<ui:define name="conteudo">
 			<h:form id="form">
-				<p:panel header="Lista OC por status dos produtos">					
+				<p:panel header="Lista OC por status dos produtos">
+					<h:panelGrid columns="2">
+						<p:outputLabel for="dataInicial" value="Período Inicial: "/>
+						<p:calendar value="#{ocControl.dataInicial}" pattern="dd/MM/yyyy" locale="pt" id="dataInicial">
+							<p:ajax event="dateSelect" process="@this"/>
+						</p:calendar>
+						<p:outputLabel for="dataFinal" value="Período Final: "/>
+						<p:calendar value="#{ocControl.dataFinal}" pattern="dd/MM/yyyy" locale="pt" id="dataFinal">
+							<p:ajax event="dateSelect" process="@this"/>
+						</p:calendar>
+						<p:outputLabel for="vendasEfetivadas" value="Vendas Efetivadas: "/>
+						<p:selectBooleanCheckbox id="vendasEfetivadas" value="#{ocControl.ehVendaEfetivida}"/>
+						<p:commandButton value="Pesquisar" update="ocstatusprod"/>
+						<h:commandLink action="#{ocControl.exportarArquivo(table,'Controle OC ','xls')}">
+							<p:graphicImage value="../imagens/excel.png"/>
+						</h:commandLink>
+					</h:panelGrid>					
 					<p:dataTable var="oc" value="#{ocControl.listaOcStatusProduto}" id="ocstatusprod" emptyMessage="Sem OC com produto para frete/montagem!" paginator="true"
 										selection="#{ocControl.oc}" selectionMode="single" lazy="true" rows="10" rowKey="#{oc.id}"
 										paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
-                 						rowsPerPageTemplate="10,25,50">
+                 						rowsPerPageTemplate="10,25,50" binding="#{table}">
                  		
-                 		<p:column headerText="Codigo">
+                 		<p:column>
+                 			<f:facet name="header">
+                 				<h:outputText value="Código" />
+                 			</f:facet>
 				            <h:outputText value="#{oc.id}" />
 				        </p:column>
 				
-				        <p:column headerText="Nome">
+				        <p:column>
+				        	<f:facet name="header">
+                 				<h:outputText value="Nome" />
+                 			</f:facet>
 				            <h:outputText value="#{oc.cliente.nome}" />
 				        </p:column>
 				        
-				        <p:column headerText="Valor Total">
-				        	<h:outputText value="R$ "/>
+				        <p:column>
+				        	<f:facet name="header">
+                 				<h:outputText value="Valor Frete" />
+                 			</f:facet>
+                 			<h:outputText value="R$ " />
+				        	<h:outputText value="#{oc.valorfrete}">
+				        		<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+				        	</h:outputText>	
+				        </p:column>				        
+				        
+				        <p:column>
+				        	<f:facet name="header">
+                 				<h:outputText value="Valor Montagem" />
+                 			</f:facet>
+                 			<h:outputText value="R$ " />
+				        	<h:outputText value="#{oc.valormontagem}">
+				        		<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
+				        	</h:outputText>	
+				        </p:column>
+				        
+				        <p:column>
+				        	<f:facet name="header">
+                 				<h:outputText value="Valor Total" />
+                 			</f:facet>
+                 			<h:outputText value="R$ " />				        	
 				        	<h:outputText value="#{oc.valorfinal}">
 				        		<f:convertNumber locale="pt_BR" maxIntegerDigits="5" minIntegerDigits="1" maxFractionDigits="2" minFractionDigits="2"/>
 				        	</h:outputText>				        					            
 				        </p:column>
 				        
-				        <p:column headerText="Status" styleClass="status_#{oc.status.id}">
+				        <p:column styleClass="status_#{oc.status.id}">
+				        	<f:facet name="header">
+                 				<h:outputText value="Status" />
+                 			</f:facet>				        	 
 				            <h:outputText value="#{oc.status.descricao}"/> 
 				        </p:column>
+
 						
-						<p:column headerText="Vendedor" filterBy="#{oc.usuario.id}" filterOptions="#{usuarioControl.listaUsuarioVendedor('filter')}" filterMatchMode="exact" >
+						<p:column filterBy="#{oc.usuario.id}" filterOptions="#{usuarioControl.listaUsuarioVendedor('filter')}" filterMatchMode="exact" >
+							<f:facet name="header">
+                 				<h:outputText value="Vendedor" />
+                 			</f:facet>
 							<h:outputText value="#{oc.usuario.nome}" />
 				        </p:column>
 				        	        
-				        <p:column headerText="Produto(s)" filterBy="#{oc.status.id}" filterOptions="#{statusControl.listaStatusCombo}" filterMatchMode="exact" filterStyleClass="filterStatus" width="120">				        	
+				        <p:column headerText="Produto(s)" filterBy="#{oc.status.id}" filterOptions="#{statusControl.listaStatusCombo}" filterMatchMode="exact" filterStyleClass="filterStatus" width="120px"
+				        		  exportable="false">				        	
 			        		<p:dataList value="#{oc.ocprodutos}" var="ocproduto">
                  				<h:outputText value="#{ocproduto.produto.fornecedor.nome} - #{ocproduto.produto.descricao} - #{ocproduto.status.descricao} - #{ocproduto.quantidade} unid."
                  				 			  styleClass="#{ocproduto.status.id == ocControl.ocproduto.status.id ? 'negrito' : ''} status_#{ocproduto.status.id}"/>

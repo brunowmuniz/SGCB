@@ -24,7 +24,7 @@
 							<p:ajax event="change" process="@this" />
 						</p:calendar>
 						
-						<p:commandButton value="Buscar" actionListener="#{lancamentoControl.buscaLancamentoPeriodo}" update="form"/>
+						<p:commandButton value="Buscar" actionListener="#{lancamentoControl.buscaLancamentoPeriodo}" update="entradalancamento"/>
 						<h:panelGrid columns="2">
 							<h:commandLink action="#{lancamentoControl.exportarArquivo(table,'contas a pagar de ','xls')}">
 								<p:graphicImage value="../imagens/excel.png"/>							
@@ -162,7 +162,7 @@
 								</f:facet>
 							</p:cellEditor>							
 						</p:column>
-						<p:column style="width: 70px;" exportable="#{lancamentoControl.tipoArquivo != 'xls'}">
+						<p:column style="width: 70px;" >
 							<f:facet name="header">
 								<h:outputText value="Status" />
 							</f:facet>

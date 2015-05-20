@@ -33,7 +33,7 @@ public class StatusControl extends Control implements InterfaceControl,
 
 	private StatusDAO statusDAO;
 	
-	private List listaStatusCombo;
+	private List listaStatusCombo = new ArrayList();
 	
 	
 	/*
@@ -143,15 +143,18 @@ public class StatusControl extends Control implements InterfaceControl,
 	}
 
 	public List getListaStatusCombo() {
-		listaStatusCombo = new ArrayList();
-		listarAtivos();
-		listaStatusCombo.add(new SelectItem("", "Todos"));
-		for(Status status : listaStatus){
-			SelectItem si = new SelectItem();
-			si.setValue(status.getId());
-			si.setLabel(status.getDescricao());
-			listaStatusCombo.add(si);
-		}		
+		if(listaStatusCombo.isEmpty()){
+			listarAtivos();
+			listaStatusCombo.add(new SelectItem("", "Todos"));
+			for(Status status : listaStatus){
+				SelectItem si = new SelectItem();
+				si.setValue(status.getId());
+				si.setLabel(status.getDescricao());
+				listaStatusCombo.add(si);
+			}
+		}
+				
+		
 		return listaStatusCombo;
 	}
 

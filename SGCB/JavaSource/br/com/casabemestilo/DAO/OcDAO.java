@@ -293,7 +293,8 @@ public class OcDAO implements InterfaceDAO, Serializable {
 		return linhas.intValue();
 	}
 	
-	public List<Oc> listaLazyStatusProduto(int first, int pageSize,  Map<String, String> filters) {
+	public List<Oc> listaLazyStatusProduto(int first, int pageSize,  Map<String, String> filters, Date dataInicial, 
+										  Date dataFinal, Boolean ehVendaEfetivada) {
 		listaOc = new ArrayList<Oc>();
 		session = Conexao.getInstance();
 		String hql = "select oc from Oc oc" +
@@ -303,22 +304,30 @@ public class OcDAO implements InterfaceDAO, Serializable {
 			hql += "with ocproduto.status.id= " + filters.get("status.id");
 		}
 		
+		hql += "where oc.datalancamento between :dataInicial and :dataFinal";
+		
 		if(filters.containsKey("usuario.id")){
-			hql +=  " where oc.usuario.id = " + filters.get("usuario.id"); 
+			hql +=  " and oc.usuario.id = " + filters.get("usuario.id"); 
 		}
 		
+		if(ehVendaEfetivada){
+			hql +=  " and oc.status.id not in(1,2,10,11)";
+		}
+				
 		hql += " group by oc.id";
 		
 		listaOc = session.createQuery(hql)
 						.setFirstResult(first)
 						.setMaxResults(pageSize)
 						.setCacheable(true)
+						.setDate("dataInicial", dataInicial)
+						.setDate("dataFinal", dataFinal)
 						.list();
 		session.close();
 		return listaOc;
 	}
 
-	public int totalOcStatusProduto(Map<String, String> filters) {
+	public int totalOcStatusProduto(Map<String, String> filters, Date dataInicial, Date dataFinal, Boolean ehVendaEfetivada) {
 		Long linhas = new Long(0);
 		session = Conexao.getInstance();
 		String hql = "select count(oc.id) from Oc oc" +
@@ -328,13 +337,20 @@ public class OcDAO implements InterfaceDAO, Serializable {
 			hql += "with ocproduto.status.id=" + filters.get("status.id");
 		}		
 		
+		hql += "where oc.datalancamento between :dataInicial and :dataFinal";
 		
 		if(filters.containsKey("usuario.id")){
-			hql +=  " where oc.usuario.id = " + filters.get("usuario.id"); 
+			hql +=  " and oc.usuario.id = " + filters.get("usuario.id"); 
+		}
+		
+		if(ehVendaEfetivada){
+			hql +=  " and oc.status.id not in(1,2,10,11)";
 		}
 		
 		linhas = (Long) session.createQuery(hql)								
 								.setCacheable(true)
+								.setDate("dataInicial", dataInicial)
+								.setDate("dataFinal", dataFinal)
 								.uniqueResult();
 		session.close();
 		return linhas.intValue();
@@ -379,7 +395,7 @@ public class OcDAO implements InterfaceDAO, Serializable {
 														" where" +
 															" oc.deleted= false" +
 														" and" +
-															" oc.status.id not in(1,2,10)" +
+															" oc.status.id not in(1,2,10,11)" +
 														" and" +
 															" oc.datalancamento between :dataInicial and :dataFinal")
 									  .setDate("dataInicial", dataInicial)
@@ -402,7 +418,7 @@ public class OcDAO implements InterfaceDAO, Serializable {
 										" where " +
 											" oc.datalancamento between :dataInicial and :dataFinal" +
 										" and " +
-											" oc.status.id not in (1,2,10)" +
+											" oc.status.id not in (1,2,10,11)" +
 										" group by date_format(oc.datalancamento,'%Y-%m')")
 						 .setDate("dataInicial", dataInicial)
 						 .setDate("dataFinal", dataFinal)				
@@ -421,7 +437,7 @@ public class OcDAO implements InterfaceDAO, Serializable {
 																" where" +
 																	" o.deleted = false" +
 																" and" +
-																	" o.status.id not in(1,2,10)" +
+																	" o.status.id not in(1,2,10,11)" +
 																" and" +
 																	" o.datalancamento between :dataInicial and :dataFinal")
 												 .setDate("dataInicial", dataInicial)
@@ -440,7 +456,7 @@ public class OcDAO implements InterfaceDAO, Serializable {
 													" where" +
 														" o.tipoFrete <> 'brinde'" +
 													" and" +
-														" o.status.id not in(1,2,10)" +
+														" o.status.id not in(1,2,10,11)" +
 													" and" +	
 														" o.datalancamento between :dataInicial and :dataFinal")
 											.setDate("dataInicial", dataInicial)
@@ -457,7 +473,7 @@ public class OcDAO implements InterfaceDAO, Serializable {
 													" from" +
 														" Oc o" +
 													" where" +													
-														" o.status.id not in(1,2,10)" +
+														" o.status.id not in(1,2,10,11)" +
 													" and" +	
 														" o.datalancamento between :dataInicial and :dataFinal")
 											.setDate("dataInicial", dataInicial)
@@ -483,7 +499,7 @@ public class OcDAO implements InterfaceDAO, Serializable {
 																			" and" +
 																				" oc.usuario.id in(:grupoUsuario)"+
 																			" and" +
-																				" oc.status.id not in(1,2,10)" +
+																				" oc.status.id not in(1,2,10,11)" +
 																			" and" +
 																				" oc.datalancamento between :dataInicial and :dataFinal")
 															.setDate("dataInicial", dataInicial)
