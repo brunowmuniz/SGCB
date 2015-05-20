@@ -1,12 +1,19 @@
 package br.com.casabemestilo.control;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -20,15 +27,34 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletResponse;
 
 import main.DataUtil;
+import net.sf.jasperreports.engine.export.oasis.Style;
 
+import org.apache.poi.hssf.model.HSSFFormulaParser;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFConditionalFormatting;
+import org.apache.poi.hssf.usermodel.HSSFDataFormat;
+import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFFontFormatting;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFCellUtil;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.Font;
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.component.export.Exporter;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
+
+import com.sun.faces.taglib.html_basic.FormTag;
 
 import br.com.casabemestilo.DAO.ContaContabilDAO;
 import br.com.casabemestilo.DAO.FormaPagamentoDAO;
@@ -272,10 +298,12 @@ public class LancamentoControl extends Control implements InterfaceControl,
 	}
 	
 	public LazyDataModel<Lancamento> listaLancamentoGeralAll(String tipoLancamento){
+		lancamento = new Lancamento();
 		
-		if(tipoLancamento.equalsIgnoreCase("vale")){
-			lancamento = new Lancamento();
+		if(tipoLancamento.equalsIgnoreCase("vale")){			
 			lancamento.setEhVale(true);
+		}else{					
+			lancamento.setEhVale(false);
 		}
 		if(listaLancamentoGeral == null){
 			listaLancamentoGeral = new LazyDataModel<Lancamento>() {
@@ -312,6 +340,8 @@ public class LancamentoControl extends Control implements InterfaceControl,
 		return listaLancamentoGeral;
 	}
 	
+	
+	
 	public List<Lancamento> listaControleGeral(){
 		lancamentoDAO = new LancamentoDAO();
 		OcControl ocControl = new OcControl();
@@ -332,7 +362,7 @@ public class LancamentoControl extends Control implements InterfaceControl,
 			listaLancamento.add(new Lancamento(null,new ContaContabilDAO().buscaObjetoId(11), valorFretePago == null ? new Double(new Float(0).doubleValue()) : valorFretePago));
 			listaLancamento.add(new Lancamento(null,new ContaContabilDAO().buscaObjetoId(28), valorMontagemPago == null ? new Double(new Float(0).doubleValue()) : valorMontagemPago));
 			
-			for(Lancamento lancamento : listaLancamento){
+			for(Lancamento lancamento : listaLancamento){				
 				if(lancamento.getContacontabil().getTipo().equalsIgnoreCase("D")){
 					setValorSaidas(getValorSaidas() + lancamento.getValor()); 
 				}
@@ -511,6 +541,184 @@ public class LancamentoControl extends Control implements InterfaceControl,
 	
 	public void buscaLancamentoPeriodo(){		
 		listaLancamentoGeralAll("lancamento");
+	}
+	
+	public void gerarExcelGeral(){
+		try {
+			int iLinha = 0;
+			DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, new Locale("pt", "BR"));
+			HSSFWorkbook wbGeral = new HSSFWorkbook();
+			HSSFSheet planPrincipal = null;
+			planPrincipal = wbGeral.createSheet("Geral");
+			HSSFRow linha = null;			
+			String nomeArquivo = "Controle Geral-Todas Contas-Periodo de ";			 
+			FacesContext context = FacesContext.getCurrentInstance();
+			HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+			HSSFFont fonteCabecalho = wbGeral.createFont();
+			HSSFCellStyle styleMoeda = wbGeral.createCellStyle();
+			HSSFCellStyle styleCabecalho = wbGeral.createCellStyle();
+			
+			// Pode ser usado o 2 ou 4. Os demais são com o $			 
+			styleMoeda.setDataFormat((short) 2);
+			
+			//Definindo estilo da fonte de cabeçalho
+			fonteCabecalho.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+			styleCabecalho.setFont(fonteCabecalho);			
+			
+			linha = planPrincipal.createRow(0);		
+			linha.createCell(0).setCellValue("Conta Contabil");			
+			linha.createCell(1).setCellValue("Saídas (R$)");
+			linha.createCell(2).setCellValue("Entradas (R$)");
+			
+			for(int i = 0; i < 3; i++){
+				linha.getCell(i).setCellStyle(styleCabecalho);
+			}			
+			
+			for (Lancamento lancamentoLinha : listaLancamento) {
+				double valor =  lancamentoLinha.getValor();
+				BigDecimal bdValor = new BigDecimal(valor).setScale(2, RoundingMode.HALF_EVEN);
+				linha = planPrincipal.createRow(++iLinha);				
+				linha.createCell(0).setCellValue(lancamentoLinha.getContacontabil().getNome());				
+				linha.createCell(1).setCellValue(bdValor.doubleValue() < 0 ? bdValor.doubleValue() : 0.00);
+				linha.getCell(1).setCellStyle(styleMoeda);
+				linha.createCell(2).setCellValue(bdValor.doubleValue() > 0 ? bdValor.doubleValue() : 0.00);
+				linha.getCell(2).setCellStyle(styleMoeda);				
+			}
+			
+			linha = planPrincipal.createRow(++iLinha);
+			linha = planPrincipal.createRow(++iLinha);			
+			linha.createCell(0).setCellValue("Somatório Entradas (R$):");
+			linha.createCell(1).setCellValue(this.valorEntradas);
+			linha.getCell(0).setCellStyle(styleCabecalho);
+			linha.getCell(1).setCellStyle(styleMoeda);
+			
+			linha = planPrincipal.createRow(++iLinha);
+			linha.createCell(0).setCellValue("Somatório Saídas (R$):");
+			linha.createCell(1).setCellValue(this.valorSaidas);
+			linha.getCell(0).setCellStyle(styleCabecalho);
+			linha.getCell(1).setCellStyle(styleMoeda);
+			
+			linha = planPrincipal.createRow(++iLinha);
+			linha.createCell(0).setCellValue("Total Período (R$):");
+			linha.createCell(1).setCellValue(this.valorEntradas + this.valorSaidas);
+			linha.getCell(0).setCellStyle(styleCabecalho);
+			linha.getCell(1).setCellStyle(styleMoeda);
+			
+			nomeArquivo += df.format(getDataInicial()) + " até " + df.format(getDataFinal()) + ".xls";
+			
+			planPrincipal = wbGeral.getSheetAt(0);
+			
+			//Definem o ajuste das colunas com a largura dos campos
+			for(int i = 0; i < 3; i++){
+				planPrincipal.autoSizeColumn(i);	
+			}	
+					
+			ByteArrayOutputStream outByteStream = new ByteArrayOutputStream();
+			wbGeral.write(outByteStream);
+			byte [] outArray = outByteStream.toByteArray();
+			response.setContentType("application/octet-stream"); //Diz que o contentType é um stream
+			response.setContentLength(outArray.length);
+			response.setHeader("Expires:", "0"); // elimina o cache do browser
+			response.setHeader("Content-Disposition", "attachment; filename= " + nomeArquivo);
+			
+			response.getOutputStream().write(outArray);
+			response.getOutputStream().flush();
+			response.getOutputStream().close() ;
+			context.responseComplete();	// Importante no uso JSF, para não reutilizar					
+		} catch (IOException e) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro IO: " + e.getMessage(), ""));
+		} catch (Exception e) {
+			e.printStackTrace();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Genérico: " + e.getMessage(), ""));
+		}	
+	}
+	
+	public String gerarExcelCC(){
+		try {
+			int iLinha = 0;
+			String cabecalho = "Data Lançamento,Descrição,Nº Boleto,Forma Pgto.,É Parcelado,Parcela,Valor da Parcela";
+			DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, new Locale("pt", "BR"));
+			HSSFWorkbook wbGeral = new HSSFWorkbook();
+			HSSFSheet planPrincipal = null;
+			planPrincipal = wbGeral.createSheet(lancamento.getContacontabil().getNome() + " - Quitado");
+			HSSFRow linha = null;			
+			String nomeArquivo = "Controle Geral - " + lancamento.getContacontabil().getNome() + " - Periodo de ";			 
+			FacesContext context = FacesContext.getCurrentInstance();
+			HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+			HSSFFont fonteCabecalho = wbGeral.createFont();
+			HSSFDataFormat formatData = wbGeral.createDataFormat();
+			HSSFCellStyle styleMoeda = wbGeral.createCellStyle();
+			HSSFCellStyle styleCabecalho = wbGeral.createCellStyle();
+			HSSFCellStyle styleData = wbGeral.createCellStyle();
+			
+			Map<String, String> filters = new HashMap<String, String>();
+			filters.put("contacontabil.id", lancamento.getContacontabil().getId().toString());
+			filters.put("status", "Quitado");
+			listaLancamento = lancamentoDAO.listaLazyLancamento(0, 9999, filters, getDataInicial(), getDataFinal(), false);
+			
+			// Pode ser usado o 2 ou 4. Os demais são com o $			 
+			styleMoeda.setDataFormat((short) 2);
+			
+			//Define o padrão de Data						
+			styleData.setDataFormat((short) 14);
+					
+			//Definindo estilo da fonte de cabeçalho
+			fonteCabecalho.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+			styleCabecalho.setFont(fonteCabecalho);			
+			
+			linha = planPrincipal.createRow(0);
+			
+			for(int i = 0; i < cabecalho.split(",").length; i++){
+				linha.createCell(i).setCellValue(cabecalho.split(",")[i]);
+				linha.getCell(i).setCellStyle(styleCabecalho);
+			}			
+			
+			//String cabecalho = "Data Lançamento,Descrição,Nº Boleto,Forma Pgto.,É Parcelado,Parcela,Valor da Parcela";
+			
+			for (Lancamento lancamentoLinha : listaLancamento) {
+				double valor =  lancamentoLinha.getValor();
+				BigDecimal bdValor = new BigDecimal(valor).setScale(2, RoundingMode.HALF_EVEN);
+				linha = planPrincipal.createRow(++iLinha);
+				
+				linha.createCell(0).setCellValue(lancamentoLinha.getDataLancamento());
+				linha.getCell(0).setCellStyle(styleData);
+				linha.createCell(1).setCellValue(lancamentoLinha.getDescricao());
+				linha.createCell(2).setCellValue(lancamentoLinha.getNumBoleto());
+				linha.createCell(3).setCellValue(lancamentoLinha.getFormapagamento().getNome());
+				linha.createCell(4).setCellValue(lancamentoLinha.getQtdeParcela() == 1 ? "Não" : "Sim");				
+				linha.createCell(5).setCellValue(lancamentoLinha.getQtdeParcela() == 1 ? "Parcela Única" : lancamentoLinha.getParcela() + "/" + lancamentoLinha.getQtdeParcela());
+				linha.createCell(6).setCellValue(lancamentoLinha.getValor());
+				linha.getCell(6).setCellStyle(styleMoeda);								
+			}			
+						
+			nomeArquivo += df.format(getDataInicial()) + " até " + df.format(getDataFinal()) + ".xls";
+			
+			planPrincipal = wbGeral.getSheetAt(0);
+			
+			//Definem o ajuste das colunas com a largura dos campos
+			for(int i = 0; i < cabecalho.split(",").length; i++){
+				planPrincipal.autoSizeColumn(i);
+			}	
+					
+			ByteArrayOutputStream outByteStream = new ByteArrayOutputStream();
+			wbGeral.write(outByteStream);
+			byte [] outArray = outByteStream.toByteArray();
+			response.setContentType("application/octet-stream"); //Diz que o contentType é um stream
+			response.setContentLength(outArray.length);
+			response.setHeader("Expires:", "0"); // elimina o cache do browser
+			response.setHeader("Content-Disposition", "attachment; filename= " + nomeArquivo);
+			
+			response.getOutputStream().write(outArray);
+			response.getOutputStream().flush();
+			response.getOutputStream().close() ;
+			context.responseComplete();	// Importante no uso JSF, para não reutilizar					
+		} catch (IOException e) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro IO: " + e.getMessage(), ""));
+		} catch (Exception e) {
+			e.printStackTrace();
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Genérico: " + e.getMessage(), ""));
+		}
+		return "controlegeral";
 	}
 	
 	/*

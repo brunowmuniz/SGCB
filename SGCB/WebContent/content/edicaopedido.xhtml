@@ -18,7 +18,8 @@
 						
 						<p:outputLabel for="fornecedor" value="Fornecedor: "/>
 						<h:outputText value="#{pedidoControl.pedido.fornecedor.nome}" id="fornecedorlbl" styleClass="negrito" rendered="#{pedidoControl.pedido.id != null}"/>						
-						<p:selectOneMenu required="true" value="#{pedidoControl.pedido.fornecedor.id}" id="fornecedor" requiredMessage="Selecione um fornecedor!">
+						<p:selectOneMenu required="true" value="#{pedidoControl.pedido.fornecedor.id}" id="fornecedor" requiredMessage="Selecione um fornecedor!"
+										 rendered="#{pedidoControl.pedido.id == null}">
 							<f:selectItem itemValue="0" itemLabel="Selecione Fornecedor" noSelectionOption="true"/>
 							<f:selectItems value="#{fornecedoresControl.getListaFornecedorCombo('')}"/>
 							<p:ajax event="change" process="@this" update="btnbuscaproduto"/>

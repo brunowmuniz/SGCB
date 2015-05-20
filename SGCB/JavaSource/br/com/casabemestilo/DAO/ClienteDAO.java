@@ -91,7 +91,7 @@ public class ClienteDAO implements Serializable,InterfaceDAO{
 			ConstraintViolationException {
 		session = Conexao.getInstance();
 		session.beginTransaction();
-		listaClientes = session.createQuery("from Cliente c order by c.nome").list();
+		listaClientes = session.createQuery("from Cliente c order by c.nome").setCacheable(true).list();
 		session.close();
 		return listaClientes;
 	}
@@ -101,7 +101,7 @@ public class ClienteDAO implements Serializable,InterfaceDAO{
 			ConstraintViolationException {
 		session = Conexao.getInstance();
 		session.beginTransaction();
-		listaClientes = session.createQuery("from Cliente c where c.deleted=0 order by c.nome").list();
+		listaClientes = session.createQuery("from Cliente c where c.deleted=0 order by c.nome").setCacheable(true).list();
 		session.close();
 		return listaClientes;
 	}
@@ -119,6 +119,7 @@ public class ClienteDAO implements Serializable,InterfaceDAO{
 															" order by c.nome")
 							 .setBoolean("deletado", cliente.getDeleted())
 							 .setString("desc", "%" + cliente.getNome() + "%")
+							 .setCacheable(true)
 							 .list();
 		session.close();
 		return listaClientes;
@@ -215,6 +216,18 @@ public class ClienteDAO implements Serializable,InterfaceDAO{
 		session.getTransaction().commit();
 	}
 	
+	public List<Cliente> listaAniversariante(){
+		session = Conexao.getInstance();
+		listaClientes = session.createQuery("select new Cliente(nome, telefone, telefoneadicional, datadenascimento, email) " +
+											"from " +
+												"Cliente c " +
+											"where " +
+												"date_format(c.datadenascimento,'%m-%d') = date_format(now(),'%m-%d')" +
+											"order by c.nome")
+								.setCacheable(true).list();
+		session.close();
+		return listaClientes;
+	}
 	
 	/*
 	 * GETTERS & SETTERS

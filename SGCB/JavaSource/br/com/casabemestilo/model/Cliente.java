@@ -85,6 +85,18 @@ public class Cliente implements java.io.Serializable {
 		this.datadenascimento = datadenascimento;
 		this.ocs = ocs;
 	}
+	
+	
+
+	public Cliente(String nome, String telefone, String telefoneadicional,
+			Date datadenascimento, String email) {
+		super();
+		this.nome = nome;
+		this.telefone = telefone;
+		this.telefoneadicional = telefoneadicional;
+		this.datadenascimento = datadenascimento;
+		this.email = email;
+	}
 
 	@Id
 	@GeneratedValue(strategy = IDENTITY)

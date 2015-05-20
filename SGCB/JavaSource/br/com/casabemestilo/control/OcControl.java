@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,6 +35,8 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanArrayDataSource;
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.component.export.Exporter;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.LazyDataModel;
@@ -68,6 +71,8 @@ import br.com.casabemestilo.model.Pedidoproduto;
 import br.com.casabemestilo.model.Produto;
 import br.com.casabemestilo.model.Status;
 import br.com.casabemestilo.model.Usuario;
+import br.com.casabemestilo.util.ExtendedExcelExporter;
+import br.com.casabemestilo.util.ExtendedPDFExporter;
 
 @ManagedBean
 @ViewScoped
@@ -112,6 +117,8 @@ public class OcControl extends Control implements InterfaceControl,
 	private Float valorDescontoAtual = new Float("0");
 	
 	private DecimalFormat df = new DecimalFormat();
+	
+	private Boolean ehVendaEfetivida = false;
 	
 	/*
 	 * CONSTRUTORES
@@ -1224,10 +1231,10 @@ public class OcControl extends Control implements InterfaceControl,
 							    public List<Oc> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String,String> filters) {
 							    	OcDAO ocDAO = new OcDAO();
 							    	
-							    	listaLazyOc = ocDAO.listaLazyStatusProduto(first, pageSize, filters);
+							    	listaLazyOc = ocDAO.listaLazyStatusProduto(first, pageSize, filters, getDataInicial(), getDataFinal(), getEhVendaEfetivida());
 							    	
 							    	if (getRowCount() <= 0) { 
-							            setRowCount(ocDAO.totalOcStatusProduto(filters));  
+							            setRowCount(ocDAO.totalOcStatusProduto(filters, getDataInicial(), getDataFinal(), getEhVendaEfetivida()));  
 							        }  
 							    	
 							        setPageSize(pageSize);  
@@ -1236,6 +1243,21 @@ public class OcControl extends Control implements InterfaceControl,
 				};
 		}		
 		return listarOcGeral;
+	}
+	
+	public void exportarArquivo(DataTable tabela, String nomeArquivo, String tipoArquivo) throws IOException{		
+		Exporter exporter = null;
+		DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, new Locale("pt", "BR"));
+		nomeArquivo += getEhVendaEfetivida() ? "- Vendas Efetivadas" : "- Todas as OC's" + " de ";
+		nomeArquivo += df.format(dataInicial) + " até " + df.format(dataFinal);
+		FacesContext context = FacesContext.getCurrentInstance();
+		if(tipoArquivo.equals("xls")){
+			exporter = new ExtendedExcelExporter();
+		}else{
+			exporter = new ExtendedPDFExporter();
+		}	    
+	    exporter.export(context,tabela, nomeArquivo, false, false, "ISO-8859-1", null, null);
+	    context.responseComplete();
 	}
 	
 	public List<String> getListaTipoFrete() {
@@ -1305,5 +1327,13 @@ public class OcControl extends Control implements InterfaceControl,
 		this.ehClienteChequeOc = ehClienteChequeOc;
 	}
 
+	public Boolean getEhVendaEfetivida() {
+		return ehVendaEfetivida;
+	}
+
+	public void setEhVendaEfetivida(Boolean ehVendaEfetivida) {
+		this.ehVendaEfetivida = ehVendaEfetivida;
+	}
+	
 		
 }

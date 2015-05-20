@@ -1,6 +1,7 @@
 package br.com.casabemestilo.model;
 
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,6 +19,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -48,6 +50,7 @@ public class Oc implements java.io.Serializable {
 	private Date datalancamento;
 	private Boolean deleted;
 	private String tipoFrete;
+	private String resumoPagamento = "";
 	private Float desconto;
 	private List<Pagamento> pagamentos = new ArrayList<Pagamento>();
 	private List<Ocproduto> ocprodutos = new ArrayList<Ocproduto>();
@@ -329,6 +332,25 @@ public class Oc implements java.io.Serializable {
 
 	public void setTipoFrete(String tipoFrete) {
 		this.tipoFrete = tipoFrete;
+	}
+	
+	@Transient
+	public String getResumoPagamento(){
+		DecimalFormat decFormat = new DecimalFormat("0.00");
+		if(this.getId() != null){
+			for(Pagamento pagamento : this.getPagamentos()){
+				if(! resumoPagamento.equals("")){
+					resumoPagamento += " + "; 
+				}
+				resumoPagamento += "R$ " + decFormat.format(pagamento.getValor()) + " - " + 
+								   pagamento.getCondicoesPagamento().getFormapagamento().getNome() +  "/" + pagamento.getCondicoesPagamento().getNome();
+			}
+		}
+		return resumoPagamento;
+	}
+
+	public void setResumoPagamento(String resumoPagamento) {
+		this.resumoPagamento = resumoPagamento;
 	}
 
 	@OneToMany(targetEntity = ComissaoVendedor.class, mappedBy = "oc",cascade = CascadeType.ALL, fetch = FetchType.LAZY)

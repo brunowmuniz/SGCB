@@ -17,6 +17,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.type.Type;
 
 import br.com.casabemestilo.DAO.Impl.InterfaceDAO;
+import br.com.casabemestilo.model.Contacontabil;
 import br.com.casabemestilo.model.Lancamento;
 import br.com.casabemestilo.model.Parcela;
 import br.com.casabemestilo.util.Conexao;
@@ -133,7 +134,7 @@ public class LancamentoDAO implements InterfaceDAO, Serializable {
 			hql += " and l.contacontabil.id = " + filters.get("contacontabil.id");
 		}
 		
-		if(filters.containsKey("usuario.id")){
+		if(filters.containsKey("usuario.id") && ehVale){
 			hql += " and l.usuario.id = " + filters.get("usuario.id");
 		}
 		
@@ -185,7 +186,7 @@ public class LancamentoDAO implements InterfaceDAO, Serializable {
 			hql += " and l.contacontabil.id = " + filters.get("contacontabil.id");
 		}
 		
-		if(filters.containsKey("usuario.id")){
+		if(filters.containsKey("usuario.id") && ehVale){
 			hql += " and l.usuario.id = " + filters.get("usuario.id");
 		}
 		
@@ -270,6 +271,10 @@ public class LancamentoDAO implements InterfaceDAO, Serializable {
 														" l.dataLancamento between :dataInicial and :dataFinal" +
 													" and" +
 														" l.contacontabil.contaBaixa = false"+
+													" and" +
+														" l.status = 'Quitado'" +
+													" and" +
+														" l.deleted = false" +
 													" group by l.contacontabil")
 								 .setDate("dataInicial", dataInicial)
 								 .setDate("dataFinal", dataFinal)

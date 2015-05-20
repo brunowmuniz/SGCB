@@ -149,7 +149,11 @@ public class FornecedoresControl extends Control implements InterfaceControl,
 	public List<Fornecedor> listarAtivos() {
 		try{
 			fornecedoresDAO = new FornecedoresDAO();
-			listaFornecedores = fornecedoresDAO.listaAtivos();
+			if(listaFornecedores == null){			
+				listaFornecedores = fornecedoresDAO.listaAtivos();				
+			}else if(listaFornecedores != null && listaFornecedores.isEmpty()){
+				listaFornecedores = fornecedoresDAO.listaAtivos();
+			}
 		}catch (ConstraintViolationException e) {
 			super.mensagem = e.getMessage();
 			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro Constraint: " + super.mensagem, ""));

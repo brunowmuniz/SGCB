@@ -123,7 +123,11 @@
 							<f:facet name="header">
 								<h:outputText value="Cliente Pagador" />
 							</f:facet>
-							<h:outputText value="#{entrada.pagamento.cliente.nome}" />
+							<h:panelGrid columns="1" style="border-style: hidden; border-color: #fff">
+								<h:outputText value="#{entrada.pagamento.cliente.nome}" />
+								<h:outputText value="Telefone: #{entrada.pagamento.cliente.telefone}" />
+								<h:outputText value="Telefone Contato: #{entrada.pagamento.cliente.telefoneadicional}" />
+							</h:panelGrid>	
 						</p:column>
 						
 						<p:column style="width: 50px;" filterBy="#{entrada.pagamento.banco.id}" filterMatchMode="exact" filterOptions="#{bancoControl.listaBancoCombo('filter')}" filterStyle="width: 80px;">
@@ -234,7 +238,11 @@
 							</h:outputText>			
 						</p:column>
 						<p:column headerText="Cliente Pagador" filterBy="#{entrada.pagamento.cliente.nome}" filterMatchMode="startsWith" filterStyle="width: 100%;">							
-							<h:outputText value="#{entrada.pagamento.cliente.nome}" />
+							<h:panelGrid columns="1" style="border-style: hidden; border-color: #fff">
+								<h:outputText value="#{entrada.pagamento.cliente.nome}" />
+								<h:outputText value="Telefone: #{entrada.pagamento.cliente.telefone}" />
+								<h:outputText value="Telefone Contato: #{entrada.pagamento.cliente.telefoneadicional}" />
+							</h:panelGrid>
 						</p:column>
 						<p:column style="width: 50px;" headerText="Banco" filterBy="#{entrada.pagamento.banco.id}" filterMatchMode="exact" filterOptions="#{bancoControl.listaBancoCombo('filter')}" filterStyle="width: 80px;">
 							<h:outputText value="#{entrada.pagamento.banco.descricao}" />

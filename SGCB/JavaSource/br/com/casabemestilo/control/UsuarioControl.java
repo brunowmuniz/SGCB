@@ -69,6 +69,8 @@ public class UsuarioControl extends Control implements InterfaceControl,
 	
 	private List listaPermissoesUsuario;
 	
+	private List listaUsuarioVendedor = new ArrayList();
+	
 	
 	
 	/*
@@ -360,7 +362,6 @@ public class UsuarioControl extends Control implements InterfaceControl,
 	
 	public List listaUsuarioVendedor(String filter){
 		usuarioDAO = new UsuarioDAO();
-		List listaUsuarioVendedor = new ArrayList();
 		listaUsuario = usuarioDAO.listaVendedor();
 		if(filter.equals("filter")){
 			listaUsuarioVendedor.add(new SelectItem("","Todos"));
@@ -520,16 +521,18 @@ public class UsuarioControl extends Control implements InterfaceControl,
 		this.listaLazyUsuario = listaLazyUsuario;
 	}
 
-	public List getListaPermissoesUsuario() {		
-		usuarioDAO = new UsuarioDAO();
-		usuario.setPermissoes(new PermissaoDAO().buscaPermissaoUsuario(usuario));
-		listaPermissoesUsuario = new ArrayList();
-		for(Permissao permissao : usuario.getPermissoes()){
-			SelectItem si = new SelectItem();
-			si.setValue(permissao.getPagina().getId());
-			si.setLabel(permissao.getPagina().getNomePagina());
-			listaPermissoesUsuario.add(si);
-		}
+	public List getListaPermissoesUsuario() {
+		if(listaUsuarioVendedor.isEmpty()){
+			usuarioDAO = new UsuarioDAO();
+			usuario.setPermissoes(new PermissaoDAO().buscaPermissaoUsuario(usuario));
+			listaPermissoesUsuario = new ArrayList();
+			for(Permissao permissao : usuario.getPermissoes()){
+				SelectItem si = new SelectItem();
+				si.setValue(permissao.getPagina().getId());
+				si.setLabel(permissao.getPagina().getNomePagina());
+				listaPermissoesUsuario.add(si);
+			}
+		}		
 		return listaPermissoesUsuario;
 	}
 
