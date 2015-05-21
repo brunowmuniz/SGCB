@@ -54,7 +54,7 @@
 									<h:panelGrid id="dadoscliente" >
 										<h:panelGrid columns="3">
 											<p:outputLabel for="buscarcliente" value="Busca Cliente: "/>
-											<p:autoComplete id="buscarcliente" value="#{ocControl.oc.cliente}" minQueryLength="4"
+											<p:autoComplete id="buscarcliente" value="#{ocControl.oc.cliente}" minQueryLength="2"
 															size="60" forceSelection="true"							 
 															converter="converter.clienteConverter" 
 															completeMethod="#{clienteControl.listaComplete}"
